@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { Check } from 'lucide-react';
-import { LoopsClient } from "loops";
 
 
 export default function WaitlistSignup() {

@@ -1,9 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
 import { LoopsClient } from "loops";
 
 const loops = new LoopsClient(process.env.LOOPS_API_KEY as string);
 
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
 
 try {
 
