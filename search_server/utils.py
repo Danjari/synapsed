@@ -6,10 +6,11 @@ import os
 from pydantic import BaseModel
 from dotenv import load_dotenv
 from openai import OpenAI
+
 load_dotenv() #load environment variables
 
 headers = {
-        "X-Auth-API-Key": "c5cf7f3f6c6fd0e694fca9a77b1765bf",
+        "X-Auth-API-Key": os.getenv("THINKIFIC_KEY"),
         "X-Auth-Subdomain": "maarifasasa",
         "Content-Type": "application/json",
     }

@@ -25,18 +25,18 @@ def search() -> str:
         # handle refusal
         print(relevant_courses.refusal)
 
-    all_relevant_chapters = []
-    for course in relevant_courses.parsed.relevant_courses:
-        course_chapters = get_chapters_by_course_id(course.id)
-        course_with_chapters = {"course_name": course.name, "course_id": course.id, "chapters": course_chapters}
-        all_relevant_chapters.append(course_with_chapters)
+    # all_relevant_chapters = []
+    # for course in relevant_courses.parsed.relevant_courses:
+    #     course_chapters = get_chapters_by_course_id(course.id)
+    #     course_with_chapters = {"course_name": course.name, "course_id": course.id, "chapters": course_chapters}
+    #     all_relevant_chapters.append(course_with_chapters)
 
     
-    path = get_chapter_sequence(query, all_relevant_chapters)
+    # path = get_chapter_sequence(query, all_relevant_chapters)
 
-    if path.parsed:
-        for chapter in path.parsed.path:
-            print(chapter)
+    # if path.parsed:
+    #     for chapter in path.parsed.path:
+    #         print(chapter)
 
     
 
