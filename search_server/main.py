@@ -1,6 +1,6 @@
 import requests
 import json
-from utils import get_all_courses, filter_all_courses_from_query, filter_all_courses_from_query_openai, get_chapters_by_course_id, get_chapter_sequence, insert_courses_to_db, match_courses
+from utils import get_all_courses, filter_all_courses_from_query, filter_all_courses_from_query_openai, get_chapters_by_course_id, get_chapter_sequence, insert_courses_to_db, match_courses, order_chapters_for_query
 
 
 def search() -> str:  
@@ -19,12 +19,17 @@ def search() -> str:
     # if len(all_courses) < 1: 
     #     print("No courses were found.")
     #     exit()
-    i = 0
-    for course in relevant_courses:
-        if i < 5:
-            print(f"COURESE: {course}")
-            # get_chapters_by_course_id(course["id"])
-            i += 1
+    # i = 0
+    # for course in relevant_courses:
+    #     if i < 5:
+    #         print(f"COURESE: {course}")
+    #         # get_chapters_by_course_id(course["id"])
+    #         i += 1
+
+    chapter_sequence = order_chapters_for_query(query, relevant_courses)
+
+    print(chapter_sequence)
+    
        
 
     

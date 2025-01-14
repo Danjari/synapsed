@@ -55,9 +55,7 @@ def get_chapters_by_course_id(course_id: int):
     if response.status_code == 200:
         data = response.json()
         chapters = data['items']
-        for chapter in chapters:
-            print(chapter)
-            
+        return chapters
 
 def filter_all_courses_from_query(query: str, courses: list[Course]) -> list[Course]: # takes in a list of courses and a query and filters the relevant queries
     nlp = spacy.load('en_core_web_lg')
@@ -149,4 +147,38 @@ def match_courses(query: str, courses: list):
     matched_courses = sorted(zip(courses, similarities), key=lambda x: x[1], reverse=True)
     return [course for course, score in matched_courses if score > 0.1]
 
+
+
+def order_chapters_for_query(query: str, relevant_courses: list):
+
+    chapter_details = []
+
+    for course in relevant_courses:
+        course_id = course["id"]
+        chapters = get_chapters_by_course_id(course_id) # get all the chapters from the course
+
+        chapter_scores = []
+
+        for chapter in chapters:
+            chapter_text = f"{chapter['name']}: {chapter['description']}"
+            score = get_chapter_similarity_score(query, chapter_text)
+            chapter_scores.append((chapter, score))
+
+        sorted_chapters = sorted(chapter_scores, key=lambda x: (-x[1], x[0]['position']))
+        chapter_details.extend([chapter for chapter, _ in sorted_chapters])
+
+    return chapter_details
+
+def get_chapter_similarity_score(query: str, chapter_text: str):
+     # Combine query and chapter text for vectorization
+    texts = [query, chapter_text]
+    
+    # Vectorize the texts using TF-IDF
+    vectorizer = TfidfVectorizer()
+    vectors = vectorizer.fit_transform(texts)
+    
+    # Calculate cosine similarity between the query vector and chapter text vector
+    score = cosine_similarity(vectors[0], vectors[1])
+    
+    return score[0][0]
 get_all_courses()
