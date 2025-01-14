@@ -6,6 +6,11 @@ import os
 from pydantic import BaseModel
 from dotenv import load_dotenv
 from openai import OpenAI
+# from rake_nltk import Rake
+from db import supabase_client
+from supabase import create_client
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 load_dotenv() #load environment variables
 
@@ -51,7 +56,7 @@ def get_chapters_by_course_id(course_id: int):
         data = response.json()
         chapters = data['items']
         for chapter in chapters:
-            all_chapters.append(chapter)
+            print(chapter)
             
 
 def filter_all_courses_from_query(query: str, courses: list[Course]) -> list[Course]: # takes in a list of courses and a query and filters the relevant queries
@@ -109,7 +114,39 @@ def get_chapter_sequence(query: str, courses: list):
     return path
     
 
-def cosine_similarity():
-    pass
+# def cosine_similarity():
+#     pass
+
+
+# def get_keywords_from_query(query: str):
+#     rake = Rake()
+#     rake.extract_keywords_from_text(query)
+#     print(rake.get_ranked_phrases_with_scores())
+
+
+def insert_courses_to_db(courses: list):
+
+    try:
+        supabase = supabase_client()
+        response = supabase.table("courses").insert(courses).execute()
+        return response
+    except Exception as exception:
+        print(exception) 
+
+
+
+def match_courses(query: str, courses: list):
+    course_texts = [f"{course["name"]}: {course['description']}" for course in courses] #each item represents a course and its desciption
+    query_vector = [query]
+
+
+    vectorizer = TfidfVectorizer().fit(course_texts + query_vector)
+
+    course_vectors = vectorizer.transform(course_texts)
+    query_vector = vectorizer.transform(query_vector)
+
+    similarities = cosine_similarity(query_vector, course_vectors)[0]
+    matched_courses = sorted(zip(courses, similarities), key=lambda x: x[1], reverse=True)
+    return [course for course, score in matched_courses if score > 0.1]
 
 get_all_courses()

@@ -1,29 +1,42 @@
 import requests
 import json
-from utils import get_all_courses, filter_all_courses_from_query, filter_all_courses_from_query_openai, get_chapters_by_course_id, get_chapter_sequence
+from utils import get_all_courses, filter_all_courses_from_query, filter_all_courses_from_query_openai, get_chapters_by_course_id, get_chapter_sequence, insert_courses_to_db, match_courses
 
 
 def search() -> str:  
 
     query = input("Please enter your query: ")
 
+    # get_keywords_from_query(query)
+
+
     all_courses = get_all_courses()
 
-    if len(all_courses) < 1: 
-        print("No courses were found.")
-        exit()
+    relevant_courses = match_courses(query, all_courses)
 
-    # for course in all_courses:
-    #     print(course)
+    # insert_courses_to_db(all_courses)
 
-    relevant_courses = filter_all_courses_from_query_openai(query, all_courses) # get all the relevant courses from the query
+    # if len(all_courses) < 1: 
+    #     print("No courses were found.")
+    #     exit()
+    i = 0
+    for course in relevant_courses:
+        if i < 5:
+            print(f"COURESE: {course}")
+            # get_chapters_by_course_id(course["id"])
+            i += 1
+       
 
-    if relevant_courses.parsed:
-      for course in relevant_courses.parsed.relevant_courses:
-          print(course.name)
-    elif relevant_courses.refusal:
-        # handle refusal
-        print(relevant_courses.refusal)
+    
+
+    # relevant_courses = filter_all_courses_from_query_openai(query, all_courses) # get all the relevant courses from the query
+
+    # if relevant_courses.parsed:
+    #   for course in relevant_courses.parsed.relevant_courses:
+    #       print(course.name)
+    # elif relevant_courses.refusal:
+    #     # handle refusal
+    #     print(relevant_courses.refusal)
 
     # all_relevant_chapters = []
     # for course in relevant_courses.parsed.relevant_courses:
@@ -37,12 +50,6 @@ def search() -> str:
     # if path.parsed:
     #     for chapter in path.parsed.path:
     #         print(chapter)
-
-    
-
-
-
-
 
 search()
         
