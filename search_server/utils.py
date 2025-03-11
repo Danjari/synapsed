@@ -24,26 +24,18 @@ headers = {
 def get_all_courses() -> list:
 
     url = "https://api.thinkific.com/api/public/v1/courses?limit=100"
-
+    course_table_keys = ["id", "name", "slug", "description", "keywords", "chapter_ids"]
 #here the collections represent the different 'schools within maarifasasa'
 
     
-
-    all_courses = [] # the array of courses to return
     response = requests.get(url, headers=headers)
 
     if response.status_code == 200:
         data = response.json()
         courses = data['items']
+        filtered_courses = [{key: d[key] for key in course_table_keys if key in d} for d in courses]
 
-        for course in courses: # get all courses and append them to the array
-            # new_course = Course(course["id"], course["name"], course["slug"], course["description"], course["keywords"], course["course_card_image_url"], course["chapter_ids"])
-            all_courses.append(course)
-
-        # for course in all_courses:
-        #     print(course.name, "keywords: ", course.keywords)
-        #     print("================")
-        return all_courses
+        return filtered_courses
     else:
         print(f"Error: {response.status_code}, {response.text}")
         return []
@@ -126,17 +118,22 @@ def insert_courses_to_db(courses: list):
 
     try:
         supabase = supabase_client()
+        
         response = supabase.table("courses").insert(courses).execute()
         return response
     except Exception as exception:
         print(exception) 
 
 
+def insert_chapters_to_db(courses: list):
+
+    for course in courses:
+        course_id = course["id"]
+        chapters = get_chapters_by_course_id(course_id)
 
 def match_courses(query: str, courses: list):
-    course_texts = [f"{course["name"]}: {course['description']}" for course in courses] #each item represents a course and its desciption
+    course_texts = [f"{course["name"]}: {course["description"]}" for course in courses] #each item represents a course and its desciption
     query_vector = [query]
-
 
     vectorizer = TfidfVectorizer().fit(course_texts + query_vector)
 
@@ -146,6 +143,7 @@ def match_courses(query: str, courses: list):
     similarities = cosine_similarity(query_vector, course_vectors)[0]
     matched_courses = sorted(zip(courses, similarities), key=lambda x: x[1], reverse=True)
     return [course for course, score in matched_courses if score > 0.1]
+    # return matched_courses
 
 
 
@@ -160,11 +158,12 @@ def order_chapters_for_query(query: str, relevant_courses: list):
         chapter_scores = []
 
         for chapter in chapters:
+            chapter["course_id"] = course_id
             chapter_text = f"{chapter['name']}: {chapter['description']}"
             score = get_chapter_similarity_score(query, chapter_text)
             chapter_scores.append((chapter, score))
 
-        sorted_chapters = sorted(chapter_scores, key=lambda x: (-x[1], x[0]['position']))
+        sorted_chapters = sorted(chapter_scores, key=lambda x: (x[0]['position'], -x[1]))
         chapter_details.extend([chapter for chapter, _ in sorted_chapters])
 
     return chapter_details
@@ -181,4 +180,37 @@ def get_chapter_similarity_score(query: str, chapter_text: str):
     score = cosine_similarity(vectors[0], vectors[1])
     
     return score[0][0]
-get_all_courses()
+
+
+def create_nodes(chapter_sequence: list):
+    nodes = []
+    for chapter in chapter_sequence:
+        node = {}
+        node["id"] = chapter["id"]
+        node['data'] = {"label": chapter["name"], "type": "chapter", "icon": "", "description": chapter["description"], "resources": []}
+        content_url = f"https://api.thinkific.com/api/public/v1/chapters/{chapter['id']}/contents?limit=100"
+        response = requests.get(content_url, headers=headers)
+
+        if response.status_code == 200:
+            data = response.json()
+            contents = data['items']
+            for content in contents:
+                resource = {"title": content["name"], "url": content["take_url"]}
+                node["data"]["resources"].append(resource)
+
+        nodes.append(node)
+
+
+    return nodes
+
+    
+def create_learning_path(query: str):
+    matched_courses = match_courses(query, get_all_courses())
+    chapter_order = order_chapters_for_query(query, matched_courses)
+
+    learning_path = [{"course": chapter["course_id"], "chapter": chapter["name"]} for chapter in chapter_order]
+    return learning_path
+
+
+
+
