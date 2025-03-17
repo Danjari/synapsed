@@ -22,6 +22,8 @@ from dotenv import load_dotenv
 from mistralai import Mistral
 from mistralai import DocumentURLChunk, ImageURLChunk, TextChunk
 from mistralai.models import OCRResponse
+import time
+import random
 
 app = FastAPI(title="Document RAG API")
 
@@ -136,7 +138,7 @@ async def process_pdf_with_mistral_ocr(file_path: str, file_name: str) -> List[D
                 }
             )
         ]
-        
+        print(f"Successfully processed {file_name} with Mistral OCR")
         return documents
     
     except Exception as e:
@@ -154,75 +156,178 @@ async def upload_document(file: UploadFile = File(...)):
     Uses Mistral's OCR for PDF files to extract text more accurately.
     """
     try:
-        
         # Generate a unique ID for this document
+        print(f"Reading the file {file.filename}")
         document_id = str(uuid.uuid4())
+        temp_file_path = None
         
-        # Create a temporary file
-        suffix = os.path.splitext(file.filename)[1].lower()
-        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp_file:
-            # Write the uploaded file content
-            content = await file.read()
-            temp_file.write(content)
-            temp_file_path = temp_file.name
-        
-        # Process the document based on its type
-        if suffix == '.pdf':
-            # Use Mistral OCR for PDF files
-            documents = await process_pdf_with_mistral_ocr(temp_file_path, file.filename)
-        elif suffix == '.docx':
-            loader = Docx2txtLoader(temp_file_path)
-            documents = loader.load()
-        elif suffix == '.txt':
-            loader = TextLoader(temp_file_path)
-            documents = loader.load()
-        else:
-            os.unlink(temp_file_path)
-            raise HTTPException(status_code=400, detail="Unsupported file format")
-        
-        # Split the document text into chunks
-        text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=1000,
-            chunk_overlap=200
-        )
-        chunks = text_splitter.split_documents(documents) #split the document into chunks
+        try:
+            # Create a temporary file more efficiently
+            suffix = os.path.splitext(file.filename)[1].lower()
+            with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp_file:
+                content = await file.read()
+                temp_file.write(content)
+                temp_file_path = temp_file.name
+            
+            # Process the document based on its type
+            if suffix == '.pdf':
+                print("This is a PDF, processing with Mistral OCR")
+                documents = await process_pdf_with_mistral_ocr(temp_file_path, file.filename)
+            elif suffix == '.docx':
+                loader = Docx2txtLoader(temp_file_path)
+                documents = loader.load()
+            elif suffix == '.txt':
+                loader = TextLoader(temp_file_path)
+                documents = loader.load()
+            else:
+                raise HTTPException(status_code=400, detail="Unsupported file format")
+                
+            # Split the document text into chunks - use larger chunks to reduce total number
+            text_splitter = RecursiveCharacterTextSplitter(
+                chunk_size=800,  # Increased chunk size to reduce number of API calls
+                chunk_overlap=100
+            )
+            chunks = text_splitter.split_documents(documents)
+            if not chunks:
+                raise HTTPException(status_code=400, detail="Unable to extract text from document")
 
-        embeddings = pinecone.inference.embed(
-        model="llama-text-embed-v2",
-        inputs=[chunk for chunk in chunks],
-        parameters={"input_type": "passage", "truncate": "END"}
-    )
+            print(f"Document split into {len(chunks)} chunks")
+            
+            # Process in optimized batches
+            batch_size = 20  # Larger batch size to reduce number of API calls while staying under limits
+            all_vectors = []
+            max_retries = 5
+            base_delay = 1
+            
+            # Pre-extract all text content to avoid repeated operations
+            all_chunk_texts = [chunk.page_content for chunk in chunks]
+            total_batches = (len(chunks) + batch_size - 1) // batch_size
+            
+            # Process embeddings in batches
+            for i in range(0, len(chunks), batch_size):
+                batch_chunks = chunks[i:i+batch_size]
+                batch_texts = all_chunk_texts[i:i+batch_size]
+                current_batch = i // batch_size + 1
+                
+                print(f"Processing embedding batch {current_batch} of {total_batches}")
+                
+                # Retry logic for rate limits
+                for retry in range(max_retries):
+                    try:
+                        # Generate embeddings
+                        embeddings = pinecone.inference.embed(
+                            model="llama-text-embed-v2",
+                            inputs=batch_texts,
+                            parameters={"input_type": "passage", "truncate": "END"}
+                        )
+                        
+                        if not embeddings:
+                            print(f"Warning: No embeddings returned for batch {current_batch}")
+                            break
+                        
+                        # Create vectors more efficiently
+                        batch_vectors = [
+                            {
+                                "id": f"{document_id}-{i+j}",
+                                "values": emb['values'],
+                                "metadata": {
+                                    'text': chunk.page_content[:500],
+                                    'source': os.path.basename(chunk.metadata.get('source', file.filename)),
+                                    'document_id': document_id
+                                }
+                            }
+                            for j, (chunk, emb) in enumerate(zip(batch_chunks, embeddings))
+                        ]
+                        
+                        all_vectors.extend(batch_vectors)
+                        print(f"Created {len(batch_vectors)} vectors for batch {current_batch}")
+                        
+                        # Adaptive rate limiting - sleep longer for larger batches
+                        sleep_time = 1.5 * (len(batch_texts) / 10)  # Scale sleep time based on batch size
+                        time.sleep(sleep_time)
+                        break
+                        
+                    except Exception as e:
+                        if "429" in str(e) or "rate limit" in str(e).lower() or "RESOURCE_EXHAUSTED" in str(e):
+                            if retry < max_retries - 1:
+                                # Exponential backoff with jitter
+                                delay = base_delay * (2 ** retry) + random.uniform(0, 1)
+                                print(f"Rate limit exceeded. Retrying batch {current_batch} in {delay:.2f} seconds...")
+                                time.sleep(delay)
+                            else:
+                                print(f"Failed to process batch {current_batch} after {max_retries} retries: {str(e)}")
+                        else:
+                            print(f"Error processing embedding batch {current_batch}: {str(e)}")
+                            break
+            
+            if not all_vectors:
+                raise HTTPException(status_code=400, detail="Failed to generate any valid vectors")
+            
+            print(f"Created total of {len(all_vectors)} vectors for upsert")
+            
+            # Optimize upsert with larger batches
+            upsert_batch_size = 20  # Increased from 10 to reduce API calls
+            successful_upserts = 0
+            total_upsert_batches = (len(all_vectors) + upsert_batch_size - 1) // upsert_batch_size
+            
+            for i in range(0, len(all_vectors), upsert_batch_size):
+                batch = all_vectors[i:i+upsert_batch_size]
+                current_upsert_batch = i // upsert_batch_size + 1
+                
+                for retry in range(max_retries):
+                    try:
+                        print(f"Upserting batch {current_upsert_batch}/{total_upsert_batches} with {len(batch)} vectors")
+                        index.upsert(vectors=batch, namespace="test")
+                        successful_upserts += len(batch)
+                        print(f"Successfully upserted batch {current_upsert_batch}")
+                        
+                        # Shorter delay between upsert batches
+                        time.sleep(0.3)
+                        break
+                        
+                    except Exception as e:
+                        if "429" in str(e) or "rate limit" in str(e).lower() or "RESOURCE_EXHAUSTED" in str(e):
+                            if retry < max_retries - 1:
+                                delay = base_delay * (2 ** retry) + random.uniform(0, 1)
+                                print(f"Rate limit exceeded. Retrying upsert batch {current_upsert_batch} in {delay:.2f} seconds...")
+                                time.sleep(delay)
+                            else:
+                                print(f"Failed to upsert batch {current_upsert_batch} after {max_retries} retries")
+                        else:
+                            print(f"Error in Pinecone batch upsert {current_upsert_batch}: {str(e)}")
+                            break
+            
+            if successful_upserts == 0:
+                raise HTTPException(status_code=500, detail="Failed to upsert any vectors to Pinecone")
+            
+            print(f"Successfully upserted {successful_upserts} out of {len(all_vectors)} vectors")
+            
+            # Only verify the first vector instead of fetching stats
+            if all_vectors:
+                try:
+                    fetch_response = index.fetch(ids=[all_vectors[0]["id"]], namespace="test")
+                    print(f"Verification: First vector exists in index: {bool(fetch_response)}")
+                except Exception as e:
+                    print(f"Warning: Could not verify vectors in index: {str(e)}")
+            
+            return DocumentResponse(
+                message=f"Document '{file.filename}' processed successfully with {'Mistral OCR' if suffix == '.pdf' else 'standard processing'}",
+                document_id=document_id,
+                status="success"
+            )
+            
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Error processing document: {str(e)}")
         
-        vectors = []
-        i = 0
-        for d, e in zip(documents, embeddings):
-            vectors.append({
-                "id": len(documents) + i,
-                "values": e['values'],
-                "metadata": {'text': 'text'}
-            })
-
-        index.upsert(
-        vectors=vectors,
-        namespace="example-namespace"
-        )
-        
-        os.unlink(temp_file_path)
-        
-        return DocumentResponse(
-            message=f"Document '{file.filename}' processed successfully with {'Mistral OCR' if suffix == '.pdf' else 'standard processing'}",
-            document_id=document_id,
-            status="success"
-        )
+        finally:
+            # Clean up temporary file
+            if temp_file_path and os.path.exists(temp_file_path):
+                try:
+                    os.unlink(temp_file_path)
+                except:
+                    pass
     
     except Exception as e:
-        # Try to clean up the temporary file if it exists
-        try:
-            if 'temp_file_path' in locals():
-                os.unlink(temp_file_path)
-        except:
-            pass
-            
         raise HTTPException(status_code=500, detail=f"Error processing document: {str(e)}")
 
 @app.post("/chat", response_model=ChatResponse)
@@ -231,45 +336,51 @@ async def chat(request: ChatRequest):
     Chat with a document using RAG.
     """
     try:
-        # Initialize LLM
-        llm = ChatOpenAI(temperature=0.7, model_name="gpt-3.5-turbo", openai_api_key=OPENAI_API_KEY)
-        
-        # Create retriever
-        # retriever = vectorstore.as_retriever(
-        #     search_type="similarity",
-        #     search_kwargs={"k": 5}
-        # )
-        
-        # Create conversation chain
-        # chain = ConversationalRetrievalChain.from_llm(
-        #     llm=llm,
-        #     retriever=retriever,
-        #     return_source_documents=True
-        # )
-        
-        # Convert chat history to the format expected by the chain
         history = []
         for h in request.history:
             if "human" in h and "ai" in h:
                 history.append((h["human"], h["ai"]))
+
+        # Generate embedding for the query
+        embedding = pinecone.inference.embed(
+            model="llama-text-embed-v2",
+            inputs=[request.query],
+            parameters={
+                "input_type": "query"
+            }
+        )
+
+        # Query Pinecone for similar documents
+        results = index.query(
+            namespace="test",
+            vector=embedding[0].values,
+            top_k=3,
+            include_values=False,
+            include_metadata=True
+        )
+        # Format the results for the response
+        source_documents = []
+        for match in results.get('matches', []):
+            source_documents.append({
+                'content': match.get('metadata', {}).get('text', 'No content available'),
+                'source': match.get('metadata', {}).get('source', 'Unknown source'),
+                'score': match.get('score', 0)
+            })
         
-        # Get response
-        # result = chain({"question": request.query, "chat_history": history})
+        # Generate a response message
+        if source_documents:
+            response_text = f"I found {len(source_documents)} relevant documents. Here's the most relevant information: {source_documents[0]['content'][:200]}..."
+        else:
+            response_text = "I couldn't find any relevant information for your query."
         
-        # Format source documents for the response
-        # sources = []
-        # for doc in result["source_documents"]:
-        #     sources.append({
-        #         "content": doc.page_content,
-        #         "metadata": doc.metadata
-        #     })
-        
-        # return ChatResponse(
-        #     response=result["answer"],
-        #     source_documents=sources
-        # )
+        # Return a properly formatted ChatResponse
+        return ChatResponse(
+            response=response_text,
+            source_documents=source_documents
+        )
     
     except Exception as e:
+        print(f"Error in chat endpoint: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error processing chat: {str(e)}")
 
 @app.get("/health")
