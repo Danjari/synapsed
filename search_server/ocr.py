@@ -43,6 +43,7 @@ PINECONE_ENVIRONMENT = os.getenv("PINECONE_ENVIRONMENT")
 PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX_NAME", "document-rag")
 MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY", "iwFigTtzXjeTf5lJu3lBbiLjxGRsmybx")
 
+
 # Initialize Pinecone
 pinecone = Pinecone(api_key=PINECONE_API_KEY)
 

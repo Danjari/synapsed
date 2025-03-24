@@ -33,7 +33,7 @@ export default function Home() {
     formData.append("file", file)
 
     try {
-      const response = await fetch("http://localhost:8000/upload", {
+      const response = await fetch("http://localhost:8000/upload-document", {
         method: "POST",
         body: formData,
       })
