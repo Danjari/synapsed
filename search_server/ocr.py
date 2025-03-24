@@ -22,6 +22,8 @@ from dotenv import load_dotenv
 from mistralai import Mistral
 from mistralai import DocumentURLChunk, ImageURLChunk, TextChunk
 from mistralai.models import OCRResponse
+import time
+import random
 
 app = FastAPI(title="Document RAG API")
 
@@ -137,7 +139,7 @@ async def process_pdf_with_mistral_ocr(file_path: str, file_name: str) -> List[D
                 }
             )
         ]
-        
+        print(f"Successfully processed {file_name} with Mistral OCR")
         return documents
     
     except Exception as e:
@@ -155,75 +157,102 @@ async def upload_document(file: UploadFile = File(...)):
     Uses Mistral's OCR for PDF files to extract text more accurately.
     """
     try:
-        
         # Generate a unique ID for this document
+        print(f"Reading the file {file.filename}")
         document_id = str(uuid.uuid4())
+        temp_file_path = None
         
-        # Create a temporary file
-        suffix = os.path.splitext(file.filename)[1].lower()
-        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp_file:
-            # Write the uploaded file content
-            content = await file.read()
-            temp_file.write(content)
-            temp_file_path = temp_file.name
-        
-        # Process the document based on its type
-        if suffix == '.pdf':
-            # Use Mistral OCR for PDF files
-            documents = await process_pdf_with_mistral_ocr(temp_file_path, file.filename)
-        elif suffix == '.docx':
-            loader = Docx2txtLoader(temp_file_path)
-            documents = loader.load()
-        elif suffix == '.txt':
-            loader = TextLoader(temp_file_path)
-            documents = loader.load()
-        else:
-            os.unlink(temp_file_path)
-            raise HTTPException(status_code=400, detail="Unsupported file format")
-        
-        # Split the document text into chunks
-        text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=1000,
-            chunk_overlap=200
-        )
-        chunks = text_splitter.split_documents(documents) #split the document into chunks
+        try:
+            # Create a temporary file
+            suffix = os.path.splitext(file.filename)[1].lower()
+            with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp_file:
+                content = await file.read()
+                temp_file.write(content)
+                temp_file_path = temp_file.name
+            
+            # Process the document based on its type
+            if suffix == '.pdf':
+                print("This is a PDF, processing with Mistral OCR")
+                documents = await process_pdf_with_mistral_ocr(temp_file_path, file.filename)
+            elif suffix == '.docx':
+                loader = Docx2txtLoader(temp_file_path)
+                documents = loader.load()
+            elif suffix == '.txt':
+                loader = TextLoader(temp_file_path)
+                documents = loader.load()
+            else:
+                raise HTTPException(status_code=400, detail="Unsupported file format")
+                
+            # Simple chunking strategy
+            text_splitter = RecursiveCharacterTextSplitter(
+                chunk_size=1024,
+                chunk_overlap=200
+            )
+            chunks = text_splitter.split_documents(documents)
+            if not chunks:
+                raise HTTPException(status_code=400, detail="Unable to extract text from document")
 
-        embeddings = pinecone.inference.embed(
-        model="llama-text-embed-v2",
-        inputs=[chunk for chunk in chunks],
-        parameters={"input_type": "passage", "truncate": "END"}
-    )
+            print(f"Document split into {len(chunks)} chunks")
+            
+            # Extract text from chunks
+            chunk_texts = [chunk.page_content for chunk in chunks]
+            
+            # Generate embeddings for all chunks at once
+            try:
+                print("Generating embeddings...")
+                embeddings = pinecone.inference.embed(
+                    model="llama-text-embed-v2",
+                    inputs=chunk_texts,
+                    parameters={"input_type": "passage", "truncate": "END"}
+                )
+                print(f"Successfully generated {len(embeddings)} embeddings")
+                
+            except Exception as e:
+                print(f"Error generating embeddings: {str(e)}")
+                raise HTTPException(status_code=500, detail=f"Error generating embeddings: {str(e)}")
+            
+            # Create vectors
+            vectors = []
+            for i, (chunk, embedding) in enumerate(zip(chunks, embeddings)):
+                vectors.append({
+                    "id": f"{document_id}-{i}",
+                    "values": embedding['values'],
+                    "metadata": {
+                        'text': chunk.page_content[:500],
+                        'source': os.path.basename(chunk.metadata.get('source', file.filename)),
+                        'document_id': document_id
+                    }
+                })
+            
+            print(f"Created {len(vectors)} vectors")
+            
+            # Upload vectors to Pinecone
+            try:
+                print("Uploading vectors to Pinecone...")
+                index.upsert(vectors=vectors, namespace="test")
+                print(f"Successfully uploaded {len(vectors)} vectors to Pinecone")
+            except Exception as e:
+                print(f"Error uploading vectors to Pinecone: {str(e)}")
+                raise HTTPException(status_code=500, detail=f"Error uploading vectors to Pinecone: {str(e)}")
+            
+            return DocumentResponse(
+                message=f"Document '{file.filename}' processed successfully with {'Mistral OCR' if suffix == '.pdf' else 'standard processing'}",
+                document_id=document_id,
+                status="success"
+            )
+            
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Error processing document: {str(e)}")
         
-        vectors = []
-        i = 0
-        for d, e in zip(documents, embeddings):
-            vectors.append({
-                "id": len(documents) + i,
-                "values": e['values'],
-                "metadata": {'text': 'text'}
-            })
-
-        index.upsert(
-        vectors=vectors,
-        namespace="example-namespace"
-        )
-        
-        os.unlink(temp_file_path)
-        
-        return DocumentResponse(
-            message=f"Document '{file.filename}' processed successfully with {'Mistral OCR' if suffix == '.pdf' else 'standard processing'}",
-            document_id=document_id,
-            status="success"
-        )
+        finally:
+            # Clean up temporary file
+            if temp_file_path and os.path.exists(temp_file_path):
+                try:
+                    os.unlink(temp_file_path)
+                except:
+                    pass
     
     except Exception as e:
-        # Try to clean up the temporary file if it exists
-        try:
-            if 'temp_file_path' in locals():
-                os.unlink(temp_file_path)
-        except:
-            pass
-            
         raise HTTPException(status_code=500, detail=f"Error processing document: {str(e)}")
 
 @app.post("/chat", response_model=ChatResponse)
@@ -232,45 +261,51 @@ async def chat(request: ChatRequest):
     Chat with a document using RAG.
     """
     try:
-        # Initialize LLM
-        llm = ChatOpenAI(temperature=0.7, model_name="gpt-3.5-turbo", openai_api_key=OPENAI_API_KEY)
-        
-        # Create retriever
-        # retriever = vectorstore.as_retriever(
-        #     search_type="similarity",
-        #     search_kwargs={"k": 5}
-        # )
-        
-        # Create conversation chain
-        # chain = ConversationalRetrievalChain.from_llm(
-        #     llm=llm,
-        #     retriever=retriever,
-        #     return_source_documents=True
-        # )
-        
-        # Convert chat history to the format expected by the chain
         history = []
         for h in request.history:
             if "human" in h and "ai" in h:
                 history.append((h["human"], h["ai"]))
+
+        # Generate embedding for the query
+        embedding = pinecone.inference.embed(
+            model="llama-text-embed-v2",
+            inputs=[request.query],
+            parameters={
+                "input_type": "query"
+            }
+        )
+
+        # Query Pinecone for similar documents
+        results = index.query(
+            namespace="test",
+            vector=embedding[0].values,
+            top_k=3,
+            include_values=False,
+            include_metadata=True
+        )
+        # Format the results for the response
+        source_documents = []
+        for match in results.get('matches', []):
+            source_documents.append({
+                'content': match.get('metadata', {}).get('text', 'No content available'),
+                'source': match.get('metadata', {}).get('source', 'Unknown source'),
+                'score': match.get('score', 0)
+            })
         
-        # Get response
-        # result = chain({"question": request.query, "chat_history": history})
+        # Generate a response message
+        if source_documents:
+            response_text = f"I found {len(source_documents)} relevant documents. Here's the most relevant information: {source_documents[0]['content'][:200]}..."
+        else:
+            response_text = "I couldn't find any relevant information for your query."
         
-        # Format source documents for the response
-        # sources = []
-        # for doc in result["source_documents"]:
-        #     sources.append({
-        #         "content": doc.page_content,
-        #         "metadata": doc.metadata
-        #     })
-        
-        # return ChatResponse(
-        #     response=result["answer"],
-        #     source_documents=sources
-        # )
+        # Return a properly formatted ChatResponse
+        return ChatResponse(
+            response=response_text,
+            source_documents=source_documents
+        )
     
     except Exception as e:
+        print(f"Error in chat endpoint: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error processing chat: {str(e)}")
 
 @app.get("/health")
