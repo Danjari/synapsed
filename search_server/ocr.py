@@ -162,7 +162,7 @@ async def upload_document(file: UploadFile = File(...)):
         temp_file_path = None
         
         try:
-            # Create a temporary file more efficiently
+            # Create a temporary file
             suffix = os.path.splitext(file.filename)[1].lower()
             with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp_file:
                 content = await file.read()
@@ -182,10 +182,10 @@ async def upload_document(file: UploadFile = File(...)):
             else:
                 raise HTTPException(status_code=400, detail="Unsupported file format")
                 
-            # Split the document text into chunks - use larger chunks to reduce total number
+            # Simple chunking strategy
             text_splitter = RecursiveCharacterTextSplitter(
-                chunk_size=800,  # Increased chunk size to reduce number of API calls
-                chunk_overlap=100
+                chunk_size=1024,
+                chunk_overlap=200
             )
             chunks = text_splitter.split_documents(documents)
             if not chunks:
@@ -193,122 +193,46 @@ async def upload_document(file: UploadFile = File(...)):
 
             print(f"Document split into {len(chunks)} chunks")
             
-            # Process in optimized batches
-            batch_size = 20  # Larger batch size to reduce number of API calls while staying under limits
-            all_vectors = []
-            max_retries = 5
-            base_delay = 1
+            # Extract text from chunks
+            chunk_texts = [chunk.page_content for chunk in chunks]
             
-            # Pre-extract all text content to avoid repeated operations
-            all_chunk_texts = [chunk.page_content for chunk in chunks]
-            total_batches = (len(chunks) + batch_size - 1) // batch_size
-            
-            # Process embeddings in batches
-            for i in range(0, len(chunks), batch_size):
-                batch_chunks = chunks[i:i+batch_size]
-                batch_texts = all_chunk_texts[i:i+batch_size]
-                current_batch = i // batch_size + 1
+            # Generate embeddings for all chunks at once
+            try:
+                print("Generating embeddings...")
+                embeddings = pinecone.inference.embed(
+                    model="llama-text-embed-v2",
+                    inputs=chunk_texts,
+                    parameters={"input_type": "passage", "truncate": "END"}
+                )
+                print(f"Successfully generated {len(embeddings)} embeddings")
                 
-                print(f"Processing embedding batch {current_batch} of {total_batches}")
-                
-                # Retry logic for rate limits
-                for retry in range(max_retries):
-                    try:
-                        # Generate embeddings
-                        embeddings = pinecone.inference.embed(
-                            model="llama-text-embed-v2",
-                            inputs=batch_texts,
-                            parameters={"input_type": "passage", "truncate": "END"}
-                        )
-                        
-                        if not embeddings:
-                            print(f"Warning: No embeddings returned for batch {current_batch}")
-                            break
-                        
-                        # Create vectors more efficiently
-                        batch_vectors = [
-                            {
-                                "id": f"{document_id}-{i+j}",
-                                "values": emb['values'],
-                                "metadata": {
-                                    'text': chunk.page_content[:500],
-                                    'source': os.path.basename(chunk.metadata.get('source', file.filename)),
-                                    'document_id': document_id
-                                }
-                            }
-                            for j, (chunk, emb) in enumerate(zip(batch_chunks, embeddings))
-                        ]
-                        
-                        all_vectors.extend(batch_vectors)
-                        print(f"Created {len(batch_vectors)} vectors for batch {current_batch}")
-                        
-                        # Adaptive rate limiting - sleep longer for larger batches
-                        sleep_time = 1.5 * (len(batch_texts) / 10)  # Scale sleep time based on batch size
-                        time.sleep(sleep_time)
-                        break
-                        
-                    except Exception as e:
-                        if "429" in str(e) or "rate limit" in str(e).lower() or "RESOURCE_EXHAUSTED" in str(e):
-                            if retry < max_retries - 1:
-                                # Exponential backoff with jitter
-                                delay = base_delay * (2 ** retry) + random.uniform(0, 1)
-                                print(f"Rate limit exceeded. Retrying batch {current_batch} in {delay:.2f} seconds...")
-                                time.sleep(delay)
-                            else:
-                                print(f"Failed to process batch {current_batch} after {max_retries} retries: {str(e)}")
-                        else:
-                            print(f"Error processing embedding batch {current_batch}: {str(e)}")
-                            break
+            except Exception as e:
+                print(f"Error generating embeddings: {str(e)}")
+                raise HTTPException(status_code=500, detail=f"Error generating embeddings: {str(e)}")
             
-            if not all_vectors:
-                raise HTTPException(status_code=400, detail="Failed to generate any valid vectors")
+            # Create vectors
+            vectors = []
+            for i, (chunk, embedding) in enumerate(zip(chunks, embeddings)):
+                vectors.append({
+                    "id": f"{document_id}-{i}",
+                    "values": embedding['values'],
+                    "metadata": {
+                        'text': chunk.page_content[:500],
+                        'source': os.path.basename(chunk.metadata.get('source', file.filename)),
+                        'document_id': document_id
+                    }
+                })
             
-            print(f"Created total of {len(all_vectors)} vectors for upsert")
+            print(f"Created {len(vectors)} vectors")
             
-            # Optimize upsert with larger batches
-            upsert_batch_size = 20  # Increased from 10 to reduce API calls
-            successful_upserts = 0
-            total_upsert_batches = (len(all_vectors) + upsert_batch_size - 1) // upsert_batch_size
-            
-            for i in range(0, len(all_vectors), upsert_batch_size):
-                batch = all_vectors[i:i+upsert_batch_size]
-                current_upsert_batch = i // upsert_batch_size + 1
-                
-                for retry in range(max_retries):
-                    try:
-                        print(f"Upserting batch {current_upsert_batch}/{total_upsert_batches} with {len(batch)} vectors")
-                        index.upsert(vectors=batch, namespace="test")
-                        successful_upserts += len(batch)
-                        print(f"Successfully upserted batch {current_upsert_batch}")
-                        
-                        # Shorter delay between upsert batches
-                        time.sleep(0.3)
-                        break
-                        
-                    except Exception as e:
-                        if "429" in str(e) or "rate limit" in str(e).lower() or "RESOURCE_EXHAUSTED" in str(e):
-                            if retry < max_retries - 1:
-                                delay = base_delay * (2 ** retry) + random.uniform(0, 1)
-                                print(f"Rate limit exceeded. Retrying upsert batch {current_upsert_batch} in {delay:.2f} seconds...")
-                                time.sleep(delay)
-                            else:
-                                print(f"Failed to upsert batch {current_upsert_batch} after {max_retries} retries")
-                        else:
-                            print(f"Error in Pinecone batch upsert {current_upsert_batch}: {str(e)}")
-                            break
-            
-            if successful_upserts == 0:
-                raise HTTPException(status_code=500, detail="Failed to upsert any vectors to Pinecone")
-            
-            print(f"Successfully upserted {successful_upserts} out of {len(all_vectors)} vectors")
-            
-            # Only verify the first vector instead of fetching stats
-            if all_vectors:
-                try:
-                    fetch_response = index.fetch(ids=[all_vectors[0]["id"]], namespace="test")
-                    print(f"Verification: First vector exists in index: {bool(fetch_response)}")
-                except Exception as e:
-                    print(f"Warning: Could not verify vectors in index: {str(e)}")
+            # Upload vectors to Pinecone
+            try:
+                print("Uploading vectors to Pinecone...")
+                index.upsert(vectors=vectors, namespace="test")
+                print(f"Successfully uploaded {len(vectors)} vectors to Pinecone")
+            except Exception as e:
+                print(f"Error uploading vectors to Pinecone: {str(e)}")
+                raise HTTPException(status_code=500, detail=f"Error uploading vectors to Pinecone: {str(e)}")
             
             return DocumentResponse(
                 message=f"Document '{file.filename}' processed successfully with {'Mistral OCR' if suffix == '.pdf' else 'standard processing'}",
