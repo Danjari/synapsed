@@ -1,4 +1,4 @@
-import { Bell, Search } from "lucide-react";
+import { Bell, Search,Calendar, Book } from "lucide-react";
 import CourseCard from "./CourseCard";
 import TaskList from "./TaskList";
 import ProgressSection from "./ProgressSection";
@@ -10,24 +10,28 @@ import ProgressSection from "./ProgressSection";
     title: "Linear Algebra",
     professor: "Prof. X",
     progress: 41,
+    link:"#",
   },
   {
     id: 2,
     title: "Machine Learning",
     professor: "Prof. Y",
     progress: 78,
-  },
+    link:"#",
+    },
   {
     id: 3,
     title: "Data Structures",
     professor: "Prof. Z",
     progress: 62,
+    link:"#",
   },
   {
     id: 4,
     title: "Algorithms",
     professor: "Prof. A",
     progress: 30,
+    link:"#",
   },
 ];
 
@@ -64,7 +68,10 @@ export default function StudentDashboard() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-gray-800">Hi Bob, welcome back</h1>
-          <p className="text-lg text-gray-500">Fall 24</p>
+          <p className="text-lg text-gray-500 flex items-center">
+            <Calendar size={18} className="mr-2" />
+            Fall 24
+          </p>
         </div>
         <div className="flex items-center space-x-4">
           <div className="relative">
@@ -84,7 +91,10 @@ export default function StudentDashboard() {
 
       {/* Courses Section */}
       <section>
-        <h2 className="text-xl font-semibold text-gray-800 mb-3">Courses in Progress</h2>
+        <h2 className="text-xl font-semibold text-gray-800 mb-3 flex items-center">
+          <Book size={24} className="mr-2 text-[#006494]" />
+          Courses in Progress
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {dummyCourses.map((course) => (
             <CourseCard
@@ -92,6 +102,7 @@ export default function StudentDashboard() {
               title={course.title}
               professor={course.professor}
               progress={course.progress}
+              link={course.link}
             />
           ))}
         </div>
