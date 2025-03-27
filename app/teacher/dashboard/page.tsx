@@ -15,20 +15,20 @@ export default function TeacherDashboard() {
         {/* Dashboard Content */}
         <main className="p-6">
           <h1 className="text-2xl font-bold">Welcome, Professor</h1>
-          <p className="text-gray-600">Here's a quick overview of your classes and students.</p>
+          <p className="text-gray-600">Here&apos;s a quick overview of your classes and students.</p>
 
           {/* Cards */}
           <div className="grid grid-cols-3 gap-4 mt-6">
             <div className="p-4 bg-blue-100 rounded-md shadow">
-              <h3 className="text-lg font-semibold">📚 Total Classes</h3>
+              <h3 className="text-lg">📚 Total Classes</h3>
               <p className="text-2xl font-bold">5</p>
             </div>
             <div className="p-4 bg-green-100 rounded-md shadow">
-              <h3 className="text-lg font-semibold">👨‍🎓 Total Students</h3>
+              <h3 className="text-lg">👨‍🎓 Total Students</h3>
               <p className="text-2xl font-bold">120</p>
             </div>
             <div className="p-4 bg-yellow-100 rounded-md shadow">
-              <h3 className="text-lg font-semibold">✅ Pathways Approved</h3>
+              <h3 className="text-lg">✅ Pathways Approved</h3>
               <p className="text-2xl font-bold">20</p>
             </div>
           </div>

@@ -25,32 +25,53 @@ const TaskList: React.FC<TaskListProps> = ({ tasks }) => {
   };
 
   return (
-    <div className="bg-white p-6 shadow-md rounded-xl">
-      <h2 className="text-xl font-semibold text-gray-800 mb-4">Tasks</h2>
-      <ul className="space-y-4">
+    <div className="bg-[#FFFFE] border border-[#E5FCF5] rounded-lg p-6">
+      <h2 className="text-xl font-semibold text-[#13293D] mb-4 flex items-center">
+        Tasks
+      </h2>
+      <ul className="space-y-2">
         {taskList.map((task) => (
           <li
             key={task.id}
-            className={`flex items-center justify-between p-3 rounded-md transition ${
-              task.completed ? "bg-green-100" : "bg-gray-50 hover:bg-gray-100"
-            }`}
+            className={`group flex items-center justify-between p-3 rounded-md transition-colors duration-200 border border-transparent ${task.completed 
+              ? 'bg-[#E5FCF5] border-[#E5FCF5]' 
+              : 'hover:bg-[#E5FCF5]/30 hover:border-[#E5FCF5]'}`}
           >
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                checked={task.completed}
-                onChange={() => toggleTask(task.id)} // ✅ Toggle task state
-                className="mr-3 accent-blue-500 w-5 h-5 cursor-pointer"
-              />
+            <div className="flex items-center flex-1 min-w-0">
+              <div 
+                className={`relative w-4 h-4 border rounded mr-3 cursor-pointer transition-colors duration-200 ${task.completed 
+                  ? 'border-[#006494] bg-[#006494]' 
+                  : 'border-[#247BA0] group-hover:border-[#006494]'}`}
+                onClick={() => toggleTask(task.id)}
+              >
+                {task.completed && (
+                  <svg 
+                    className="absolute inset-0 w-full h-full text-white stroke-2" 
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                  >
+                    <path 
+                      d="M5 13l4 4L19 7" 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                )}
+              </div>
               <span
-                className={`text-gray-700 transition ${
-                  task.completed ? "line-through text-gray-400" : ""
-                }`}
+                className={`text-[#13293D] transition-colors duration-200 truncate ${task.completed 
+                  ? 'line-through text-[#247BA0]/70' 
+                  : 'group-hover:text-[#006494]'}`}
               >
                 {task.title}
               </span>
             </div>
-            {task.progress && <span className="text-gray-500 text-sm">{task.progress}</span>}
+            {task.progress && (
+              <span className="text-[#247BA0] text-sm ml-4">
+                {task.progress}
+              </span>
+            )}
           </li>
         ))}
       </ul>

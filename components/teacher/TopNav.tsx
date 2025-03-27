@@ -3,7 +3,7 @@ import { Bell, Search } from "lucide-react";
 export default function TopNav() {
   return (
     <nav className="bg-white shadow flex items-center justify-between p-4">
-      <h2 className="text-lg font-semibold">Teacher Dashboard</h2>
+      <h2 className="text-lg font-semibold">Professor&apos;s Dashboard</h2>
       <div className="flex items-center gap-4">
         <div className="relative">
           <input

@@ -4,27 +4,32 @@ interface CourseCardProps {
   title: string;
   professor: string;
   progress: number;
+  link: string;
 }
 
-const CourseCard: React.FC<CourseCardProps> = ({ title, professor, progress }) => {
+const CourseCard: React.FC<CourseCardProps> = ({ title, professor, progress, link }) => {
   return (
-    <div className="bg-white p-5 rounded-xl shadow-md transition hover:shadow-lg">
-      <h3 className="font-semibold text-gray-800">{title}</h3>
-      <p className="text-sm text-gray-500">{professor}</p>
-      <div className="mt-2">
-        <p className="text-sm text-gray-600">{progress}% Completed</p>
-        <div className="w-full bg-gray-200 rounded-full h-2.5 mt-1">
+    <div className="bg-white-50 p-5 rounded-lg border border-emerald-50 hover:bg-emerald-50 transition-colors duration-200">
+      <h3 className="font-semibold text-cyan-900 text-lg mb-1">{title}</h3>
+      <p className="text-sm text-grey-600">{professor}</p>
+      <div className="mt-3">
+        <div className="flex justify-between items-center mb-2">
+          <p className="text-sm text-cyan-700">{progress}% Completed</p>
+        </div>
+        <div className="w-full bg-emerald-50 rounded-full h-1.5">
           <div
-            className="bg-blue-500 h-2.5 rounded-full"
+            className="bg-cyan-700 h-1.5 rounded-full transition-all duration-300 ease-out"
             style={{ width: `${progress}%` }}
           ></div>
         </div>
       </div>
-      <button className="mt-4 w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2 rounded-lg 
-                    font-medium transition hover:shadow-lg hover:brightness-110 active:scale-95 
-                    focus:ring-2 focus:ring-blue-300">
+      <a href={link} className="mt-6 block text-center w-full bg-sky-950 text-purple-950 py-3 px-4 rounded-lg
+                 font-semibold transition-colors hover:bg-sky-900
+                 focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2
+                 ">
         Continue
-        </button>
+      </a>
+
     </div>
   );
 };
