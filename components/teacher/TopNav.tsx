@@ -1,4 +1,5 @@
 import { Bell, Search } from "lucide-react";
+import AuthButton from "../AuthButtons";
 
 export default function TopNav() {
   return (
@@ -17,6 +18,7 @@ export default function TopNav() {
           <Bell className="h-5 w-5 text-gray-600" />
           <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full px-1">2</span>
         </button>
+        <AuthButton/>
       </div>
     </nav>
   );
