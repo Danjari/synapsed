@@ -20,6 +20,7 @@ import {
       difficulty?: 'beginner' | 'intermediate' | 'advanced';
       duration?: string;
       resourceUrl?: string;
+      markdownContent?: string; // Added new optional field for rich content
   };
 
   // Define pathway node type
@@ -176,7 +177,17 @@ import {
             description: 'Core concepts and strategies in digital marketing',
             type: 'topic',
             difficulty: 'beginner',
-            duration: '2 weeks'
+            duration: '2 weeks',
+            markdownContent: `### Digital Marketing Fundamentals
+
+Digital marketing encompasses all marketing efforts that use the internet or electronic devices. It includes channels such as:
+
+- Social Media
+- Search Engines
+- Email Marketing
+- Content Marketing
+
+Mastering the fundamentals sets the stage for advanced strategies.`,
           }
         },
         {
@@ -188,7 +199,15 @@ import {
             description: 'Creating valuable content to attract audience',
             type: 'subtopic',
             difficulty: 'beginner',
-            duration: '1 week'
+            duration: '1 week',
+            markdownContent: `### Content Marketing
+
+Content marketing involves creating and distributing valuable, relevant content to attract and engage a target audience. Common formats include:
+
+- Blog Posts
+- Infographics
+- Videos
+- Podcasts`,
           }
         },
         {
@@ -200,7 +219,17 @@ import {
             description: 'Using AI tools to enhance marketing strategies',
             type: 'subtopic',
             difficulty: 'intermediate',
-            duration: '1 week'
+            duration: '1 week',
+            markdownContent: `### AI in Marketing
+
+AI tools can automate and enhance marketing tasks like:
+
+- Personalization
+- Predictive Analytics
+- Chatbots
+- A/B Testing
+
+AI allows for data-driven decision making at scale.`,
           }
         },
         {
@@ -211,7 +240,10 @@ import {
             title: 'Content Calendar Creation',
             description: 'Learn to structure and plan content',
             type: 'resource',
-            resourceUrl: 'https://example.com/content-calendar'
+            resourceUrl: 'https://example.com/content-calendar',
+            markdownContent: `### Content Calendar Creation
+
+A content calendar helps plan, organize, and schedule content. It improves consistency and collaboration in marketing teams.`,
           }
         },
         {
@@ -222,7 +254,15 @@ import {
             title: 'SEO Optimization',
             description: 'Making content discoverable through search engines',
             type: 'resource',
-            resourceUrl: 'https://example.com/seo-guide'
+            resourceUrl: 'https://example.com/seo-guide',
+            markdownContent: `### SEO Optimization
+
+Search Engine Optimization improves website visibility in search engine results. Key techniques include:
+
+- Keyword Research
+- On-page Optimization
+- Backlinking
+- Technical SEO`,
           }
         },
         {
@@ -233,8 +273,63 @@ import {
             title: 'AI Content Tools',
             description: 'Overview of AI tools for content generation',
             type: 'resource',
-            resourceUrl: 'https://example.com/ai-tools'
+            resourceUrl: 'https://example.com/ai-tools',
+            markdownContent: `### Linear Regression
+
+Linear regression models the relationship between two variables using a straight line.
+
+#### 🧠 Formula
+
+The equation:
+
+$$
+y = mx + b
+$$
+
+Where:
+
+- \$begin:math:text$ y \\$end:math:text$: predicted value  
+- \$begin:math:text$ m \\$end:math:text$: slope  
+- \$begin:math:text$ x \\$end:math:text$: input variable  
+- \$begin:math:text$ b \\$end:math:text$: y-intercept
+
+#### 💻 Code Example
+
+\`\`\`python
+from sklearn.linear_model import LinearRegression
+import numpy as np
+
+# Sample data
+X = np.array([[1], [2], [3], [4]])
+y = np.array([2, 4, 6, 8])
+
+# Model training
+model = LinearRegression()
+model.fit(X, y)
+
+# Prediction
+print(model.predict([[5]]))  # Output: [10.]
+\`\`\`
+Where:
+
+- \$begin:math:text$ y \\$end:math:text$: predicted value  
+- \$begin:math:text$ m \\$end:math:text$: slope  
+- \$begin:math:text$ x \\$end:math:text$: input variable  
+- \$begin:math:text$ b \\$end:math:text$: y-intercept
+
+#### 💻 Code Example
+
+\`\`\`python
+from sklearn.linear_model import LinearRegression
+import numpy as np
+
+# Sample data
+X = np.array([[1], [2], [3], [4]])
+y = np.array([2, 4, 6, 8])
+
+`,
           }
+            
         },
         {
           id: '7',
@@ -244,7 +339,10 @@ import {
             title: 'Marketing Strategy Assessment',
             description: 'Test your knowledge on integrated marketing approaches',
             type: 'assessment',
-            duration: '1 hour'
+            duration: '1 hour',
+            markdownContent: `### Marketing Strategy Assessment
+
+Assess your understanding of marketing concepts through a quiz or short reflective exercise.`,
           }
         }
       ];
