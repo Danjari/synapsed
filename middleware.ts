@@ -22,9 +22,13 @@ export async function middleware(req: NextRequest) {
   if (!token) {
     return NextResponse.redirect(new URL('/sign-in', req.url));
   }
+ 
 
   // Role-based route access
   const role = token.role;
+  if (!role) {
+    return NextResponse.redirect(new URL("/choose-role", req.url));
+  }
 
   if (pathname.startsWith('/admin') && role !== 'ADMIN') {
     return NextResponse.redirect(new URL('/unauthorized', req.url));
