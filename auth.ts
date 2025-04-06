@@ -1,15 +1,8 @@
 import NextAuth from "next-auth"
-import Google from "next-auth/providers/google"
+
+// authOptions so we can use GetServerSession
+import { authOptions } from "./lib/authOptions"
 
 
  
-export const { handlers, signIn, signOut, auth } = NextAuth({
-  
-  providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID! as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET! as string,
-      
-    }),
-  ],
-});
+export const { handlers, signIn, signOut, auth } = NextAuth(authOptions)

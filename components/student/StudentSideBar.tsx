@@ -3,15 +3,24 @@ import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { Home, BookOpen, MessageSquare, Award, Settings, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
+import { User } from "next-auth";
+import { Role } from "@prisma/client";
+//import { useSession } from "next-auth/react";
 
-const Sidebar = () => {
+type UserWithRole = User & {
+  role?: Role;
+}
+
+const Sidebar = ({ user }: { user?: UserWithRole }) => {
+  //const { data: session } = useSession();
+  //const user = session?.user;
   const router = useRouter();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(true); // Toggle sidebar
 
   const menuItems = [
     { name: "Home", icon: <Home size={20} />, path: "/" },
-    { name: "My Courses", icon: <BookOpen size={20} />, path: "/courses" },
+    { name: "Join a Class", icon: <BookOpen size={20} />, path: "/student/join" },
     { name: "Feedback", icon: <MessageSquare size={20} />, path: "/feedback" },
     { name: "Test", icon: <Award size={20} />, path: "/test" },
     { name: "Achievements", icon: <Award size={20} />, path: "/achievements" },
@@ -63,7 +72,7 @@ const Sidebar = () => {
       {/* Profile Section */}
       <div className="absolute bottom-4 left-4 flex items-center space-x-3">
         <Image
-          src="/logo.svg"
+          src={user?.image || "/logo.svg"}
           alt="User Avatar"
           width={50}
           height={50}
@@ -71,8 +80,8 @@ const Sidebar = () => {
         />
         {isOpen && (
           <div>
-            <p className="text-sm font-semibold">Bob</p>
-            <p className="text-xs text-gray-500">Premium Account</p>
+            <p className="text-sm font-semibold">{user?.name|| "Guest"}</p>
+            <p className="text-xs text-gray-500">{user?.role|| ""}</p>
           </div>
         )}
       </div>

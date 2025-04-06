@@ -16,7 +16,8 @@ __pycache__/
 # next.js
 /.next/
 /out/
-
+# Ignore Prisma client
+/generated/prisma
 # production
 /build
 
