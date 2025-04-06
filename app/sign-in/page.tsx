@@ -34,8 +34,8 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-indigo-100 px-4">
-      <div className="bg-white shadow-2xl rounded-3xl p-10 max-w-md w-full">
+    <div className="min-h-screen flex items-center justify-center  px-4">
+      <div className="  rounded-3xl p-10 max-w-md w-full">
         <h2 className="text-4xl font-bold text-center text-gray-800 mb-4">Welcome Back</h2>
         <p className="text-center text-gray-500 mb-6">Sign in to your SynapsEd account</p>
 

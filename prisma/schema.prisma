@@ -15,15 +15,41 @@ datasource db {
 }
 
 model User {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
   name          String?
-  email         String   @unique
+  email         String    @unique
   emailVerified DateTime?
   image         String?
   role          Role?
   accounts      Account[]
   sessions      Session[]
-  createdAt     DateTime @default(now()) @map("created_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  // relations 
+
+  classesTaught Class[]   @relation("ProfessorClasses")
+
+  // students
+  classIds      String[]  @db.ObjectId
+  classesJoined Class[]   @relation("StudentClasses",fields: [classIds],references: [id])
+}
+
+model Class {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  title         String
+  description   String?
+  createdAt     DateTime  @default(now())
+
+
+  //relations
+  professorId   String    @db.ObjectId
+  professor     User      @relation("ProfessorClasses",fields:[professorId], references: [id])
+
+  studentIds    String[]  @db.ObjectId
+  students      User[]    @relation("StudentClasses",fields: [studentIds],references: [id]) 
+
+  // token to join class
+  joinToken   String    @unique
 }
 
 model Account {
