@@ -1,6 +1,6 @@
 import { uploadToMistral } from '@/lib/ocr/uploadToMistral';
-import { getOcrMarkdown } from '@/lib/ocr/getOCRMardown';
-//import { embedAndStore } from '@/lib/embedding';
+import { getOcrMarkdown } from '@/lib/ocr/getOcrMardown';
+import { embedAndStore } from '@/lib/pinecone/embedAndStore';
 import { chunkMarkdownByPage } from '@/lib/chunking/chunkMarkdown';
 
 export async function POST(req: Request) {
@@ -12,6 +12,7 @@ export async function POST(req: Request) {
       const uploadRes = await uploadToMistral(file);
       const markdown = await getOcrMarkdown(uploadRes.id);
       const chunks = await chunkMarkdownByPage(markdown);
+      await embedAndStore(chunks, "default");
   
       return Response.json({ status: 'success', chunks });
     } catch (err: any) {
