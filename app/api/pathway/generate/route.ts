@@ -1,0 +1,26 @@
+import { uploadToMistral } from '@/lib/ocr/uploadToMistral';
+import { getOcrMarkdown } from '@/lib/ocr/getOCRMardown';
+//import { embedAndStore } from '@/lib/embedding';
+import { chunkMarkdownByPage } from '@/lib/chunking/chunkMarkdown';
+
+export async function POST(req: Request) {
+    try {
+      const formData = await req.formData();
+      const file = formData.get('file') as File;
+      if (!file) return Response.json({ error: 'No file provided' }, { status: 400 });
+  
+      const uploadRes = await uploadToMistral(file);
+      const markdown = await getOcrMarkdown(uploadRes.id);
+      const chunks = await chunkMarkdownByPage(markdown);
+  
+      return Response.json({ status: 'success', chunks });
+    } catch (err: any) {
+      console.error('Error:', err);
+      return Response.json({ error: err.message || 'Unknown error' }, { status: 500 });
+    }
+  }
+  
+  
+  
+  //await embedAndStore(chunks, /* metadata */);
+
