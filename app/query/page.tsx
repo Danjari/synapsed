@@ -16,6 +16,8 @@ export default function QueryTestPage() {
     setResults(data.matches);
   };
 
+ 
+
   return (
     <div className="p-6">
       <h1 className="text-xl font-semibold">Semantic Search</h1>

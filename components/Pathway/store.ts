@@ -44,6 +44,79 @@ import {
     fetchPathway: (prompt: string) => Promise<void>;
     setPrompt: (prompt: string) => void;
   };
+
+  // laying out the nodes 
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function layoutNodes(nodes: any[]): { nodes: PathwayNode[]; edges: Edge[] } {
+    // Using type assertion to avoid 'any' linter errors
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const nodeMap = new Map(nodes.map((n: any) => [n.id, n]));
+    const levels: Record<string, number> = {};
+  
+    // Assign level using dependencies
+    function getLevel(id: string): number {
+      if (!nodeMap.has(id)) return 0;
+      if (levels[id] !== undefined) return levels[id];
+  
+      const node = nodeMap.get(id);
+      if (!node.dependsOn || node.dependsOn.length === 0) {
+        levels[id] = 0;
+      } else {
+        levels[id] = Math.max(...node.dependsOn.map(getLevel)) + 1;
+      }
+      return levels[id];
+    }
+  
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    nodes.forEach((n: any) => getLevel(n.id));
+  
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const levelGroups: Record<number, any[]> = {};
+    nodes.forEach(n => {
+      const lvl = levels[n.id] ?? 0;
+      if (!levelGroups[lvl]) levelGroups[lvl] = [];
+      levelGroups[lvl].push(n);
+    });
+  
+    const finalNodes: PathwayNode[] = [];
+    const spacingX = 300;
+    const spacingY = 200;
+  
+    Object.entries(levelGroups).forEach(([lvlStr, group]) => {
+
+      group.forEach((node, colIdx) => {
+        finalNodes.push({
+          id: node.id,
+          type: 'pathway',
+          position: {
+            x: colIdx * spacingX,
+            y: parseInt(lvlStr) * spacingY,
+          },
+          data: {
+            title: node.title,
+            description: node.description,
+            type: node.type,
+            difficulty: node.difficulty,
+            duration: node.duration,
+            markdownContent: node.markdownContent || 'Click to load content...',
+          }
+        });
+      });
+    });
+  
+    const edges: Edge[] = nodes.flatMap(node =>
+      (node.dependsOn || []).map((depId: string) => ({
+        id: `e${depId}-${node.id}`,
+        source: depId,
+        target: node.id,
+        type: 'pathway'
+      }))
+    );
+  
+    return { nodes: finalNodes, edges };
+  }
+  
   
   // Create the store
   const usePathwayStore = create<PathwayState>((set, get) => ({
@@ -140,14 +213,16 @@ import {
         await new Promise(resolve => setTimeout(resolve, 1000));
         
         // Create dummy data based on prompt
-        const dummyData = generateDummyPathway(prompt);
+        // NEW: Dynamic fetch from your mock API
+        const res = await fetch(`/api/pathway/generate?studentId=demo&classId=test&prompt=${encodeURIComponent(prompt)}`);
+        const skeleton = await res.json();
+
         
-        set({
-          nodes: dummyData.nodes,
-          edges: dummyData.edges,
-          isLoading: false,
-          prompt
-        });
+
+        const { nodes, edges } = layoutNodes(skeleton); //e
+        set({ nodes, edges, isLoading: false, prompt });
+
+
       } catch (error) {
         console.error(error);
         set({ 
@@ -163,264 +238,5 @@ import {
     }
   }));
   
-  // Helper function to generate dummy pathway data
-  function generateDummyPathway(prompt: string): { nodes: PathwayNode[]; edges: Edge[] } {
-    // Digital Marketing pathway dummy data
-    if (prompt.toLowerCase().includes('digital marketing')) {
-      const nodes: PathwayNode[] = [
-        {
-          id: '1',
-          type: 'pathway',
-          position: { x: 250, y: 5 },
-          data: {
-            title: 'Digital Marketing Fundamentals',
-            description: 'Core concepts and strategies in digital marketing',
-            type: 'topic',
-            difficulty: 'beginner',
-            duration: '2 weeks',
-            markdownContent: `### Digital Marketing Fundamentals
-
-Digital marketing encompasses all marketing efforts that use the internet or electronic devices. It includes channels such as:
-
-- Social Media
-- Search Engines
-- Email Marketing
-- Content Marketing
-
-Mastering the fundamentals sets the stage for advanced strategies.`,
-          }
-        },
-        {
-          id: '2',
-          type: 'pathway',
-          position: { x: 100, y: 100 },
-          data: {
-            title: 'Content Marketing',
-            description: 'Creating valuable content to attract audience',
-            type: 'subtopic',
-            difficulty: 'beginner',
-            duration: '1 week',
-            markdownContent: `### Content Marketing
-
-Content marketing involves creating and distributing valuable, relevant content to attract and engage a target audience. Common formats include:
-
-- Blog Posts
-- Infographics
-- Videos
-- Podcasts`,
-          }
-        },
-        {
-          id: '3',
-          type: 'pathway',
-          position: { x: 400, y: 100 },
-          data: {
-            title: 'AI in Marketing',
-            description: 'Using AI tools to enhance marketing strategies',
-            type: 'subtopic',
-            difficulty: 'intermediate',
-            duration: '1 week',
-            markdownContent: `### AI in Marketing
-
-AI tools can automate and enhance marketing tasks like:
-
-- Personalization
-- Predictive Analytics
-- Chatbots
-- A/B Testing
-
-AI allows for data-driven decision making at scale.`,
-          }
-        },
-        {
-          id: '4',
-          type: 'pathway',
-          position: { x: 100, y: 200 },
-          data: {
-            title: 'Content Calendar Creation',
-            description: 'Learn to structure and plan content',
-            type: 'resource',
-            resourceUrl: 'https://example.com/content-calendar',
-            markdownContent: `### Content Calendar Creation
-
-A content calendar helps plan, organize, and schedule content. It improves consistency and collaboration in marketing teams.`,
-          }
-        },
-        {
-          id: '5',
-          type: 'pathway',
-          position: { x: 250, y: 200 },
-          data: {
-            title: 'SEO Optimization',
-            description: 'Making content discoverable through search engines',
-            type: 'resource',
-            resourceUrl: 'https://example.com/seo-guide',
-            markdownContent: `### SEO Optimization
-
-Search Engine Optimization improves website visibility in search engine results. Key techniques include:
-
-- Keyword Research
-- On-page Optimization
-- Backlinking
-- Technical SEO`,
-          }
-        },
-        {
-          id: '6',
-          type: 'pathway',
-          position: { x: 400, y: 200 },
-          data: {
-            title: 'AI Content Tools',
-            description: 'Overview of AI tools for content generation',
-            type: 'resource',
-            resourceUrl: 'https://example.com/ai-tools',
-            markdownContent: `### Linear Regression
-
-Linear regression models the relationship between two variables using a straight line.
-
-#### 🧠 Formula
-
-The equation:
-
-$$
-y = mx + b
-$$
-
-Where:
-
-- \$begin:math:text$ y \\$end:math:text$: predicted value  
-- \$begin:math:text$ m \\$end:math:text$: slope  
-- \$begin:math:text$ x \\$end:math:text$: input variable  
-- \$begin:math:text$ b \\$end:math:text$: y-intercept
-
-#### 💻 Code Example
-
-\`\`\`python
-from sklearn.linear_model import LinearRegression
-import numpy as np
-
-# Sample data
-X = np.array([[1], [2], [3], [4]])
-y = np.array([2, 4, 6, 8])
-
-# Model training
-model = LinearRegression()
-model.fit(X, y)
-
-# Prediction
-print(model.predict([[5]]))  # Output: [10.]
-\`\`\`
-Where:
-
-- \$begin:math:text$ y \\$end:math:text$: predicted value  
-- \$begin:math:text$ m \\$end:math:text$: slope  
-- \$begin:math:text$ x \\$end:math:text$: input variable  
-- \$begin:math:text$ b \\$end:math:text$: y-intercept
-
-#### 💻 Code Example
-
-\`\`\`python
-from sklearn.linear_model import LinearRegression
-import numpy as np
-
-# Sample data
-X = np.array([[1], [2], [3], [4]])
-y = np.array([2, 4, 6, 8])
-
-`,
-          }
-            
-        },
-        {
-          id: '7',
-          type: 'pathway',
-          position: { x: 250, y: 300 },
-          data: {
-            title: 'Marketing Strategy Assessment',
-            description: 'Test your knowledge on integrated marketing approaches',
-            type: 'assessment',
-            duration: '1 hour',
-            markdownContent: `### Marketing Strategy Assessment
-
-Assess your understanding of marketing concepts through a quiz or short reflective exercise.`,
-          }
-        }
-      ];
-      
-      const edges: Edge[] = [
-        { id: 'e1-2', source: '1', target: '2', type: 'pathway' },
-        { id: 'e1-3', source: '1', target: '3', type: 'pathway' },
-        { id: 'e2-4', source: '2', target: '4', type: 'pathway' },
-        { id: 'e2-5', source: '2', target: '5', type: 'pathway' },
-        { id: 'e3-6', source: '3', target: '6', type: 'pathway' },
-        { id: 'e3-5', source: '3', target: '5', type: 'pathway' },
-        { id: 'e4-7', source: '4', target: '7', type: 'pathway' },
-        { id: 'e5-7', source: '5', target: '7', type: 'pathway' },
-        { id: 'e6-7', source: '6', target: '7', type: 'pathway' }
-      ];
-      
-      return { nodes, edges };
-    }
-    
-    // Default generic learning pathway
-    const nodes: PathwayNode[] = [
-      {
-        id: '1',
-        type: 'pathway',
-        position: { x: 250, y: 25 },
-        data: {
-          title: 'Learning Pathway',
-          description: 'Custom learning path based on your interests',
-          type: 'topic',
-          difficulty: 'beginner',
-          duration: '4 weeks'
-        }
-      },
-      {
-        id: '2',
-        type: 'pathway',
-        position: { x: 100, y: 125 },
-        data: {
-          title: 'Fundamentals',
-          description: 'Core concepts and principles',
-          type: 'subtopic',
-          difficulty: 'beginner',
-          duration: '1 week'
-        }
-      },
-      {
-        id: '3',
-        type: 'pathway',
-        position: { x: 400, y: 125 },
-        data: {
-          title: 'Advanced Topics',
-          description: 'In-depth exploration of complex subjects',
-          type: 'subtopic',
-          difficulty: 'advanced',
-          duration: '2 weeks'
-        }
-      },
-      {
-        id: '4',
-        type: 'pathway',
-        position: { x: 250, y: 250 },
-        data: {
-          title: 'Final Project',
-          description: 'Apply what you\'ve learned in a practical project',
-          type: 'assessment',
-          duration: '1 week'
-        }
-      }
-    ];
-    
-    const edges: Edge[] = [
-      { id: 'e1-2', source: '1', target: '2', type: 'pathway' },
-      { id: 'e1-3', source: '1', target: '3', type: 'pathway' },
-      { id: 'e2-4', source: '2', target: '4', type: 'pathway' },
-      { id: 'e3-4', source: '3', target: '4', type: 'pathway' }
-    ];
-    
-    return { nodes, edges };
-  }
-  
+ 
   export default usePathwayStore;
