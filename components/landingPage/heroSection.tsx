@@ -168,10 +168,10 @@ export function HeroSection() {
         </p>
         <div className="flex flex-col sm:flex-row gap-4 animate-fade-up animation-delay-200">
           <Button size="lg" className="bg-purple-600 hover:bg-purple-700">
-            Request a demo
+            <a href="/waitlist-page">Request a Demo</a>
           </Button>
           <Button size="lg" variant="outline" asChild>
-            <a href="/waitlist">Join the Waitlist</a>
+            <a href="/waitlist-page">Join the Waitlist</a>
           </Button>
         </div>
       </div>

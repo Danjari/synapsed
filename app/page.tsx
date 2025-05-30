@@ -1,14 +1,21 @@
-import Hero from '../components/Hero'
-import HowItWorks from '../components/HowItWorks'
-import Footer from '../components/Footer'
+import { HeroSection } from "@/components/landingPage/heroSection"
+import { ProductSnapshot } from "@/components/landingPage/productSnapShot"
+import { HowItWorks } from "@/components/landingPage/howItWorks"
+import { ResearchDriven } from "@/components/landingPage/researchDriven"
+import { KeyFeatures } from "@/components/landingPage/keyFeatures"
+import { WhoItsFor } from "@/components/landingPage/whoFor"
+import { FinalCTA } from "@/components/landingPage/finalCTA"
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <Hero />
+    <main className="flex min-h-screen flex-col items-center">
+      <HeroSection />
+      <ProductSnapshot />
       <HowItWorks />
-      <Footer />
+      <ResearchDriven />
+      <KeyFeatures />
+      <WhoItsFor />
+      <FinalCTA />
     </main>
   )
 }
-
