@@ -16,11 +16,28 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
-import { toast } from "@/components/ui/use-toast"
+import { toast } from "sonner"
+
+interface Student {
+  id: string;
+  name: string;
+  email: string;
+  joinDate: string;
+  status: "active" | "pending";
+}
+
+interface Enrollment {
+  student: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  joinedAt: string;
+}
 
 export function StudentManagement({ classId }: { classId: string }) {
-  const [students, setStudents] = useState<any[]>([])
-  const [studentToRemove, setStudentToRemove] = useState<any | null>(null)
+  const [students, setStudents] = useState<Student[]>([])
+  const [studentToRemove, setStudentToRemove] = useState<Student | null>(null)
   const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
 
@@ -29,7 +46,7 @@ export function StudentManagement({ classId }: { classId: string }) {
       const res = await fetch(`/api/class/${classId}/students`)
       const data = await res.json()
       setStudents(
-        data.map((enrollment: any) => ({
+        data.map((enrollment: Enrollment) => ({
           id: enrollment.student.id,
           name: enrollment.student.name,
           email: enrollment.student.email,
@@ -49,8 +66,7 @@ export function StudentManagement({ classId }: { classId: string }) {
   )
 
   const handleRemoveStudent = async () => {
-    toast({
-      title: "Student removed",
+    toast.success("Student removed", {
       description: `${studentToRemove?.name} has been removed from the class.`,
     })
     setStudents((prev) => prev.filter((s) => s.id !== studentToRemove?.id))
@@ -61,9 +77,8 @@ export function StudentManagement({ classId }: { classId: string }) {
     })
   }
 
-  const handleResendInvite = (student: any) => {
-    toast({
-      title: "Invite resent",
+  const handleResendInvite = (student: Student) => {
+    toast.success("Invite resent", {
       description: `Invitation has been resent to ${student.email}.`,
     })
   }

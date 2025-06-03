@@ -1,26 +1,30 @@
-
+import { StudentManagement } from "@/components/teacher/class/studentManagement"
 import { useParams } from "next/navigation"
 import { useState } from "react"
+import { TeacherDashboard } from "@/components/teacher/class/teacherDashboard"
 export default function Page() {
-  const { id: classId } = useParams()
+  const params = useParams()
+  const classId = params.id as string
   const [activeSection, setActiveSection] = useState("class-info")
+
+  if (!classId) return null;
 
   const renderContent = () => {
     switch (activeSection) {
-      case "class-info":
-        return <ClassInfo classId={classId} />
+      // case "class-info":
+      //   return <ClassInfo classId={classId} />
       case "student-management":
         return <StudentManagement classId={classId} />
-      case "content-management":
-        return <ContentManagement classId={classId} />
-      case "survey-learning-path":
-        return <SurveyLearningPath classId={classId} />
-      case "quizzes-assessments":
-        return <QuizzesAssessments classId={classId} />
-      case "analytics":
-        return <Analytics classId={classId} />
-      default:
-        return <ClassInfo classId={classId} />
+      // case "content-management":
+      //   return <ContentManagement classId={classId} />
+      // case "survey-learning-path":
+      //   return <SurveyLearningPath classId={classId} />
+      // case "quizzes-assessments":
+      //   return <QuizzesAssessments classId={classId} />
+      // case "analytics":
+      //   return <Analytics classId={classId} />
+      // default:
+      //   return <ClassInfo classId={classId} />
     }
   }
 
