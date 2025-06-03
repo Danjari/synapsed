@@ -56,7 +56,7 @@ export default function ClassesPage({professorId} : Props) {
                 <div className="text-gray-600 flex items-center mt-2">
                   <Users className="h-4 w-4 mr-2" /> {cls.studentsCount} Students
                 </div>
-                <button className="mt-3 text-blue-600 hover:underline" onClick={() => alert(`Manage ${cls.title}`)}>Manage</button>
+                <button className="mt-3 text-blue-600 hover:underline" onClick={() => window.location.href = `/teacher/classes/${cls.id}`}>Manage</button>
               </div>
             ))}
           </div>

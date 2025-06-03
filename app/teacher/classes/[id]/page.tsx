@@ -1,3 +1,4 @@
+'use client'
 import { StudentManagement } from "@/components/teacher/class/studentManagement"
 import { useParams } from "next/navigation"
 import { useState } from "react"
