@@ -53,7 +53,7 @@ const StudentDashboard = ({user}:{user?:User})=> {
     const fetchClasses = async () => {
       if (!session?.user?.id) return; // Check if the user is authenticated
 
-      const res = await fetch(`/api/student/classes?studentId=${session.user.id}`); // Fetch classes for the current user
+      const res = await fetch(`/api/student/classes?enrollmentId=${session.user.id}`); // Fetch classes for the current user
       const data = await res.json();
       setClasses(data); // Update the state with the fetched classes
     };

@@ -58,7 +58,7 @@ export async function GET(req: NextRequest) {
     const classes = await prisma.class.findMany({
       where: { professorId },
       include: {
-        students: true, // Including students in the response to show the students enrolled in each class
+        enrollments: true, // Including students in the response to show the students enrolled in each class
       },
     });
 

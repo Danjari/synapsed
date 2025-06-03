@@ -26,7 +26,7 @@ export default function ClassesPage({professorId} : Props) {
     const mappedClasses = data.map((cls: any) => ({
       id: cls.id,
       title: cls.title,
-      studentsCount: cls.students?.length || 0,
+      studentsCount: cls.enrollments?.length || 0,
     }));
 
     setClasses(mappedClasses);

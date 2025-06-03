@@ -29,9 +29,7 @@ model User {
 
   classesTaught Class[]   @relation("ProfessorClasses")
 
-  // students
-  classIds      String[]  @db.ObjectId
-  classesJoined Class[]   @relation("StudentClasses",fields: [classIds],references: [id])
+  enrollments ClassEnrollment[]
 }
 
 model Class {
@@ -45,11 +43,12 @@ model Class {
   professorId   String    @db.ObjectId
   professor     User      @relation("ProfessorClasses",fields:[professorId], references: [id])
 
-  studentIds    String[]  @db.ObjectId
-  students      User[]    @relation("StudentClasses",fields: [studentIds],references: [id]) 
+  enrollments ClassEnrollment[]
 
   // token to join class
   joinToken   String    @unique
+
+  materials   ClassMaterial[]
 }
 
 model Account {
@@ -87,6 +86,34 @@ model VerificationToken {
  
   @@unique([identifier, token])
 }
+
+model ClassEnrollment {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  student   User     @relation(fields: [studentId], references: [id])
+  studentId String   @db.ObjectId
+  class     Class    @relation(fields: [classId], references: [id])
+  classId   String   @db.ObjectId
+  joinedAt  DateTime @default(now())
+
+  @@unique([studentId, classId])
+}
+
+model ClassMaterial {
+  id         String       @id @default(auto()) @map("_id") @db.ObjectId
+  class      Class        @relation(fields: [classId], references: [id])
+  classId    String       @db.ObjectId
+  title      String
+  url        String
+  type       MaterialType
+  uploadedAt DateTime     @default(now())
+}
+
+enum MaterialType {
+  PDF
+  DOCX
+  MP4
+}
+
 enum Role {
   STUDENT
   PROFESSOR
