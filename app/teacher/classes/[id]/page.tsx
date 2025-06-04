@@ -1,28 +1,37 @@
-"use client";
-import { useState } from "react";
-import { useParams } from "next/navigation";
+'use client'
+import { StudentManagement } from "@/components/teacher/class/studentManagement"
+import { useParams } from "next/navigation"
+import { useState } from "react"
+import { TeacherDashboard } from "@/components/teacher/class/teacherDashboard"
+export default function Page() {
+  const params = useParams()
+  const classId = params.id as string
+  const [activeSection, setActiveSection] = useState("class-info")
 
-export default function ManageClassPage() {
-  const { id } = useParams();
-  const [email, setEmail] = useState("");
+  if (!classId) return null;
+
+  const renderContent = () => {
+    switch (activeSection) {
+      // case "class-info":
+      //   return <ClassInfo classId={classId} />
+      case "student-management":
+        return <StudentManagement classId={classId} />
+      // case "content-management":
+      //   return <ContentManagement classId={classId} />
+      // case "survey-learning-path":
+      //   return <SurveyLearningPath classId={classId} />
+      // case "quizzes-assessments":
+      //   return <QuizzesAssessments classId={classId} />
+      // case "analytics":
+      //   return <Analytics classId={classId} />
+      // default:
+      //   return <ClassInfo classId={classId} />
+    }
+  }
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold">Manage Class {id}</h1>
-      <p className="text-gray-600">Invite students via email.</p>
-
-      <div className="mt-4">
-        <input
-          type="email"
-          placeholder="Enter student email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="border p-2 rounded-lg mr-2"
-        />
-        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700" onClick={() => alert(`Inviting: ${email}`)}>
-          Invite
-        </button>
-      </div>
-    </div>
-  );
+    <TeacherDashboard activeSection={activeSection} setActiveSection={setActiveSection}>
+      {renderContent()}
+    </TeacherDashboard>
+  )
 }

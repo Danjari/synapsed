@@ -160,7 +160,7 @@ export default function AIAssistant() {
                 <Sparkles className="h-8 w-8 text-blue-500" />
               </div>
               <p className="font-medium text-gray-700 mb-1">How can I help you today?</p>
-              <p className="text-sm text-gray-500">Ask me anything and I'll do my best to assist you.</p>
+              <p className="text-sm text-gray-500">Ask me anything and I &apos;ll do my best to assist you.</p>
             </div>
           ) : (
             messages.map((msg, index) => (

@@ -6,10 +6,15 @@ import Sidebar from "@/components/student/StudentSideBar";
 import StudentDashboard from "@/components/student/StudentDashboard";
 
 export default function StudentPageClient() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
+
+  if (status === "loading") {
+    return null;
+  }
+
   if (!session) {
-    router.push("/sign-in");
+    router.replace("/sign-in");
     return null;
   }
 
@@ -17,7 +22,7 @@ export default function StudentPageClient() {
     <div className="flex">
       <Sidebar user={session.user} />
       <div className="flex-1">
-        <StudentDashboard user = {session.user} />
+        <StudentDashboard user={session.user} />
       </div>
     </div>
   );

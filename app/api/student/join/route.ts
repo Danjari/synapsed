@@ -24,6 +24,9 @@ export async function POST(req: NextRequest) {
     // Fetching the class with the provided joinToken from the database
     const targetClass = await prisma.class.findUnique({
       where: { joinToken },
+      include: {
+        enrollments: true
+      }
     });
 
     // Validating if the class exists
@@ -33,7 +36,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Validating if the user has already joined the class
-    if (targetClass.studentIds.includes(session.user.id)) {
+    if (targetClass.enrollments.some((enrollment) => enrollment.studentId === session.user.id)) {
       // Returning a success response if the user has already joined the class
       return NextResponse.json({ message: "You already joined this class" }, { status: 200 });
     }
@@ -42,10 +45,15 @@ export async function POST(req: NextRequest) {
     const updatedClass = await prisma.class.update({
       where: { joinToken },
       data: {
-        studentIds: {
-          push: session.user.id,
-        },
+        enrollments: {
+          create: {
+            studentId: session.user.id
+          }
+        }
       },
+      include: {
+        enrollments: true
+      }
     });
 
     // Returning a success response with the updated class

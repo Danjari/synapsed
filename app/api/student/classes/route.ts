@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const studentId = searchParams.get("studentId");
+  const studentId = searchParams.get("enrollmentId");
 
   if (!studentId) {
     return NextResponse.json({ message: "Missing studentId" }, { status: 400 });
@@ -13,8 +13,10 @@ export async function GET(req: NextRequest) {
   try {
     const classes = await prisma.class.findMany({
       where: {
-        studentIds: {
-          has: studentId,
+        enrollments: {
+          some: {
+            studentId: studentId,
+          },
         },
       },
       include: {
