@@ -76,9 +76,9 @@ export function TeacherDashboard({ children, activeSection, setActiveSection }: 
           <SidebarHeader className="flex h-16 items-center border-b px-6">
             <div className="flex items-center gap-2 font-semibold">
               <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
-                AI
+                S
               </div>
-              <span>EduAI Platform</span>
+              <span>SynapsEd.</span>
             </div>
           </SidebarHeader>
           <SidebarContent>
