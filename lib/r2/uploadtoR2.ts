@@ -23,5 +23,5 @@ export async function uploadToR2(fileBuffer: Buffer, fileName: string, mimeType:
 
   await r2.send(command);
 
-  return `https://${process.env.R2_BUCKET_NAME}.${process.env.R2_ENDPOINT?.replace(/^https?:\/\//, '')}/${objectKey}`;
+  return `${process.env.R2_PUBLIC_URL}/${objectKey}`;
 }
