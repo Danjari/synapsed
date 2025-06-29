@@ -58,11 +58,11 @@ export async function embedAndStore(
   });
 
 
-console.log("🟢 Final vectors to upsert:", vectors.length);
-console.log("🟢 Vector sample ID:", vectors[0]?.id);
-console.log("🟢 Metadata sample:", vectors[0]?.metadata);
-console.log("🟢 Namespace:", namespace);
-console.log("🟢 Index Name:", process.env.PINECONE_INDEX_NAME);
+// console.log("🟢 Final vectors to upsert:", vectors.length);
+// console.log("🟢 Vector sample ID:", vectors[0]?.id);
+// console.log("🟢 Metadata sample:", vectors[0]?.metadata);
+// console.log("🟢 Namespace:", namespace);
+// console.log("🟢 Index Name:", process.env.PINECONE_INDEX_NAME);
 
   
 

@@ -3,6 +3,7 @@
 
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// after you change this you need to run npx prisma generate 
 
 generator client {
   provider = "prisma-client-js"
@@ -98,15 +99,20 @@ model ClassEnrollment {
   @@unique([studentId, classId])
 }
 
+
 model ClassMaterial {
-  id         String       @id @default(auto()) @map("_id") @db.ObjectId
-  class      Class        @relation(fields: [classId], references: [id])
-  classId    String       @db.ObjectId
-  title      String
-  url        String
-  type       MaterialType
-  uploadedAt DateTime     @default(now())
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  classId        String       @db.ObjectId
+  class          Class        @relation(fields: [classId], references: [id])
+  title          String
+  url            String
+  type           MaterialType
+  uploadedAt     DateTime     @default(now())
+
+  isVectorized   Boolean      @default(false)
+  vectorNamespace String?     // e.g., "calculus-101"
 }
+
 
 enum MaterialType {
   PDF
