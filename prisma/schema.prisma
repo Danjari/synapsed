@@ -107,6 +107,7 @@ model ClassMaterial {
   title          String
   url            String
   type           MaterialType
+  mimeType       String?
   uploadedAt     DateTime     @default(now())
 
   isVectorized   Boolean      @default(false)
