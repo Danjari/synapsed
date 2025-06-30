@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { File, MoreHorizontal, Upload } from "lucide-react";
+import { File, MoreHorizontal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,11 +12,11 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 
-export function ContentManagement({ classId }: { classId: string }) {
+export function ContentView({ classId }: { classId: string }) {
   const [materials, setMaterials] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
-  const [fileToRename, setFileToRename] = useState<any | null>(null);
+  const [ setFileToRename] = useState<any | null>(null);
   const [newFileName, setNewFileName] = useState("");
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [fileToDelete, setFileToDelete] = useState<any | null>(null);

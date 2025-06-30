@@ -1,7 +1,7 @@
 import { UploadSection } from "./Upload/page";
-import { ContentManagement } from "./contentView/page";
+import { ContentView } from "./contentView/page";
 
-export default function Page({ classId }: { classId: string }) {
+export default function ContentManagement({ classId }: { classId: string }) {
   const refreshFiles = () => {
     window.location.reload();
   };
@@ -9,7 +9,7 @@ export default function Page({ classId }: { classId: string }) {
   return (
     <div className="space-y-6">
       <UploadSection classId={classId} onUploadComplete={refreshFiles} />
-      <ContentManagement classId={classId} />
+      <ContentView classId={classId} />
     </div>
   );
 }

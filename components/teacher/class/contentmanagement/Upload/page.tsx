@@ -24,7 +24,7 @@ export function UploadSection({ classId, onUploadComplete }: { classId: string; 
     selectedFiles.forEach((file) => formData.append("files", file));
 
     try {
-      const res = await fetch("/api/material/upload", {
+      const res = await fetch("/api/classMaterial/upload", {
         method: "POST",
         body: formData,
       });

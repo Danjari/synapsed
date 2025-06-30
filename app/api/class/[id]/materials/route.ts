@@ -1,14 +1,16 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { ObjectId } from "mongodb";
 
 export async function GET(req: Request, { params }: { params: { classId: string } }) {
   const { classId } = params;
 
   try {
     const materials = await prisma.classMaterial.findMany({
-      where: { classId },
+      where: { classId: new ObjectId(classId).toString() },
       orderBy: { uploadedAt: 'desc' },
     });
+    console.log("here is the mat",materials)
 
     return NextResponse.json(materials);
   } catch (error) {
