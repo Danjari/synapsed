@@ -1,7 +1,7 @@
 'use client';
 
 import AIAssistant from '@/components/AIAssistant';
-import SynapsedFlow from '@/components/Pathway/PathwayDisplay';
+import SynapsedFlow from '@/components/Synapses/Pathway/PathwayDisplay';
 
 export default function SynapsedPathwayPage() {
   return (

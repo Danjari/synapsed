@@ -1,5 +1,6 @@
 'use client'
 import { StudentManagement } from "@/components/teacher/class/studentManagement"
+import ContentManagement from "@/components/teacher/class/contentmanagement/contentManagement"
 import { useParams } from "next/navigation"
 import { useState } from "react"
 import { TeacherDashboard } from "@/components/teacher/class/teacherDashboard"
@@ -16,8 +17,8 @@ export default function Page() {
       //   return <ClassInfo classId={classId} />
       case "student-management":
         return <StudentManagement classId={classId} />
-      // case "content-management":
-      //   return <ContentManagement classId={classId} />
+      case "content-management":
+        return <ContentManagement classId={classId} />
       // case "survey-learning-path":
       //   return <SurveyLearningPath classId={classId} />
       // case "quizzes-assessments":
