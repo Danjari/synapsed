@@ -73,7 +73,7 @@ export function SurveyLearningPath({classId}:{classId:string}) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        classId: "replace-this-with-real-class-id", // <-- replace dynamically if needed
+        classId,
         questions: surveyQuestions,
       }),
     })
@@ -483,14 +483,7 @@ export function SurveyLearningPath({classId}:{classId:string}) {
               Cancel
             </Button>
             <Button
-              onClick={() => {
-                // In a real app, this would call an API to save the survey
-                toast("Survey saved",{
-                  description: "Your survey has been saved successfully.",
-                })
-                setIsSaveConfirmOpen(false)
-                setIsSurveyBuilderOpen(false)
-              }}
+              onClick={handleSaveSurvey}
             >
               Save Survey
             </Button>
