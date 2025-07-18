@@ -40,3 +40,22 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
+
+
+
+// ✅ Handle GET for checking if student submitted
+export async function GET(req: NextRequest) {
+    const { searchParams } = new URL(req.url);
+    const studentId = searchParams.get("studentId");
+    const classId = searchParams.get("classId");
+  
+    if (!studentId || !classId) {
+      return NextResponse.json({ error: "Missing studentId or classId" }, { status: 400 });
+    }
+  
+    const existing = await prisma.studentSurveyResponse.findFirst({
+      where: { studentId, classId },
+    });
+  
+    return NextResponse.json({ submitted: !!existing });
+  }

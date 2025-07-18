@@ -1,13 +1,15 @@
+// /app/api/survey/[classId]/route.ts
+
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-type Params = {
-  params: { classId: string };
-};
-
-export async function GET(req: NextRequest, { params }: Params) {
+export async function GET(
+  req: NextRequest,
+  context: { params: { classId: string } }
+) {
   try {
-    const { classId } = params;
+    const { params } = context;
+    const classId = await params.classId;
 
     if (!classId) {
       return NextResponse.json({ error: "Missing classId" }, { status: 400 });
@@ -18,10 +20,10 @@ export async function GET(req: NextRequest, { params }: Params) {
     });
 
     if (!survey) {
-      return NextResponse.json({ questions: [] }, { status: 200 }); // fallback
+      return NextResponse.json({ questions: [] }, { status: 200 });
     }
 
-    return NextResponse.json(survey, { status: 200 });
+    return NextResponse.json(survey);
   } catch (error) {
     console.error("[GET_SURVEY]", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

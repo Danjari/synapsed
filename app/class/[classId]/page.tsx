@@ -14,7 +14,7 @@ export default function ClassEntryPage() {
     const checkSurveyStatus = async () => {
       if (!session?.user?.id || !classId) return;
 
-      const res = await fetch(`/api/survey/submitted?studentId=${session.user.id}&classId=${classId}`);
+      const res = await fetch(`/api/survey/submit?studentId=${session.user.id}&classId=${classId}`);
       const data = await res.json();
 
       if (data.submitted) {
