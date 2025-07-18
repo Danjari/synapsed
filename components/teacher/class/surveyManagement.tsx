@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { CheckCircle, Edit, Eye, MoreHorizontal, Plus } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -37,7 +37,7 @@ const learningPaths = [
   { id: 3, student: "Morgan Wilson", generatedAt: "2023-09-09", status: "pending" },
 ]
 
-export function SurveyLearningPath() {
+export function SurveyLearningPath({classId}:{classId:string}) {
   const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false)
   const [selectedPath, setSelectedPath] = useState<(typeof learningPaths)[0] | null>(null)
   const [isGenerateDialogOpen, setIsGenerateDialogOpen] = useState(false)
@@ -57,6 +57,40 @@ export function SurveyLearningPath() {
     },
   ])
   const [isSaveConfirmOpen, setIsSaveConfirmOpen] = useState(false)
+
+  useEffect(() => {
+    fetch(`/api/survey/${classId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.questions?.length) {
+          setSurveyQuestions(data.questions)
+        }
+      })
+  }, [classId])
+
+  const handleSaveSurvey = async () => {
+    const res = await fetch("/api/survey/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        classId: "replace-this-with-real-class-id", // <-- replace dynamically if needed
+        questions: surveyQuestions,
+      }),
+    })
+  
+    if (res.ok) {
+      toast("Survey saved",{
+
+        description: "Your survey has been saved successfully.",
+      })
+      setIsSaveConfirmOpen(false)
+      setIsSurveyBuilderOpen(false)
+    } else {
+      toast("Error", {
+        description: "Failed to save survey. Try again."
+      })
+    }
+  }
 
   const handleApprovePathClick = () => {
     // In a real app, this would call an API to approve the learning path
@@ -431,7 +465,7 @@ export function SurveyLearningPath() {
             <Button variant="outline" onClick={() => setIsSurveyBuilderOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={() => setIsSaveConfirmOpen(true)}>Save Survey</Button>
+            <Button onClick= {handleSaveSurvey}>Save Survey</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
