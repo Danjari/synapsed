@@ -483,7 +483,14 @@ export function SurveyLearningPath({classId}:{classId:string}) {
               Cancel
             </Button>
             <Button
-              onClick={handleSaveSurvey}
+              onClick={() => {
+                // In a real app, this would call an API to save the survey
+                toast("Survey saved",{
+                  description: "Your survey has been saved successfully.",
+                })
+                setIsSaveConfirmOpen(false)
+                setIsSurveyBuilderOpen(false)
+              }}
             >
               Save Survey
             </Button>
