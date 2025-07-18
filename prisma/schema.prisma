@@ -31,6 +31,8 @@ model User {
   classesTaught Class[]   @relation("ProfessorClasses")
 
   enrollments ClassEnrollment[]
+
+  surveyResponse StudentSurveyResponse?
 }
 
 model Class {
@@ -50,6 +52,9 @@ model Class {
   joinToken   String    @unique
 
   materials   ClassMaterial[]
+  // survey? 
+  survey        Survey?
+  studentSurveyResponses StudentSurveyResponse[]
 }
 
 model Account {
@@ -125,4 +130,26 @@ enum Role {
   STUDENT
   PROFESSOR
   ADMIN
+}
+
+model Survey {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  classId   String   @unique @db.ObjectId
+  class     Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  questions Json     // Array of { id, text, type, options? }
+  createdAt DateTime @default(now())
+}
+
+model StudentSurveyResponse {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  studentId  String   @unique @db.ObjectId
+  student    User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  classId    String   @db.ObjectId
+  class      Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  answers    Json     // Array of { questionId, answer }
+  submittedAt DateTime @default(now())
+
+  @@unique([studentId, classId])
 }
