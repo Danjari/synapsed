@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { CheckCircle, Edit, Eye, MoreHorizontal, Plus } from "lucide-react"
-
+import StudentSurveyDialog from "./Dialogs/StudentViewSurveyAnswerDialog";
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -16,19 +16,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
-import {toast} from "sonner"
+import { toast } from "sonner"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
-
-// Sample survey responses
-const surveyResponses = [
-  { id: 1, student: "Alex Johnson", completedAt: "2023-09-05", status: "processed" },
-  { id: 2, student: "Jamie Smith", completedAt: "2023-09-06", status: "processed" },
-  { id: 3, student: "Taylor Brown", completedAt: "2023-09-07", status: "pending" },
-  { id: 4, student: "Morgan Wilson", completedAt: "2023-09-08", status: "processed" },
-  { id: 5, student: "Casey Davis", completedAt: "2023-09-10", status: "pending" },
-]
 
 // Sample learning paths
 const learningPaths = [
@@ -37,35 +28,36 @@ const learningPaths = [
   { id: 3, student: "Morgan Wilson", generatedAt: "2023-09-09", status: "pending" },
 ]
 
-export function SurveyLearningPath({classId}:{classId:string}) {
+type SurveyResponse = {
+  studentId: string;
+  name: string;
+  submittedAt: string;
+  answers: { question: string; answer: string }[];
+};
+
+type SurveyQuestion = { id: string; text: string; type: string; options?: string[] };
+
+export function SurveyLearningPath({ classId }: { classId: string }) {
   const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false)
   const [selectedPath, setSelectedPath] = useState<(typeof learningPaths)[0] | null>(null)
   const [isGenerateDialogOpen, setIsGenerateDialogOpen] = useState(false)
   const [isSurveyBuilderOpen, setIsSurveyBuilderOpen] = useState(false)
-  const [surveyQuestions, setSurveyQuestions] = useState([
-    {
-      id: 1,
-      text: "What topics in physics interest you most?",
-      type: "multiple-choice",
-      options: ["Quantum Mechanics", "Relativity", "Thermodynamics", "Electromagnetism"],
-    },
-    {
-      id: 2,
-      text: "How would you rate your current understanding of quantum mechanics?",
-      type: "multiple-choice",
-      options: ["Beginner", "Intermediate", "Advanced"],
-    },
-  ])
+  const [isSurveyViewOpen, setIsSurveyViewOpen] = useState(false);
+  const [surveyQuestions, setSurveyQuestions] = useState<SurveyQuestion[]>([])
+  const [selectedStudentResponse, setSelectedStudentResponse] = useState<SurveyResponse | null>(null);
   const [isSaveConfirmOpen, setIsSaveConfirmOpen] = useState(false)
+  const [surveyResponses, setSurveyResponses] = useState<SurveyResponse[]>([]);
 
   useEffect(() => {
     fetch(`/api/survey/${classId}`)
       .then((res) => res.json())
       .then((data) => {
-        if (data?.questions?.length) {
-          setSurveyQuestions(data.questions)
-        }
+        if (data?.questions?.length) setSurveyQuestions(data.questions)
       })
+
+    fetch(`/api/survey/response/${classId}`)
+      .then((res) => res.json())
+      .then((data) => setSurveyResponses(Array.isArray(data) ? data : []))
   }, [classId])
 
   const handleSaveSurvey = async () => {
@@ -77,10 +69,9 @@ export function SurveyLearningPath({classId}:{classId:string}) {
         questions: surveyQuestions,
       }),
     })
-  
-    if (res.ok) {
-      toast("Survey saved",{
 
+    if (res.ok) {
+      toast("Survey saved", {
         description: "Your survey has been saved successfully.",
       })
       setIsSaveConfirmOpen(false)
@@ -93,18 +84,14 @@ export function SurveyLearningPath({classId}:{classId:string}) {
   }
 
   const handleApprovePathClick = () => {
-    // In a real app, this would call an API to approve the learning path
     toast(
-      "Learning path approved",{description: `Learning path for ${selectedPath?.student} has been approved.`,
-      }   
+      "Learning path approved", { description: `Learning path for ${selectedPath?.student} has been approved.`, }
     )
     setIsPreviewDialogOpen(false)
   }
 
   const handleGeneratePaths = () => {
-    // In a real app, this would call an API to generate learning paths
-    toast("Learning paths generated",{
-    
+    toast("Learning paths generated", {
       description: "Learning paths are being generated for students with pending surveys.",
     })
     setIsGenerateDialogOpen(false)
@@ -141,18 +128,25 @@ export function SurveyLearningPath({classId}:{classId:string}) {
               </TableHeader>
               <TableBody>
                 {surveyResponses.map((response) => (
-                  <TableRow key={response.id}>
-                    <TableCell className="font-medium">{response.student}</TableCell>
+                  <TableRow key={response.studentId}>
+                    <TableCell className="font-medium">{response.name}</TableCell>
                     <TableCell className="hidden md:table-cell">
-                      {new Date(response.completedAt).toLocaleDateString()}
+                      {new Date(response.submittedAt).toLocaleDateString()}
                     </TableCell>
                     <TableCell>
-                      <Badge variant={response.status === "processed" ? "default" : "secondary"}>
-                        {response.status === "processed" ? "Processed" : "Pending"}
+                      <Badge variant={response.answers.length > 0 ? "default" : "secondary"}>
+                        {response.answers.length > 0 ? "Processed" : "Pending"}
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Button variant="ghost" size="icon">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                          setSelectedStudentResponse(response);
+                          setIsSurveyViewOpen(true);
+                        }}
+                      >
                         <Eye className="h-4 w-4" />
                         <span className="sr-only">View</span>
                       </Button>
@@ -164,6 +158,14 @@ export function SurveyLearningPath({classId}:{classId:string}) {
           </div>
         </CardContent>
       </Card>
+      <StudentSurveyDialog
+        open={isSurveyViewOpen}
+        onClose={() => setIsSurveyViewOpen(false)}
+        studentName={selectedStudentResponse?.name}
+        completedAt={selectedStudentResponse?.submittedAt}
+        answers={selectedStudentResponse?.answers}
+      />
+
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
@@ -309,7 +311,7 @@ export function SurveyLearningPath({classId}:{classId:string}) {
               <Button
                 onClick={() => {
                   const newQuestion = {
-                    id: Date.now(),
+                    id: Date.now().toString(), // Changed to string to match SurveyQuestion type
                     text: "",
                     type: "short-answer",
                     options: [],
@@ -356,8 +358,8 @@ export function SurveyLearningPath({classId}:{classId:string}) {
                                     type: e.target.value,
                                     options:
                                       e.target.value === "multiple-choice"
-                                        ? q.options.length > 0
-                                          ? q.options
+                                        ? (q.options ?? []).length > 0
+                                          ? q.options ?? []
                                           : [""]
                                         : [],
                                   }
@@ -385,7 +387,7 @@ export function SurveyLearningPath({classId}:{classId:string}) {
                                   q.id === question.id
                                     ? {
                                         ...q,
-                                        options: [...q.options, ""],
+                                        options: [...(q.options ?? []), ""],
                                       }
                                     : q,
                                 )
@@ -396,7 +398,7 @@ export function SurveyLearningPath({classId}:{classId:string}) {
                               Add Option
                             </Button>
                           </div>
-                          {question.options.map((option, optionIndex) => (
+                          {(question.options ?? []).map((option: string, optionIndex: number) => (
                             <div key={optionIndex} className="flex items-center gap-2">
                               <Input
                                 value={option}
@@ -405,7 +407,7 @@ export function SurveyLearningPath({classId}:{classId:string}) {
                                     q.id === question.id
                                       ? {
                                           ...q,
-                                          options: q.options.map((opt, idx) =>
+                                          options: (q.options ?? []).map((opt: string, idx: number) =>
                                             idx === optionIndex ? e.target.value : opt,
                                           ),
                                         }
@@ -424,7 +426,7 @@ export function SurveyLearningPath({classId}:{classId:string}) {
                                     q.id === question.id
                                       ? {
                                           ...q,
-                                          options: q.options.filter((_, idx) => idx !== optionIndex),
+                                          options: (q.options ?? []).filter((_: string, idx: number) => idx !== optionIndex),
                                         }
                                       : q,
                                   )

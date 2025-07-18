@@ -9,7 +9,7 @@ export async function GET(
 ) {
   try {
     const { params } = context;
-    const classId = await params.classId;
+    const classId = params.classId;
 
     if (!classId) {
       return NextResponse.json({ error: "Missing classId" }, { status: 400 });
