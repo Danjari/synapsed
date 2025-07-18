@@ -15,6 +15,9 @@ type Props = {
     professorId:string;
 }
 
+type Enrollment = { [key: string]: unknown };
+type ApiClass = { id: string; title: string; enrollments?: Enrollment[] };
+
 export default function ClassesPage({professorId} : Props) {
   const [classes, setClasses] = useState<ClassType[]>([]);
   const [isModalOpen, setModalOpen] = useState(false);
@@ -23,7 +26,7 @@ export default function ClassesPage({professorId} : Props) {
     const res = await fetch(`/api/professor/classes?professorId=${professorId}`);
     const data = await res.json();
 
-    const mappedClasses = data.map((cls: any) => ({
+    const mappedClasses = (data as ApiClass[]).map((cls) => ({
       id: cls.id,
       title: cls.title,
       studentsCount: cls.enrollments?.length || 0,
