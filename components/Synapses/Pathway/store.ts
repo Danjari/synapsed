@@ -219,7 +219,8 @@ import {
 
         
 
-        const { nodes, edges } = layoutNodes(skeleton); //e
+        const nodesArray = Array.isArray(skeleton) ? skeleton : skeleton.nodes ?? [];
+        const { nodes, edges } = layoutNodes(nodesArray); //e
         set({ nodes, edges, isLoading: false, prompt });
 
 
