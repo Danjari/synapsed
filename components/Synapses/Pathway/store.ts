@@ -41,7 +41,7 @@ import {
     addNode: (node: Partial<PathwayNode>) => void;
     updateNodeData: (nodeId: string, data: Partial<PathwayNodeData>) => void;
     removeNode: (nodeId: string) => void;
-    fetchPathway: (prompt: string) => Promise<void>;
+    fetchPathway: (prompt: string, studentId: string, classId: string) => Promise<void>;
     setPrompt: (prompt: string) => void;
   };
 
@@ -202,7 +202,7 @@ import {
     },
     
     // Fetch pathway data
-    fetchPathway: async (prompt: string) => {
+    fetchPathway: async (prompt: string, studentId: string, classId: string) => {
       set({ isLoading: true, error: null });
       
       try {
@@ -214,7 +214,7 @@ import {
         
         // Create dummy data based on prompt
         // NEW: Dynamic fetch from your mock API
-        const res = await fetch(`/api/pathway/generate?studentId=demo&classId=test&prompt=${encodeURIComponent(prompt)}`);
+        const res = await fetch(`/api/pathway/generate?studentId=${studentId}&classId=${classId}&prompt=${encodeURIComponent(prompt)}`);
         const skeleton = await res.json();
 
         

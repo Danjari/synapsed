@@ -23,6 +23,8 @@ import { atomOneLight } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
+import { useSession } from 'next-auth/react';
+import { useParams } from 'next/navigation';
 
 SyntaxHighlighter.registerLanguage('javascript', js);
 
@@ -34,6 +36,8 @@ const nodeTypes = {
 const edgeTypes = {
   pathway: PathwayEdge,
 };
+
+
 
 // Create selector for store values
 const selector = (state: PathwayState) => ({
@@ -64,11 +68,16 @@ function PathwayFlow() {
   
   const [inputPrompt, setInputPrompt] = useState(prompt);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
-  
+  const { data: session } = useSession();
+  const { classId } = useParams();
+  const studentId = session?.user?.id;
+  const classIdStr = Array.isArray(classId) ? classId[0] : classId;
   // Fetch pathway on initial load
   useEffect(() => {
-    fetchPathway(prompt);
-  }, []);
+    if (studentId && classIdStr) {
+      fetchPathway(prompt, studentId, classIdStr);
+    }
+  }, [prompt, studentId, classIdStr, fetchPathway]);
 
   useEffect(() => {
     if (selectedNode) {
@@ -86,7 +95,9 @@ function PathwayFlow() {
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    fetchPathway(inputPrompt);
+    if (studentId && classIdStr) {
+      fetchPathway(inputPrompt, studentId, classIdStr);
+    }
   };
 
   const handleNodeClick = (event: React.MouseEvent, node: Node) => {
