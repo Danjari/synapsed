@@ -61,12 +61,9 @@ function PathwayFlow() {
     onEdgesChange,
     onConnect,
     fetchPathway,
-    isLoading,
-    error,
     prompt,
   } = usePathwayStore(useShallow(selector));
   
-  const [inputPrompt, setInputPrompt] = useState(prompt);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const { data: session } = useSession();
   const { classId } = useParams();
@@ -92,14 +89,6 @@ function PathwayFlow() {
     };
   }, [selectedNode]);
   
-  // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (studentId && classIdStr) {
-      fetchPathway(inputPrompt, studentId, classIdStr);
-    }
-  };
-
   const handleNodeClick = (event: React.MouseEvent, node: Node) => {
     event.stopPropagation();
     setSelectedNode(node);
@@ -107,40 +96,6 @@ function PathwayFlow() {
   
   return (
     <div className="pathway-container">
-      {/* Prompt input form */}
-      <div className="pathway-controls">
-        <form onSubmit={handleSubmit} className="pathway-form">
-          <input
-            type="text"
-            value={inputPrompt}
-            onChange={(e) => setInputPrompt(e.target.value)}
-            placeholder="Describe your learning pathway..."
-            className="pathway-input"
-          />
-          <button 
-            type="submit" 
-            className="pathway-button"
-            disabled={isLoading}
-          >
-            {isLoading ? 'Generating...' : 'Generate Pathway'}
-          </button>
-        </form>
-      </div>
-      
-      {/* Loading indicator */}
-      {isLoading && (
-        <div className="pathway-loading">
-          <div className="spinner"></div>
-          <p>Generating your learning pathway...</p>
-        </div>
-      )}
-      
-      {/* Error message */}
-      {error && (
-        <div className="pathway-error">
-          <p>Error: {error}</p>
-        </div>
-      )}
       
       {/* The actual flow diagram */}
       <div className="pathway-flow">
