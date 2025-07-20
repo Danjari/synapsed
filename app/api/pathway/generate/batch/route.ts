@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+type SurveyAnswer = { questionId: string; answer: string };
+type SurveyQuestion = { id: string; text: string };
+
 export async function POST(req: Request) {
   const { classId } = await req.json();
   if (!classId) return NextResponse.json({ error: "Missing classId" }, { status: 400 });
@@ -12,8 +15,8 @@ export async function POST(req: Request) {
 
   for (const response of responses) {
     // Build prompt from answers and questions
-    const prompt = response.answers!.map((ans: any) => {
-      const q = questions.find((q: any) => q.id == ans.questionId);
+    const prompt = (response.answers as SurveyAnswer[]).map((ans) => {
+      const q = (questions as SurveyQuestion[]).find((q) => q.id == ans.questionId);
       return `Q: ${q?.text || "Unknown"}\nA: ${ans.answer}`;
     }).join("\n");
 

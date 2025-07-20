@@ -90,12 +90,23 @@ export function SurveyLearningPath({ classId }: { classId: string }) {
     setIsPreviewDialogOpen(false)
   }
 
-  const handleGeneratePaths = () => {
-    toast("Learning paths generated", {
-      description: "Learning paths are being generated for students with pending surveys.",
-    })
-    setIsGenerateDialogOpen(false)
-  }
+  const handleGeneratePaths = async () => {
+    const res = await fetch("/api/pathway/generate/batch", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ classId }),
+    });
+    if (res.ok) {
+      toast("Learning paths generated", {
+        description: "Learning paths are being generated for students with pending surveys.",
+      });
+    } else {
+      toast("Error", {
+        description: "Failed to generate learning paths. Try again.",
+      });
+    }
+    setIsGenerateDialogOpen(false);
+  };
 
   return (
     <div className="space-y-6">
