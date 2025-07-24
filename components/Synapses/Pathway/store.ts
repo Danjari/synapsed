@@ -87,7 +87,7 @@ import {
 
       group.forEach((node, colIdx) => {
         finalNodes.push({
-          id: node.id,
+          id: node.nodeId,
           type: 'pathway',
           position: {
             x: colIdx * spacingX,
