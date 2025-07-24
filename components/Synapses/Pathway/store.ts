@@ -51,30 +51,30 @@ import {
   function layoutNodes(nodes: any[]): { nodes: PathwayNode[]; edges: Edge[] } {
     // Using type assertion to avoid 'any' linter errors
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const nodeMap = new Map(nodes.map((n: any) => [n.id, n]));
+    const nodeMap = new Map(nodes.map((n: any) => [n.nodeId, n]));
     const levels: Record<string, number> = {};
   
     // Assign level using dependencies
-    function getLevel(id: string): number {
-      if (!nodeMap.has(id)) return 0;
-      if (levels[id] !== undefined) return levels[id];
+    function getLevel(nodeId: string): number {
+      if (!nodeMap.has(nodeId)) return 0;
+      if (levels[nodeId] !== undefined) return levels[nodeId];
   
-      const node = nodeMap.get(id);
+      const node = nodeMap.get(nodeId);
       if (!node.dependsOn || node.dependsOn.length === 0) {
-        levels[id] = 0;
+        levels[nodeId] = 0;
       } else {
-        levels[id] = Math.max(...node.dependsOn.map(getLevel)) + 1;
+        levels[nodeId] = Math.max(...node.dependsOn.map(getLevel)) + 1;
       }
-      return levels[id];
+      return levels[nodeId];
     }
   
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    nodes.forEach((n: any) => getLevel(n.id));
+    nodes.forEach((n: any) => getLevel(n.nodeId));
   
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const levelGroups: Record<number, any[]> = {};
     nodes.forEach(n => {
-      const lvl = levels[n.id] ?? 0;
+      const lvl = levels[n.nodeId] ?? 0;
       if (!levelGroups[lvl]) levelGroups[lvl] = [];
       levelGroups[lvl].push(n);
     });
@@ -107,12 +107,14 @@ import {
   
     const edges: Edge[] = nodes.flatMap(node =>
       (node.dependsOn || []).map((depId: string) => ({
-        id: `e${depId}-${node.id}`,
+        id: `e${depId}-${node.nodeId}`,
         source: depId,
-        target: node.id,
+        target: node.nodeId,
         type: 'pathway'
       }))
     );
+
+    
   
     return { nodes: finalNodes, edges };
   }
@@ -214,15 +216,16 @@ import {
         
         // Create dummy data based on prompt
         // NEW: Dynamic fetch from your mock API
-        const res = await fetch(`/api/pathway/generate?studentId=${studentId}&classId=${classId}&prompt=${encodeURIComponent(prompt)}`);
+        const res = await fetch(`/api/pathway/get?studentId=${studentId}&classId=${classId}`);
         const skeleton = await res.json();
+        console.log("Skeleton:", skeleton);
 
         
 
         const nodesArray = Array.isArray(skeleton) ? skeleton : skeleton.nodes ?? [];
-        const { nodes, edges } = layoutNodes(nodesArray); //e
+        const { nodes, edges } = layoutNodes(nodesArray); // This generates edges from dependsOn
         set({ nodes, edges, isLoading: false, prompt });
-
+        
 
       } catch (error) {
         console.error(error);
