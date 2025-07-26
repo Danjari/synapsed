@@ -31,6 +31,8 @@ model User {
   classesTaught Class[]   @relation("ProfessorClasses")
 
   enrollments ClassEnrollment[]
+
+  surveyResponse StudentSurveyResponse?
 }
 
 model Class {
@@ -50,6 +52,9 @@ model Class {
   joinToken   String    @unique
 
   materials   ClassMaterial[]
+  // survey? 
+  survey        Survey?
+  studentSurveyResponses StudentSurveyResponse[]
 }
 
 model Account {
@@ -125,4 +130,58 @@ enum Role {
   STUDENT
   PROFESSOR
   ADMIN
+}
+
+model Survey {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  classId   String   @unique @db.ObjectId
+  class     Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  questions Json     // Array of { id, text, type, options? }
+  createdAt DateTime @default(now())
+}
+
+model StudentSurveyResponse {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  studentId  String   @unique @db.ObjectId
+  student    User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  classId    String   @db.ObjectId
+  class      Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  answers    Json     // Array of { questionId, answer }
+  submittedAt DateTime @default(now())
+
+  @@unique([studentId, classId])
+}
+
+model LearningPathway {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  studentId  String
+  classId    String
+  status     String   @default("pending") // or "approved"
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  nodes      PathwayNode[]
+}
+
+model PathwayNode {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  pathwayId     String   @db.ObjectId
+  pathway       LearningPathway @relation(fields: [pathwayId], references: [id], onDelete: Cascade)
+
+  nodeId        String   // This is the Gemini-generated ID (e.g. "node1", "topic_2")
+  title         String
+  description   String
+  type          String   // "topic", "subtopic", "resource", "assessment"
+  difficulty    String   // "beginner", "intermediate", "advanced"
+  duration      String
+  dependsOn     String[] // array of nodeIds it depends on (e.g. ["node1", "node2"])
+
+  // For future expansion
+  flashcardsAdded   Boolean @default(false)
+  aiLessonComplete  Boolean @default(false)
+  quizScore         Int?    // nullable, stores quiz result if applicable
+
+  createdAt     DateTime @default(now())
 }

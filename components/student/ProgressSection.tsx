@@ -10,12 +10,13 @@ import {
   PointElement,
   Tooltip,
 } from "chart.js";
+import type { TooltipItem } from "chart.js";
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Tooltip);
 
 const ProgressSection = () => {
   // ✅ Mock progress data (could later come from an API)
-  const [progressData, setProgressData] = useState([40, 50, 60, 75, 83]); // Example: Weekly progress
+  const [progressData] = useState([40, 50, 60, 75, 83]); // Example: Weekly progress
 
   useEffect(() => {
     // In a real app, fetch progress data here
@@ -48,7 +49,7 @@ const ProgressSection = () => {
       tooltip: {
         enabled: true,
         callbacks: {
-          label: (context: any) => `Progress: ${context.raw}%`,
+          label: (context: TooltipItem<"line">) => `Progress: ${context.raw}%`,
         },
       },
     },

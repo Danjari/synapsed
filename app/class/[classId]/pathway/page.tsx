@@ -1,0 +1,19 @@
+'use client';
+
+import SynapsedFlow from '@/components/Synapses/Pathway/PathwayDisplay';
+
+export default function SynapsedPathwayPage() {
+  return (
+    <main className="min-h-screen">
+      <div className="px-4 py-6 max-w-screen-xl mx-auto">
+        <header className="mb-8">
+          <h1 className="text-3xl font-bold mb-2">Synapsed Learning Pathways</h1>
+        </header>
+        <div className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-100 min-h-[calc(100vh-180px)]">
+          <SynapsedFlow />
+        </div>
+      </div>
+
+    </main>
+  );
+}

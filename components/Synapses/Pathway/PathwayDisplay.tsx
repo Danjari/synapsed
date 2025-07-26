@@ -23,6 +23,8 @@ import { atomOneLight } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
+import { useSession } from 'next-auth/react';
+import { useParams } from 'next/navigation';
 
 SyntaxHighlighter.registerLanguage('javascript', js);
 
@@ -34,6 +36,8 @@ const nodeTypes = {
 const edgeTypes = {
   pathway: PathwayEdge,
 };
+
+
 
 // Create selector for store values
 const selector = (state: PathwayState) => ({
@@ -57,18 +61,23 @@ function PathwayFlow() {
     onEdgesChange,
     onConnect,
     fetchPathway,
-    isLoading,
-    error,
     prompt,
+    isLoading,
   } = usePathwayStore(useShallow(selector));
   
-  const [inputPrompt, setInputPrompt] = useState(prompt);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
-  
+  const { data: session } = useSession();
+  const { classId } = useParams();
+  const studentId = session?.user?.id;
+  const classIdStr = Array.isArray(classId) ? classId[0] : classId;
+  const [pathwayExists, setPathwayExists] = useState<boolean | null>(null);
+
   // Fetch pathway on initial load
   useEffect(() => {
-    fetchPathway(prompt);
-  }, []);
+    if (studentId && classIdStr) {
+      fetchPathway(prompt, studentId, classIdStr);
+    }
+  }, [prompt, studentId, classIdStr, fetchPathway]);
 
   useEffect(() => {
     if (selectedNode) {
@@ -82,13 +91,15 @@ function PathwayFlow() {
       document.body.style.overflow = 'auto';
     };
   }, [selectedNode]);
-  
-  // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    fetchPathway(inputPrompt);
-  };
 
+  useEffect(() => {
+    if (studentId && classIdStr) {
+      fetch(`/api/pathway/exists/${classIdStr}/${studentId}`)
+        .then(res => res.json())
+        .then(data => setPathwayExists(data.exists));
+    }
+  }, [studentId, classIdStr]);
+  
   const handleNodeClick = (event: React.MouseEvent, node: Node) => {
     event.stopPropagation();
     setSelectedNode(node);
@@ -96,75 +107,48 @@ function PathwayFlow() {
   
   return (
     <div className="pathway-container">
-      {/* Prompt input form */}
-      <div className="pathway-controls">
-        <form onSubmit={handleSubmit} className="pathway-form">
-          <input
-            type="text"
-            value={inputPrompt}
-            onChange={(e) => setInputPrompt(e.target.value)}
-            placeholder="Describe your learning pathway..."
-            className="pathway-input"
-          />
-          <button 
-            type="submit" 
-            className="pathway-button"
-            disabled={isLoading}
+      {/* Show message if pathway is not available */}
+      {(!isLoading && pathwayExists === false && (
+        <div className="flex flex-col items-center justify-center h-64 text-center text-gray-500">
+          <div className="text-2xl mb-2">🍳 Your pathway is cooking!</div>
+          <div>Your professor will approve it soon. Come back later.</div>
+        </div>
+      ))}
+      {pathwayExists && nodes.length > 0 && (
+        <div className="pathway-flow">
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            onNodeClick={handleNodeClick}
+            nodeTypes={nodeTypes}
+            edgeTypes={edgeTypes}
+            fitView
+            attributionPosition="bottom-left"
           >
-            {isLoading ? 'Generating...' : 'Generate Pathway'}
-          </button>
-        </form>
-      </div>
-      
-      {/* Loading indicator */}
-      {isLoading && (
-        <div className="pathway-loading">
-          <div className="spinner"></div>
-          <p>Generating your learning pathway...</p>
+            <Controls />
+            <MiniMap 
+              nodeStrokeWidth={3}
+              zoomable
+              pannable
+            />
+            <Background 
+              variant={'dots' as BackgroundVariant}
+              gap={12} 
+              size={1} 
+              color="#f1f1f1" 
+            />
+            <Panel position="top-left" className="pathway-info-panel">
+              <h3>Learning Pathway</h3>
+              <p className="text-sm text-gray-600">
+                {nodes.length} topics · {edges.length} connections
+              </p>
+            </Panel>
+          </ReactFlow>
         </div>
       )}
-      
-      {/* Error message */}
-      {error && (
-        <div className="pathway-error">
-          <p>Error: {error}</p>
-        </div>
-      )}
-      
-      {/* The actual flow diagram */}
-      <div className="pathway-flow">
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          onNodeClick={handleNodeClick}
-          nodeTypes={nodeTypes}
-          edgeTypes={edgeTypes}
-          fitView
-          attributionPosition="bottom-left"
-        >
-          <Controls />
-          <MiniMap 
-            nodeStrokeWidth={3}
-            zoomable
-            pannable
-          />
-          <Background 
-            variant={'dots' as BackgroundVariant}
-            gap={12} 
-            size={1} 
-            color="#f1f1f1" 
-          />
-          <Panel position="top-left" className="pathway-info-panel">
-            <h3>Learning Pathway</h3>
-            <p className="text-sm text-gray-600">
-              {nodes.length} topics · {edges.length} connections
-            </p>
-          </Panel>
-        </ReactFlow>
-      </div>
 
       {selectedNode && (
   <div 

@@ -113,7 +113,7 @@ const StudentDashboard = ({user}:{user?:User})=> {
                 title={cls.title}
                 professor={cls.professor?.name || "Unknown"}
                 progress={cls.progress || 0}
-                link={cls.link || "#"}
+                link={`/class/${cls.id}`}
               />
             ))}
           </div>

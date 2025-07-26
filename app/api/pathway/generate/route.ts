@@ -1,54 +1,20 @@
-// // /app/api/pathway/route.ts
-// import { NextResponse } from 'next/server';
-
-// export async function GET(req: Request) {
-//   const { searchParams } = new URL(req.url);
-//   const studentId = searchParams.get('studentId') || 'demo';
-//   const classId = searchParams.get('classId') || 'default';
-
-//   // You can customize this mock based on studentId or classId
-//   const mockNodes = [
-//     {
-//       id: '1',
-//       title: 'Understanding Functions',
-//       description: 'Explore basic definitions and examples of functions.',
-//       type: 'topic',
-//       difficulty: 'beginner',
-//       duration: '1 week',
-//       dependsOn: [],
-//       markdownContent: `### Understanding Functions\nA **function** maps an input to an output.`
-//     },
-//     {
-//       id: '2',
-//       title: 'Linear Functions',
-//       description: 'Explore slope, y-intercept, and graph interpretation.',
-//       type: 'subtopic',
-//       difficulty: 'beginner',
-//       duration: '1 week',
-//       dependsOn: ['1'],
-//       markdownContent: `### Linear Functions\nA linear function has the form: \n\`\`\`math\ny = mx + b\n\`\`\``
-//     },
-//     {
-//       id: '3',
-//       title: 'Applications of Linear Models',
-//       description: 'Solve real-life problems using linear equations.',
-//       type: 'assessment',
-//       difficulty: 'intermediate',
-//       duration: '1 week',
-//       dependsOn: ['2'],
-//       markdownContent: `### Assessment\nUse a real-life dataset to fit a linear model.`
-//     }
-//   ];
-
-//   return NextResponse.json(mockNodes);
-// }
-
 
 // /app/api/pathway/route.ts
 import { NextResponse } from 'next/server';
 import { GoogleGenAI, Type } from '@google/genai';
+import { prisma } from '@/lib/prisma';
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
+
+type PathwayNodeInput = {
+  id: string;
+  title: string;
+  description: string;
+  type: string;
+  difficulty: string;
+  duration: string;
+  dependsOn: string[];
+};
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -116,6 +82,47 @@ export async function GET(req: Request) {
   
   if (!nodes) {
     return NextResponse.json({ error: 'No nodes returned' }, { status: 500 });
+  }
+
+  // saving everything in db 
+  try {
+    // Optional: delete previous pathways
+    await prisma.learningPathway.deleteMany({
+      where: { studentId, classId }
+    });
+
+    const newPathway = await prisma.learningPathway.create({
+      data: {
+        studentId,
+        classId,
+        status: 'pending'
+      }
+    });
+
+    if (!Array.isArray(nodes)){
+      return NextResponse.json({error: "No Nodes array returned"},{status:500});
+    }
+
+    await prisma.pathwayNode.createMany({
+      data: (nodes as PathwayNodeInput[]).map((node) => ({
+        pathwayId: newPathway.id,
+        nodeId: node.id,
+        title: node.title,
+        description: node.description,
+        type: node.type,
+        difficulty: node.difficulty,
+        duration: node.duration,
+        dependsOn: node.dependsOn,
+        flashcardsAdded: false,
+        aiLessonComplete: false,
+        quizScore: null
+      }))
+    });
+
+    return NextResponse.json({ success: true, pathwayId: newPathway.id, nodes });
+  } catch (error) {
+    console.error('[SAVE_PATHWAY_ERROR]', error);
+    return NextResponse.json({ error: 'Failed to save pathway' }, { status: 500 });
   }
   
   return NextResponse.json(nodes);
