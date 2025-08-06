@@ -5,15 +5,15 @@ import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 export async function callOpenAI(prompt: string) {
   const model = new ChatOpenAI({
     modelName: "gpt-3.5-turbo",
-    maxTokens: 500,
+    maxTokens: 2000,
     temperature: 0.7,
     openAIApiKey: process.env.OPENAI_API_KEY,
   });
 
   try {
     const response = await model.invoke([
-      ["system", "You are a helpful AI assistant."],
-      ["human", prompt]
+      { role: "system", content: "You are a helpful AI assistant." },
+      { role: "human", content: prompt }
     ]);
     
     return response.content as string;
@@ -25,14 +25,14 @@ export async function callOpenAI(prompt: string) {
 export async function callClaude(prompt: string) {
   const model = new ChatAnthropic({
     modelName: "claude-3-sonnet-20240229",
-    maxTokens: 500,
+    maxTokens: 2000,
     temperature: 0.7,
     anthropicApiKey: process.env.ANTHROPIC_API_KEY,
   });
 
   try {
     const response = await model.invoke([
-      ["human", prompt]
+      { role: "human", content: prompt }
     ]);
     
     return response.content as string;
@@ -43,15 +43,15 @@ export async function callClaude(prompt: string) {
 
 export async function callGemini(prompt: string) {
   const model = new ChatGoogleGenerativeAI({
-    modelName: "gemini-pro",
-    maxOutputTokens: 500,
+    model: "gemini-2.0-flash",
+    maxOutputTokens: 2000,
     temperature: 0.7,
-    googleApiKey: process.env.GOOGLE_API_KEY,
+    apiKey: process.env.GEMINI_API_KEY,
   });
 
   try {
     const response = await model.invoke([
-      ["human", prompt]
+      { role: "human", content: prompt }
     ]);
     
     return response.content as string;

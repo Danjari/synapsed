@@ -1,10 +1,13 @@
 export async function callAI(action: string, selectedText: string) {
     const prompt = getPromptForAction(action, selectedText);
+    const requestBody = { action, text: selectedText, prompt };
+    
+    console.log('Sending AI request:', requestBody);
     
     const response = await fetch('/api/editorAi', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action, text: selectedText, prompt }),
+      body: JSON.stringify(requestBody),
     });
     
     if (!response.ok) {
