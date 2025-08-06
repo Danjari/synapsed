@@ -47,25 +47,29 @@ export default function Editor() {
     setIsLoading(true);
     
     try {
-      const selectedText = payload?.selectedText || "current content";
+      // Get selected text or use full document content
+      const selectedText = payload?.selectedText || editor.getSelectedText();
+      const hasSelection = selectedText && selectedText.length > 0;
       
       // Get full document content as context
       const fullContent = editor.document;
       const fullContext = JSON.stringify(fullContent, null, 2);
       
       console.log("📄 Full context length:", fullContext.length);
+      console.log("🎯 Has selection:", hasSelection, "Selection length:", selectedText?.length);
       
-      const aiResponse = await callAI(action, selectedText, fullContext);
+      // Use selected text if available, otherwise use full context
+      const contextToUse = hasSelection ? selectedText : fullContext;
+      const aiResponse = await callAI(action, contextToUse, fullContext);
       
       // Add to responses log
       setAiResponses(prev => [...prev, aiResponse]);
       
-      // Insert into editor
-      editor.insertBlocks(
-        [{ type: "paragraph", content: aiResponse }],
-        editor.getTextCursorPosition().block,
-        "after"
-      );
+      // Parse markdown using BlockNote's built-in parser
+      const blocks = await editor.tryParseMarkdownToBlocks(aiResponse);
+      
+      // Insert the parsed blocks
+      editor.insertBlocks(blocks, editor.getTextCursorPosition().block, "after");
       
     } catch (error) {
       console.error('AI error:', error);
@@ -88,6 +92,34 @@ export default function Editor() {
           AI is thinking...
         </div>
       )}
+      
+      {/* AI Controls */}
+      <div className="mb-4 flex gap-2 flex-wrap">
+        <button
+          onClick={() => handleAICommand('explain')}
+          className="px-2 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300 transition-colors"
+        >
+          Explain
+        </button>
+        <button
+          onClick={() => handleAICommand('summarize')}
+          className="px-2 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300 transition-colors"
+        >
+          Summarize
+        </button>
+        <button
+          onClick={() => handleAICommand('quiz-me')}
+          className="px-2 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300 transition-colors"
+        >
+          Quiz Me
+        </button>
+        <button
+          onClick={() => handleAICommand('diagram')}
+          className="px-2 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300 transition-colors"
+        >
+          Create Diagram
+        </button>
+      </div>
       
       {/* Editor */}
       <div className="border rounded-lg overflow-hidden">
