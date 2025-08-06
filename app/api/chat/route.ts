@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Convert to Gemini format
-    const formattedMessages = messages.map((msg: any) => ({
+    const formattedMessages = messages.map((msg: { role: string; content: string }) => ({
       role: msg.role,
       parts: [{ text: msg.content }],
     }));
