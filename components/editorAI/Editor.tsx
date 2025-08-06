@@ -17,7 +17,7 @@ import { getAISlashMenuItems } from "@danjari/blocknote-ai-extension";
 import { callAI } from "@/lib/Editor/aiClient";
 
 export default function Editor() {
-  const [aiResponses, setAiResponses] = useState<string[]>([]);
+  //const [aiResponses, setAiResponses] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isClient, setIsClient] = useState(false);
 
@@ -63,7 +63,7 @@ export default function Editor() {
       const aiResponse = await callAI(action, contextToUse, fullContext);
       
       // Add to responses log
-      setAiResponses(prev => [...prev, aiResponse]);
+      //setAiResponses(prev => [...prev, aiResponse]);
       
       // Parse markdown using BlockNote's built-in parser
       const blocks = await editor.tryParseMarkdownToBlocks(aiResponse);
@@ -73,8 +73,8 @@ export default function Editor() {
       
     } catch (error) {
       console.error('AI error:', error);
-      const errorMessage = `Sorry, I couldn't process that request.`;
-      setAiResponses(prev => [...prev, errorMessage]);
+      //const errorMessage = `Sorry, I couldn't process that request.`;
+      // setAiResponses(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }
@@ -140,7 +140,7 @@ export default function Editor() {
       </div>
       
       {/* AI Responses Log */}
-      {aiResponses.length > 0 && (
+      {/* {aiResponses.length > 0 && (
         <div className="mt-6 p-4 bg-gray-50 rounded-lg">
           <h3 className="text-lg font-semibold mb-3">AI Responses:</h3>
           {aiResponses.map((response, index) => (
@@ -150,7 +150,7 @@ export default function Editor() {
             </div>
           ))}
         </div>
-      )}
+      )} */}
     </div>
   );
 }
