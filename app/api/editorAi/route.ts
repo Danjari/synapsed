@@ -87,9 +87,6 @@ async function callGemini(prompt: string) {
           ]
         }
       ],
-      generationConfig: {
-        maxOutputTokens: 500,
-      },
     }),
   });
   
