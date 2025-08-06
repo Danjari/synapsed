@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
-    const { action, text, prompt } = await request.json();
+    const { prompt } = await request.json();
     
     // Choose AI provider based on env or request
     const provider = process.env.NEXT_PUBLIC_AI_PROVIDER || 'openai';
