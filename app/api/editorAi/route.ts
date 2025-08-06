@@ -6,6 +6,7 @@ export async function POST(request: NextRequest) {
     
     // Choose AI provider based on env or request
     const provider = process.env.NEXT_PUBLIC_AI_PROVIDER || 'openai';
+    console.log('provider', provider);
     
     let response;
     switch (provider) {
@@ -23,9 +24,10 @@ export async function POST(request: NextRequest) {
     }
     
     return NextResponse.json({ content: response });
-  } catch {
+  } catch (error) {
+    console.error('AI API error:', error);
     return NextResponse.json(
-      { error: 'AI request failed' },
+      { error: 'AI request failed', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
@@ -48,7 +50,17 @@ async function callOpenAI(prompt: string) {
     }),
   });
   
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(`OpenAI API error: ${response.status} - ${JSON.stringify(errorData)}`);
+  }
+  
   const data = await response.json();
+  
+  if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+    throw new Error('Invalid response format from OpenAI API');
+  }
+  
   return data.choices[0].message.content;
 }
 
@@ -69,7 +81,17 @@ async function callClaude(prompt: string) {
     }),
   });
   
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(`Claude API error: ${response.status} - ${JSON.stringify(errorData)}`);
+  }
+  
   const data = await response.json();
+  
+  if (!data.content || !data.content[0] || !data.content[0].text) {
+    throw new Error('Invalid response format from Claude API');
+  }
+  
   return data.content[0].text;
 }
 
@@ -87,9 +109,22 @@ async function callGemini(prompt: string) {
           ]
         }
       ],
+      generationConfig: {
+        maxOutputTokens: 500,
+      },
     }),
   });
   
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(`Gemini API error: ${response.status} - ${JSON.stringify(errorData)}`);
+  }
+  
   const data = await response.json();
+  
+  if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+    throw new Error('Invalid response format from Gemini API');
+  }
+  
   return data.candidates[0].content.parts[0].text;
 }

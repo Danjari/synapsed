@@ -10,7 +10,7 @@ import {
   getDefaultReactSlashMenuItems,
   useCreateBlockNote,
 } from "@blocknote/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // Import your AI extension
 import { getAISlashMenuItems } from "@danjari/blocknote-ai-extension";
@@ -19,6 +19,12 @@ import { callAI } from "@/lib/Editor/aiClient";
 export default function Editor() {
   const [aiResponses, setAiResponses] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  // Ensure we're on the client side
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const editor = useCreateBlockNote({
     dictionary: en,
@@ -62,6 +68,10 @@ export default function Editor() {
       setIsLoading(false);
     }
   };
+
+  if (!isClient) {
+    return <div className="max-w-6xl mx-auto p-6">Loading editor...</div>;
+  }
 
   return (
     <div className="max-w-6xl mx-auto p-6">
