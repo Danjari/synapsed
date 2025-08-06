@@ -12,11 +12,11 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    const { action, text, prompt } = body;
+    const { action, text, prompt, fullContext } = body;
     
     // Choose AI provider based on env or request
     const provider = process.env.NEXT_PUBLIC_AI_PROVIDER || 'openai';
-    console.log('provider', provider, 'action:', action, 'text:', text?.substring(0, 50) + '...');
+    console.log('provider', provider, 'action:', action, 'text:', text?.substring(0, 50) + '...', 'contextLength:', fullContext?.length);
     
     let response;
     switch (provider) {

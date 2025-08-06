@@ -48,7 +48,14 @@ export default function Editor() {
     
     try {
       const selectedText = payload?.selectedText || "current content";
-      const aiResponse = await callAI(action, selectedText);
+      
+      // Get full document content as context
+      const fullContent = editor.document;
+      const fullContext = JSON.stringify(fullContent, null, 2);
+      
+      console.log("📄 Full context length:", fullContext.length);
+      
+      const aiResponse = await callAI(action, selectedText, fullContext);
       
       // Add to responses log
       setAiResponses(prev => [...prev, aiResponse]);
@@ -78,7 +85,7 @@ export default function Editor() {
       {/* Loading indicator */}
       {isLoading && (
         <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded">
-          �� AI is thinking...
+          AI is thinking...
         </div>
       )}
       
