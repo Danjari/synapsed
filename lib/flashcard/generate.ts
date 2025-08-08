@@ -2,72 +2,19 @@
 
 // Real Gemini client function for dynamic flashcard generation
 export async function callGemini(nodeTitle: string, markdownContent: string): Promise<string> {
-  const prompt = `You are an expert educational content creator specializing in creating engaging flashcards for students. 
-
-Create 15-20 high-quality flashcards based on the following lesson content. The flashcards should be diverse, engaging, and cover different aspects of the material.
-
-Lesson Title: ${nodeTitle}
-Lesson Content:
-${markdownContent}
-
-Requirements:
-1. Create 15-20 flashcards total
-2. Mix of concept cards (60%) and quiz-style cards (40%)
-3. Each card should have:
-   - A clear, specific question
-   - A comprehensive but concise answer
-   - A helpful hint (optional but encouraged)
-   - Relevant tags
-   - Type: either "concept" or "quiz"
-
-4. Concept cards should focus on:
-   - Key definitions and terms
-   - Important principles and concepts
-   - Core ideas and theories
-   - Fundamental relationships
-
-5. Quiz cards should focus on:
-   - Application scenarios
-   - Problem-solving situations
-   - Comparative analysis
-   - Practical implications
-
-6. Questions should be:
-   - Specific and focused
-   - Engaging and thought-provoking
-   - Appropriate for college-level students
-   - Varied in difficulty
-
-7. Answers should be:
-   - Accurate and comprehensive
-   - Clear and well-structured
-   - Educational and informative
-   - 2-4 sentences maximum
-
-Respond ONLY with valid JSON in this exact format:
-[
-  {
-    "question": "Specific question about the content",
-    "answer": "Clear, comprehensive answer",
-    "hint": "Optional helpful hint",
-    "tags": ["relevant", "tags"],
-    "type": "concept"
-  }
-]`;
-
   try {
-    // Use the existing Gemini helper from the editorAI system
-    const { callGemini: callGeminiHelper } = await import('../../app/api/editorAi/helpers');
-    const response = await callGeminiHelper(prompt);
-    
-    // Validate that response is valid JSON
-    try {
-      JSON.parse(response);
-      return response;
-    } catch {
-      console.error('AI response is not valid JSON:', response);
-      return generateFallbackCards(nodeTitle, markdownContent);
+    const response = await fetch('/api/flashcard/ai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nodeTitle, markdownContent }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`AI API request failed: ${response.status}`);
     }
+
+    const data = await response.json();
+    return data.content;
   } catch (error) {
     console.error('Gemini API error:', error);
     // Fallback to a more robust mock response based on content
