@@ -1,13 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
+interface FlashcardData {
+  question: string;
+  answer: string;
+  hint?: string;
+  tags?: string[];
+  type?: string;
+}
+
 export async function GET(
   request: NextRequest,
-  { params }: { params: { nodeId: string } }
+  { params }: { params: Promise<{ nodeId: string }> }
 ) {
   try {
+    const { nodeId } = await params;
     const deck = await prisma.flashcardDeck.findUnique({
-      where: { nodeId: params.nodeId },
+      where: { nodeId },
       include: { cards: { orderBy: { order: 'asc' } } }
     });
     
@@ -17,24 +26,25 @@ export async function GET(
     
     return NextResponse.json(deck);
   } catch (error) {
-    console.error('Failed to fetch deck:', error);
+    console.error('Failed to fetch deck:', String(error));
     return NextResponse.json({ error: 'Failed to fetch deck' }, { status: 500 });
   }
 }
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { nodeId: string } }
+  { params }: { params: Promise<{ nodeId: string }> }
 ) {
   try {
+    const { nodeId } = await params;
     const { cards } = await request.json();
     
     const deck = await prisma.flashcardDeck.update({
-      where: { nodeId: params.nodeId },
+      where: { nodeId },
       data: {
         cards: {
           deleteMany: {},
-          create: cards.map((card: any, index: number) => ({
+          create: cards.map((card: FlashcardData, index: number) => ({
             question: card.question,
             answer: card.answer,
             hint: card.hint || null,
@@ -49,7 +59,7 @@ export async function PATCH(
     
     return NextResponse.json(deck);
   } catch (error) {
-    console.error('Failed to update deck:', error);
+    console.error('Failed to update deck:', String(error));
     return NextResponse.json({ error: 'Failed to update deck' }, { status: 500 });
   }
 } 

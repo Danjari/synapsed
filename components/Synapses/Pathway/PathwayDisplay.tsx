@@ -25,6 +25,9 @@ import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
 import { useSession } from 'next-auth/react';
 import { useParams } from 'next/navigation';
+import { FlashcardsPanel } from '@/components/flashcard/FlashcardsPanel';
+import { Button } from '@/components/ui/button';
+import { BookOpen } from 'lucide-react';
 
 SyntaxHighlighter.registerLanguage('javascript', js);
 
@@ -66,6 +69,7 @@ function PathwayFlow() {
   } = usePathwayStore(useShallow(selector));
   
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
+  const [showFlashcards, setShowFlashcards] = useState(false);
   const { data: session } = useSession();
   const { classId } = useParams();
   const studentId = session?.user?.id;
@@ -170,13 +174,24 @@ function PathwayFlow() {
         <h2 className="text-xl font-bold truncate pr-8">
           {(selectedNode.data as PathwayNodeData).title}
         </h2>
-        <button
-          onClick={() => setSelectedNode(null)}
-          className="text-2xl text-gray-500 hover:text-gray-800"
-          aria-label="Close"
-        >
-          ×
-        </button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowFlashcards(!showFlashcards)}
+            className="flex items-center gap-2"
+          >
+            <BookOpen className="w-4 h-4" />
+            {showFlashcards ? 'Content' : 'Flashcards'}
+          </Button>
+          <button
+            onClick={() => setSelectedNode(null)}
+            className="text-2xl text-gray-500 hover:text-gray-800"
+            aria-label="Close"
+          >
+            ×
+          </button>
+        </div>
       </div>
       
       <div 
@@ -188,42 +203,51 @@ function PathwayFlow() {
           maxHeight: 'calc(80vh - 70px)' // Subtract header height
         }}
       >
-        <ReactMarkdown
-          remarkPlugins={[remarkMath]}
-          rehypePlugins={[rehypeKatex]}
-          components={{
-            code: ({ inline, className, children = '', ...props }: {
-              inline?: boolean;
-              className?: string;
-              children?: React.ReactNode;
-            }) => {
-              const match = /language-(\w+)/.exec(className || '');
-              return !inline && match ? (
-                <SyntaxHighlighter
-                  language={match[1]}
-                  PreTag="div"
-                  wrapLines={true}
-                  {...props}
-                  style={{
-                    ...atomOneLight,
-                    'pre': {
-                      maxWidth: '100%',
-                      overflow: 'auto'
-                    }
-                  }}
-                >
-                  {String(children).replace(/\n$/, '')}
-                </SyntaxHighlighter>
-              ) : (
-                <code className={className} {...props}>
-                  {children}
-                </code>
-              );
-            }
-          }}
-        >
-          {(selectedNode.data as PathwayNodeData).markdownContent || 'No content available.'}
-        </ReactMarkdown>
+        {showFlashcards ? (
+          <FlashcardsPanel
+            nodeId={selectedNode.id}
+            nodeTitle={(selectedNode.data as PathwayNodeData).title}
+            markdownContent={(selectedNode.data as PathwayNodeData).markdownContent || ''}
+            quizQuestions={[]} // You can add quiz questions here if available
+          />
+        ) : (
+          <ReactMarkdown
+            remarkPlugins={[remarkMath]}
+            rehypePlugins={[rehypeKatex]}
+            components={{
+              code: ({ inline, className, children = '', ...props }: {
+                inline?: boolean;
+                className?: string;
+                children?: React.ReactNode;
+              }) => {
+                const match = /language-(\w+)/.exec(className || '');
+                return !inline && match ? (
+                  <SyntaxHighlighter
+                    language={match[1]}
+                    PreTag="div"
+                    wrapLines={true}
+                    {...props}
+                    style={{
+                      ...atomOneLight,
+                      'pre': {
+                        maxWidth: '100%',
+                        overflow: 'auto'
+                      }
+                    }}
+                  >
+                    {String(children).replace(/\n$/, '')}
+                  </SyntaxHighlighter>
+                ) : (
+                  <code className={className} {...props}>
+                    {children}
+                  </code>
+                );
+              }
+            }}
+          >
+            {(selectedNode.data as PathwayNodeData).markdownContent || 'No content available.'}
+          </ReactMarkdown>
+        )}
       </div>
     </div>
   </div>

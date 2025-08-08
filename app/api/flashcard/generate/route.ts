@@ -1,8 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
+interface FlashcardData {
+  question: string;
+  answer: string;
+  hint?: string;
+  tags?: string[];
+  type?: string;
+}
+
 // Simple Gemini client function (you can replace this with your actual Gemini setup)
-async function callGemini(prompt: string): Promise<string> {
+async function callGemini(): Promise<string> {
   // For now, we'll use a mock response. Replace this with your actual Gemini API call
   const mockResponse = `[
     {
@@ -68,33 +76,67 @@ async function callGemini(prompt: string): Promise<string> {
 
 export async function POST(request: NextRequest) {
   try {
-    const { nodeId, nodeTitle, markdownContent, quizQuestions, prompt } = await request.json();
+    console.log('POST request received');
+    const body = await request.json();
+    console.log('Request body:', body);
     
-    // Check rate limiting (one generation per hour per node)
-    const existingDeck = await prisma.flashcardDeck.findUnique({
-      where: { nodeId },
-      include: { cards: true }
-    });
+    const { nodeId, nodeTitle, markdownContent } = body;
     
-    if (existingDeck && 
-        Date.now() - existingDeck.lastGenerated.getTime() < 3600000) {
-      return NextResponse.json({ error: 'Rate limited' }, { status: 429 });
+    if (!nodeId) {
+      return NextResponse.json({ error: 'nodeId is required' }, { status: 400 });
     }
     
+    console.log('Starting flashcard generation for nodeId:', nodeId);
+    
+    // Check if PathwayNode exists, if not create a temporary one for testing
+    let pathwayNode = await prisma.pathwayNode.findUnique({
+      where: { id: nodeId }
+    });
+    
+    if (!pathwayNode) {
+      // Create a temporary pathway and node for testing
+      const tempPathway = await prisma.learningPathway.create({
+        data: {
+          studentId: '507f1f77bcf86cd799439012', // Use a proper ObjectID
+          classId: '507f1f77bcf86cd799439013',   // Use a proper ObjectID
+          status: 'pending'
+        }
+      });
+      
+      pathwayNode = await prisma.pathwayNode.create({
+        data: {
+          id: nodeId,
+          pathwayId: tempPathway.id,
+          nodeId: nodeId,
+          title: nodeTitle || 'Test Node',
+          description: markdownContent || 'Test content',
+          type: 'topic',
+          difficulty: 'beginner',
+          duration: '30 minutes',
+          dependsOn: []
+        }
+      });
+    }
+    
+    console.log('About to call Gemini');
+    
     // Generate flashcards using Gemini
-    const aiResponse = await callGemini(prompt);
+    const aiResponse = await callGemini();
+    console.log('Gemini response received:', aiResponse);
     
     // Parse JSON response with error handling
     let cardsData;
     try {
       cardsData = JSON.parse(aiResponse);
+      console.log('Parsed cards data:', cardsData);
     } catch (parseError) {
-      console.error('Failed to parse AI response:', aiResponse);
+      console.error('Failed to parse AI response:', String(parseError));
       return NextResponse.json({ error: 'Invalid AI response format' }, { status: 500 });
     }
     
     // Validate cards structure
     if (!Array.isArray(cardsData)) {
+      console.error('Cards data is not an array:', cardsData);
       return NextResponse.json({ error: 'Invalid cards format' }, { status: 500 });
     }
     
@@ -106,7 +148,7 @@ export async function POST(request: NextRequest) {
         lastGenerated: new Date(),
         cards: {
           deleteMany: {},
-          create: cardsData.map((card: any, index: number) => ({
+          create: cardsData.map((card: FlashcardData, index: number) => ({
             question: card.question,
             answer: card.answer,
             hint: card.hint || null,
@@ -120,7 +162,7 @@ export async function POST(request: NextRequest) {
         nodeId,
         title: nodeTitle,
         cards: {
-          create: cardsData.map((card: any, index: number) => ({
+          create: cardsData.map((card: FlashcardData, index: number) => ({
             question: card.question,
             answer: card.answer,
             hint: card.hint || null,
@@ -135,7 +177,7 @@ export async function POST(request: NextRequest) {
     
     return NextResponse.json(deck);
   } catch (error) {
-    console.error('Flashcard generation error:', error);
+    console.error('Flashcard generation error:', String(error));
     return NextResponse.json({ error: 'Generation failed' }, { status: 500 });
   }
 } 
