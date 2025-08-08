@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { callGemini } from '@/lib/flashcard/generate';
 
 interface FlashcardData {
   question: string;
@@ -7,71 +8,6 @@ interface FlashcardData {
   hint?: string;
   tags?: string[];
   type?: string;
-}
-
-// Simple Gemini client function (you can replace this with your actual Gemini setup)
-async function callGemini(): Promise<string> {
-  // For now, we'll use a mock response. Replace this with your actual Gemini API call
-  const mockResponse = `[
-    {
-      "question": "What is the main focus of this lesson?",
-      "answer": "Understanding and applying the core concepts presented in this lesson to build a strong foundation for future learning.",
-      "hint": "Think about the primary learning objective",
-      "tags": ["concept", "basics"],
-      "type": "concept"
-    },
-    {
-      "question": "How should you apply the knowledge from this lesson?",
-      "answer": "By connecting theoretical concepts to practical scenarios and using the knowledge as building blocks for more advanced topics.",
-      "hint": "Consider real-world applications",
-      "tags": ["concept", "application"],
-      "type": "concept"
-    },
-    {
-      "question": "What are the key principles discussed in this lesson?",
-      "answer": "The lesson covers fundamental principles that form the basis for understanding more complex topics in this subject area.",
-      "hint": "Look for recurring themes",
-      "tags": ["concept", "principles"],
-      "type": "concept"
-    },
-    {
-      "question": "How does this lesson connect to previous topics?",
-      "answer": "This lesson builds upon foundational knowledge and creates connections to previously learned concepts.",
-      "hint": "Think about dependencies",
-      "tags": ["concept", "connections"],
-      "type": "concept"
-    },
-    {
-      "question": "What practical skills can you develop from this lesson?",
-      "answer": "You can develop analytical thinking, problem-solving abilities, and practical application skills.",
-      "hint": "Focus on actionable skills",
-      "tags": ["quiz", "skills"],
-      "type": "quiz"
-    },
-    {
-      "question": "Which of the following best describes the main concept?",
-      "answer": "The main concept involves understanding fundamental principles and their practical applications.",
-      "hint": "This question will appear in the quiz",
-      "tags": ["quiz", "assessment"],
-      "type": "quiz"
-    },
-    {
-      "question": "What is the relationship between theory and practice in this lesson?",
-      "answer": "Theory provides the foundation while practice helps reinforce understanding and develop skills.",
-      "hint": "Consider the balance between concepts and application",
-      "tags": ["quiz", "theory"],
-      "type": "quiz"
-    },
-    {
-      "question": "How can you measure your understanding of this lesson?",
-      "answer": "Through self-assessment, practice exercises, and applying concepts to real-world scenarios.",
-      "hint": "Think about evaluation methods",
-      "tags": ["quiz", "evaluation"],
-      "type": "quiz"
-    }
-  ]`;
-  
-  return mockResponse;
 }
 
 export async function POST(request: NextRequest) {
@@ -121,7 +57,7 @@ export async function POST(request: NextRequest) {
     console.log('About to call Gemini');
     
     // Generate flashcards using Gemini
-    const aiResponse = await callGemini();
+    const aiResponse = await callGemini(nodeTitle, markdownContent);
     console.log('Gemini response received:', aiResponse);
     
     // Parse JSON response with error handling

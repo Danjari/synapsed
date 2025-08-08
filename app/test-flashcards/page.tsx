@@ -1,6 +1,6 @@
 'use client';
 
-import { FlashcardsPanel } from '@/components/flashcard/FlashcardsPanel';
+import { FlashcardsPanel } from '@/components/Lesson/flashcard/FlashcardsPanel';
 
 export default function TestFlashcardsPage() {
   // Use a proper 24-character ObjectID for testing
@@ -50,7 +50,6 @@ The OS controls and coordinates hardware devices and their drivers.
             nodeId={testNodeId}
             nodeTitle={testNodeTitle}
             markdownContent={testMarkdownContent}
-            quizQuestions={[]}
           />
         </div>
       </div>
