@@ -33,6 +33,9 @@ model User {
   enrollments ClassEnrollment[]
 
   surveyResponse StudentSurveyResponse?
+
+  // Flashcard progress
+  nodeProgress NodeProgress[]
 }
 
 model Class {
@@ -184,4 +187,48 @@ model PathwayNode {
   quizScore         Int?    // nullable, stores quiz result if applicable
 
   createdAt     DateTime @default(now())
+
+  // Flashcard relations
+  flashcardDeck FlashcardDeck?
+  progress      NodeProgress[]
 }
+
+model FlashcardDeck {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  nodeId        String   @unique @db.ObjectId  // References PathwayNode.id
+  node          PathwayNode @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+  title         String
+  cards         Flashcard[]
+  lastGenerated DateTime @default(now())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Flashcard {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  deckId    String   @db.ObjectId
+  deck      FlashcardDeck @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  question  String
+  answer    String
+  hint      String?
+  tags      String[] // Array of tags
+  order     Int      // For reordering
+  type      String   // "concept" or "quiz"
+  createdAt DateTime @default(now())
+}
+
+model NodeProgress {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  nodeId          String   @db.ObjectId
+  node            PathwayNode @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+  studentId       String   @db.ObjectId
+  student         User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  flashMasteredIds String[] // Array of flashcard IDs the student has mastered
+  quizScore       Int?
+  completedAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([nodeId, studentId])
+}
+
