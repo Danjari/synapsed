@@ -25,7 +25,7 @@ import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
 import { useSession } from 'next-auth/react';
 import { useParams } from 'next/navigation';
-import { FlashcardsPanel } from '@/components/flashcard/FlashcardsPanel';
+import { FlashcardsPanel } from '@/components/Lesson/flashcard/FlashcardsPanel';
 import { Button } from '@/components/ui/button';
 import { BookOpen } from 'lucide-react';
 
@@ -208,7 +208,7 @@ function PathwayFlow() {
             nodeId={selectedNode.id}
             nodeTitle={(selectedNode.data as PathwayNodeData).title}
             markdownContent={(selectedNode.data as PathwayNodeData).markdownContent || ''}
-            quizQuestions={[]} // You can add quiz questions here if available
+            // quizQuestions={[]} // You can add quiz questions here if available
           />
         ) : (
           <ReactMarkdown

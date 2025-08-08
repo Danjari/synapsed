@@ -9,7 +9,6 @@ interface FlashcardsPanelProps {
   nodeId: string;
   nodeTitle: string;
   markdownContent: string;
-  quizQuestions?: any[];
 }
 
 interface Flashcard {
@@ -21,12 +20,11 @@ interface Flashcard {
   tags: string[];
 }
 
-export function FlashcardsPanel({ nodeId, nodeTitle, markdownContent, quizQuestions }: FlashcardsPanelProps) {
-  const { deck, loading, error, generateDeck, updateProgress } = useFlashDeck(
+export function FlashcardsPanel({ nodeId, nodeTitle, markdownContent }: FlashcardsPanelProps) {
+  const { deck, loading, error, generateDeck } = useFlashDeck(
     nodeId, 
     nodeTitle, 
     markdownContent, 
-    quizQuestions
   );
 
   const [stackArray, setStackArray] = useState<number[]>([]);
@@ -122,7 +120,7 @@ export function FlashcardsPanel({ nodeId, nodeTitle, markdownContent, quizQuesti
     returningCardElement.style.transition = "none";
 
     // Force layout
-    returningCardElement.offsetHeight;
+    void returningCardElement.offsetHeight;
 
     // Animate returning card in
     setTimeout(() => {
