@@ -14,8 +14,10 @@ type PrismaWithLessonNote = PrismaClient & {
 
 const prismaLN = prisma as unknown as PrismaWithLessonNote;
 
+type NodeRecord = { id: string; title: string; nodeId?: string };
+
 // Resolve the student's pathway node (DB id) from (studentId, classId, nodeKey)
-async function resolvePathwayNode(studentId: string, classId: string, nodeKey: string) {
+async function resolvePathwayNode(studentId: string, classId: string, nodeKey: string): Promise<NodeRecord | null> {
   const pathway = await prisma.learningPathway.findFirst({
     where: { studentId, classId },
     select: { id: true },
@@ -23,9 +25,9 @@ async function resolvePathwayNode(studentId: string, classId: string, nodeKey: s
   if (!pathway) return null;
   const node = await prisma.pathwayNode.findFirst({
     where: { pathwayId: pathway.id, nodeId: nodeKey },
-    select: { id: true, title: true },
+    select: { id: true, title: true, nodeId: true },
   });
-  return node;
+  return node as NodeRecord | null;
 }
 
 export async function GET(request: NextRequest) {
@@ -40,15 +42,15 @@ export async function GET(request: NextRequest) {
     const nodeKey = searchParams.get('nodeId') || '';
     const dbNodeId = searchParams.get('dbNodeId') || '';
 
-    if (!classId || !nodeKey) {
-      return NextResponse.json({ error: 'classId and nodeId are required' }, { status: 400 });
+    if (!classId || (!nodeKey && !dbNodeId)) {
+      return NextResponse.json({ error: 'classId and one of (nodeId, dbNodeId) are required' }, { status: 400 });
     }
 
     const studentId = session.user.id;
-    let node: { id: string; title: string } | null = null;
+    let node: NodeRecord | null = null;
     if (dbNodeId) {
-      const found = await prisma.pathwayNode.findFirst({ where: { id: dbNodeId }, select: { id: true, title: true } });
-      node = found as { id: string; title: string } | null;
+      const found = await prisma.pathwayNode.findFirst({ where: { id: dbNodeId }, select: { id: true, title: true, nodeId: true } });
+      node = found as NodeRecord | null;
     } else {
       node = await resolvePathwayNode(studentId, classId, nodeKey);
     }
@@ -70,7 +72,7 @@ export async function GET(request: NextRequest) {
         studentId,
         classId,
         pathwayNodeId: node.id,
-        nodeKey,
+        nodeKey: nodeKey || node.nodeId || '',
         title: node.title,
         content: [],
         aiEntries: [],
@@ -105,10 +107,10 @@ export async function PATCH(request: NextRequest) {
     }
 
     const studentId = session.user.id;
-    let node: { id: string; title: string } | null = null;
+    let node: NodeRecord | null = null;
     if (dbNodeId) {
-      const found = await prisma.pathwayNode.findFirst({ where: { id: dbNodeId }, select: { id: true, title: true } });
-      node = found as { id: string; title: string } | null;
+      const found = await prisma.pathwayNode.findFirst({ where: { id: dbNodeId }, select: { id: true, title: true, nodeId: true } });
+      node = found as NodeRecord | null;
     } else if (nodeKey) {
       node = await resolvePathwayNode(studentId, classId, nodeKey);
     }
@@ -147,7 +149,7 @@ export async function PATCH(request: NextRequest) {
         studentId,
         classId,
         pathwayNodeId: node.id,
-        nodeKey,
+        nodeKey: nodeKey || node.nodeId || '',
         title: title ?? node.title,
         content,
         contentText,
@@ -171,21 +173,28 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { classId, nodeId: nodeKey, action, selectedText, outputBlocks, outputMarkdown } = body as {
+    const { classId, nodeId: nodeKey, dbNodeId, action, selectedText, outputBlocks, outputMarkdown } = body as {
       classId: string;
-      nodeId: string;
+      nodeId?: string;
+      dbNodeId?: string;
       action: string;
       selectedText?: string;
       outputBlocks: unknown;
       outputMarkdown?: string;
     };
 
-    if (!classId || !nodeKey || !action || outputBlocks === undefined) {
-      return NextResponse.json({ error: 'classId, nodeId, action, outputBlocks are required' }, { status: 400 });
+    if (!classId || (!nodeKey && !dbNodeId) || !action || outputBlocks === undefined) {
+      return NextResponse.json({ error: 'classId and one of (nodeId, dbNodeId), action, outputBlocks are required' }, { status: 400 });
     }
 
     const studentId = session.user.id;
-    const node = await resolvePathwayNode(studentId, classId, nodeKey);
+    let node: NodeRecord | null = null;
+    if (dbNodeId) {
+      const found = await prisma.pathwayNode.findFirst({ where: { id: dbNodeId }, select: { id: true, title: true, nodeId: true } });
+      node = found as NodeRecord | null;
+    } else if (nodeKey) {
+      node = await resolvePathwayNode(studentId, classId, nodeKey);
+    }
     if (!node) {
       return NextResponse.json({ error: 'Pathway node not found' }, { status: 404 });
     }
@@ -216,7 +225,7 @@ export async function POST(request: NextRequest) {
             studentId,
             classId,
             pathwayNodeId: node.id,
-            nodeKey,
+            nodeKey: nodeKey || node.nodeId || '',
             title: undefined,
             content: [],
             aiEntries: [
