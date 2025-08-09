@@ -4,8 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 type SurveyAnswer = { questionId: string; answer: string };
 type SurveyQuestion = { id: string; text: string; [key: string]: unknown };
 
-export async function GET(_: NextRequest, { params }: { params: { classId: string } }) {
-  const { classId } = params;
+export async function GET(_: NextRequest, { params }: { params: Promise<{ classId: string }> }) {
+  const { classId } = await params;
 
   try {
     const responses = await prisma.studentSurveyResponse.findMany({
