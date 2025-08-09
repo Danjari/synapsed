@@ -36,6 +36,9 @@ model User {
 
   // Flashcard progress
   nodeProgress NodeProgress[]
+
+  // Lesson notes authored by the user
+  lessonNotes LessonNote[]
 }
 
 model Class {
@@ -58,6 +61,9 @@ model Class {
   // survey? 
   survey        Survey?
   studentSurveyResponses StudentSurveyResponse[]
+
+  // Lesson notes in this class
+  lessonNotes LessonNote[]
 }
 
 model Account {
@@ -191,6 +197,9 @@ model PathwayNode {
   // Flashcard relations
   flashcardDeck FlashcardDeck?
   progress      NodeProgress[]
+
+  // Lesson notes attached to this node
+  lessonNotes LessonNote[]
 }
 
 model FlashcardDeck {
@@ -230,5 +239,32 @@ model NodeProgress {
   updatedAt       DateTime @updatedAt
 
   @@unique([nodeId, studentId])
+}
+
+model LessonNote {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  studentId      String   @db.ObjectId
+  student        User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  classId        String   @db.ObjectId
+  class          Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  pathwayNodeId  String   @db.ObjectId
+  node           PathwayNode @relation(fields: [pathwayNodeId], references: [id], onDelete: Cascade)
+
+  // Stable string identifier for the node within the pathway (e.g., "probability_basics")
+  nodeKey        String
+  title          String?
+
+  // BlockNote document JSON
+  content        Json
+  contentText    String?
+  wordCount      Int?
+
+  // Store an array of AI entries as JSON (we will manage array updates in app logic)
+  aiEntries      Json
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([studentId, classId, pathwayNodeId])
 }
 

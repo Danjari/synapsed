@@ -1,6 +1,6 @@
 'use client';
 
-import { filterSuggestionItems } from "@blocknote/core";
+import { filterSuggestionItems, type PartialBlock } from "@blocknote/core";
 import "@blocknote/core/fonts/inter.css";
 import { en } from "@blocknote/core/locales";
 import { BlockNoteView } from "@blocknote/mantine";
@@ -16,7 +16,14 @@ import { useState, useEffect } from "react";
 import { getAISlashMenuItems } from "@danjari/blocknote-ai-extension";
 import { callAI } from "@/lib/Editor/aiClient";
 
-export default function Editor() {
+type EditorProps = {
+  initialContent?: PartialBlock[];
+  onChange?: (content: unknown) => void;
+  onAIEntry?: (payload: { action: string; selectedText?: string; outputBlocks: unknown; outputMarkdown?: string }) => void;
+  title?: string;
+};
+
+export default function Editor({ initialContent, onChange, onAIEntry, title }: EditorProps) {
   //const [aiResponses, setAiResponses] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isClient, setIsClient] = useState(false);
@@ -26,19 +33,24 @@ export default function Editor() {
     setIsClient(true);
   }, []);
 
+  const defaultBlocks: PartialBlock[] = [
+    {
+      type: "heading",
+      props: { level: 1 },
+      content: title || "Lesson",
+    },
+    {
+      type: "paragraph",
+      content: "Start taking your notes here. Type '/' to see AI commands.",
+    },
+  ];
+
   const editor = useCreateBlockNote({
     dictionary: en,
-    initialContent: [
-      {
-        type: "heading",
-        props: { level: 1 },
-        content: "AI-Powered BlockNote Editor",
-      },
-      {
-        type: "paragraph",
-        content: "Type '/' to see AI commands. Select text and try /explain, /summarize, /quiz-me, or /diagram.",
-      },
-    ],
+    initialContent:
+      Array.isArray(initialContent) && initialContent.length > 0
+        ? initialContent
+        : defaultBlocks,
   });
 
   const handleAICommand = async (action: string, payload?: { selectedText?: string }) => {
@@ -67,6 +79,9 @@ export default function Editor() {
       
       // Parse markdown using BlockNote's built-in parser
       const blocks = await editor.tryParseMarkdownToBlocks(aiResponse);
+
+      // Log AI entry if requested by parent
+      onAIEntry?.({ action, selectedText, outputBlocks: blocks, outputMarkdown: aiResponse });
       
       // Insert the parsed blocks
       editor.insertBlocks(blocks, editor.getTextCursorPosition().block, "after");
@@ -126,6 +141,7 @@ export default function Editor() {
         <BlockNoteView
           editor={editor}
           slashMenu={false}
+          onChange={() => onChange?.(editor.document)}
         >
           <SuggestionMenuController
             triggerCharacter="/"
