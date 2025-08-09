@@ -64,6 +64,7 @@ function PathwayFlow() {
   const studentId = session?.user?.id;
   const classIdStr = Array.isArray(classId) ? classId[0] : classId;
   const [pathwayExists, setPathwayExists] = useState<boolean | null>(null);
+  const [isNavigating, setIsNavigating] = useState(false);
 
   // Fetch pathway on initial load
   useEffect(() => {
@@ -84,6 +85,7 @@ function PathwayFlow() {
     event.stopPropagation();
     const nodeTitle = (node.data as PathwayNodeData).title;
     if (classIdStr) {
+      setIsNavigating(true);
       router.push(`/class/${classIdStr}/lesson/${node.id}?nodeTitle=${encodeURIComponent(nodeTitle)}`);
     }
   };
@@ -133,7 +135,13 @@ function PathwayFlow() {
         </div>
       )}
 
-      {/* Node click now navigates to a dedicated lesson page */}
+      {/* Navigation spinner overlay */}
+      {isNavigating && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm">
+          <div className="h-10 w-10 rounded-full border-4 border-gray-300 border-t-gray-700 animate-spin" />
+          <p className="mt-3 text-sm text-gray-700">Loading lesson…</p>
+        </div>
+      )}
     </div>
   );
 }
