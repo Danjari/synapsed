@@ -23,7 +23,7 @@ export default function LessonPage() {
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  type LessonNoteResponse = { content?: unknown } | null;
+  type LessonNoteResponse = { content?: unknown; contentText?: string } | null;
   const [note, setNote] = useState<LessonNoteResponse>(null);
   const saveTimer = useRef<NodeJS.Timeout | null>(null);
 
@@ -54,11 +54,15 @@ export default function LessonPage() {
     if (!classId || !nodeId) return;
     setSaving(true);
     try {
-      await fetch('/api/lesson-notes', {
+      const res = await fetch('/api/lesson-notes', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ classId, dbNodeId: nodeId, content, title }),
       });
+      if (res.ok) {
+        const updated = await res.json();
+        setNote(updated);
+      }
     } finally {
       setSaving(false);
     }
@@ -200,7 +204,7 @@ export default function LessonPage() {
               )}
               {viewMode === 'flashcards' && (
                 <div className="h-full">
-                  <FlashcardsPanel nodeId={nodeId || ''} nodeTitle={nodeTitle || ''} markdownContent={''} />
+                  <FlashcardsPanel nodeId={nodeId || ''} nodeTitle={nodeTitle || ''} markdownContent={note?.contentText ?? ''} />
                 </div>
               )}
               {viewMode === 'summary' && (

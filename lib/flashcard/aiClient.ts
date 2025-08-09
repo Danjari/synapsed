@@ -1,4 +1,4 @@
-export async function generateFlashcards(nodeTitle: string, markdownContent: string, quizQuestions?: any[]) {
+export async function generateFlashcards(nodeId: string, nodeTitle: string, markdownContent: string, quizQuestions?: any[]) {
   const prompt = `You are QuizletGPT. Create 8 flash cards covering the following lesson. 
   
   Lesson Title: ${nodeTitle}
@@ -28,6 +28,7 @@ export async function generateFlashcards(nodeTitle: string, markdownContent: str
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ 
+      nodeId,
       nodeTitle, 
       markdownContent, 
       quizQuestions,

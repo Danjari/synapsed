@@ -35,7 +35,7 @@ export function useFlashDeck(nodeId: string, nodeTitle?: string, markdownContent
     setLoading(true);
     setError(null);
     try {
-      const data = await generateFlashcards(nodeTitle, markdownContent, quizQuestions);
+      const data = await generateFlashcards(nodeId, nodeTitle, markdownContent, quizQuestions);
       setDeck(data);
     } catch (err: any) {
       setError(err.message);
