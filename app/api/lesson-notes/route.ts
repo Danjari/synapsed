@@ -38,13 +38,20 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const classId = searchParams.get('classId') || '';
     const nodeKey = searchParams.get('nodeId') || '';
+    const dbNodeId = searchParams.get('dbNodeId') || '';
 
     if (!classId || !nodeKey) {
       return NextResponse.json({ error: 'classId and nodeId are required' }, { status: 400 });
     }
 
     const studentId = session.user.id;
-    const node = await resolvePathwayNode(studentId, classId, nodeKey);
+    let node: { id: string; title: string } | null = null;
+    if (dbNodeId) {
+      const found = await prisma.pathwayNode.findFirst({ where: { id: dbNodeId }, select: { id: true, title: true } });
+      node = found as { id: string; title: string } | null;
+    } else {
+      node = await resolvePathwayNode(studentId, classId, nodeKey);
+    }
     if (!node) {
       return NextResponse.json({ error: 'Pathway node not found' }, { status: 404 });
     }
@@ -85,19 +92,26 @@ export async function PATCH(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { classId, nodeId: nodeKey, content, title } = body as {
+    const { classId, nodeId: nodeKey, dbNodeId, content, title } = body as {
       classId: string;
-      nodeId: string;
+      nodeId?: string;
+      dbNodeId?: string;
       content: unknown;
       title?: string;
     };
 
-    if (!classId || !nodeKey || content === undefined) {
-      return NextResponse.json({ error: 'classId, nodeId and content are required' }, { status: 400 });
+    if (!classId || (!nodeKey && !dbNodeId) || content === undefined) {
+      return NextResponse.json({ error: 'classId and one of (nodeId, dbNodeId) and content are required' }, { status: 400 });
     }
 
     const studentId = session.user.id;
-    const node = await resolvePathwayNode(studentId, classId, nodeKey);
+    let node: { id: string; title: string } | null = null;
+    if (dbNodeId) {
+      const found = await prisma.pathwayNode.findFirst({ where: { id: dbNodeId }, select: { id: true, title: true } });
+      node = found as { id: string; title: string } | null;
+    } else if (nodeKey) {
+      node = await resolvePathwayNode(studentId, classId, nodeKey);
+    }
     if (!node) {
       return NextResponse.json({ error: 'Pathway node not found' }, { status: 404 });
     }

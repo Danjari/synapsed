@@ -84,9 +84,12 @@ function PathwayFlow() {
   const handleNodeClick = (event: React.MouseEvent, node: Node) => {
     event.stopPropagation();
     const nodeTitle = (node.data as PathwayNodeData).title;
+    const dbId = (node.data as PathwayNodeData).dbId;
     if (classIdStr) {
       setIsNavigating(true);
-      router.push(`/class/${classIdStr}/lesson/${node.id}?nodeTitle=${encodeURIComponent(nodeTitle)}`);
+      const idToUse = dbId ?? node.id;
+      console.log('idToUse', idToUse);
+      router.push(`/class/${classIdStr}/lesson/${idToUse}?nodeTitle=${encodeURIComponent(nodeTitle)}`);
     }
   };
   
