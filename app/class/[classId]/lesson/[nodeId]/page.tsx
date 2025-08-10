@@ -85,7 +85,7 @@ export default function LessonPage() {
   }, [classId, nodeId]);
 
   return (
-    <div className="h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex flex-col overflow-hidden">
+    <div className=" bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex flex-col overflow-hidden">
       {/* Top Bar */}
       <div className={`transition-all duration-300 ease-in-out ${showTopBar ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'} fixed top-0 left-0 right-0 z-40`}>
         <div className="relative">
@@ -177,10 +177,10 @@ export default function LessonPage() {
       )}
 
       {/* Main Content Area */}
-      <div className={`flex flex-1 min-h-0 relative transition-all duration-300 ${showTopBar ? 'pt-24' : 'pt-0'}`}>
+      <div className={`h-screen-min flex flex-1 min-h-0 relative transition-all duration-300 ${showTopBar ? 'pt-24' : 'pt-0'}`}>
         <div className="flex-1 flex flex-col min-h-0">
           <div className="flex-1 p-6 overflow-hidden min-h-0">
-            <div className="bg-white rounded-xl border border-slate-200 shadow-lg overflow-hidden h-full">
+            <div className=" overflow-hidden h-full">
               {viewMode === 'overview' && (
                 <div className="h-full p-6 text-slate-600">Overview coming soon…</div>
               )}
@@ -203,7 +203,7 @@ export default function LessonPage() {
                 <div className="h-full p-6 text-slate-600">Content coming soon…</div>
               )}
               {viewMode === 'flashcards' && (
-                <div className="h-full">
+                <div className="h-full bg-white rounded-xl border border-slate-200 shadow-lg overflow-hidden min-h-[600px]">
                   <FlashcardsPanel nodeId={nodeId || ''} nodeTitle={nodeTitle || ''} markdownContent={note?.contentText ?? ''} />
                 </div>
               )}
