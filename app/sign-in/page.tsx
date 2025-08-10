@@ -19,14 +19,21 @@ export default function SignInPage() {
   const router = useRouter();
 
   useEffect(() => {
+    console.log('Auth status:', status);
+    console.log('Session:', session);
+    
     if (status === 'authenticated') {
       const role = (session?.user as UserWithRole)?.role;
+      console.log('User role:', role);
 
       if (!role) {
+        console.log('Redirecting to choose-role');
         router.push('/choose-role');
       } else if (role === 'STUDENT') {
+        console.log('Redirecting to student dashboard');
         router.push('/student/dashboard');
       } else {
+        console.log('Redirecting to teacher dashboard');
         router.push('/teacher/dashboard');
       }
     }
