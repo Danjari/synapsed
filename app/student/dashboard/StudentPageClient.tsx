@@ -10,12 +10,23 @@ export default function StudentPageClient() {
   const router = useRouter();
 
   if (status === "loading") {
-    return null;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-xl font-semibold animate-pulse">Loading...</div>
+      </div>
+    );
   }
 
   if (!session) {
-    router.replace("/sign-in");
-    return null;
+    // Add a small delay to prevent immediate redirect during race condition
+    setTimeout(() => {
+      router.replace("/sign-in");
+    }, 100);
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-xl font-semibold animate-pulse">Redirecting...</div>
+      </div>
+    );
   }
 
   return (

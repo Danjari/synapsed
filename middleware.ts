@@ -4,7 +4,12 @@ import { getToken } from 'next-auth/jwt';
 const PUBLIC_FILE = /\.(.*)$/;
 
 export async function middleware(req: NextRequest) {
-  const token = await getToken({ req,secret: process.env.AUTH_SECRET  });
+  // Add a small delay to allow session to load (helps with race conditions)
+  const token = await getToken({ 
+    req, 
+    secret: process.env.AUTH_SECRET,
+    secureCookie: process.env.NODE_ENV === 'production'
+  });
 
   const { pathname } = req.nextUrl;
 
@@ -15,6 +20,11 @@ export async function middleware(req: NextRequest) {
     pathname.includes('.') ||
     PUBLIC_FILE.test(pathname)
   ) {
+    return NextResponse.next();
+  }
+
+  // Allow access to sign-in and choose-role pages
+  if (pathname === '/sign-in' || pathname === '/choose-role') {
     return NextResponse.next();
   }
 
