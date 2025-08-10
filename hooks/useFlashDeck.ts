@@ -1,8 +1,34 @@
 import { useState, useEffect } from 'react';
 import { generateFlashcards } from '@/lib/flashcard/aiClient';
 
-export function useFlashDeck(nodeId: string, nodeTitle?: string, markdownContent?: string, quizQuestions?: any[]) {
-  const [deck, setDeck] = useState<any>(null);
+interface Flashcard {
+  id: string;
+  question: string;
+  answer: string;
+  hint?: string;
+  tags: string[];
+  type: string;
+  order: number;
+}
+
+interface FlashcardDeck {
+  id: string;
+  nodeId: string;
+  title: string;
+  cards: Flashcard[];
+  lastGenerated: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface QuizQuestion {
+  question: string;
+  answer: string;
+  options?: string[];
+}
+
+export function useFlashDeck(nodeId: string, nodeTitle?: string, markdownContent?: string, quizQuestions?: QuizQuestion[]) {
+  const [deck, setDeck] = useState<FlashcardDeck | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -19,8 +45,8 @@ export function useFlashDeck(nodeId: string, nodeTitle?: string, markdownContent
       } else {
         setError('Failed to fetch deck');
       }
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch deck');
     } finally {
       setLoading(false);
     }
@@ -37,8 +63,8 @@ export function useFlashDeck(nodeId: string, nodeTitle?: string, markdownContent
     try {
       const data = await generateFlashcards(nodeId, nodeTitle, markdownContent, quizQuestions);
       setDeck(data);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to generate deck');
     } finally {
       setLoading(false);
     }
@@ -60,7 +86,7 @@ export function useFlashDeck(nodeId: string, nodeTitle?: string, markdownContent
     if (nodeId) {
       fetchDeck();
     }
-  }, [nodeId]);
+  }, [nodeId, fetchDeck]);
 
   return { 
     deck, 
