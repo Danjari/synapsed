@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
@@ -12,7 +12,8 @@ export async function GET(
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const classId = params.id;
+    const { id } = await params;
+    const classId = id;
     const enrollments = await prisma.classEnrollment.findMany({
       where: {
         classId: classId,

@@ -33,6 +33,12 @@ model User {
   enrollments ClassEnrollment[]
 
   surveyResponse StudentSurveyResponse?
+
+  // Flashcard progress
+  nodeProgress NodeProgress[]
+
+  // Lesson notes authored by the user
+  lessonNotes LessonNote[]
 }
 
 model Class {
@@ -55,6 +61,9 @@ model Class {
   // survey? 
   survey        Survey?
   studentSurveyResponses StudentSurveyResponse[]
+
+  // Lesson notes in this class
+  lessonNotes LessonNote[]
 }
 
 model Account {
@@ -184,4 +193,78 @@ model PathwayNode {
   quizScore         Int?    // nullable, stores quiz result if applicable
 
   createdAt     DateTime @default(now())
+
+  // Flashcard relations
+  flashcardDeck FlashcardDeck?
+  progress      NodeProgress[]
+
+  // Lesson notes attached to this node
+  lessonNotes LessonNote[]
 }
+
+model FlashcardDeck {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  nodeId        String   @unique @db.ObjectId  // References PathwayNode.id
+  node          PathwayNode @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+  title         String
+  cards         Flashcard[]
+  lastGenerated DateTime @default(now())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Flashcard {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  deckId    String   @db.ObjectId
+  deck      FlashcardDeck @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  question  String
+  answer    String
+  hint      String?
+  tags      String[] // Array of tags
+  order     Int      // For reordering
+  type      String   // "concept" or "quiz"
+  createdAt DateTime @default(now())
+}
+
+model NodeProgress {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  nodeId          String   @db.ObjectId
+  node            PathwayNode @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+  studentId       String   @db.ObjectId
+  student         User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  flashMasteredIds String[] // Array of flashcard IDs the student has mastered
+  quizScore       Int?
+  completedAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([nodeId, studentId])
+}
+
+model LessonNote {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  studentId      String   @db.ObjectId
+  student        User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  classId        String   @db.ObjectId
+  class          Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  pathwayNodeId  String   @db.ObjectId
+  node           PathwayNode @relation(fields: [pathwayNodeId], references: [id], onDelete: Cascade)
+
+  // Stable string identifier for the node within the pathway (e.g., "probability_basics")
+  nodeKey        String
+  title          String?
+
+  // BlockNote document JSON
+  content        Json
+  contentText    String?
+  wordCount      Int?
+
+  // Store an array of AI entries as JSON (we will manage array updates in app logic)
+  aiEntries      Json
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([studentId, classId, pathwayNodeId])
+}
+

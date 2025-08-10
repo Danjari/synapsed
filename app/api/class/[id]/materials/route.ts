@@ -2,8 +2,9 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 
-export async function GET(req: Request, { params }: { params: { classId: string } }) {
-  const { classId } = params;
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const classId = id;
 
   try {
     const materials = await prisma.classMaterial.findMany({

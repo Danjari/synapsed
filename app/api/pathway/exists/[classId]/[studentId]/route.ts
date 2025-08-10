@@ -3,9 +3,9 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(
   req: Request,
-  { params }: { params: { classId: string; studentId: string } }
+  { params }: { params: Promise<{ classId: string; studentId: string }> }
 ) {
-  const { classId, studentId } = params;
+  const { classId, studentId } = await params;
   if (!classId || !studentId) {
     return NextResponse.json({ exists: false });
   }

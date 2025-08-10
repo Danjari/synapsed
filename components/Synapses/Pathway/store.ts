@@ -21,6 +21,7 @@ import {
       duration?: string;
       resourceUrl?: string;
       markdownContent?: string; // Added new optional field for rich content
+      dbId?: string; // Database ID for this node
   };
 
   // Define pathway node type
@@ -100,6 +101,7 @@ import {
             difficulty: node.difficulty,
             duration: node.duration,
             markdownContent: node.markdownContent || 'Click to load content...',
+            dbId: node.id,
           }
         });
       });
