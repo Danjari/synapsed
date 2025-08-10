@@ -33,6 +33,9 @@ export async function middleware(req: NextRequest) {
   if (pathname.startsWith('/admin') && role !== 'ADMIN') {
     return NextResponse.redirect(new URL('/unauthorized', req.url));
   }
+  if (pathname.startsWith('/class') && role !== 'ADMIN' && role !== 'PROFESSOR' && role !== 'STUDENT') {
+    return NextResponse.redirect(new URL('/unauthorized', req.url));
+  }
 
   if (pathname.startsWith('/teacher') && role !== 'ADMIN' && role !== 'PROFESSOR') {
     return NextResponse.redirect(new URL('/unauthorized', req.url));
