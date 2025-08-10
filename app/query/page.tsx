@@ -1,9 +1,17 @@
 'use client';
 import { useState } from 'react';
 
+interface SearchResult {
+  metadata: {
+    page: number;
+    text?: string;
+    chunk?: string;
+  };
+}
+
 export default function QueryTestPage() {
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState<SearchResult[]>([]);
 
   const search = async () => {
     const res = await fetch('/api/query', {
@@ -31,7 +39,7 @@ export default function QueryTestPage() {
       <button onClick={search} className="bg-indigo-600 text-white px-4 py-2 rounded">Search</button>
 
       <ul className="mt-6 space-y-4 text-sm">
-        {results.map((res: any, i) => (
+        {results.map((res: SearchResult, i) => (
           <li key={i} className="p-2 border rounded">
             <strong>Page {res.metadata.page}</strong>
             <p>{res.metadata.text || res.metadata.chunk || 'No text available'}</p>
