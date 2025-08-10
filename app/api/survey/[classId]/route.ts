@@ -5,10 +5,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   req: NextRequest,
-  context: { params: { classId: string } }
+  context: { params: Promise<{ classId: string }> }
 ) {
   try {
-    const { params } = context;
+    const params = await context.params;
     const classId = params.classId;
 
     if (!classId) {
