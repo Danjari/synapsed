@@ -1,3 +1,5 @@
+'use client';
+
 import Editor from '@/components/Lesson/editorAI/Editor';
 
 export default function TestEditorPage() {
