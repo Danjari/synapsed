@@ -204,7 +204,12 @@ export default function LessonPage() {
               )}
               {viewMode === 'flashcards' && (
                 <div className="h-full bg-white rounded-xl border border-slate-200 shadow-lg overflow-hidden min-h-[600px]">
-                  <FlashcardsPanel nodeId={nodeId || ''} nodeTitle={nodeTitle || ''} markdownContent={note?.contentText ?? ''} />
+                  <FlashcardsPanel 
+                    key={`${nodeId}-${nodeTitle}`}
+                    nodeId={nodeId || ''} 
+                    nodeTitle={nodeTitle || ''} 
+                    markdownContent={note?.contentText ?? ''} 
+                  />
                 </div>
               )}
               {viewMode === 'summary' && (

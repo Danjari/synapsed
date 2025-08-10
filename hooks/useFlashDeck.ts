@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { generateFlashcards } from '@/lib/flashcard/aiClient';
 
 interface Flashcard {
@@ -32,7 +32,8 @@ export function useFlashDeck(nodeId: string, nodeTitle?: string, markdownContent
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchDeck = async () => {
+  const fetchDeck = useCallback(async () => {
+    console.log('fetchDeck called for nodeId:', nodeId);
     setLoading(true);
     setError(null);
     try {
@@ -50,9 +51,9 @@ export function useFlashDeck(nodeId: string, nodeTitle?: string, markdownContent
     } finally {
       setLoading(false);
     }
-  };
+  }, [nodeId]);
 
-  const generateDeck = async () => {
+  const generateDeck = useCallback(async () => {
     if (!nodeTitle || !markdownContent) {
       setError('Missing content for generation');
       return;
@@ -68,7 +69,7 @@ export function useFlashDeck(nodeId: string, nodeTitle?: string, markdownContent
     } finally {
       setLoading(false);
     }
-  };
+  }, [nodeId, nodeTitle, markdownContent, quizQuestions]);
 
   const updateProgress = async (cardId: string, mastered: boolean) => {
     try {
@@ -83,10 +84,14 @@ export function useFlashDeck(nodeId: string, nodeTitle?: string, markdownContent
   };
 
   useEffect(() => {
+    console.log('useEffect triggered for nodeId:', nodeId);
     if (nodeId) {
       fetchDeck();
     }
-  }, [nodeId, fetchDeck]);
+  }, [nodeId]); // Remove fetchDeck from dependencies since it's already memoized
+
+  // Only fetch deck when nodeId changes, not when markdownContent changes
+  // markdownContent is only used for generation, not fetching
 
   return { 
     deck, 
