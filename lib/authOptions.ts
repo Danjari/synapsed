@@ -11,14 +11,20 @@ type UserWithRole = User & {
 }
 
 export const authOptions: NextAuthConfig = {
+  secret: process.env.AUTH_SECRET,
   session: { strategy: "jwt" as const },
   adapter: PrismaAdapter(prisma) as Adapter,
+  trustHost: true,
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID! as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET! as string,
     }),
   ],
+  pages: {
+    signIn: '/sign-in',
+    error: '/unauthorized',
+  },
   callbacks: {
     async jwt({ token, user }: { token: JWT; user?: UserWithRole }) {
       if (user) {
