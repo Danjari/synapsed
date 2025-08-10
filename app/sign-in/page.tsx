@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useSession, signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { FcGoogle } from "react-icons/fc";
@@ -17,7 +17,6 @@ type UserWithRole = {
 export default function SignInPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [isRedirecting, setIsRedirecting] = useState(false);
 
   useEffect(() => {
     console.log('Auth status:', status);
@@ -29,38 +28,21 @@ export default function SignInPage() {
 
       if (!role) {
         console.log('Redirecting to choose-role');
-        setIsRedirecting(true);
-        router.replace('/choose-role');
-        // Fallback redirect
-        setTimeout(() => {
-          window.location.href = '/choose-role';
-        }, 1000);
+        router.push('/choose-role');
       } else if (role === 'STUDENT') {
         console.log('Redirecting to student dashboard');
-        setIsRedirecting(true);
-        router.replace('/student/dashboard');
-        // Fallback redirect
-        setTimeout(() => {
-          window.location.href = '/student/dashboard';
-        }, 1000);
+        router.push('/student/dashboard');
       } else {
         console.log('Redirecting to teacher dashboard');
-        setIsRedirecting(true);
-        router.replace('/teacher/dashboard');
-        // Fallback redirect
-        setTimeout(() => {
-          window.location.href = '/teacher/dashboard';
-        }, 1000);
+        router.push('/teacher/dashboard');
       }
     }
   }, [session, status, router]);
 
-  if (status === 'loading' || isRedirecting) {
+  if (status === 'loading') {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="text-xl font-semibold animate-pulse">
-          {isRedirecting ? 'Redirecting...' : 'Loading...'}
-        </div>
+        <div className="text-xl font-semibold animate-pulse">Loading...</div>
       </div>
     );
   }
