@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Validating if the user has already joined the class
-    if (targetClass.enrollments.some((enrollment) => enrollment.studentId === session.user.id)) {
+    if (targetClass.enrollments.some((enrollment) => enrollment.studentId === session.user!.id)) {
       // Returning a success response if the user has already joined the class
       return NextResponse.json({ message: "You already joined this class" }, { status: 200 });
     }
@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
       data: {
         enrollments: {
           create: {
-            studentId: session.user.id
+            studentId: session.user!.id
           }
         }
       },
