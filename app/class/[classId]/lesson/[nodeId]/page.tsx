@@ -1,7 +1,6 @@
 'use client';
 
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { useSession } from 'next-auth/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { PartialBlock } from '@blocknote/core';
 import Editor from '@/components/Lesson/editorAI/Editor';
@@ -10,7 +9,7 @@ import { BarChart3, Sparkles, BookOpen, Brain, FileText, ArrowLeft, ChevronUp, C
 import { FlashcardsPanel } from '@/components/Lesson/flashcard/FlashcardsPanel';
 
 export default function LessonPage() {
-  useSession();
+
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -204,7 +203,12 @@ export default function LessonPage() {
               )}
               {viewMode === 'flashcards' && (
                 <div className="h-full bg-white rounded-xl border border-slate-200 shadow-lg overflow-hidden min-h-[600px]">
-                  <FlashcardsPanel nodeId={nodeId || ''} nodeTitle={nodeTitle || ''} markdownContent={note?.contentText ?? ''} />
+                  <FlashcardsPanel 
+                    key={`${nodeId}-${nodeTitle}`}
+                    nodeId={nodeId || ''} 
+                    nodeTitle={nodeTitle || ''} 
+                    markdownContent={note?.contentText ?? ''} 
+                  />
                 </div>
               )}
               {viewMode === 'summary' && (

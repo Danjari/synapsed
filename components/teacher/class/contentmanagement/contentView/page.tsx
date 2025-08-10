@@ -12,20 +12,35 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 
+interface Material {
+  id: string;
+  title: string;
+  type: string;
+  url: string;
+  uploadedAt: string;
+  isVectorized: boolean;
+}
+
 export function ContentView({ classId }: { classId: string }) {
-  const [materials, setMaterials] = useState<any[]>([]);
+  const [materials, setMaterials] = useState<Material[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
-  const [ setFileToRename] = useState<any | null>(null);
+  const [, setFileToRename] = useState<Material | null>(null);
   const [newFileName, setNewFileName] = useState("");
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [fileToDelete, setFileToDelete] = useState<any | null>(null);
+  const [fileToDelete, setFileToDelete] = useState<Material | null>(null);
 
   useEffect(() => {
     const fetchMaterials = async () => {
-      const res = await fetch(`/api/class/${classId}/materials`);
-      const data = await res.json();
-      setMaterials(data);
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/class/${classId}/materials`);
+        const data = await res.json();
+        setMaterials(data);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchMaterials();
   }, [classId]);
@@ -81,17 +96,20 @@ export function ContentView({ classId }: { classId: string }) {
             />
           </div>
           <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead className="hidden md:table-cell">Upload Date</TableHead>
-                  <TableHead className="w-[80px]"></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredFiles.map((file) => (
+            {loading ? (
+              <div className="p-8 text-center text-muted-foreground">Loading materials...</div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead className="hidden md:table-cell">Upload Date</TableHead>
+                    <TableHead className="w-[80px]"></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredFiles.map((file) => (
                   <TableRow key={file.id}>
                     <TableCell className="font-medium">
                       <a href={file.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:underline">
@@ -134,9 +152,10 @@ export function ContentView({ classId }: { classId: string }) {
                       </DropdownMenu>
                     </TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                                  ))}
+                </TableBody>
+              </Table>
+            )}
           </div>
         </CardContent>
       </Card>

@@ -1,18 +1,16 @@
 import Sidebar from "@/components/teacher/SideBar";
 import TopNav from "@/components/teacher/TopNav";
-import { Dispatch, SetStateAction, ReactNode } from "react";
+import { ReactNode } from "react";
 
 interface TeacherDashboardProps {
   children: ReactNode;
-  activeSection: string;
-  setActiveSection: Dispatch<SetStateAction<string>>;
 }
 
-export default function TeacherDashboard({ children, activeSection, setActiveSection }: TeacherDashboardProps) {
+export default function TeacherDashboard({ children }: TeacherDashboardProps) {
   return (
     <div className="flex h-screen">
       {/* Sidebar on the left */}
-      <Sidebar activeSection={activeSection} setActiveSection={setActiveSection} />
+      <Sidebar />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col bg-gray-50">
