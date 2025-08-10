@@ -4,16 +4,23 @@ import { useEffect } from 'react';
 import { useSession, signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { FcGoogle } from "react-icons/fc";
-
+import { Role } from '@prisma/client';
 
 import { Button } from '@/components/ui/button';
+
+type UserWithRole = {
+  id: string;
+  email: string;
+  name?: string;
+  role?: Role;
+};
 export default function SignInPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
   useEffect(() => {
     if (status === 'authenticated') {
-      const role = session?.user?.role;
+      const role = (session?.user as UserWithRole)?.role;
 
       if (!role) {
         router.push('/choose-role');

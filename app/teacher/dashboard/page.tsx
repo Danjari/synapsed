@@ -1,12 +1,7 @@
 import Sidebar from "@/components/teacher/SideBar";
 import TopNav from "@/components/teacher/TopNav";
-import { ReactNode } from "react";
 
-interface TeacherDashboardProps {
-  children: ReactNode;
-}
-
-export default function TeacherDashboard({ children }: TeacherDashboardProps) {
+export default function TeacherDashboardPage() {
   return (
     <div className="flex h-screen">
       {/* Sidebar on the left */}
@@ -19,7 +14,11 @@ export default function TeacherDashboard({ children }: TeacherDashboardProps) {
 
         {/* Dashboard Content */}
         <main className="p-6">
-          {children}
+          <div className="space-y-6">
+            <h1 className="text-3xl font-bold text-gray-900">Teacher Dashboard</h1>
+            <p className="text-gray-600">Welcome to your teaching dashboard.</p>
+            {/* Add your dashboard content here */}
+          </div>
         </main>
       </div>
     </div>
