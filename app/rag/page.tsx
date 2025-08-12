@@ -23,7 +23,7 @@ export default function TestUploadPage() {
     formData.append('file', file);
 
     setLoading(true);
-    const res = await fetch('/api/pathway/generate', {
+    const res = await fetch('/api/rag', {
       method: 'POST',
       body: formData,
     });
