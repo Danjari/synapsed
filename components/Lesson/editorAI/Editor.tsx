@@ -12,7 +12,7 @@ import {
 } from "@blocknote/react";
 import { useState, useEffect } from "react";
 
-// Import your AI extension
+// Import your AI extension we can build extension to take in drawing
 import { getAISlashMenuItems } from "@danjari/blocknote-ai-extension";
 import { callAI } from "@/lib/Editor/aiClient";
 
