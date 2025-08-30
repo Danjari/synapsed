@@ -4,6 +4,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { Home, BookOpen, MessageSquare, Award, Settings, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { User } from "next-auth";
+import { signOut } from "next-auth/react";
 import { Role } from "@prisma/client";
 //import { useSession } from "next-auth/react";
 
@@ -69,21 +70,32 @@ const Sidebar = ({ user }: { user?: UserWithRole }) => {
         ))}
       </nav>
 
-      {/* Profile Section */}
-      <div className="absolute bottom-4 left-4 flex items-center space-x-3">
-        <Image
-          src={user?.image || "/logo.svg"}
-          alt="User Avatar"
-          width={50}
-          height={50}
-          className="w-10 h-10 rounded-full border"
-        />
-        {isOpen && (
-          <div>
-            <p className="text-sm font-semibold">{user?.name|| "Guest"}</p>
-            <p className="text-xs text-gray-500">{user?.role|| ""}</p>
-          </div>
-        )}
+      {/* Profile + Sign Out Section */}
+      <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+        <div className="flex items-center space-x-3">
+          <Image
+            src={user?.image || "/logo.svg"}
+            alt="User Avatar"
+            width={50}
+            height={50}
+            className="w-10 h-10 rounded-full border"
+          />
+          {isOpen && (
+            <div>
+              <p className="text-sm font-semibold">{user?.name|| "Guest"}</p>
+              <p className="text-xs text-gray-500">{user?.role|| ""}</p>
+            </div>
+          )}
+        </div>
+        <button
+          onClick={() => signOut()}
+          className={`text-sm rounded px-3 py-1 transition-colors ${
+            isOpen ? "bg-red-500 text-white hover:bg-red-600" : "bg-red-500 text-white hover:bg-red-600"
+          }`}
+          aria-label="Sign out"
+        >
+          {isOpen ? "Sign Out" : "↥"}
+        </button>
       </div>
     </aside>
   );
