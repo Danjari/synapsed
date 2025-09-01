@@ -5,7 +5,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { PartialBlock } from '@blocknote/core';
 import Editor from '@/components/Lesson/editorAI/Editor';
 import { Button } from '@/components/ui/button';
-import { BarChart3, Sparkles, BookOpen, Brain, FileText, ArrowLeft, ChevronUp, ChevronDown } from 'lucide-react';
+import { BarChart3, Sparkles, BookOpen, Brain, FileText, ArrowLeft, ChevronUp, ChevronDown, LayoutDashboard } from 'lucide-react';
+import Link from 'next/link';
 import { FlashcardsPanel } from '@/components/Lesson/flashcard/FlashcardsPanel';
 
 export default function LessonPage() {
@@ -89,7 +90,7 @@ export default function LessonPage() {
       <div className={`transition-all duration-300 ease-in-out ${showTopBar ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'} fixed top-0 left-0 right-0 z-40`}>
         <div className="relative">
           <div className="flex items-center justify-between p-6 bg-white/95 backdrop-blur-sm border-b border-slate-200 shadow-lg">
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-3">
               <Button
                 variant="ghost"
                 size="icon"
@@ -98,6 +99,10 @@ export default function LessonPage() {
               >
                 <ArrowLeft className="w-5 h-5" />
               </Button>
+              <Link href="/teacher/dashboard" className="hidden sm:inline-flex items-center gap-2 btn-secondary-emerald rounded-full px-3 py-1.5">
+                <LayoutDashboard className="w-4 h-4" />
+                <span className="text-sm">Dashboard</span>
+              </Link>
               <div>
                 <h2 className="text-xl font-bold text-slate-800">{nodeTitle || 'Lesson'}</h2>
                 <p className="text-sm text-slate-500 mt-0.5">Interactive Learning Experience</p>

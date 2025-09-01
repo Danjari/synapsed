@@ -119,7 +119,7 @@ export function SurveyLearningPath({ classId }: { classId: string }) {
         <p className="text-muted-foreground">Create surveys and generate personalized learning paths.</p>
       </div>
 
-      <Card>
+      <Card className="hover:shadow-none hover:translate-y-0">
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
             <CardTitle>Survey Management</CardTitle>
@@ -186,7 +186,7 @@ export function SurveyLearningPath({ classId }: { classId: string }) {
       />
 
 
-      <Card>
+      <Card className="hover:shadow-none hover:translate-y-0">
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
             <CardTitle>Learning Paths</CardTitle>

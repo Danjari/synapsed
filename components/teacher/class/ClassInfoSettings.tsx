@@ -84,14 +84,14 @@ export default function ClassInfoSettings({ classId }: { classId: string }) {
   };
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <div className="space-y-6 p-2 md:p-2">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Class Info & Settings</h1>
         <p className="text-sm text-gray-500">Manage your class information and settings.</p>
       </div>
 
       {/* Class Details */}
-      <section className="bg-white border rounded-xl p-5 md:p-6">
+      <section className="">
         <h2 className="text-xl font-semibold">Class Details</h2>
         <p className="text-sm text-gray-500 mb-4">Update your class information visible to students.</p>
 
@@ -111,7 +111,7 @@ export default function ClassInfoSettings({ classId }: { classId: string }) {
       </section>
 
       {/* Join Token */}
-      <section className="bg-white border rounded-xl p-5 md:p-6">
+      <section className="">
         <h2 className="text-xl font-semibold">Join Token</h2>
         <p className="text-sm text-gray-500 mb-4">Share this token with students to join your class.</p>
 
@@ -123,7 +123,7 @@ export default function ClassInfoSettings({ classId }: { classId: string }) {
       </section>
 
       {/* Class Visibility (UI only) */}
-      <section className="bg-white border rounded-xl p-5 md:p-6">
+      <section className="">
         <h2 className="text-xl font-semibold">Class Visibility</h2>
         <p className="text-sm text-gray-500 mb-4">Control who can see and join your class.</p>
 
@@ -151,4 +151,3 @@ export default function ClassInfoSettings({ classId }: { classId: string }) {
     </div>
   );
 }
-

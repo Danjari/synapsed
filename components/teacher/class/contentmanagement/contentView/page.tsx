@@ -82,7 +82,7 @@ export function ContentView({ classId }: { classId: string }) {
         <p className="text-muted-foreground">Manage your uploaded class materials.</p>
       </div>
 
-      <Card>
+      <Card className="hover:shadow-none hover:translate-y-0">
         <CardHeader>
           <CardTitle>Content Files</CardTitle>
           <CardDescription>Review and manage your uploaded materials.</CardDescription>

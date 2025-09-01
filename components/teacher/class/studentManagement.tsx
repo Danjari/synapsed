@@ -97,7 +97,7 @@ export function StudentManagement({ classId }: { classId: string }) {
         <p className="text-muted-foreground">Manage students enrolled in your class.</p>
       </div>
 
-      <Card>
+      <Card className="hover:shadow-none hover:translate-y-0">
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
             <CardTitle>Students</CardTitle>

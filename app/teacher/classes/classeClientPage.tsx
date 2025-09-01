@@ -42,24 +42,32 @@ export default function ClassesPage({professorId} : Props) {
   return (
     <div className="flex h-screen">
       <Sidebar />
-      <div className="flex-1 flex flex-col bg-gray-50">
+      <div className="flex-1 flex flex-col">
         <TopNav />
         <main className="p-6">
           <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold">Your Classes</h1>
-            <button className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700" onClick={() => setModalOpen(true)}>
-              <PlusCircle className="h-5 w-5 mr-2" /> Add Class
+            <h1 className="text-2xl font-bold text-slate-900">Your Classes</h1>
+            <button
+              className="btn-primary-emerald px-4 py-2 rounded-lg"
+              onClick={() => setModalOpen(true)}
+            >
+              <PlusCircle className="h-5 w-5" /> Add Class
             </button>
           </div>
 
-          <div className="mt-6 grid grid-cols-3 gap-4">
+          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {classes.map((cls) => (
-              <div key={cls.id} className="p-4 bg-white rounded-md shadow hover:shadow-md transition">
-                <h3 className="text-lg font-semibold">{cls.title}</h3>
-                <div className="text-gray-600 flex items-center mt-2">
+              <div key={cls.id} className="glass-soft glass-outline p-4 rounded-2xl hover:shadow-md transition">
+                <h3 className="text-lg font-semibold text-slate-900">{cls.title}</h3>
+                <div className="text-slate-600 flex items-center mt-2">
                   <Users className="h-4 w-4 mr-2" /> {cls.studentsCount} Students
                 </div>
-                <button className="mt-3 text-blue-600 hover:underline" onClick={() => window.location.href = `/teacher/classes/${cls.id}`}>Manage</button>
+                <button
+                  className="mt-3 btn-secondary-emerald px-3 py-1.5 rounded-lg text-sm"
+                  onClick={() => (window.location.href = `/teacher/classes/${cls.id}`)}
+                >
+                  Manage
+                </button>
               </div>
             ))}
           </div>
