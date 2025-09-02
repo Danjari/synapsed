@@ -5,6 +5,7 @@ import { useParams } from "next/navigation"
 import { useState } from "react"
 import { TeacherDashboard } from "@/components/teacher/class/teacherDashboard"
 import { SurveyLearningPath } from "@/components/teacher/class/surveyManagement"
+import ClassInfoSettings from "@/components/teacher/class/ClassInfoSettings"
 export default function Page() {
   const params = useParams()
   const classId = params.id as string
@@ -14,8 +15,8 @@ export default function Page() {
 
   const renderContent = () => {
     switch (activeSection) {
-      // case "class-info":
-      //   return <ClassInfo classId={classId} />
+      case "class-info":
+        return <ClassInfoSettings classId={classId} />
       case "student-management":
         return <StudentManagement classId={classId} />
       case "content-management":

@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
+import TableSkeleton from "@/components/ui/table-skeleton"
 
 interface Student {
   id: string;
@@ -37,23 +38,29 @@ interface Enrollment {
 
 export function StudentManagement({ classId }: { classId: string }) {
   const [students, setStudents] = useState<Student[]>([])
+  const [loading, setLoading] = useState(true)
   const [studentToRemove, setStudentToRemove] = useState<Student | null>(null)
   const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
 
   useEffect(() => {
     const fetchStudents = async () => {
-      const res = await fetch(`/api/class/${classId}/students`)
-      const data = await res.json()
-      setStudents(
-        data.map((enrollment: Enrollment) => ({
-          id: enrollment.student.id,
-          name: enrollment.student.name,
-          email: enrollment.student.email,
-          joinDate: enrollment.joinedAt,
-          status: "active",
-        }))
-      )
+      setLoading(true)
+      try {
+        const res = await fetch(`/api/class/${classId}/students`)
+        const data = await res.json()
+        setStudents(
+          data.map((enrollment: Enrollment) => ({
+            id: enrollment.student.id,
+            name: enrollment.student.name,
+            email: enrollment.student.email,
+            joinDate: enrollment.joinedAt,
+            status: "active",
+          }))
+        )
+      } finally {
+        setLoading(false)
+      }
     }
 
     if (classId) fetchStudents()
@@ -90,7 +97,7 @@ export function StudentManagement({ classId }: { classId: string }) {
         <p className="text-muted-foreground">Manage students enrolled in your class.</p>
       </div>
 
-      <Card>
+      <Card className="hover:shadow-none hover:translate-y-0">
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
             <CardTitle>Students</CardTitle>
@@ -103,67 +110,77 @@ export function StudentManagement({ classId }: { classId: string }) {
         </CardHeader>
         <CardContent>
           <div className="mb-4">
-            <Input
-              placeholder="Search students..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="max-w-sm"
-            />
+            {loading ? (
+              <div className="max-w-sm">
+                <div className="animate-pulse h-10 bg-primary/10 rounded-md" />
+              </div>
+            ) : (
+              <Input
+                placeholder="Search students..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="max-w-sm"
+              />
+            )}
           </div>
           <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead className="hidden md:table-cell">Join Date</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="w-[80px]"></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredStudents.map((student) => (
-                  <TableRow key={student.id}>
-                    <TableCell className="font-medium">{student.name}</TableCell>
-                    <TableCell>{student.email}</TableCell>
-                    <TableCell className="hidden md:table-cell">
-                      {new Date(student.joinDate).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={student.status === "active" ? "default" : "secondary"}>
-                        {student.status === "active" ? "Active" : "Pending"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="h-4 w-4" />
-                            <span className="sr-only">Actions</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          {student.status === "pending" && (
-                            <DropdownMenuItem onClick={() => handleResendInvite(student)}>
-                              Resend Invite
-                            </DropdownMenuItem>
-                          )}
-                          <DropdownMenuItem
-                            className="text-destructive focus:text-destructive"
-                            onClick={() => {
-                              setStudentToRemove(student)
-                              setIsRemoveDialogOpen(true)
-                            }}
-                          >
-                            Remove Student
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
+            {loading ? (
+              <TableSkeleton columns={5} rows={6} />
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead className="hidden md:table-cell">Join Date</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="w-[80px]"></TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {filteredStudents.map((student) => (
+                    <TableRow key={student.id}>
+                      <TableCell className="font-medium">{student.name}</TableCell>
+                      <TableCell>{student.email}</TableCell>
+                      <TableCell className="hidden md:table-cell">
+                        {new Date(student.joinDate).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={student.status === "active" ? "default" : "secondary"}>
+                          {student.status === "active" ? "Active" : "Pending"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                              <MoreHorizontal className="h-4 w-4" />
+                              <span className="sr-only">Actions</span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            {student.status === "pending" && (
+                              <DropdownMenuItem onClick={() => handleResendInvite(student)}>
+                                Resend Invite
+                              </DropdownMenuItem>
+                            )}
+                            <DropdownMenuItem
+                              className="text-destructive focus:text-destructive"
+                              onClick={() => {
+                                setStudentToRemove(student)
+                                setIsRemoveDialogOpen(true)
+                              }}
+                            >
+                              Remove Student
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
           </div>
         </CardContent>
       </Card>

@@ -11,6 +11,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import TableSkeleton from "@/components/ui/table-skeleton";
 
 interface Material {
   id: string;
@@ -81,7 +82,7 @@ export function ContentView({ classId }: { classId: string }) {
         <p className="text-muted-foreground">Manage your uploaded class materials.</p>
       </div>
 
-      <Card>
+      <Card className="hover:shadow-none hover:translate-y-0">
         <CardHeader>
           <CardTitle>Content Files</CardTitle>
           <CardDescription>Review and manage your uploaded materials.</CardDescription>
@@ -97,7 +98,7 @@ export function ContentView({ classId }: { classId: string }) {
           </div>
           <div className="rounded-md border">
             {loading ? (
-              <div className="p-8 text-center text-muted-foreground">Loading materials...</div>
+              <TableSkeleton columns={4} rows={6} />
             ) : (
               <Table>
                 <TableHeader>

@@ -20,6 +20,7 @@ import { toast } from "sonner"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
+import TableSkeleton from "@/components/ui/table-skeleton"
 
 // Sample learning paths
 const learningPaths = [
@@ -47,6 +48,7 @@ export function SurveyLearningPath({ classId }: { classId: string }) {
   const [selectedStudentResponse, setSelectedStudentResponse] = useState<SurveyResponse | null>(null);
   const [isSaveConfirmOpen, setIsSaveConfirmOpen] = useState(false)
   const [surveyResponses, setSurveyResponses] = useState<SurveyResponse[]>([]);
+  const [loadingResponses, setLoadingResponses] = useState(true);
 
   useEffect(() => {
     fetch(`/api/survey/${classId}`)
@@ -55,9 +57,11 @@ export function SurveyLearningPath({ classId }: { classId: string }) {
         if (data?.questions?.length) setSurveyQuestions(data.questions)
       })
 
+    setLoadingResponses(true)
     fetch(`/api/survey/response/${classId}`)
       .then((res) => res.json())
       .then((data) => setSurveyResponses(Array.isArray(data) ? data : []))
+      .finally(() => setLoadingResponses(false))
   }, [classId])
 
   const handleSaveSurvey = async () => {
@@ -115,7 +119,7 @@ export function SurveyLearningPath({ classId }: { classId: string }) {
         <p className="text-muted-foreground">Create surveys and generate personalized learning paths.</p>
       </div>
 
-      <Card>
+      <Card className="hover:shadow-none hover:translate-y-0">
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
             <CardTitle>Survey Management</CardTitle>
@@ -128,44 +132,48 @@ export function SurveyLearningPath({ classId }: { classId: string }) {
         </CardHeader>
         <CardContent>
           <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Student</TableHead>
-                  <TableHead className="hidden md:table-cell">Completed At</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="w-[80px]"></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {surveyResponses.map((response) => (
-                  <TableRow key={response.studentId}>
-                    <TableCell className="font-medium">{response.name}</TableCell>
-                    <TableCell className="hidden md:table-cell">
-                      {new Date(response.submittedAt).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={response.answers.length > 0 ? "default" : "secondary"}>
-                        {response.answers.length > 0 ? "Processed" : "Pending"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => {
-                          setSelectedStudentResponse(response);
-                          setIsSurveyViewOpen(true);
-                        }}
-                      >
-                        <Eye className="h-4 w-4" />
-                        <span className="sr-only">View</span>
-                      </Button>
-                    </TableCell>
+            {loadingResponses ? (
+              <TableSkeleton columns={4} rows={6} />
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Student</TableHead>
+                    <TableHead className="hidden md:table-cell">Completed At</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="w-[80px]"></TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {surveyResponses.map((response) => (
+                    <TableRow key={response.studentId}>
+                      <TableCell className="font-medium">{response.name}</TableCell>
+                      <TableCell className="hidden md:table-cell">
+                        {new Date(response.submittedAt).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={response.answers.length > 0 ? "default" : "secondary"}>
+                          {response.answers.length > 0 ? "Processed" : "Pending"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => {
+                            setSelectedStudentResponse(response);
+                            setIsSurveyViewOpen(true);
+                          }}
+                        >
+                          <Eye className="h-4 w-4" />
+                          <span className="sr-only">View</span>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -178,7 +186,7 @@ export function SurveyLearningPath({ classId }: { classId: string }) {
       />
 
 
-      <Card>
+      <Card className="hover:shadow-none hover:translate-y-0">
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
             <CardTitle>Learning Paths</CardTitle>

@@ -48,7 +48,7 @@ export default function RootLayout({
   return (
     <SessionProvider>
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.className} min-h-screen bg-texture-light` }>
         <ThemeProvider attribute="class" defaultTheme="light">
           {children}
           <Toaster />

@@ -43,7 +43,7 @@ export function UploadSection({ classId, onUploadComplete }: { classId: string; 
   };
 
   return (
-    <Card>
+    <Card className="hover:shadow-none hover:translate-y-0">
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
           <CardTitle>Upload Content</CardTitle>
