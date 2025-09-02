@@ -14,17 +14,13 @@ interface NotesPanelProps {
 }
 
 export function NotesPanelClient({ documentId }: NotesPanelProps) {
-  // Ensure this component only runs on the client side
-  if (typeof window === "undefined") {
-    return <div className="h-full flex items-center justify-center">Loading...</div>
-  }
+
 
   // Creates a new editor instance
   const editor = useCreateBlockNote()
-  
+
   // Annotation context
-  const { 
-    currentDocument, 
+  const {  
     activeContentReference, 
     createNote, 
     updateNote,
