@@ -1,7 +1,7 @@
 "use client"
 
 import { useAnnotation } from "@/lib/content/annotation-context"
-import { ContentReference } from "@/lib/types/annotations"
+import { ContentReference, Note } from "@/lib/types/annotations"
 import { formatTimestamp } from "@/lib/utils/annotationUtils"
 import { StickyNote, MessageSquare, Image, FileText, Star, Clock } from "lucide-react"
 
@@ -83,7 +83,7 @@ export function ContentReferenceDisplay({ pageNumber, scale, rotation }: Content
   }
 
   // Helper function to determine if notes contain high-priority content
-  const getPriorityIndicator = (notes: any[]) => {
+  const getPriorityIndicator = (notes: Note[]) => {
     if (notes.length === 0) return null
     
     // Check if any notes have important tags
@@ -183,7 +183,7 @@ export function ContentReferenceDisplay({ pageNumber, scale, rotation }: Content
               
               {/* Content preview text (truncated if too long) */}
               <div className="text-xs text-gray-300 mb-2 max-w-xs">
-                "{reference.contentPreview.length > 60 ? reference.contentPreview.substring(0, 60) + '...' : reference.contentPreview}"
+                &quot;{reference.contentPreview.length > 60 ? reference.contentPreview.substring(0, 60) + '...' : reference.contentPreview}&quot;
               </div>
               
               {/* Statistics: note count and timestamp */}
@@ -197,7 +197,7 @@ export function ContentReferenceDisplay({ pageNumber, scale, rotation }: Content
                   {(() => {
                     try {
                       return formatTimestamp(reference.timestamp)
-                    } catch (error) {
+                    } catch {
                       return 'Invalid date'
                     }
                   })()}
