@@ -117,13 +117,13 @@ export function NotesPanelClient({ documentId }: NotesPanelProps) {
                 {(() => {
                   try {
                     return formatTimestamp(activeContentReference.timestamp)
-                  } catch (error) {
+                  } catch {
                     return 'Invalid date'
                   }
                 })()}
               </div>
             <div className="bg-background p-2 rounded border text-xs">
-              "{activeContentReference.contentPreview}"
+              &quot;{activeContentReference.contentPreview}&quot;
             </div>
           </div>
           
@@ -227,7 +227,7 @@ export function NotesPanelClient({ documentId }: NotesPanelProps) {
                         {(() => {
                           try {
                             return formatTimestamp(note.timestamp)
-                          } catch (error) {
+                          } catch {
                             return 'Invalid date'
                           }
                         })()}
