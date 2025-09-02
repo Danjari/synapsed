@@ -3,15 +3,15 @@
 import { useState, useCallback, useRef, useEffect } from "react"
 import { Document, Page, pdfjs } from "react-pdf"
 import { ZoomIn, ZoomOut, RotateCw, Download, ChevronLeft, ChevronRight } from "lucide-react"
-import { useAnnotation } from "@/lib/contexts/annotation-context"
+import { useAnnotation } from "@/lib/content/annotation-context"
 import { 
   hashContent, 
   extractContentAroundCoordinates,
   calculateOptimalPosition,
   wouldOverlapWithExisting
-} from "@/lib/utils/annotation-utils"
+} from "@/lib/utils/annotationUtils"
 import { CreateContentReferenceRequest } from "@/lib/types/annotations"
-import { ContentReferenceDisplay } from "./content-reference-display"
+import { ContentReferenceDisplay } from "./contentReferenceDisplay"
 
 // Ensure this only runs on the client side
 if (typeof window !== "undefined") {

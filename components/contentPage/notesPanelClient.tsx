@@ -5,8 +5,8 @@ import "@blocknote/core/fonts/inter.css"
 import { useCreateBlockNote } from "@blocknote/react"
 import { BlockNoteView } from "@blocknote/mantine"
 import "@blocknote/mantine/style.css"
-import { useAnnotation } from "@/lib/contexts/annotation-context"
-import { formatTimestamp } from "@/lib/utils/annotation-utils"
+import { useAnnotation } from "@/lib/content/annotation-context"
+import { formatTimestamp } from "@/lib/utils/annotationUtils"
 import { MessageSquare, Plus, FileText, Clock, Edit3, Trash2 } from "lucide-react"
 
 interface NotesPanelProps {
