@@ -13,7 +13,7 @@ const PDFViewer = dynamic(() => import("@/components/contentPage/pdfViewer").the
   loading: () => <div className="h-full flex items-center justify-center">Loading PDF viewer...</div>
 })
 
-const NotesPanelClient = dynamic(() => import("@/components/notes-panel-client").then(mod => ({ default: mod.NotesPanelClient })), {
+const NotesPanelClient = dynamic(() => import("@/components/contentPage/notesPanelClient").then(mod => ({ default: mod.NotesPanelClient })), {
   ssr: false,
   loading: () => <div className="h-full flex items-center justify-center">Loading notes panel...</div>
 })
