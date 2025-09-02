@@ -10,7 +10,7 @@ import {
   CreateNoteRequest,
   UpdateNoteRequest
 } from '../types/annotations'
-import { contentReferenceService } from '../services/content-reference-service'
+import { contentReferenceService } from './content-ReferenceService'
 
 // Action types for the reducer
 type AnnotationAction =

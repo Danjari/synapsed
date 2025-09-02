@@ -12,18 +12,19 @@ interface ContentReferenceDisplayProps {
 }
 
 export function ContentReferenceDisplay({ pageNumber, scale, rotation }: ContentReferenceDisplayProps) {
-  // Ensure this component only runs on the client side
-  if (typeof window === "undefined") {
-    return null
-  }
+
 
   const { currentDocument, setActiveContentReference, getNotesForContentReference, activeContentReference } = useAnnotation()
 
+    // Ensure this component only runs on the client side
+  if (typeof window === "undefined") {
+    return null
+  }
   if (!currentDocument) return null
 
   // Filter content references for the current page
   const pageReferences = currentDocument.contentReferences.filter(
-    ref => ref.pageNumber === pageNumber
+    (ref: ContentReference) => ref.pageNumber === pageNumber
   )
 
 //   // Debug logging

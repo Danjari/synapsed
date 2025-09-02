@@ -8,7 +8,7 @@ import {
     NoteSearchQuery,
     NoteSearchResult
   } from '../types/annotations'
-  import { generateId, hashContent, validateContentReference, validateNote } from '../utils/annotation-utils'
+  import { generateId, validateContentReference, validateNote } from '../utils/annotationUtils'
   
   /**
    * Service for managing content references and notes
@@ -509,8 +509,8 @@ import {
         }
   
         const allAnnotations: Record<string, DocumentAnnotation> = JSON.parse(stored)
-        let allNotes: Note[] = []
-        let allContentReferences: ContentReference[] = []
+        const allNotes: Note[] = []
+        const allContentReferences: ContentReference[] = []
   
         // Collect all notes and content references
         for (const documentAnnotations of Object.values(allAnnotations)) {
