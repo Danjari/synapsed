@@ -30,8 +30,10 @@ export function ContentReferenceDisplay({ pageNumber, scale, rotation }: Content
 //   console.log('Content references for page', pageNumber, ':', pageReferences)
 //   console.log('Current scale:', scale, 'rotation:', rotation)
 
+  // Return null if no content references exist for this page
   if (pageReferences.length === 0) return null
 
+  // Helper function to get the appropriate icon for each content type
   const getContentTypeIcon = (contentType: ContentReference['contentType']) => {
     switch (contentType) {
       case 'text':
@@ -47,6 +49,7 @@ export function ContentReferenceDisplay({ pageNumber, scale, rotation }: Content
     }
   }
 
+  // Helper function to get color scheme for each content type
   const getContentTypeColor = (contentType: ContentReference['contentType']) => {
     switch (contentType) {
       case 'text':
@@ -62,6 +65,7 @@ export function ContentReferenceDisplay({ pageNumber, scale, rotation }: Content
     }
   }
 
+  // Helper function to get human-readable label for content type
   const getContentTypeLabel = (contentType: ContentReference['contentType']) => {
     switch (contentType) {
       case 'text':
@@ -77,6 +81,7 @@ export function ContentReferenceDisplay({ pageNumber, scale, rotation }: Content
     }
   }
 
+  // Helper function to determine if notes contain high-priority content
   const getPriorityIndicator = (notes: any[]) => {
     if (notes.length === 0) return null
     
@@ -89,6 +94,7 @@ export function ContentReferenceDisplay({ pageNumber, scale, rotation }: Content
       )
     )
     
+    // Return star icon for high-priority notes
     if (hasImportantNotes) {
       return <Star className="w-3 h-3 text-yellow-400 fill-current" />
     }
@@ -98,7 +104,9 @@ export function ContentReferenceDisplay({ pageNumber, scale, rotation }: Content
 
   return (
     <>
+      {/* Render each content reference as an interactive indicator */}
       {pageReferences.map((reference) => {
+        // Get associated notes and determine state
         const notes = getNotesForContentReference(reference.id)
         const hasNotes = notes.length > 0
         const isActive = activeContentReference?.id === reference.id
@@ -108,8 +116,10 @@ export function ContentReferenceDisplay({ pageNumber, scale, rotation }: Content
             key={reference.id}
             className="absolute z-10 cursor-pointer group hover:cursor-pointer"
             style={{
+              // Position based on stored coordinates
               left: reference.coordinates.x,
               top: reference.coordinates.y,
+              // Apply current PDF scale and rotation
               transform: `scale(${scale}) rotate(${rotation}deg)`,
               transformOrigin: 'top left'
             }}
@@ -117,8 +127,10 @@ export function ContentReferenceDisplay({ pageNumber, scale, rotation }: Content
               // Prevent the click from bubbling up to the PDF container
               event.stopPropagation()
               
+              // Set this reference as active for editing
               setActiveContentReference(reference)
-              // Add visual feedback for the click
+              
+              // Add visual feedback for the click with scale animation
               const element = event.currentTarget as HTMLElement
               element.style.transform = `scale(${scale * 1.2}) rotate(${rotation}deg)`
               setTimeout(() => {
@@ -127,7 +139,7 @@ export function ContentReferenceDisplay({ pageNumber, scale, rotation }: Content
             }}
             title={`Click to view/edit notes for this ${getContentTypeLabel(reference.contentType).toLowerCase()} (${notes.length} note${notes.length !== 1 ? 's' : ''})`}
           >
-            {/* Enhanced Content Reference Indicator */}
+            {/* Main content reference indicator circle */}
             <div className={`
               relative w-8 h-8 rounded-full flex items-center justify-center text-white shadow-lg
               ${getContentTypeColor(reference.contentType)}
@@ -138,7 +150,7 @@ export function ContentReferenceDisplay({ pageNumber, scale, rotation }: Content
             `}>
               {getContentTypeIcon(reference.contentType)}
               
-              {/* Priority indicator */}
+              {/* Priority indicator star (top-right corner) */}
               {getPriorityIndicator(notes) && (
                 <div className="absolute -top-1 -right-1">
                   {getPriorityIndicator(notes)}
@@ -146,7 +158,7 @@ export function ContentReferenceDisplay({ pageNumber, scale, rotation }: Content
               )}
             </div>
             
-            {/* Enhanced Note Count Badge */}
+            {/* Note count badge (shows when notes exist) */}
             {hasNotes && (
               <div className={`
                 absolute -top-2 -right-2 rounded-full px-2 py-1 text-xs font-bold text-white
@@ -157,9 +169,9 @@ export function ContentReferenceDisplay({ pageNumber, scale, rotation }: Content
               </div>
             )}
             
-            {/* Enhanced Hover Tooltip */}
+            {/* Detailed hover tooltip with content preview */}
             <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 px-4 py-3 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap z-20 shadow-2xl border border-gray-700">
-              {/* Header */}
+              {/* Tooltip header with content type and priority */}
               <div className="flex items-center gap-2 mb-2">
                 <div className={`w-3 h-3 rounded-full ${getContentTypeColor(reference.contentType).split(' ')[0]}`}></div>
                 <div className="font-semibold">{getContentTypeLabel(reference.contentType)}</div>
@@ -168,12 +180,12 @@ export function ContentReferenceDisplay({ pageNumber, scale, rotation }: Content
                 )}
               </div>
               
-              {/* Content Preview */}
+              {/* Content preview text (truncated if too long) */}
               <div className="text-xs text-gray-300 mb-2 max-w-xs">
                 "{reference.contentPreview.length > 60 ? reference.contentPreview.substring(0, 60) + '...' : reference.contentPreview}"
               </div>
               
-              {/* Stats */}
+              {/* Statistics: note count and timestamp */}
               <div className="flex items-center justify-between text-xs text-gray-400">
                 <div className="flex items-center gap-1">
                   <MessageSquare className="w-3 h-3" />
@@ -191,23 +203,25 @@ export function ContentReferenceDisplay({ pageNumber, scale, rotation }: Content
                 </div>
               </div>
               
-              {/* Arrow */}
+              {/* Tooltip arrow pointing down */}
               <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
             </div>
             
-            {/* Connection Line (when hovering) */}
+            {/* Connection line that appears on hover */}
             <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-px h-2 bg-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </div>
         )
       })}
       
-      {/* Page Summary Indicator */}
+      {/* Page summary indicator (shows when multiple references exist) */}
       {pageReferences.length > 1 && (
         <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg px-3 py-2 shadow-lg">
+          {/* Total reference count */}
           <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
             <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
             {pageReferences.length} content references
           </div>
+          {/* Count of references with notes */}
           <div className="text-xs text-gray-500 mt-1">
             {pageReferences.filter(ref => getNotesForContentReference(ref.id).length > 0).length} with notes
           </div>
