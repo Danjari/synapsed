@@ -151,7 +151,7 @@ export function DocumentSidebar({ isOpen, onToggle, selectedDocument, onDocument
       fileInputRef.current.value = ""
     }
 
-    console.log("[v0] Document added:", newDocument.name)
+    // console.log("[v0] Document added:", newDocument.name)
   }
 
   // Trigger file input click
