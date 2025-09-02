@@ -1,9 +1,9 @@
 "use client"
 
-import { useAnnotation } from "@/lib/contexts/annotationContext"
+import { useAnnotation } from "@/lib/content/annotation-context"
 import { ContentReference } from "@/lib/types/annotations"
-import { formatTimestamp } from "@/lib/utils/annotation-utils"
-import { StickyNote, MessageSquare, Image, FileText, Star, AlertCircle, CheckCircle, Clock } from "lucide-react"
+import { formatTimestamp } from "@/lib/utils/annotationUtils"
+import { StickyNote, MessageSquare, Image, FileText, Star, Clock } from "lucide-react"
 
 interface ContentReferenceDisplayProps {
   pageNumber: number
