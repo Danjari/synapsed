@@ -2,13 +2,13 @@
 
 import { useState, useCallback } from "react"
 import dynamic from "next/dynamic"
-import { DocumentSidebar } from "@/components/document-sidebar"
-import { ResizablePane } from "@/components/resizable-pane"
+import { DocumentSidebar } from "@/components/contentPage/documentSideBar"
+import { ResizablePane } from "@/components/contentPage/resizblePanel"
 import { Sidebar, SidebarClose as SidebarColumns, Moon, Sun } from "lucide-react"
-import { AnnotationProvider } from "@/lib/contexts/annotation-context"
+import { AnnotationProvider } from "@/lib/content/annotation-context"
 
 // Dynamic imports to prevent SSR issues
-const PDFViewer = dynamic(() => import("@/components/pdf-viewer").then(mod => ({ default: mod.PDFViewer })), {
+const PDFViewer = dynamic(() => import("@/components/contentPage/pdfViewer").then(mod => ({ default: mod.PDFViewer })), {
   ssr: false,
   loading: () => <div className="h-full flex items-center justify-center">Loading PDF viewer...</div>
 })
