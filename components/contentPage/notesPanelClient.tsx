@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import "@blocknote/core/fonts/inter.css"
 import { useCreateBlockNote } from "@blocknote/react"
 import { BlockNoteView } from "@blocknote/mantine"
@@ -34,6 +34,14 @@ export function NotesPanelClient({ documentId }: NotesPanelProps) {
   const [noteCreationFeedback, setNoteCreationFeedback] = useState<string | null>(null)
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null)
   const [editingNoteContent, setEditingNoteContent] = useState<string>('')
+  const [notes, setNotes] = useState<any[]>([])
+
+  // Load notes when active content reference changes
+  useEffect(() => {
+    if (activeContentReference) {
+      getNotesForContentReference(activeContentReference.id).then(setNotes)
+    }
+  }, [activeContentReference, getNotesForContentReference])
 
   if (!documentId) {
     return (
@@ -86,9 +94,9 @@ export function NotesPanelClient({ documentId }: NotesPanelProps) {
                 <Edit3 className="w-3 h-3" />
               </button>
               <button
-                onClick={() => {
+                onClick={async () => {
                   if (confirm('Are you sure you want to delete this content reference and all its notes?')) {
-                    const success = deleteContentReference(activeContentReference.id)
+                    const success = await deleteContentReference(activeContentReference.id)
                     if (success) {
                       setNoteCreationFeedback('Content reference deleted successfully!')
                       setTimeout(() => setNoteCreationFeedback(null), 2000)
@@ -141,9 +149,9 @@ export function NotesPanelClient({ documentId }: NotesPanelProps) {
                 type="text"
                 placeholder="Add a quick note..."
                 className="flex-1 px-3 py-2 text-sm border border-border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
-                onKeyPress={(e) => {
+                onKeyPress={async (e) => {
                   if (e.key === 'Enter' && e.currentTarget.value.trim()) {
-                    const note = createNote({
+                    const note = await createNote({
                       contentReferenceId: activeContentReference.id,
                       content: e.currentTarget.value.trim()
                     })
@@ -156,10 +164,10 @@ export function NotesPanelClient({ documentId }: NotesPanelProps) {
                 }}
               />
               <button
-                onClick={() => {
+                onClick={async () => {
                   const input = document.querySelector('input[placeholder="Add a quick note..."]') as HTMLInputElement
                   if (input && input.value.trim()) {
-                    const note = createNote({
+                    const note = await createNote({
                       contentReferenceId: activeContentReference.id,
                       content: input.value.trim()
                     })
@@ -187,11 +195,11 @@ export function NotesPanelClient({ documentId }: NotesPanelProps) {
             <span className="text-sm font-medium text-foreground">Notes</span>
           </div>
           
-          {getNotesForContentReference(activeContentReference.id).length === 0 ? (
+          {notes.length === 0 ? (
             <p className="text-xs text-muted-foreground">No notes yet. Add one above!</p>
           ) : (
             <div className="space-y-2">
-              {getNotesForContentReference(activeContentReference.id).map((note) => (
+              {notes.map((note) => (
                 <div key={note.id} className="bg-background p-3 rounded border group">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -201,10 +209,10 @@ export function NotesPanelClient({ documentId }: NotesPanelProps) {
                           value={editingNoteContent}
                           onChange={(e) => setEditingNoteContent(e.target.value)}
                           className="w-full px-2 py-1 text-sm border border-blue-300 rounded bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          onKeyPress={(e) => {
+                          onKeyPress={async (e) => {
                             if (e.key === 'Enter') {
                               console.log('Updating note via Enter:', { id: note.id, content: editingNoteContent })
-                              const success = updateNote({
+                              const success = await updateNote({
                                 id: note.id,
                                 content: editingNoteContent
                               })
@@ -237,9 +245,9 @@ export function NotesPanelClient({ documentId }: NotesPanelProps) {
                       {editingNoteId === note.id ? (
                         <>
                           <button
-                            onClick={() => {
+                            onClick={async () => {
                               console.log('Updating note:', { id: note.id, content: editingNoteContent })
-                              const success = updateNote({
+                              const success = await updateNote({
                                 id: note.id,
                                 content: editingNoteContent
                               })
@@ -282,9 +290,9 @@ export function NotesPanelClient({ documentId }: NotesPanelProps) {
                             <Edit3 className="w-3 h-3" />
                           </button>
                           <button
-                            onClick={() => {
+                            onClick={async () => {
                               if (confirm('Are you sure you want to delete this note?')) {
-                                const success = deleteNote(note.id)
+                                const success = await deleteNote(note.id)
                                 if (success) {
                                   setNoteCreationFeedback('Note deleted successfully!')
                                   setTimeout(() => setNoteCreationFeedback(null), 2000)

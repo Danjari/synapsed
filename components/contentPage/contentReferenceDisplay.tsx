@@ -88,7 +88,7 @@ export function ContentReferenceDisplay({ pageNumber, scale, rotation }: Content
     
     // Check if any notes have important tags
     const hasImportantNotes = notes.some(note => 
-      note.metadata?.tags?.some((tag: string) => 
+      note.tags?.some((tag: string) => 
         tag.toLowerCase().includes('important') || 
         tag.toLowerCase().includes('critical') ||
         tag.toLowerCase().includes('urgent')
@@ -107,8 +107,8 @@ export function ContentReferenceDisplay({ pageNumber, scale, rotation }: Content
     <>
       {/* Render each content reference as an interactive indicator */}
       {pageReferences.map((reference) => {
-        // Get associated notes and determine state
-        const notes = getNotesForContentReference(reference.id)
+        // Get associated notes from current document state
+        const notes = currentDocument.notes.filter(note => note.contentReferenceId === reference.id)
         const hasNotes = notes.length > 0
         const isActive = activeContentReference?.id === reference.id
         

@@ -322,9 +322,7 @@ model DocumentAnnotation {
   createdAt     DateTime @default(now())
   lastModified  DateTime @updatedAt
   
-  // Relations
-  contentReferences ContentReference[]
-  notes           Note[]
+  // Note: contentReferences and notes are accessed through the document relation
 }
 
 model ContentReference {

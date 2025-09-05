@@ -30,13 +30,11 @@ export interface Coordinates {
     id: string
     contentReferenceId: string // Links to ContentReference
     content: string // The actual note text
+    tags: string[] // For organization (e.g., "important", "question", "definition")
+    color?: string // Optional color coding
     timestamp: Date
-    metadata: {
-      createdBy: string
-      lastModified: Date
-      tags: string[] // For organization (e.g., "important", "question", "definition")
-      color?: string // Optional color coding
-    }
+    lastModified: Date
+    createdBy: string
   }
   
   export interface DocumentAnnotation {

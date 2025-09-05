@@ -21,6 +21,7 @@ const NotesPanelClient = dynamic(() => import("@/components/contentPage/notesPan
 function ContentPageInner() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [selectedDocument, setSelectedDocument] = useState<string | null>(null)
+  const [selectedDocumentUrl, setSelectedDocumentUrl] = useState<string | null>(null)
   const [paneWidth, setPaneWidth] = useState(50) // Percentage
   const [layoutMode, setLayoutMode] = useState<"sidebar" | "overlay">("sidebar")
   const [darkMode, setDarkMode] = useState(false)
@@ -32,15 +33,16 @@ function ContentPageInner() {
     document.documentElement.classList.toggle("dark")
   }, [darkMode])
 
-  // Load document annotations when a document is selected
+  // Load document annotations and URL when a document is selected
   useEffect(() => {
     if (selectedDocument) {
-      // Extract document ID from URL if it's a full URL
-      const documentId = selectedDocument.includes('/') 
-        ? selectedDocument.split('/').pop()?.split('.')[0] || selectedDocument
-        : selectedDocument
+      // selectedDocument is now the database ID, not a URL
+      loadDocumentAnnotations(selectedDocument)
       
-      loadDocumentAnnotations(documentId)
+      // Use the proxy endpoint for PDF viewing to avoid CORS issues
+      setSelectedDocumentUrl(`/api/documents/${selectedDocument}/pdf`)
+    } else {
+      setSelectedDocumentUrl(null)
     }
   }, [selectedDocument, loadDocumentAnnotations])
 
@@ -104,7 +106,7 @@ function ContentPageInner() {
           <ResizablePane
             leftPane={
               <div className="h-full p-4">
-                <PDFViewer documentUrl={selectedDocument} />
+                <PDFViewer documentUrl={selectedDocumentUrl} documentId={selectedDocument} />
               </div>
             }
             rightPane={

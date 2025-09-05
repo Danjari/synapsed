@@ -10,7 +10,7 @@ import {
   CreateNoteRequest,
   UpdateNoteRequest
 } from '../types/annotations'
-import { contentReferenceService } from './content-ReferenceService'
+import { databaseContentService } from './database-content-service'
 
 // Action types for the reducer
 type AnnotationAction =
@@ -76,7 +76,7 @@ function annotationReducer(state: AnnotationState, action: AnnotationAction): An
           metadata: {
             ...state.currentDocument.metadata,
             lastModified: new Date(),
-            pagesWithNotes: contentReferenceService.getPagesWithNotes([
+            pagesWithNotes: databaseContentService.getPagesWithNotes([
               ...state.currentDocument.contentReferences,
               action.payload
             ])
@@ -114,7 +114,7 @@ function annotationReducer(state: AnnotationState, action: AnnotationAction): An
             ...state.currentDocument.metadata,
             lastModified: new Date(),
             totalNotes: state.currentDocument.notes.filter(note => note.contentReferenceId !== action.payload).length,
-            pagesWithNotes: contentReferenceService.getPagesWithNotes(
+            pagesWithNotes: databaseContentService.getPagesWithNotes(
               state.currentDocument.contentReferences.filter(ref => ref.id !== action.payload)
             )
           }
@@ -187,26 +187,26 @@ function annotationReducer(state: AnnotationState, action: AnnotationAction): An
 // Context interface
 interface AnnotationContextType extends AnnotationState {
   // Document management
-  loadDocumentAnnotations: (documentId: string) => void
-  clearDocumentAnnotations: (documentId: string) => void
+  loadDocumentAnnotations: (documentId: string) => Promise<void>
+  clearDocumentAnnotations: (documentId: string) => Promise<void>
   
   // Content reference management
-  createContentReference: (request: CreateContentReferenceRequest) => ContentReference | null
+  createContentReference: (request: CreateContentReferenceRequest) => Promise<ContentReference | null>
   setActiveContentReference: (reference: ContentReference | null) => void
-  updateContentReference: (id: string, updates: Partial<ContentReference>) => ContentReference | null
-  deleteContentReference: (id: string) => boolean
+  updateContentReference: (id: string, updates: Partial<ContentReference>) => Promise<ContentReference | null>
+  deleteContentReference: (id: string) => Promise<boolean>
   
   // Note management
-  createNote: (request: CreateNoteRequest) => Note | null
-  updateNote: (request: UpdateNoteRequest) => Note | null
-  deleteNote: (noteId: string) => boolean
+  createNote: (request: CreateNoteRequest) => Promise<Note | null>
+  updateNote: (request: UpdateNoteRequest) => Promise<Note | null>
+  deleteNote: (noteId: string) => Promise<boolean>
   setActiveNote: (note: Note | null) => void
   
   // UI state
   setEditing: (editing: boolean) => void
   
   // Utility methods
-  getNotesForContentReference: (contentReferenceId: string) => Note[]
+  getNotesForContentReference: (contentReferenceId: string) => Promise<Note[]>
   getPagesWithNotes: () => number[]
 }
 
@@ -221,27 +221,46 @@ interface AnnotationProviderProps {
 export function AnnotationProvider({ children }: AnnotationProviderProps) {
   const [state, dispatch] = useReducer(annotationReducer, initialState)
 
-  // Load document annotations from storage
-  const loadDocumentAnnotations = useCallback((documentId: string) => {
-    const annotations = contentReferenceService.getDocumentAnnotations(documentId)
-    if (annotations) {
-      dispatch({ type: 'LOAD_DOCUMENT_ANNOTATIONS', payload: annotations })
-    } else {
+  // Load document annotations from database
+  const loadDocumentAnnotations = useCallback(async (documentId: string) => {
+    try {
+      const response = await fetch(`/api/documents/${documentId}`)
+      if (response.ok) {
+        const document = await response.json()
+        // Convert the document data to DocumentAnnotation format
+        const annotations: DocumentAnnotation = {
+          documentId: document.id,
+          documentName: document.name,
+          contentReferences: document.contentReferences || [],
+          notes: document.contentReferences?.flatMap((ref: any) => ref.notes || []) || [],
+          metadata: {
+            createdAt: new Date(document.uploadedAt),
+            lastModified: new Date(document.lastModified),
+            totalNotes: document.contentReferences?.reduce((total: number, ref: any) => total + (ref.notes?.length || 0), 0) || 0,
+            pagesWithNotes: document.annotations?.pagesWithNotes || []
+          }
+        }
+        dispatch({ type: 'LOAD_DOCUMENT_ANNOTATIONS', payload: annotations })
+      } else {
+        dispatch({ type: 'SET_CURRENT_DOCUMENT', payload: null })
+      }
+    } catch (error) {
+      console.error('Error loading document annotations:', error)
       dispatch({ type: 'SET_CURRENT_DOCUMENT', payload: null })
     }
   }, [])
 
   // Clear document annotations
-  const clearDocumentAnnotations = useCallback((documentId: string) => {
-    const success = contentReferenceService.clearDocumentAnnotations(documentId)
+  const clearDocumentAnnotations = useCallback(async (documentId: string) => {
+    const success = await databaseContentService.clearDocumentAnnotations(documentId)
     if (success) {
       dispatch({ type: 'SET_CURRENT_DOCUMENT', payload: null })
     }
   }, [])
 
   // Create content reference
-  const createContentReference = useCallback((request: CreateContentReferenceRequest): ContentReference | null => {
-    const reference = contentReferenceService.createContentReference(request)
+  const createContentReference = useCallback(async (request: CreateContentReferenceRequest): Promise<ContentReference | null> => {
+    const reference = await databaseContentService.createContentReference(request, 'current-user-id')
     if (reference) {
       dispatch({ type: 'ADD_CONTENT_REFERENCE', payload: reference })
       return reference
@@ -255,8 +274,8 @@ export function AnnotationProvider({ children }: AnnotationProviderProps) {
   }, [])
 
   // Create note
-  const createNote = useCallback((request: CreateNoteRequest): Note | null => {
-    const note = contentReferenceService.createNote(request)
+  const createNote = useCallback(async (request: CreateNoteRequest): Promise<Note | null> => {
+    const note = await databaseContentService.createNote(request)
     if (note) {
       dispatch({ type: 'ADD_NOTE', payload: note })
       return note
@@ -265,8 +284,8 @@ export function AnnotationProvider({ children }: AnnotationProviderProps) {
   }, [])
 
   // Update note
-  const updateNote = useCallback((request: UpdateNoteRequest): Note | null => {
-    const note = contentReferenceService.updateNote(request)
+  const updateNote = useCallback(async (request: UpdateNoteRequest): Promise<Note | null> => {
+    const note = await databaseContentService.updateNote(request)
     if (note) {
       dispatch({ type: 'UPDATE_NOTE', payload: note })
       return note
@@ -275,8 +294,8 @@ export function AnnotationProvider({ children }: AnnotationProviderProps) {
   }, [])
 
   // Delete note
-  const deleteNote = useCallback((noteId: string): boolean => {
-    const success = contentReferenceService.deleteNote(noteId)
+  const deleteNote = useCallback(async (noteId: string): Promise<boolean> => {
+    const success = await databaseContentService.deleteNote(noteId)
     if (success) {
       dispatch({ type: 'DELETE_NOTE', payload: noteId })
       return true
@@ -285,8 +304,8 @@ export function AnnotationProvider({ children }: AnnotationProviderProps) {
   }, [])
 
   // Update content reference
-  const updateContentReference = useCallback((id: string, updates: Partial<ContentReference>): ContentReference | null => {
-    const reference = contentReferenceService.updateContentReference(id, updates)
+  const updateContentReference = useCallback(async (id: string, updates: Partial<ContentReference>): Promise<ContentReference | null> => {
+    const reference = await databaseContentService.updateContentReference(id, updates)
     if (reference) {
       dispatch({ type: 'UPDATE_CONTENT_REFERENCE', payload: reference })
       return reference
@@ -295,8 +314,8 @@ export function AnnotationProvider({ children }: AnnotationProviderProps) {
   }, [])
 
   // Delete content reference
-  const deleteContentReference = useCallback((id: string): boolean => {
-    const success = contentReferenceService.deleteContentReference(id)
+  const deleteContentReference = useCallback(async (id: string): Promise<boolean> => {
+    const success = await databaseContentService.deleteContentReference(id)
     if (success) {
       dispatch({ type: 'DELETE_CONTENT_REFERENCE', payload: id })
       // If the deleted reference was active, clear the active reference
@@ -319,8 +338,8 @@ export function AnnotationProvider({ children }: AnnotationProviderProps) {
   }, [])
 
   // Get notes for content reference
-  const getNotesForContentReference = useCallback((contentReferenceId: string): Note[] => {
-    return contentReferenceService.getNotesForContentReference(contentReferenceId)
+  const getNotesForContentReference = useCallback(async (contentReferenceId: string): Promise<Note[]> => {
+    return await databaseContentService.getNotesForContentReference(contentReferenceId)
   }, [])
 
   // Get pages with notes

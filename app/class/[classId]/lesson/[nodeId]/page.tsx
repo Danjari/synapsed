@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { BarChart3, Sparkles, BookOpen, Brain, FileText, ArrowLeft, ChevronUp, ChevronDown, LayoutDashboard } from 'lucide-react';
 import Link from 'next/link';
 import { FlashcardsPanel } from '@/components/Lesson/flashcard/FlashcardsPanel';
+import ContentPage from '@/components/contentPage/ContentPage';
 
 export default function LessonPage() {
 
@@ -204,7 +205,9 @@ export default function LessonPage() {
                 )
               )}
               {viewMode === 'content' && (
-                <div className="h-full p-6 text-slate-600">Content coming soon…</div>
+                <div className="h-full">
+                  <ContentPage />
+                </div>
               )}
               {viewMode === 'flashcards' && (
                 <div className="h-full bg-white rounded-xl border border-slate-200 shadow-lg overflow-hidden min-h-[600px]">

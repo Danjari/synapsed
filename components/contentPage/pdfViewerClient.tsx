@@ -21,9 +21,10 @@ if (typeof window !== "undefined") {
 
 interface PDFViewerProps {
   documentUrl: string | null
+  documentId?: string | null
 }
 
-export function PDFViewerClient({ documentUrl }: PDFViewerProps) {
+export function PDFViewerClient({ documentUrl, documentId }: PDFViewerProps) {
 
   const [numPages, setNumPages] = useState<number>(0)
   const [pageNumber, setPageNumber] = useState<number>(1)
@@ -46,11 +47,10 @@ export function PDFViewerClient({ documentUrl }: PDFViewerProps) {
 
   // Load annotations when document changes
   useEffect(() => {
-    if (documentUrl) {
-      const documentId = documentUrl.split('/').pop()?.split('.')[0] || 'unknown'
+    if (documentId) {
       loadDocumentAnnotations(documentId)
     }
-  }, [documentUrl, loadDocumentAnnotations])
+  }, [documentId, loadDocumentAnnotations])
 
   const onDocumentLoadSuccess = useCallback(({ numPages }: { numPages: number }) => {
     console.log("[v0] PDF loaded successfully with", numPages, "pages")
@@ -156,8 +156,7 @@ export function PDFViewerClient({ documentUrl }: PDFViewerProps) {
     }
     
     // Create a content reference
-    const documentId = documentUrl.split('/').pop()?.split('.')[0] || 'unknown'
-    const documentName = documentUrl.split('/').pop() || 'Document'
+    const documentName = documentUrl?.split('/').pop() || 'Document'
     
     // Extract content around the clicked area
     const contentPreview = extractContentAroundCoordinates(
@@ -190,7 +189,7 @@ export function PDFViewerClient({ documentUrl }: PDFViewerProps) {
       contentHash,
       coordinates: optimalCoordinates,
       contentPreview,
-      documentId,
+      documentId: documentId!,
       documentName
     }
     

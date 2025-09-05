@@ -55,71 +55,41 @@ export function DocumentSidebar({ isOpen, onToggle, selectedDocument, onDocument
   // State for storing document list
   const [documents, setDocuments] = useState<DocumentItem[]>([])
 
-  // Load documents from localStorage on component mount
+  // Load documents from database on component mount
   useEffect(() => {
-    const savedDocuments = localStorage.getItem("pdf-annotation-documents")
-    if (savedDocuments) {
-      const parsed = JSON.parse(savedDocuments)
-      // Convert date strings back to Date objects
-      const documentsWithDates = parsed.map((doc: DocumentItem) => ({
-        ...doc,
-        lastModified: new Date(doc.lastModified),
-      }))
-      setDocuments(documentsWithDates)
-    } else {
-      // Initialize with default documents if none exist
-      const defaultDocuments: DocumentItem[] = [
-        {
-          id: "1",
-          name: "Lecture2",
-          type: "pdf",
-          url: "/pdfs/lecture2.pdf",
-          lastModified: new Date("2024-01-15"),
-          size: "2.3 MB",
-          folder: "recent",
-        },
-        {
-          id: "2",
-          name: "Research Paper - Attention Is All You Need",
-          type: "pdf",
-          url: "https://arxiv.org/pdf/1706.03762",
-          lastModified: new Date("2024-01-10"),
-          size: "1.8 MB",
-          folder: "research",
-        },
-        {
-          id: "4",
-          name: "Your Local PDF",
-          type: "pdf",
-          url: "/pdfs/your-document.pdf",
-          lastModified: new Date("2024-01-20"),
-          size: "1.5 MB",
-          folder: "recent",
-        },
-        {
-          id: "3",
-          name: "Project Presentation Q4",
-          type: "pptx",
-          url: "#",
-          lastModified: new Date("2024-01-08"),
-          size: "5.2 MB",
-          folder: "presentations",
-        },
-      ]
-      setDocuments(defaultDocuments)
-      localStorage.setItem("pdf-annotation-documents", JSON.stringify(defaultDocuments))
+    const loadDocuments = async () => {
+      try {
+        const response = await fetch('/api/documents')
+        if (response.ok) {
+          const documents = await response.json()
+          // Convert database documents to DocumentItem format
+          const documentItems: DocumentItem[] = documents.map((doc: any) => ({
+            id: doc.id,
+            name: doc.name,
+            type: doc.type.toLowerCase(),
+            url: doc.url,
+            lastModified: new Date(doc.lastModified),
+            size: doc.size,
+            folder: doc.folder || 'recent',
+          }))
+          setDocuments(documentItems)
+        } else {
+          console.error('Failed to load documents')
+          setDocuments([])
+        }
+      } catch (error) {
+        console.error('Error loading documents:', error)
+        setDocuments([])
+      }
     }
+
+    loadDocuments()
   }, [])
 
-  // Save documents to localStorage whenever the documents array changes
-  useEffect(() => {
-    if (documents.length > 0) {
-      localStorage.setItem("pdf-annotation-documents", JSON.stringify(documents))
-    }
-  }, [documents])
+  // No need to save to localStorage anymore - data is persisted in database
 
   // Handle file upload from user's device
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (!file) return
 
@@ -129,29 +99,45 @@ export function DocumentSidebar({ isOpen, onToggle, selectedDocument, onDocument
       return
     }
 
-    // Create object URL for the uploaded file
-    const fileUrl = URL.createObjectURL(file)
+    try {
+      // Create FormData to send the actual file
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('folder', 'recent')
 
-    // Create new document object
-    const newDocument: DocumentItem = {
-      id: Date.now().toString(),
-      name: file.name.replace(".pdf", ""),
-      type: "pdf",
-      url: fileUrl,
-      lastModified: new Date(),
-      size: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
-      folder: "recent",
+      // Create new document in database
+      const response = await fetch('/api/documents', {
+        method: 'POST',
+        body: formData
+      })
+
+      if (response.ok) {
+        const newDocument = await response.json()
+        
+        // Convert to DocumentItem format and add to list
+        const documentItem: DocumentItem = {
+          id: newDocument.id,
+          name: newDocument.name,
+          type: newDocument.type.toLowerCase(),
+          url: newDocument.url,
+          lastModified: new Date(newDocument.lastModified),
+          size: newDocument.size,
+          folder: newDocument.folder || 'recent',
+        }
+
+        setDocuments((prev) => [documentItem, ...prev])
+      } else {
+        alert('Failed to upload document')
+      }
+    } catch (error) {
+      console.error('Error uploading document:', error)
+      alert('Error uploading document')
     }
-
-    // Add new document to the beginning of the list
-    setDocuments((prev) => [newDocument, ...prev])
 
     // Clear the file input
     if (fileInputRef.current) {
       fileInputRef.current.value = ""
     }
-
-    // console.log("[v0] Document added:", newDocument.name)
   }
 
   // Trigger file input click
@@ -270,13 +256,13 @@ export function DocumentSidebar({ isOpen, onToggle, selectedDocument, onDocument
                   <div
                     key={doc.id}
                     className={`relative group rounded-lg transition-colors ${
-                      selectedDocument === doc.url
+                      selectedDocument === doc.id
                         ? "bg-sidebar-accent text-sidebar-accent-foreground"
                         : "hover:bg-sidebar-primary hover:text-sidebar-primary-foreground"
                     }`}
                   >
                     {/* Document Item Button */}
-                    <button onClick={() => onDocumentSelect(doc.url)} className="w-full text-left p-3 rounded-lg">
+                    <button onClick={() => onDocumentSelect(doc.id)} className="w-full text-left p-3 rounded-lg">
                       <div className="flex items-start gap-3">
                         <FileText className="w-5 h-5 mt-0.5 flex-shrink-0" />
                         <div className="min-w-0 flex-1">
