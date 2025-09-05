@@ -112,13 +112,13 @@ export default function LessonPage() {
 
             {/* Center Tabs */}
             <div className="absolute left-1/2 transform -translate-x-1/2 flex bg-slate-100 p-1 rounded-lg">
-              <button
+              {/* <button
                 onClick={() => setViewMode('overview')}
                 className={`flex items-center space-x-2 px-4 py-2 rounded-md transition-all duration-200 text-sm font-medium ${viewMode === 'overview' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600 hover:text-slate-800 hover:bg-white/50'}`}
               >
                 <BarChart3 className="w-4 h-4" />
                 <span>Overview</span>
-              </button>
+              </button> */}
               <button
                 onClick={() => setViewMode('ai-lesson')}
                 className={`flex items-center space-x-2 px-4 py-2 rounded-md transition-all duration-200 text-sm font-medium ${viewMode === 'ai-lesson' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600 hover:text-slate-800 hover:bg-white/50'}`}
@@ -186,9 +186,9 @@ export default function LessonPage() {
         <div className="flex-1 flex flex-col min-h-0">
           <div className="flex-1 p-6 overflow-hidden min-h-0">
             <div className=" overflow-hidden h-full">
-              {viewMode === 'overview' && (
+              {/* {viewMode === 'overview' && (
                 <div className="h-full p-6 text-slate-600">Overview coming soon…</div>
-              )}
+              )} */}
               {viewMode === 'ai-lesson' && (
                 loading ? (
                   <div className="h-full p-6">Loading note…</div>

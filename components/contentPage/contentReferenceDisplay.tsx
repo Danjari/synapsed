@@ -14,7 +14,7 @@ interface ContentReferenceDisplayProps {
 export function ContentReferenceDisplay({ pageNumber, scale, rotation }: ContentReferenceDisplayProps) {
 
 
-  const { currentDocument, setActiveContentReference, getNotesForContentReference, activeContentReference } = useAnnotation()
+  const { currentDocument, setActiveContentReference, activeContentReference } = useAnnotation()
 
     // Ensure this component only runs on the client side
   if (typeof window === "undefined") {
@@ -246,7 +246,7 @@ export function ContentReferenceDisplay({ pageNumber, scale, rotation }: Content
           </div>
           {/* Count of references with notes */}
           <div className="text-xs text-gray-500 mt-1">
-            {pageReferences.filter(ref => getNotesForContentReference(ref.id).length > 0).length} with notes
+            {pageReferences.filter(ref => currentDocument.notes.filter(note => note.contentReferenceId === ref.id).length > 0).length} with notes
           </div>
         </div>
       )}
