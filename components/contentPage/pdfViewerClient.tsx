@@ -94,6 +94,7 @@ export function PDFViewerClient({ documentUrl, documentId }: PDFViewerProps) {
   }, [documentUrl])
 
   // Handle page text extraction and dimension logging
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onPageLoadSuccess = useCallback((page: any) => {
     // Log page dimensions for debugging
     console.log('Page loaded successfully:', {
@@ -104,11 +105,14 @@ export function PDFViewerClient({ documentUrl, documentId }: PDFViewerProps) {
       rotation,
       orientation: page.width > page.height ? 'landscape' : 'portrait'
     })
-    
+    // find a way to fix the any for later. 
     // Extract text content from the page for content detection
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     page.getTextContent().then((textContent: any) => {
       const text = textContent.items
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .filter((item: any) => item.str) // Filter out items without str property
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .map((item: any) => item.str)
         .join(' ')
       setPageText(text)
