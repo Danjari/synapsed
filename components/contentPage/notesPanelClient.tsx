@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import "@blocknote/core/fonts/inter.css"
 import { useCreateBlockNote } from "@blocknote/react"
 import { BlockNoteView } from "@blocknote/mantine"
@@ -26,22 +26,19 @@ export function NotesPanelClient({ documentId }: NotesPanelProps) {
     updateNote,
     deleteNote,
     deleteContentReference,
-    getNotesForContentReference,
-    setActiveContentReference 
+    setActiveContentReference,
+    currentDocument
   } = useAnnotation()
 
   // State for note creation feedback
   const [noteCreationFeedback, setNoteCreationFeedback] = useState<string | null>(null)
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null)
   const [editingNoteContent, setEditingNoteContent] = useState<string>('')
-  const [notes, setNotes] = useState<any[]>([])
 
-  // Load notes when active content reference changes
-  useEffect(() => {
-    if (activeContentReference) {
-      getNotesForContentReference(activeContentReference.id).then(setNotes)
-    }
-  }, [activeContentReference, getNotesForContentReference])
+  // Get notes from the global context instead of local state
+  const notes = activeContentReference 
+    ? currentDocument?.notes.filter(note => note.contentReferenceId === activeContentReference.id) || []
+    : []
 
   if (!documentId) {
     return (
@@ -153,13 +150,16 @@ export function NotesPanelClient({ documentId }: NotesPanelProps) {
                   if (e.key === 'Enter' && e.currentTarget.value.trim()) {
                     const note = await createNote({
                       contentReferenceId: activeContentReference.id,
-                      content: e.currentTarget.value.trim()
+                      content: e.currentTarget.value.trim(),
+                      tags: [],
+                      lastModified: new Date(),
+                      createdBy: 'you'
                     })
                     if (note) {
                       setNoteCreationFeedback('Note created successfully!')
                       setTimeout(() => setNoteCreationFeedback(null), 2000)
+                      e.currentTarget.value = ''
                     }
-                    e.currentTarget.value = ''
                   }
                 }}
               />
@@ -169,13 +169,16 @@ export function NotesPanelClient({ documentId }: NotesPanelProps) {
                   if (input && input.value.trim()) {
                     const note = await createNote({
                       contentReferenceId: activeContentReference.id,
-                      content: input.value.trim()
+                      content: input.value.trim(),
+                      tags: [],
+                      lastModified: new Date(),
+                      createdBy: 'you' // TODO: Get proper user name in next iteration
                     })
                     if (note) {
                       setNoteCreationFeedback('Note created successfully!')
                       setTimeout(() => setNoteCreationFeedback(null), 2000)
+                      input.value = ''
                     }
-                    input.value = ''
                   }
                 }}
                 className="px-3 py-2 bg-primary text-primary-foreground text-sm rounded-md hover:bg-primary/90 transition-colors"

@@ -79,7 +79,7 @@ export function PDFViewerClient({ documentUrl, documentId }: PDFViewerProps) {
 
   const changeScale = useCallback(
     (delta: number) => {
-      setScale((prevScale) => Math.min(Math.max(prevScale + delta, 0.5), 3.0))
+      setScale((prevScale) => Math.min(Math.max(prevScale + delta, 0.5), 1.2))
     },
     [],
   )
@@ -283,7 +283,7 @@ export function PDFViewerClient({ documentUrl, documentId }: PDFViewerProps) {
 
         <div className="flex items-center gap-2">
           <button
-            onClick={() => changeScale(-0.2)}
+            onClick={() => changeScale(-0.1)}
             disabled={scale <= 0.5}
             className="p-2 rounded-lg hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
@@ -295,8 +295,8 @@ export function PDFViewerClient({ documentUrl, documentId }: PDFViewerProps) {
           </span>
 
           <button
-            onClick={() => changeScale(0.2)}
-            disabled={scale >= 3.0}
+            onClick={() => changeScale(0.1)}
+            disabled={scale >= 1.2}
             className="p-2 rounded-lg hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             <ZoomIn className="w-4 h-4" />

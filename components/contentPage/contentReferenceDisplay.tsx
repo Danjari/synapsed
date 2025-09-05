@@ -117,12 +117,12 @@ export function ContentReferenceDisplay({ pageNumber, scale, rotation }: Content
             key={reference.id}
             className="absolute z-10 cursor-pointer group hover:cursor-pointer"
             style={{
-              // Position based on stored coordinates
-              left: reference.coordinates.x,
-              top: reference.coordinates.y,
-              // Apply current PDF scale and rotation
-              transform: `scale(${scale}) rotate(${rotation}deg)`,
-              transformOrigin: 'top left'
+              // Position based on stored coordinates scaled to current zoom level
+              left: reference.coordinates.x * scale,
+              top: reference.coordinates.y * scale,
+              // Apply rotation only (scale is handled by position)
+              transform: `rotate(${rotation}deg)`,
+              transformOrigin: 'center'
             }}
             onClick={(event) => {
               // Prevent the click from bubbling up to the PDF container
@@ -133,27 +133,41 @@ export function ContentReferenceDisplay({ pageNumber, scale, rotation }: Content
               
               // Add visual feedback for the click with scale animation
               const element = event.currentTarget as HTMLElement
-              element.style.transform = `scale(${scale * 1.2}) rotate(${rotation}deg)`
+              element.style.transform = `scale(1.2) rotate(${rotation}deg)`
               setTimeout(() => {
-                element.style.transform = `scale(${scale}) rotate(${rotation}deg)`
+                element.style.transform = `rotate(${rotation}deg)`
               }, 150)
             }}
             title={`Click to view/edit notes for this ${getContentTypeLabel(reference.contentType).toLowerCase()} (${notes.length} note${notes.length !== 1 ? 's' : ''})`}
           >
             {/* Main content reference indicator circle */}
-            <div className={`
-              relative w-8 h-8 rounded-full flex items-center justify-center text-white shadow-lg
-              ${getContentTypeColor(reference.contentType)}
-              transition-all duration-200 hover:scale-110 active:scale-95
-              ${hasNotes ? 'ring-2 ring-yellow-400 ring-offset-2' : 'ring-1 ring-white/20'}
-              ${isActive ? 'ring-4 ring-blue-300 ring-offset-2' : ''}
-              group-hover:shadow-xl group-hover:ring-2 group-hover:ring-white/50
-            `}>
+            <div 
+              className={`
+                relative rounded-full flex items-center justify-center text-white shadow-lg
+                ${getContentTypeColor(reference.contentType)}
+                transition-all duration-200 hover:scale-110 active:scale-95
+                ${hasNotes ? 'ring-2 ring-yellow-400 ring-offset-2' : 'ring-1 ring-white/20'}
+                ${isActive ? 'ring-4 ring-blue-300 ring-offset-2' : ''}
+                group-hover:shadow-xl group-hover:ring-2 group-hover:ring-white/50
+              `}
+              style={{
+                width: `${32 * scale}px`,
+                height: `${32 * scale}px`,
+                fontSize: `${14 * scale}px`
+              }}
+            >
               {getContentTypeIcon(reference.contentType)}
               
               {/* Priority indicator star (top-right corner) */}
               {getPriorityIndicator(notes) && (
-                <div className="absolute -top-1 -right-1">
+                <div 
+                  className="absolute"
+                  style={{
+                    top: `${-4 * scale}px`,
+                    right: `${-4 * scale}px`,
+                    fontSize: `${12 * scale}px`
+                  }}
+                >
                   {getPriorityIndicator(notes)}
                 </div>
               )}
@@ -161,11 +175,19 @@ export function ContentReferenceDisplay({ pageNumber, scale, rotation }: Content
             
             {/* Note count badge (shows when notes exist) */}
             {hasNotes && (
-              <div className={`
-                absolute -top-2 -right-2 rounded-full px-2 py-1 text-xs font-bold text-white
-                ${notes.length > 3 ? 'bg-red-500' : notes.length > 1 ? 'bg-yellow-500' : 'bg-green-500'}
-                shadow-lg transition-all duration-200 group-hover:scale-110
-              `}>
+              <div 
+                className={`
+                  absolute rounded-full font-bold text-white
+                  ${notes.length > 3 ? 'bg-red-500' : notes.length > 1 ? 'bg-yellow-500' : 'bg-green-500'}
+                  shadow-lg transition-all duration-200 group-hover:scale-110
+                `}
+                style={{
+                  top: `${-8 * scale}px`,
+                  right: `${-8 * scale}px`,
+                  padding: `${4 * scale}px ${8 * scale}px`,
+                  fontSize: `${10 * scale}px`
+                }}
+              >
                 {notes.length > 9 ? '9+' : notes.length}
               </div>
             )}
