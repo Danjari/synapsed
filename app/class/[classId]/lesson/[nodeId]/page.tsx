@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { PartialBlock } from '@blocknote/core';
 import Editor from '@/components/Lesson/editorAI/Editor';
 import { Button } from '@/components/ui/button';
-import { BarChart3, Sparkles, BookOpen, Brain, FileText, ArrowLeft, ChevronUp, ChevronDown, LayoutDashboard } from 'lucide-react';
+import { Sparkles, BookOpen, Brain, FileText, ArrowLeft, ChevronUp, ChevronDown, LayoutDashboard } from 'lucide-react';
 import Link from 'next/link';
 import { FlashcardsPanel } from '@/components/Lesson/flashcard/FlashcardsPanel';
 import ContentPage from '@/components/contentPage/ContentPage';

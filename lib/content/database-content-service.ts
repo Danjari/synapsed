@@ -16,7 +16,7 @@ class DatabaseContentService {
    * Create a new content reference (PDF click annotation)
    */
 
-  async createContentReference(request: CreateContentReferenceRequest, userId: string): Promise<ContentReference | null> {
+  async createContentReference(request: CreateContentReferenceRequest): Promise<ContentReference | null> {
     try {
       const response = await fetch('/api/content-references', {
         method: 'POST',
@@ -181,10 +181,10 @@ class DatabaseContentService {
    * 4. Return paginated results with NoteSearchResult format
    * 5. Update this method to call the new endpoint
    */
-  async searchNotes(query: any): Promise<any> {
-    // Implementation needed - see steps above
-    return { notes: [], totalResults: 0 }
-  }
+  // async searchNotes(query: any): Promise<any> {
+  //   // Implementation needed - see steps above
+  //   return { notes: [], totalResults: 0 }
+  // }
 
   /**
    * TODO: Implement clear document annotations
@@ -195,10 +195,10 @@ class DatabaseContentService {
    * 3. Delete document annotation metadata
    * 4. Update this method to call the new endpoint
    */
-  async clearDocumentAnnotations(documentId: string): Promise<boolean> {
-    // Implementation needed - see steps above
-    return false
-  }
+  // async clearDocumentAnnotations(documentId: string): Promise<boolean> {
+  //   // Implementation needed - see steps above
+  //   return false
+  // }
 
   /**
    * TODO: Implement document annotation export
@@ -209,10 +209,10 @@ class DatabaseContentService {
    * 3. Format as JSON, PDF, or other export format
    * 4. Update this method to call the new endpoint
    */
-  async exportDocumentAnnotations(documentId: string): Promise<string | null> {
-    // Implementation needed - see steps above
-    return null
-  }
+  // async exportDocumentAnnotations(documentId: string): Promise<string | null> {
+  //   // Implementation needed - see steps above
+  //   return null
+  // }
 }
 
 // Export a singleton instance
