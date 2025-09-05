@@ -26,6 +26,16 @@ interface DocumentItem {
   folder?: string
 }
 
+interface DatabaseDocument {
+  id: string
+  name: string
+  type: string
+  url: string
+  lastModified: string
+  size: string
+  folder?: string
+}
+
 interface DocumentSidebarProps {
   isOpen: boolean
   onToggle: () => void
@@ -63,7 +73,7 @@ export function DocumentSidebar({ isOpen, onToggle, selectedDocument, onDocument
         if (response.ok) {
           const documents = await response.json()
           // Convert database documents to DocumentItem format
-          const documentItems: DocumentItem[] = documents.map((doc: any) => ({
+          const documentItems: DocumentItem[] = documents.map((doc: DatabaseDocument) => ({
             id: doc.id,
             name: doc.name,
             type: doc.type.toLowerCase(),
