@@ -24,10 +24,6 @@ interface PDFViewerProps {
 }
 
 export function PDFViewerClient({ documentUrl }: PDFViewerProps) {
-  // Ensure this component only runs on the client side
-  if (typeof window === "undefined") {
-    return <div className="h-full flex items-center justify-center">Loading...</div>
-  }
 
   const [numPages, setNumPages] = useState<number>(0)
   const [pageNumber, setPageNumber] = useState<number>(1)
@@ -41,7 +37,6 @@ export function PDFViewerClient({ documentUrl }: PDFViewerProps) {
   const { 
     createContentReference, 
     currentDocument, 
-    activeContentReference,
     loadDocumentAnnotations 
   } = useAnnotation()
   
@@ -113,10 +108,11 @@ export function PDFViewerClient({ documentUrl }: PDFViewerProps) {
     // Extract text content from the page for content detection
     page.getTextContent().then((textContent: any) => {
       const text = textContent.items
+        .filter((item: any) => item.str) // Filter out items without str property
         .map((item: any) => item.str)
         .join(' ')
       setPageText(text)
-    }).catch((error: any) => {
+    }).catch((error: unknown) => {
       console.warn('Could not extract text from page:', error)
       setPageText('')
     })
