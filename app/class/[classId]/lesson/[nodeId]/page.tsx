@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { PartialBlock } from '@blocknote/core';
 import Editor from '@/components/Lesson/editorAI/Editor';
 import { Button } from '@/components/ui/button';
-import { Sparkles, BookOpen, Brain, FileText, ArrowLeft, ChevronUp, ChevronDown, LayoutDashboard } from 'lucide-react';
+import { Sparkles, BookOpen, Brain, ArrowLeft, ChevronUp, ChevronDown, LayoutDashboard } from 'lucide-react';
 import Link from 'next/link';
 import { FlashcardsPanel } from '@/components/Lesson/flashcard/FlashcardsPanel';
 import ContentPage from '@/components/contentPage/ContentPage';
@@ -140,13 +140,13 @@ export default function LessonPage() {
                 <Brain className="w-4 h-4" />
                 <span>Flashcards</span>
               </button>
-              <button
+              {/* <button
                 onClick={() => setViewMode('summary')}
                 className={`flex items-center space-x-2 px-4 py-2 rounded-md transition-all duration-200 text-sm font-medium ${viewMode === 'summary' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600 hover:text-slate-800 hover:bg-white/50'}`}
               >
                 <FileText className="w-4 h-4" />
                 <span>Summary</span>
-              </button>
+              </button> */}
             </div>
 
             {/* Right spacer */}
@@ -185,12 +185,10 @@ export default function LessonPage() {
       <div className={`h-screen-min flex flex-1 min-h-0 relative transition-all duration-300 ${showTopBar ? 'pt-24' : 'pt-0'}`}>
         <div className="flex-1 flex flex-col min-h-0">
           <div className="flex-1 p-6 overflow-hidden min-h-0">
-            <div className=" overflow-hidden h-full">
-              {/* {viewMode === 'overview' && (
-                <div className="h-full p-6 text-slate-600">Overview coming soon…</div>
-              )} */}
-              {viewMode === 'ai-lesson' && (
-                loading ? (
+            <div className="overflow-hidden h-full">
+              {/* AI Lesson Tab */}
+              <div className={`h-full ${viewMode === 'ai-lesson' ? 'block' : 'hidden'}`}>
+                {loading ? (
                   <div className="h-full p-6">Loading note…</div>
                 ) : (
                   <div className="h-full">
@@ -202,14 +200,16 @@ export default function LessonPage() {
                     />
                     <div className="px-6 pb-3 text-xs text-gray-500">{saving ? 'Saving…' : 'Saved'}</div>
                   </div>
-                )
-              )}
-              {viewMode === 'content' && (
-                <div className="h-full">
-                  <ContentPage />
-                </div>
-              )}
-              {viewMode === 'flashcards' && (
+                )}
+              </div>
+
+              {/* Content Tab */}
+              <div className={`h-full ${viewMode === 'content' ? 'block' : 'hidden'}`}>
+                <ContentPage />
+              </div>
+
+              {/* Flashcards Tab */}
+              <div className={`h-full ${viewMode === 'flashcards' ? 'block' : 'hidden'}`}>
                 <div className="h-full bg-white rounded-xl border border-slate-200 shadow-lg overflow-hidden min-h-[600px]">
                   <FlashcardsPanel 
                     key={`${nodeId}-${nodeTitle}`}
@@ -218,10 +218,17 @@ export default function LessonPage() {
                     markdownContent={note?.contentText ?? ''} 
                   />
                 </div>
-              )}
-              {viewMode === 'summary' && (
+              </div>
+
+              {/* Overview Tab (commented out for now) */}
+              {/* <div className={`h-full ${viewMode === 'overview' ? 'block' : 'hidden'}`}>
+                <div className="h-full p-6 text-slate-600">Overview coming soon…</div>
+              </div> */}
+
+              {/* Summary Tab (commented out for now) */}
+              {/* <div className={`h-full ${viewMode === 'summary' ? 'block' : 'hidden'}`}>
                 <div className="h-full p-6 text-slate-600">Summary coming soon…</div>
-              )}
+              </div> */}
             </div>
           </div>
         </div>
