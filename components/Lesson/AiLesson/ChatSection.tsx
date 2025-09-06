@@ -93,13 +93,22 @@ export default function ChatPage() {
     }
 
     try {
-      const response = await fetch('/api/agent', {
+      const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          question: userMessage.content,
+          messages: [
+            ...messages.map(msg => ({
+              role: msg.role,
+              content: msg.content
+            })),
+            {
+              role: "user",
+              content: userMessage.content
+            }
+          ]
         }),
       })
       if (!response.ok) {
@@ -108,7 +117,7 @@ export default function ChatPage() {
       const data = await response.json()
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: cleanAIResponse(data.answer),
+        content: cleanAIResponse(data.message),
         role: "assistant",
         timestamp: new Date(),
       }
@@ -152,13 +161,22 @@ export default function ChatPage() {
     }
 
     try {
-      const response = await fetch('/api/agent', {
+      const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          question: userMessage.content,
+          messages: [
+            ...messages.map(msg => ({
+              role: msg.role,
+              content: msg.content
+            })),
+            {
+              role: "user",
+              content: userMessage.content
+            }
+          ]
         }),
       })
       if (!response.ok) {
@@ -167,7 +185,7 @@ export default function ChatPage() {
       const data = await response.json()
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: cleanAIResponse(data.answer),
+        content: cleanAIResponse(data.message),
         role: "assistant",
         timestamp: new Date(),
       }
