@@ -5,13 +5,36 @@ import type React from "react"
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { Send } from "lucide-react"
+import { Send, Plus } from "lucide-react"
 import ReactMarkdown from "react-markdown"
+import remarkMath from "remark-math"
+import rehypeKatex from "rehype-katex"
+import "katex/dist/katex.min.css"
+
+// Custom styles for math rendering
+const mathStyles = `
+  .katex {
+    font-size: 1.1em;
+  }
+  .katex-display {
+    margin: 1em 0;
+    text-align: center;
+  }
+  .katex .base {
+    margin: 0.1em 0;
+  }
+`
 interface Message {
   id: string
   content: string
   role: "user" | "assistant"
   timestamp: Date
+}
+
+interface ChatSectionProps {
+  onAddToNotes?: (content: string) => void
+  classId?: string
+  lessonId?: string
 }
 
 function formatRelativeTime(date: Date): string {
@@ -39,7 +62,26 @@ const cleanAIResponse = (content: string): string => {
     .trim()
 }
 
-export default function ChatPage() {
+// Helper function to convert common math patterns to LaTeX
+const convertMathToLatex = (content: string): string => {
+  return content
+    // Convert x^2 patterns to LaTeX
+    .replace(/(\w+)\^(\d+)/g, '$$1^{$2}$')
+    // Convert fractions like 1/2 to LaTeX
+    .replace(/(\d+)\/(\d+)/g, '$\\frac{$1}{$2}$')
+    // Convert sqrt patterns
+    .replace(/sqrt\(([^)]+)\)/g, '$\\sqrt{$1}$')
+    // Convert integral patterns
+    .replace(/∫/g, '$\\int$')
+    // Convert sum patterns
+    .replace(/∑/g, '$\\sum$')
+    // Convert pi
+    .replace(/π/g, '$\\pi$')
+    // Convert infinity
+    .replace(/∞/g, '$\\infty$')
+}
+
+export default function ChatPage({ onAddToNotes }: ChatSectionProps = {}) {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState("")
   const [isTyping, setIsTyping] = useState(false)
@@ -106,7 +148,7 @@ export default function ChatPage() {
             })),
             {
               role: "user",
-              content: userMessage.content
+              content: `${userMessage.content}\n\nPlease format any mathematical expressions using LaTeX syntax with $ for inline math and $$ for display math.`
             }
           ]
         }),
@@ -117,7 +159,7 @@ export default function ChatPage() {
       const data = await response.json()
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: cleanAIResponse(data.message),
+        content: convertMathToLatex(cleanAIResponse(data.message)),
         role: "assistant",
         timestamp: new Date(),
       }
@@ -174,7 +216,7 @@ export default function ChatPage() {
             })),
             {
               role: "user",
-              content: userMessage.content
+              content: `${userMessage.content}\n\nPlease format any mathematical expressions using LaTeX syntax with $ for inline math and $$ for display math.`
             }
           ]
         }),
@@ -185,7 +227,7 @@ export default function ChatPage() {
       const data = await response.json()
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: cleanAIResponse(data.message),
+        content: convertMathToLatex(cleanAIResponse(data.message)),
         role: "assistant",
         timestamp: new Date(),
       }
@@ -227,6 +269,7 @@ export default function ChatPage() {
   }
 
   return (<div className="h-screen bg-white flex flex-col font-system overflow-hidden">
+    <style dangerouslySetInnerHTML={{ __html: mathStyles }} />
   {/* Chat Area */}
   <div className="flex-1 overflow-hidden relative">
     {/* Welcome Screen */}
@@ -304,6 +347,8 @@ export default function ChatPage() {
                   >
                     <div className="whitespace-pre-wrap break-words leading-relaxed text-[15px]">
                       <ReactMarkdown
+                        remarkPlugins={[remarkMath]}
+                        rehypePlugins={[rehypeKatex]}
                         components={{
                           a: ({ ...props}) => (
                             <a
@@ -318,6 +363,19 @@ export default function ChatPage() {
                         {message.content}
                       </ReactMarkdown>
                     </div>
+                    {message.role === "assistant" && onAddToNotes && (
+                      <div className="mt-2 flex justify-end">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => onAddToNotes(message.content)}
+                          className="h-6 px-2 text-xs text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-full"
+                        >
+                          <Plus className="w-3 h-3 mr-1" />
+                          Add to Notes
+                        </Button>
+                      </div>
+                    )}
                   </div>
                   <p
                     className={`text-xs text-gray-400 mt-1 px-2 ${

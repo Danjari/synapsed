@@ -1,9 +1,10 @@
 'use client';
 
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import type { PartialBlock } from '@blocknote/core';
-import Editor from '@/components/Lesson/AiLesson/Editor';
+import { useCallback, useEffect, useState } from 'react';
+// import type { PartialBlock } from '@blocknote/core';
+// import Editor from '@/components/Lesson/AiLesson/Editor';
+import AiLessonLayout from '@/components/Lesson/AiLesson/AiLessonLayout';
 import { Button } from '@/components/ui/button';
 import { Sparkles, BookOpen, Brain, ArrowLeft, ChevronUp, ChevronDown, LayoutDashboard } from 'lucide-react';
 import Link from 'next/link';
@@ -23,10 +24,10 @@ export default function LessonPage() {
   const nodeTitle = searchParams.get('nodeTitle') ?? '';
 
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+  // const [saving, setSaving] = useState(false);
   type LessonNoteResponse = { content?: unknown; contentText?: string } | null;
   const [note, setNote] = useState<LessonNoteResponse>(null);
-  const saveTimer = useRef<NodeJS.Timeout | null>(null);
+  // const saveTimer = useRef<NodeJS.Timeout | null>(null);
 
   // const userId = session?.user?.id ?? 'unknown';
   // const userEmail = session?.user?.email ?? 'unknown';
@@ -51,39 +52,39 @@ export default function LessonPage() {
     fetchNote();
   }, [fetchNote]);
 
-  const autosave = useCallback(async (content: unknown, title?: string) => {
-    if (!classId || !nodeId) return;
-    setSaving(true);
-    try {
-      const res = await fetch('/api/lesson-notes', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ classId, dbNodeId: nodeId, content, title }),
-      });
-      if (res.ok) {
-        const updated = await res.json();
-        setNote(updated);
-      }
-    } finally {
-      setSaving(false);
-    }
-  }, [classId, nodeId]);
+  // const autosave = useCallback(async (content: unknown, title?: string) => {
+  //   if (!classId || !nodeId) return;
+  //   setSaving(true);
+  //   try {
+  //     const res = await fetch('/api/lesson-notes', {
+  //       method: 'PATCH',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify({ classId, dbNodeId: nodeId, content, title }),
+  //     });
+  //     if (res.ok) {
+  //       const updated = await res.json();
+  //       setNote(updated);
+  //     }
+  //   } finally {
+  //     setSaving(false);
+  //   }
+  // }, [classId, nodeId]);
 
-  const onEditorChange = useCallback((content: unknown) => {
-    if (saveTimer.current) clearTimeout(saveTimer.current);
-    saveTimer.current = setTimeout(() => {
-      autosave(content, nodeTitle);
-    }, 1000);
-  }, [autosave, nodeTitle]);
+  // const onEditorChange = useCallback((content: unknown) => {
+  //   if (saveTimer.current) clearTimeout(saveTimer.current);
+  //   saveTimer.current = setTimeout(() => {
+  //     autosave(content, nodeTitle);
+  //   }, 1000);
+  // }, [autosave, nodeTitle]);
 
-  const onAIEntry = useCallback(async (payload: { action: string; selectedText?: string; outputBlocks: unknown; outputMarkdown?: string }) => {
-    if (!classId || !nodeId) return;
-    await fetch('/api/lesson-notes', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ classId, dbNodeId: nodeId, ...payload }),
-    });
-  }, [classId, nodeId]);
+  // const onAIEntry = useCallback(async (payload: { action: string; selectedText?: string; outputBlocks: unknown; outputMarkdown?: string }) => {
+  //   if (!classId || !nodeId) return;
+  //   await fetch('/api/lesson-notes', {
+  //     method: 'POST',
+  //     headers: { 'Content-Type': 'application/json' },
+  //     body: JSON.stringify({ classId, dbNodeId: nodeId, ...payload }),
+  //   });
+  // }, [classId, nodeId]);
 
   return (
     <div className=" bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex flex-col overflow-hidden">
@@ -192,13 +193,11 @@ export default function LessonPage() {
                   <div className="h-full p-6">Loading note…</div>
                 ) : (
                   <div className="h-full">
-                    <Editor
-                      onChange={onEditorChange}
-                      onAIEntry={onAIEntry}
-                      initialContent={Array.isArray(note?.content) ? (note?.content as PartialBlock[]) : undefined}
-                      title={nodeTitle}
+                    <AiLessonLayout 
+                      classId={classId}
+                      lessonId={nodeId}
+                      initialChatWidth={50}
                     />
-                    <div className="px-6 pb-3 text-xs text-gray-500">{saving ? 'Saving…' : 'Saved'}</div>
                   </div>
                 )}
               </div>

@@ -10,7 +10,7 @@ import {
   getDefaultReactSlashMenuItems,
   useCreateBlockNote,
 } from "@blocknote/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 
 // Import your AI extension we can build extension to take in drawing
 import { getAISlashMenuItems } from "@danjari/blocknote-ai-extension";
@@ -21,9 +21,26 @@ type EditorProps = {
   onChange?: (content: unknown) => void;
   onAIEntry?: (payload: { action: string; selectedText?: string; outputBlocks: unknown; outputMarkdown?: string }) => void;
   title?: string;
+  content?: string;
+  onContentChange?: (content: string) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
+  placeholder?: string;
+  className?: string;
 };
 
-export default function Editor({ initialContent, onChange, onAIEntry, title }: EditorProps) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const Editor = forwardRef<any, EditorProps>(({ 
+  initialContent, 
+  onChange, 
+  onAIEntry, 
+  title,
+  onContentChange,
+  onFocus,
+  onBlur,
+  placeholder,
+  className
+}, ref) => {
   //const [aiResponses, setAiResponses] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isClient, setIsClient] = useState(false);
@@ -37,11 +54,11 @@ export default function Editor({ initialContent, onChange, onAIEntry, title }: E
     {
       type: "heading",
       props: { level: 1 },
-      content: title || "Lesson",
+      content: title || "Lesson Notes",
     },
     {
       type: "paragraph",
-      content: "Start taking your notes here. Type '/' to see AI commands.",
+      content: placeholder || "Start taking your notes here. Type '/' to see AI commands.",
     },
   ];
 
@@ -52,6 +69,9 @@ export default function Editor({ initialContent, onChange, onAIEntry, title }: E
         ? initialContent
         : defaultBlocks,
   });
+
+  // Expose editor instance to parent component
+  useImperativeHandle(ref, () => editor, [editor]);
 
   const handleAICommand = async (action: string, payload?: { selectedText?: string }) => {
     //console.log("🤖 AI Command:", action, payload);
@@ -100,7 +120,7 @@ export default function Editor({ initialContent, onChange, onAIEntry, title }: E
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <div className={`${className || "max-w-6xl mx-auto p-6"}`}>
       {/* Loading indicator */}
       {isLoading && (
         <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded">
@@ -141,7 +161,12 @@ export default function Editor({ initialContent, onChange, onAIEntry, title }: E
         <BlockNoteView
           editor={editor}
           slashMenu={false}
-          onChange={() => onChange?.(editor.document)}
+          onChange={() => {
+            onChange?.(editor.document)
+            onContentChange?.(editor.document.map(block => block.content || '').join('\n'))
+          }}
+          onFocus={onFocus}
+          onBlur={onBlur}
         >
           <SuggestionMenuController
             triggerCharacter="/"
@@ -169,4 +194,8 @@ export default function Editor({ initialContent, onChange, onAIEntry, title }: E
       )} */}
     </div>
   );
-}
+});
+
+Editor.displayName = "Editor";
+
+export default Editor;
