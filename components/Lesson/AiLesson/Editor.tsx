@@ -120,16 +120,16 @@ const Editor = forwardRef<any, EditorProps>(({
   }
 
   return (
-    <div className={`${className || "max-w-6xl mx-auto p-6"}`}>
+    <div className={`${className || "h-full flex flex-col"}`}>
       {/* Loading indicator */}
       {isLoading && (
-        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded">
+        <div className="flex-shrink-0 mb-4 p-3 bg-blue-50 border border-blue-200 rounded">
           AI is thinking...
         </div>
       )}
       
-      {/* AI Controls */}
-      <div className="mb-4 flex gap-2 flex-wrap">
+      {/* AI Controls - Fixed at top */}
+      <div className="flex-shrink-0 mb-4 flex gap-2 flex-wrap">
         <button
           onClick={() => handleAICommand('explain')}
           className="px-2 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300 transition-colors"
@@ -156,28 +156,30 @@ const Editor = forwardRef<any, EditorProps>(({
         </button>
       </div>
       
-      {/* Editor */}
-      <div className="border rounded-lg overflow-hidden">
-        <BlockNoteView
-          editor={editor}
-          slashMenu={false}
-          onChange={() => {
-            onChange?.(editor.document)
-            onContentChange?.(editor.document.map(block => block.content || '').join('\n'))
-          }}
-          onFocus={onFocus}
-          onBlur={onBlur}
-        >
-          <SuggestionMenuController
-            triggerCharacter="/"
-            getItems={async (query) => {
-              const defaultItems = getDefaultReactSlashMenuItems(editor);
-              const aiItems = getAISlashMenuItems(editor, handleAICommand);
-              const allItems = [...defaultItems, ...aiItems];
-              return filterSuggestionItems(allItems, query);
+      {/* Editor Container - Takes remaining space and scrollable */}
+      <div className="flex-1 border rounded-lg overflow-hidden">
+        <div className="h-full overflow-y-auto">
+          <BlockNoteView
+            editor={editor}
+            slashMenu={false}
+            onChange={() => {
+              onChange?.(editor.document)
+              onContentChange?.(editor.document.map(block => block.content || '').join('\n'))
             }}
-          />
-        </BlockNoteView>
+            onFocus={onFocus}
+            onBlur={onBlur}
+          >
+            <SuggestionMenuController
+              triggerCharacter="/"
+              getItems={async (query) => {
+                const defaultItems = getDefaultReactSlashMenuItems(editor);
+                const aiItems = getAISlashMenuItems(editor, handleAICommand);
+                const allItems = [...defaultItems, ...aiItems];
+                return filterSuggestionItems(allItems, query);
+              }}
+            />
+          </BlockNoteView>
+        </div>
       </div>
       
       {/* AI Responses Log */}

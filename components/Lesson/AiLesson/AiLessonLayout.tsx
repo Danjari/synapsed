@@ -52,7 +52,7 @@ export default function AiLessonLayout({
   }, [])
 
   return (
-    <div className="h-screen w-full bg-background">
+    <div className="h-screen w-full bg-background overflow-hidden">
       <ResizablePane
         leftPane={
           <div className="h-full flex flex-col">
@@ -75,7 +75,7 @@ export default function AiLessonLayout({
               <h2 className="text-lg font-semibold text-foreground">Notes</h2>
               <p className="text-sm text-muted-foreground">Take notes as you learn</p>
             </div>
-            <div className="flex-1 overflow-hidden">
+            <div className="flex-1 overflow-hidden p-4">
               <Editor
                 ref={editorRef}
                 onContentChange={handleEditorContentChange}

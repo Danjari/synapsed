@@ -52,6 +52,23 @@ export default function LessonPage() {
     fetchNote();
   }, [fetchNote]);
 
+  // Prevent body scrolling when AI lesson is active
+  useEffect(() => {
+    if (viewMode === 'ai-lesson') {
+      document.body.style.overflow = 'hidden';
+      document.body.style.height = '100vh';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.height = '';
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.height = '';
+    };
+  }, [viewMode]);
+
   // const autosave = useCallback(async (content: unknown, title?: string) => {
   //   if (!classId || !nodeId) return;
   //   setSaving(true);
@@ -87,7 +104,7 @@ export default function LessonPage() {
   // }, [classId, nodeId]);
 
   return (
-    <div className=" bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex flex-col overflow-hidden">
+    <div className="ai-lesson-page bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex flex-col overflow-hidden">
       {/* Top Bar */}
       <div className={`transition-all duration-300 ease-in-out ${showTopBar ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'} fixed top-0 left-0 right-0 z-40`}>
         <div className="relative">
@@ -183,9 +200,9 @@ export default function LessonPage() {
       )}
 
       {/* Main Content Area */}
-      <div className={`h-screen-min flex flex-1 min-h-0 relative transition-all duration-300 ${showTopBar ? 'pt-24' : 'pt-0'}`}>
+      <div className={`h-screen flex flex-1 min-h-0 relative transition-all duration-300 ${showTopBar ? 'pt-24' : 'pt-0'}`}>
         <div className="flex-1 flex flex-col min-h-0">
-          <div className="flex-1 p-6 overflow-hidden min-h-0">
+          <div className="flex-1 overflow-hidden min-h-0">
             <div className="overflow-hidden h-full">
               {/* AI Lesson Tab */}
               <div className={`h-full ${viewMode === 'ai-lesson' ? 'block' : 'hidden'}`}>
