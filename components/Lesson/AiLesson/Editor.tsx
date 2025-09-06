@@ -10,7 +10,7 @@ import {
   getDefaultReactSlashMenuItems,
   useCreateBlockNote,
 } from "@blocknote/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 
 // Import your AI extension we can build extension to take in drawing
 import { getAISlashMenuItems } from "@danjari/blocknote-ai-extension";
@@ -21,9 +21,26 @@ type EditorProps = {
   onChange?: (content: unknown) => void;
   onAIEntry?: (payload: { action: string; selectedText?: string; outputBlocks: unknown; outputMarkdown?: string }) => void;
   title?: string;
+  content?: string;
+  onContentChange?: (content: string) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
+  placeholder?: string;
+  className?: string;
 };
 
-export default function Editor({ initialContent, onChange, onAIEntry, title }: EditorProps) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const Editor = forwardRef<any, EditorProps>(({ 
+  initialContent, 
+  onChange, 
+  onAIEntry, 
+  title,
+  onContentChange,
+  onFocus,
+  onBlur,
+  placeholder,
+  className
+}, ref) => {
   //const [aiResponses, setAiResponses] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isClient, setIsClient] = useState(false);
@@ -37,11 +54,11 @@ export default function Editor({ initialContent, onChange, onAIEntry, title }: E
     {
       type: "heading",
       props: { level: 1 },
-      content: title || "Lesson",
+      content: title || "Lesson Notes",
     },
     {
       type: "paragraph",
-      content: "Start taking your notes here. Type '/' to see AI commands.",
+      content: placeholder || "Start taking your notes here. Type '/' to see AI commands.",
     },
   ];
 
@@ -53,8 +70,11 @@ export default function Editor({ initialContent, onChange, onAIEntry, title }: E
         : defaultBlocks,
   });
 
+  // Expose editor instance to parent component
+  useImperativeHandle(ref, () => editor, [editor]);
+
   const handleAICommand = async (action: string, payload?: { selectedText?: string }) => {
-    console.log("🤖 AI Command:", action, payload);
+    //console.log("🤖 AI Command:", action, payload);
     
     setIsLoading(true);
     
@@ -67,8 +87,8 @@ export default function Editor({ initialContent, onChange, onAIEntry, title }: E
       const fullContent = editor.document;
       const fullContext = JSON.stringify(fullContent, null, 2);
       
-      console.log("📄 Full context length:", fullContext.length);
-      console.log("🎯 Has selection:", hasSelection, "Selection length:", selectedText?.length);
+      // console.log("📄 Full context length:", fullContext.length);
+      // console.log("🎯 Has selection:", hasSelection, "Selection length:", selectedText?.length);
       
       // Use selected text if available, otherwise use full context
       const contextToUse = hasSelection ? selectedText : fullContext;
@@ -100,16 +120,16 @@ export default function Editor({ initialContent, onChange, onAIEntry, title }: E
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <div className={`${className || "h-full flex flex-col"}`}>
       {/* Loading indicator */}
       {isLoading && (
-        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded">
+        <div className="flex-shrink-0 mb-4 p-3 bg-blue-50 border border-blue-200 rounded">
           AI is thinking...
         </div>
       )}
       
-      {/* AI Controls */}
-      <div className="mb-4 flex gap-2 flex-wrap">
+      {/* AI Controls - Fixed at top */}
+      <div className="flex-shrink-0 mb-4 flex gap-2 flex-wrap">
         <button
           onClick={() => handleAICommand('explain')}
           className="px-2 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300 transition-colors"
@@ -136,23 +156,31 @@ export default function Editor({ initialContent, onChange, onAIEntry, title }: E
         </button>
       </div>
       
-      {/* Editor */}
-      <div className="border rounded-lg overflow-hidden">
-        <BlockNoteView
-          editor={editor}
-          slashMenu={false}
-          onChange={() => onChange?.(editor.document)}
-        >
-          <SuggestionMenuController
-            triggerCharacter="/"
-            getItems={async (query) => {
-              const defaultItems = getDefaultReactSlashMenuItems(editor);
-              const aiItems = getAISlashMenuItems(editor, handleAICommand);
-              const allItems = [...defaultItems, ...aiItems];
-              return filterSuggestionItems(allItems, query);
+      {/* Editor Container - Takes remaining space and scrollable */}
+      <div className="flex-1 border rounded-lg overflow-hidden">
+        <div className="h-full w-full overflow-y-auto">
+          <BlockNoteView
+            editor={editor}
+            slashMenu={false}
+            onChange={() => {
+              onChange?.(editor.document)
+              onContentChange?.(editor.document.map(block => block.content || '').join('\n'))
             }}
-          />
-        </BlockNoteView>
+            onFocus={onFocus}
+            onBlur={onBlur}
+            className="h-full w-full"
+          >
+            <SuggestionMenuController
+              triggerCharacter="/"
+              getItems={async (query) => {
+                const defaultItems = getDefaultReactSlashMenuItems(editor);
+                const aiItems = getAISlashMenuItems(editor, handleAICommand);
+                const allItems = [...defaultItems, ...aiItems];
+                return filterSuggestionItems(allItems, query);
+              }}
+            />
+          </BlockNoteView>
+        </div>
       </div>
       
       {/* AI Responses Log */}
@@ -169,4 +197,8 @@ export default function Editor({ initialContent, onChange, onAIEntry, title }: E
       )} */}
     </div>
   );
-}
+});
+
+Editor.displayName = "Editor";
+
+export default Editor;

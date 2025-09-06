@@ -1,13 +1,15 @@
 'use client';
 
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import type { PartialBlock } from '@blocknote/core';
-import Editor from '@/components/Lesson/editorAI/Editor';
+import { useCallback, useEffect, useState } from 'react';
+// import type { PartialBlock } from '@blocknote/core';
+// import Editor from '@/components/Lesson/AiLesson/Editor';
+import AiLessonLayout from '@/components/Lesson/AiLesson/AiLessonLayout';
 import { Button } from '@/components/ui/button';
-import { BarChart3, Sparkles, BookOpen, Brain, FileText, ArrowLeft, ChevronUp, ChevronDown, LayoutDashboard } from 'lucide-react';
+import { Sparkles, BookOpen, Brain, ArrowLeft, ChevronUp, ChevronDown, LayoutDashboard } from 'lucide-react';
 import Link from 'next/link';
 import { FlashcardsPanel } from '@/components/Lesson/flashcard/FlashcardsPanel';
+import ContentPage from '@/components/Lesson/contentPage/ContentPage';
 
 export default function LessonPage() {
 
@@ -22,10 +24,10 @@ export default function LessonPage() {
   const nodeTitle = searchParams.get('nodeTitle') ?? '';
 
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+  // const [saving, setSaving] = useState(false);
   type LessonNoteResponse = { content?: unknown; contentText?: string } | null;
   const [note, setNote] = useState<LessonNoteResponse>(null);
-  const saveTimer = useRef<NodeJS.Timeout | null>(null);
+  // const saveTimer = useRef<NodeJS.Timeout | null>(null);
 
   // const userId = session?.user?.id ?? 'unknown';
   // const userEmail = session?.user?.email ?? 'unknown';
@@ -50,42 +52,59 @@ export default function LessonPage() {
     fetchNote();
   }, [fetchNote]);
 
-  const autosave = useCallback(async (content: unknown, title?: string) => {
-    if (!classId || !nodeId) return;
-    setSaving(true);
-    try {
-      const res = await fetch('/api/lesson-notes', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ classId, dbNodeId: nodeId, content, title }),
-      });
-      if (res.ok) {
-        const updated = await res.json();
-        setNote(updated);
-      }
-    } finally {
-      setSaving(false);
+  // Prevent body scrolling when AI lesson is active
+  useEffect(() => {
+    if (viewMode === 'ai-lesson') {
+      document.body.style.overflow = 'hidden';
+      document.body.style.height = '100vh';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.height = '';
     }
-  }, [classId, nodeId]);
 
-  const onEditorChange = useCallback((content: unknown) => {
-    if (saveTimer.current) clearTimeout(saveTimer.current);
-    saveTimer.current = setTimeout(() => {
-      autosave(content, nodeTitle);
-    }, 1000);
-  }, [autosave, nodeTitle]);
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.height = '';
+    };
+  }, [viewMode]);
 
-  const onAIEntry = useCallback(async (payload: { action: string; selectedText?: string; outputBlocks: unknown; outputMarkdown?: string }) => {
-    if (!classId || !nodeId) return;
-    await fetch('/api/lesson-notes', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ classId, dbNodeId: nodeId, ...payload }),
-    });
-  }, [classId, nodeId]);
+  // const autosave = useCallback(async (content: unknown, title?: string) => {
+  //   if (!classId || !nodeId) return;
+  //   setSaving(true);
+  //   try {
+  //     const res = await fetch('/api/lesson-notes', {
+  //       method: 'PATCH',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify({ classId, dbNodeId: nodeId, content, title }),
+  //     });
+  //     if (res.ok) {
+  //       const updated = await res.json();
+  //       setNote(updated);
+  //     }
+  //   } finally {
+  //     setSaving(false);
+  //   }
+  // }, [classId, nodeId]);
+
+  // const onEditorChange = useCallback((content: unknown) => {
+  //   if (saveTimer.current) clearTimeout(saveTimer.current);
+  //   saveTimer.current = setTimeout(() => {
+  //     autosave(content, nodeTitle);
+  //   }, 1000);
+  // }, [autosave, nodeTitle]);
+
+  // const onAIEntry = useCallback(async (payload: { action: string; selectedText?: string; outputBlocks: unknown; outputMarkdown?: string }) => {
+  //   if (!classId || !nodeId) return;
+  //   await fetch('/api/lesson-notes', {
+  //     method: 'POST',
+  //     headers: { 'Content-Type': 'application/json' },
+  //     body: JSON.stringify({ classId, dbNodeId: nodeId, ...payload }),
+  //   });
+  // }, [classId, nodeId]);
 
   return (
-    <div className=" bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex flex-col overflow-hidden">
+    <div className="ai-lesson-page bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex flex-col overflow-hidden">
       {/* Top Bar */}
       <div className={`transition-all duration-300 ease-in-out ${showTopBar ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'} fixed top-0 left-0 right-0 z-40`}>
         <div className="relative">
@@ -111,13 +130,13 @@ export default function LessonPage() {
 
             {/* Center Tabs */}
             <div className="absolute left-1/2 transform -translate-x-1/2 flex bg-slate-100 p-1 rounded-lg">
-              <button
+              {/* <button
                 onClick={() => setViewMode('overview')}
                 className={`flex items-center space-x-2 px-4 py-2 rounded-md transition-all duration-200 text-sm font-medium ${viewMode === 'overview' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600 hover:text-slate-800 hover:bg-white/50'}`}
               >
                 <BarChart3 className="w-4 h-4" />
                 <span>Overview</span>
-              </button>
+              </button> */}
               <button
                 onClick={() => setViewMode('ai-lesson')}
                 className={`flex items-center space-x-2 px-4 py-2 rounded-md transition-all duration-200 text-sm font-medium ${viewMode === 'ai-lesson' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600 hover:text-slate-800 hover:bg-white/50'}`}
@@ -139,13 +158,13 @@ export default function LessonPage() {
                 <Brain className="w-4 h-4" />
                 <span>Flashcards</span>
               </button>
-              <button
+              {/* <button
                 onClick={() => setViewMode('summary')}
                 className={`flex items-center space-x-2 px-4 py-2 rounded-md transition-all duration-200 text-sm font-medium ${viewMode === 'summary' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600 hover:text-slate-800 hover:bg-white/50'}`}
               >
                 <FileText className="w-4 h-4" />
                 <span>Summary</span>
-              </button>
+              </button> */}
             </div>
 
             {/* Right spacer */}
@@ -181,32 +200,32 @@ export default function LessonPage() {
       )}
 
       {/* Main Content Area */}
-      <div className={`h-screen-min flex flex-1 min-h-0 relative transition-all duration-300 ${showTopBar ? 'pt-24' : 'pt-0'}`}>
+      <div className={`h-screen flex flex-1 min-h-0 relative transition-all duration-300 ${showTopBar ? 'pt-24' : 'pt-0'}`}>
         <div className="flex-1 flex flex-col min-h-0">
-          <div className="flex-1 p-6 overflow-hidden min-h-0">
-            <div className=" overflow-hidden h-full">
-              {viewMode === 'overview' && (
-                <div className="h-full p-6 text-slate-600">Overview coming soon…</div>
-              )}
-              {viewMode === 'ai-lesson' && (
-                loading ? (
+          <div className="flex-1 overflow-hidden min-h-0">
+            <div className="overflow-hidden h-full">
+              {/* AI Lesson Tab */}
+              <div className={`h-full ${viewMode === 'ai-lesson' ? 'block' : 'hidden'}`}>
+                {loading ? (
                   <div className="h-full p-6">Loading note…</div>
                 ) : (
                   <div className="h-full">
-                    <Editor
-                      onChange={onEditorChange}
-                      onAIEntry={onAIEntry}
-                      initialContent={Array.isArray(note?.content) ? (note?.content as PartialBlock[]) : undefined}
-                      title={nodeTitle}
+                    <AiLessonLayout 
+                      classId={classId}
+                      lessonId={nodeId}
+                      initialChatWidth={50}
                     />
-                    <div className="px-6 pb-3 text-xs text-gray-500">{saving ? 'Saving…' : 'Saved'}</div>
                   </div>
-                )
-              )}
-              {viewMode === 'content' && (
-                <div className="h-full p-6 text-slate-600">Content coming soon…</div>
-              )}
-              {viewMode === 'flashcards' && (
+                )}
+              </div>
+
+              {/* Content Tab */}
+              <div className={`h-full ${viewMode === 'content' ? 'block' : 'hidden'}`}>
+                <ContentPage />
+              </div>
+
+              {/* Flashcards Tab */}
+              <div className={`h-full ${viewMode === 'flashcards' ? 'block' : 'hidden'}`}>
                 <div className="h-full bg-white rounded-xl border border-slate-200 shadow-lg overflow-hidden min-h-[600px]">
                   <FlashcardsPanel 
                     key={`${nodeId}-${nodeTitle}`}
@@ -215,10 +234,17 @@ export default function LessonPage() {
                     markdownContent={note?.contentText ?? ''} 
                   />
                 </div>
-              )}
-              {viewMode === 'summary' && (
+              </div>
+
+              {/* Overview Tab (commented out for now) */}
+              {/* <div className={`h-full ${viewMode === 'overview' ? 'block' : 'hidden'}`}>
+                <div className="h-full p-6 text-slate-600">Overview coming soon…</div>
+              </div> */}
+
+              {/* Summary Tab (commented out for now) */}
+              {/* <div className={`h-full ${viewMode === 'summary' ? 'block' : 'hidden'}`}>
                 <div className="h-full p-6 text-slate-600">Summary coming soon…</div>
-              )}
+              </div> */}
             </div>
           </div>
         </div>

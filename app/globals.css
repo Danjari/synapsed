@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Prevent page scrolling for AI lesson layout */
+.ai-lesson-page {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.ai-lesson-page body {
+  overflow: hidden;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
