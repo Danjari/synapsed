@@ -2,18 +2,18 @@
 
 import { useState, useCallback, useEffect } from "react"
 import dynamic from "next/dynamic"
-import { DocumentSidebar } from "@/components/contentPage/documentSideBar"
-import { ResizablePane } from "@/components/contentPage/resizblePanel"
+import { DocumentSidebar } from "@/components/Lesson/contentPage/documentSideBar"
+import { ResizablePane } from "@/components/Lesson/contentPage/resizblePanel"
 import { Sidebar, SidebarClose as SidebarColumns, Moon, Sun } from "lucide-react"
 import { AnnotationProvider, useAnnotation } from "@/lib/content/annotation-context"
 
 // Dynamic imports to prevent SSR issues
-const PDFViewer = dynamic(() => import("@/components/contentPage/pdfViewer").then(mod => ({ default: mod.PDFViewer })), {
+const PDFViewer = dynamic(() => import("@/components/Lesson/contentPage/pdfViewer").then(mod => ({ default: mod.PDFViewer })), {
   ssr: false,
   loading: () => <div className="h-full flex items-center justify-center">Loading PDF viewer...</div>
 })
 
-const NotesPanelClient = dynamic(() => import("@/components/contentPage/notesPanelClient").then(mod => ({ default: mod.NotesPanelClient })), {
+const NotesPanelClient = dynamic(() => import("@/components/Lesson/contentPage/notesPanelClient").then(mod => ({ default: mod.NotesPanelClient })), {
   ssr: false,
   loading: () => <div className="h-full flex items-center justify-center">Loading notes panel...</div>
 })

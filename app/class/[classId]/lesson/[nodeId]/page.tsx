@@ -3,12 +3,12 @@
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { PartialBlock } from '@blocknote/core';
-import Editor from '@/components/Lesson/editorAI/Editor';
+import Editor from '@/components/Lesson/AiLesson/Editor';
 import { Button } from '@/components/ui/button';
 import { Sparkles, BookOpen, Brain, ArrowLeft, ChevronUp, ChevronDown, LayoutDashboard } from 'lucide-react';
 import Link from 'next/link';
 import { FlashcardsPanel } from '@/components/Lesson/flashcard/FlashcardsPanel';
-import ContentPage from '@/components/contentPage/ContentPage';
+import ContentPage from '@/components/Lesson/contentPage/ContentPage';
 
 export default function LessonPage() {
 

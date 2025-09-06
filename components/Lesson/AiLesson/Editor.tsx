@@ -54,7 +54,7 @@ export default function Editor({ initialContent, onChange, onAIEntry, title }: E
   });
 
   const handleAICommand = async (action: string, payload?: { selectedText?: string }) => {
-    console.log("🤖 AI Command:", action, payload);
+    //console.log("🤖 AI Command:", action, payload);
     
     setIsLoading(true);
     
@@ -67,8 +67,8 @@ export default function Editor({ initialContent, onChange, onAIEntry, title }: E
       const fullContent = editor.document;
       const fullContext = JSON.stringify(fullContent, null, 2);
       
-      console.log("📄 Full context length:", fullContext.length);
-      console.log("🎯 Has selection:", hasSelection, "Selection length:", selectedText?.length);
+      // console.log("📄 Full context length:", fullContext.length);
+      // console.log("🎯 Has selection:", hasSelection, "Selection length:", selectedText?.length);
       
       // Use selected text if available, otherwise use full context
       const contextToUse = hasSelection ? selectedText : fullContext;
