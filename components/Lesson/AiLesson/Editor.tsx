@@ -158,7 +158,7 @@ const Editor = forwardRef<any, EditorProps>(({
       
       {/* Editor Container - Takes remaining space and scrollable */}
       <div className="flex-1 border rounded-lg overflow-hidden">
-        <div className="h-full overflow-y-auto">
+        <div className="h-full w-full overflow-y-auto">
           <BlockNoteView
             editor={editor}
             slashMenu={false}
@@ -168,6 +168,7 @@ const Editor = forwardRef<any, EditorProps>(({
             }}
             onFocus={onFocus}
             onBlur={onBlur}
+            className="h-full w-full"
           >
             <SuggestionMenuController
               triggerCharacter="/"

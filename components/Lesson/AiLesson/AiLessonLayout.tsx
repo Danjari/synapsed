@@ -56,10 +56,10 @@ export default function AiLessonLayout({
       <ResizablePane
         leftPane={
           <div className="h-full flex flex-col">
-            <div className="flex-shrink-0 px-4 py-3 border-b border-border bg-muted/30">
+            {/* <div className="flex-shrink-0 px-4 py-3 border-b border-border bg-muted/30">
               <h2 className="text-lg font-semibold text-foreground">AI Tutor</h2>
               <p className="text-sm text-muted-foreground">Ask questions and learn interactively</p>
-            </div>
+            </div> */}
             <div className="flex-1 overflow-hidden">
               <ChatSection 
                 onAddToNotes={handleAddToNotes}
@@ -71,10 +71,10 @@ export default function AiLessonLayout({
         }
         rightPane={
           <div className="h-full flex flex-col">
-            <div className="flex-shrink-0 px-4 py-3 border-b border-border bg-muted/30">
+            {/* <div className="flex-shrink-0 px-4 py-3 border-b border-border bg-muted/30">
               <h2 className="text-lg font-semibold text-foreground">Notes</h2>
               <p className="text-sm text-muted-foreground">Take notes as you learn</p>
-            </div>
+            </div> */}
             <div className="flex-1 overflow-hidden p-4">
               <Editor
                 ref={editorRef}
@@ -82,7 +82,7 @@ export default function AiLessonLayout({
                 onFocus={() => {}}
                 onBlur={() => {}}
                 placeholder="Start taking notes here... The AI tutor can help you understand concepts and you can add important points to your notes."
-                className="h-full"
+                className="h-full w-full"
               />
             </div>
           </div>
