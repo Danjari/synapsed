@@ -1,12 +1,10 @@
 "use client"
-import { Bell, Search,Calendar, Book } from "lucide-react"; // Import icons for UI
-import CourseCard from "./CourseCard"; // Import CourseCard component for displaying courses
-import TaskList from "./TaskList"; // Import TaskList component for displaying tasks
-import ProgressSection from "./ProgressSection"; // Import ProgressSection component for displaying progress
-import {User} from "next-auth" // Import User type from next-auth for user authentication
-import { useEffect, useState } from "react"; // Import React hooks for state management and side effects
-import { useSession } from "next-auth/react"; // Import useSession hook from next-auth/react for session management
-import { Button } from "../ui/button"; // Import Button component from ui for button functionality
+import { Calendar, Layers3 } from "lucide-react";
+import CourseCard from "./CourseCard";
+import { User } from "next-auth";
+import { useEffect, useMemo, useState } from "react";
+import { useSession } from "next-auth/react";
+import { Button } from "../ui/button";
 
 // This file defines the StudentDashboard component, which is a client-side component that displays the student's dashboard.
 // It fetches the student's classes and displays them in a course card format. It also displays a task list and progress section.
@@ -18,115 +16,127 @@ type ClassType = {
   professor: { name: string };
   progress?: number;
   link?: string;
-}; // Define the type for a class, including its properties
+};
 
-const dummyTasks = [
-  {
-    id: 1,
-    title: "Basic Foundations - Linear Algebra",
-    completed: false,
-    progress: "1/5",
-  },
-  {
-    id: 2,
-    title: "Watch Video",
-    completed: false,
-  },
-  {
-    id: 3,
-    title: "Finish Assessment",
-    completed: true,
-  },
-  {
-    id: 4,
-    title: "Sensitivity Analysis - Finance",
-    completed: false,
-    progress: "6/12",
-  },
-]; // Define dummy tasks for demonstration
-
-const StudentDashboard = ({user}:{user?:User})=> {
-  const { data: session } = useSession(); // Use the useSession hook to get the current session
-  const [classes, setClasses] = useState<ClassType[]>([]); // State to hold the classes fetched from the API
+const StudentDashboard = ({ user }: { user?: User }) => {
+  const { data: session } = useSession();
+  const [classes, setClasses] = useState<ClassType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showArchived, setShowArchived] = useState(false);
 
   useEffect(() => {
     const fetchClasses = async () => {
       if (!session?.user?.id) return; // Check if the user is authenticated
-
-      const res = await fetch(`/api/student/classes?enrollmentId=${session.user.id}`); // Fetch classes for the current user
-      const data = await res.json();
-      setClasses(data); // Update the state with the fetched classes
+      try {
+        const res = await fetch(`/api/student/classes?enrollmentId=${session.user.id}`); // Fetch classes for the current user
+        const data = await res.json();
+        setClasses(data); // Update the state with the fetched classes
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchClasses(); // Call the fetchClasses function
   }, [session?.user?.id]); // Dependency array to trigger the effect when the session changes
 
+  // Dummy semester grouping for now
+  const currentSemester = "Fall 2025";
+  const archivedSemester = "Spring 2025";
+  const currentClasses = useMemo(() => classes, [classes]);
+  const archivedClasses = useMemo<ClassType[]>(
+    () => [
+      { id: "a1", title: "Intro to Economics", professor: { name: "Dr. Smith" }, progress: 100, link: "/#" },
+      { id: "a2", title: "Biology 101", professor: { name: "Dr. Lee" }, progress: 100, link: "/#" },
+      { id: "a3", title: "World History", professor: { name: "Dr. Patel" }, progress: 100, link: "/#" },
+    ],
+    []
+  );
+
   return (
-    <div className="p-6 bg-gray-50 min-h-screen flex flex-col space-y-6">
-      {/* Header Section */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-800">Hi {user?.name}, welcome back</h1> 
-          <p className="text-lg text-gray-500 flex items-center">
-            <Calendar size={18} className="mr-2" />
-            Fall 24
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-6xl mx-auto px-6 py-12">
+        {/* Header */}
+        <div className="text-center mb-10">
+          <h1 className="text-3xl font-bold text-gray-900">Hi {user?.name || "there"}</h1>
+          <p className="text-gray-600 mt-1 flex items-center justify-center gap-2">
+            <Calendar size={18} className="text-[#006494]" />
+            {currentSemester}
           </p>
         </div>
-        <div className="flex items-center space-x-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-2 text-gray-400" size={20} />
-            <input
-              type="text"
-              placeholder="Search"
-              className="pl-10 pr-4 py-2 border rounded-lg focus:outline-none bg-white shadow-sm"
-            />
-          </div>
-          <div className="relative cursor-pointer">
-            <Bell size={24} className="text-gray-600 hover:text-gray-800 transition" />
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">2</span>
-          </div>
+
+        {/* Current semester courses centered */}
+        <div className="glass rounded-2xl p-8 shadow-sm">
+          {loading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 place-items-center">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="w-full max-w-sm">
+                  <div className="animate-pulse rounded-2xl overflow-hidden border-0">
+                    <div className="bg-gradient-to-br from-slate-100 via-white to-slate-200">
+                      <div className="px-5 pt-5">
+                        <div className="h-6 w-3/4 bg-slate-200 rounded mb-2" />
+                        <div className="h-4 w-1/2 bg-slate-100 rounded" />
+                        <div className="mt-4 h-2 w-1/3 bg-slate-100 rounded" />
+                      </div>
+                      <div className="px-5 py-5">
+                        <div className="h-10 w-full bg-emerald-100 rounded" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : currentClasses.length === 0 ? (
+            <div className="text-gray-500 text-sm border border-dashed border-gray-300 rounded-lg p-8 flex flex-col items-center justify-center">
+              <p className="mb-3">No courses this semester yet.</p>
+              <Button onClick={() => (window.location.href = "/student/join")} className="bg-emerald-600 hover:bg-emerald-700 text-white" variant="default">
+                Join a Class
+              </Button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 place-items-center">
+              {currentClasses.map((cls) => (
+                <div className="w-full max-w-sm" key={cls.id}>
+                  <CourseCard
+                    title={cls.title}
+                    professor={cls.professor?.name || "Unknown"}
+                    progress={cls.progress || 0}
+                    link={`/class/${cls.id}`}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-      </div>
 
-     {/* Courses Section */}
-      <section>
-        <h2 className="text-xl font-semibold text-gray-800 mb-3 flex items-center">
-          <Book size={24} className="mr-2 text-[#006494]" />
-          Courses in Progress
-        </h2>
+        {/* Archived toggle */}
+        <div className="mt-10 text-center">
+          <button
+            type="button"
+            onClick={() => setShowArchived((s) => !s)}
+            className="inline-flex items-center gap-2 text-sm text-emerald-700 hover:text-emerald-800 hover:underline"
+          >
+            <Layers3 className="h-4 w-4" />
+            {showArchived ? "Hide archived classes" : "Show archived classes"}
+          </button>
+        </div>
 
-        {classes.length === 0 ? (
-          <div className="text-gray-500 text-sm border border-dashed border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center">
-            <p className="mb-2">No courses yet, wanna add a course?</p>
-            <Button
-              onClick={() => window.location.href = "/student/join"}
-              variant={'outline'}
-            >
-              Join a Class
-            </Button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {classes.map((cls) => (
-              <CourseCard
-                key={cls.id}
-                title={cls.title}
-                professor={cls.professor?.name || "Unknown"}
-                progress={cls.progress || 0}
-                link={`/class/${cls.id}`}
-              />
-            ))}
+        {showArchived && (
+          <div className="mt-6">
+            <h3 className="text-sm uppercase tracking-wide text-slate-500 mb-3">{archivedSemester}</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 place-items-center">
+              {archivedClasses.map((cls) => (
+                <div className="w-full max-w-sm opacity-80" key={cls.id}>
+                  <CourseCard
+                    title={cls.title}
+                    professor={cls.professor?.name}
+                    progress={cls.progress}
+                    link={cls.link || "#"}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         )}
-      </section>
-
-      {/* Tasks and Progress Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Tasks Section */}
-        <TaskList tasks={dummyTasks} />
-
-        {/* Progress Section */}
-        <ProgressSection />
       </div>
     </div>
   );

@@ -228,10 +228,10 @@ export default function StudentSurveyPage() {
 
   if (state === "intro") {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-emerald-100 flex items-center justify-center p-6">
         <Card className="w-full max-w-2xl">
           <CardHeader className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle className="w-8 h-8 text-white" />
             </div>
             <CardTitle className="text-3xl text-slate-800 mb-2">Class Personalization Survey</CardTitle>
@@ -240,17 +240,17 @@ export default function StudentSurveyPage() {
             </p>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-blue-800 text-sm">
+            <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 text-emerald-800 text-sm">
               This quick survey helps your professor and our AI understand how to best support your learning.
             </div>
 
             <div className="flex justify-center space-x-4">
-              <Button variant="outline" onClick={() => router.push("/student/dashboard")}>
+              <Button variant="outline" className="text-emerald-700 border-emerald-300 hover:bg-emerald-50" onClick={() => router.push("/student/dashboard")}>
                 Back to Dashboard
               </Button>
               <Button
                 onClick={() => setState("survey")}
-                className="bg-indigo-600 hover:bg-indigo-700"
+                className="bg-emerald-600 hover:bg-emerald-700"
               >
                 Start Survey <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
@@ -263,7 +263,7 @@ export default function StudentSurveyPage() {
 
   if (state === "submitted") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-purple-50 p-6">
+      <div className="min-h-screen flex items-center justify-center bg-emerald-50 p-6">
         <Card className="text-center max-w-xl w-full">
           <CardHeader>
             <CardTitle className="text-3xl font-bold text-slate-800 mb-2">Thank You!</CardTitle>
@@ -272,7 +272,7 @@ export default function StudentSurveyPage() {
             </p>
           </CardHeader>
           <CardContent>
-            <Button onClick={() => router.push(`/class/${classId}`)} className="mt-6">
+            <Button onClick={() => router.push(`/class/${classId}`)} className="mt-6 bg-emerald-600 hover:bg-emerald-700">
               Go to Class
             </Button>
           </CardContent>
@@ -285,7 +285,7 @@ export default function StudentSurveyPage() {
   const progress = ((current + 1) / questions.length) * 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-emerald-100 flex flex-col">
       {/* Header */}
       <div className="bg-white border-b border-slate-200 p-6 shadow-sm">
         <div className="max-w-4xl mx-auto">
@@ -324,7 +324,7 @@ export default function StudentSurveyPage() {
                       key={index}
                       className={`block border p-3 rounded-lg cursor-pointer ${
                         answers[q.id] === opt
-                          ? "border-indigo-500 bg-indigo-50 text-indigo-700"
+                          ? "border-emerald-500 bg-emerald-50 text-emerald-700"
                           : "border-slate-300 hover:bg-slate-50"
                       }`}
                     >
@@ -349,7 +349,7 @@ export default function StudentSurveyPage() {
       {/* Navigation Footer */}
       <div className="bg-white border-t border-slate-200 p-6 shadow-sm">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <Button variant="outline" onClick={() => setCurrent((c) => c - 1)} disabled={current === 0}>
+          <Button variant="outline" className="text-emerald-700 border-emerald-300 hover:bg-emerald-50" onClick={() => setCurrent((c) => c - 1)} disabled={current === 0}>
             Previous
           </Button>
 
@@ -360,7 +360,7 @@ export default function StudentSurveyPage() {
                 onClick={() => setCurrent(index)}
                 className={`w-10 h-10 rounded-full text-sm font-medium transition-colors ${
                   index === current
-                    ? "bg-indigo-500 text-white"
+                    ? "bg-emerald-600 text-white"
                     : answers[questions[index].id]
                       ? "bg-emerald-500 text-white"
                       : "bg-slate-200 text-slate-600 hover:bg-slate-300"
@@ -380,7 +380,7 @@ export default function StudentSurveyPage() {
               Submit Survey
             </Button>
           ) : (
-            <Button onClick={() => setCurrent((c) => c + 1)} disabled={!answers[q.id]}>
+            <Button onClick={() => setCurrent((c) => c + 1)} disabled={!answers[q.id]} className="bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300">
               Next
             </Button>
           )}

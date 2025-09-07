@@ -8,15 +8,31 @@ import { Sidebar, SidebarClose as SidebarColumns, Moon, Sun } from "lucide-react
 import { AnnotationProvider, useAnnotation } from "@/lib/content/annotation-context"
 
 // Dynamic imports to prevent SSR issues
-const PDFViewer = dynamic(() => import("@/components/Lesson/contentPage/pdfViewer").then(mod => ({ default: mod.PDFViewer })), {
-  ssr: false,
-  loading: () => <div className="h-full flex items-center justify-center">Loading PDF viewer...</div>
-})
+const PDFViewer = dynamic(
+  () => import("@/components/Lesson/contentPage/pdfViewer").then((mod) => ({ default: mod.PDFViewer })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-full p-4 animate-pulse">
+        <div className="h-8 w-40 bg-slate-200 rounded mb-3" />
+        <div className="h-[60vh] w-full bg-slate-100 rounded-xl" />
+      </div>
+    ),
+  }
+)
 
-const NotesPanelClient = dynamic(() => import("@/components/Lesson/contentPage/notesPanelClient").then(mod => ({ default: mod.NotesPanelClient })), {
-  ssr: false,
-  loading: () => <div className="h-full flex items-center justify-center">Loading notes panel...</div>
-})
+const NotesPanelClient = dynamic(
+  () => import("@/components/Lesson/contentPage/notesPanelClient").then((mod) => ({ default: mod.NotesPanelClient })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-full p-4 animate-pulse">
+        <div className="h-8 w-32 bg-slate-200 rounded mb-3" />
+        <div className="h-[60vh] w-full bg-slate-100 rounded-xl" />
+      </div>
+    ),
+  }
+)
 
 function ContentPageInner() {
   const [sidebarOpen, setSidebarOpen] = useState(true)

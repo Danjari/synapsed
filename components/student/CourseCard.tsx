@@ -11,20 +11,21 @@ interface CourseCardProps {
 
 const CourseCard: React.FC<CourseCardProps> = ({ title, professor, progress, link }) => {
   return (
-    <Card className="transition-all hover:shadow-md hover:border-muted-foreground/20">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-base font-medium">{title}</CardTitle>
-        <p className="text-sm text-muted-foreground">Prof. {professor}</p>
-        <div className="mb-2 text-sm text-muted-foreground">
-          {progress}% completed
-        </div>
-      </CardHeader>
-
-      <CardFooter>
-        <Button asChild className="w-full" variant={"outline"}>
-          <a href={link}>Continue</a>
-        </Button>
-      </CardFooter>
+    <Card className="transition-all hover:shadow-lg border-0 overflow-hidden">
+      <div className="bg-gradient-to-br from-emerald-50 via-white to-emerald-100">
+        <CardHeader className="pb-2 px-5 pt-5">
+          <CardTitle className="text-lg font-semibold text-slate-900">{title}</CardTitle>
+          <p className="text-sm text-slate-600">Prof. {professor}</p>
+          <div className="mt-2 mb-1 text-xs text-slate-500">
+            {progress}% completed
+          </div>
+        </CardHeader>
+        <CardFooter className="px-5 pb-5">
+          <Button asChild className="w-full bg-emerald-600 hover:bg-emerald-700 text-white">
+            <a href={link}>Continue</a>
+          </Button>
+        </CardFooter>
+      </div>
     </Card>
   )
 }

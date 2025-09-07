@@ -52,7 +52,7 @@ export default function AiLessonLayout({
   }, [])
 
   return (
-    <div className="h-screen w-full bg-background overflow-hidden">
+    <div className="h-full w-full bg-background overflow-hidden">
       <ResizablePane
         leftPane={
           <div className="h-full flex flex-col">

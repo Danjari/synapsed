@@ -116,15 +116,31 @@ const Editor = forwardRef<any, EditorProps>(({
   };
 
   if (!isClient) {
-    return <div className="max-w-6xl mx-auto p-6">Loading editor...</div>;
+    return (
+      <div className="max-w-6xl mx-auto p-6 animate-pulse">
+        <div className="h-6 w-64 bg-slate-200 rounded mb-4" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="md:col-span-2 space-y-3">
+            <div className="h-3 w-full bg-slate-100 rounded" />
+            <div className="h-3 w-11/12 bg-slate-100 rounded" />
+            <div className="h-3 w-10/12 bg-slate-100 rounded" />
+            <div className="h-64 w-full bg-slate-100 rounded" />
+          </div>
+          <div className="space-y-3">
+            <div className="h-3 w-2/3 bg-slate-100 rounded" />
+            <div className="h-64 w-full bg-slate-100 rounded" />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className={`${className || "h-full flex flex-col"}`}>
       {/* Loading indicator */}
       {isLoading && (
-        <div className="flex-shrink-0 mb-4 p-3 bg-blue-50 border border-blue-200 rounded">
-          AI is thinking...
+        <div className="flex-shrink-0 mb-4 p-3 rounded animate-pulse">
+          <div className="h-3 w-40 bg-slate-200 rounded" />
         </div>
       )}
       
