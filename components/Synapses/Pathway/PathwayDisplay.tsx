@@ -65,6 +65,8 @@ function PathwayFlow() {
   const classIdStr = Array.isArray(classId) ? classId[0] : classId;
   const [pathwayExists, setPathwayExists] = useState<boolean | null>(null);
   const [isNavigating, setIsNavigating] = useState(false);
+  // Show skeleton only when we do not yet have nodes AND we are loading
+  const showSkeleton = isLoading && nodes.length === 0;
 
   // Fetch pathway on initial load
   useEffect(() => {
@@ -95,6 +97,46 @@ function PathwayFlow() {
   
   return (
     <div className="pathway-container">
+      {showSkeleton && (
+        <div className="absolute inset-0 z-20 flex items-center justify-center">
+          <div className="w-full h-full flex items-center justify-center">
+            <div className="w-[min(100%,900px)] px-6 animate-pulse">
+              <div className="mx-auto h-6 w-64 bg-slate-200 rounded mb-6" />
+              <div className="relative pl-8">
+                <div className="absolute left-3 top-0 bottom-0 w-px bg-slate-200" />
+                <div className="space-y-6">
+                  <div>
+                    <div className="h-4 w-56 bg-slate-200 rounded mb-2" />
+                    <div className="ml-6 h-3 w-40 bg-slate-100 rounded" />
+                  </div>
+                  <div>
+                    <div className="h-4 w-40 bg-slate-200 rounded mb-2" />
+                    <div className="ml-6 grid grid-cols-2 gap-3">
+                      <div className="h-3 w-32 bg-slate-100 rounded" />
+                      <div className="h-3 w-28 bg-slate-100 rounded" />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="h-4 w-64 bg-slate-200 rounded mb-2" />
+                    <div className="ml-6 grid grid-cols-3 gap-3">
+                      <div className="h-3 w-28 bg-slate-100 rounded" />
+                      <div className="h-3 w-32 bg-slate-100 rounded" />
+                      <div className="h-3 w-24 bg-slate-100 rounded" />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="h-4 w-52 bg-slate-200 rounded mb-2" />
+                    <div className="ml-6 grid grid-cols-2 gap-3">
+                      <div className="h-3 w-36 bg-slate-100 rounded" />
+                      <div className="h-3 w-28 bg-slate-100 rounded" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Show message if pathway is not available */}
       {(!isLoading && pathwayExists === false && (
         <div className="flex flex-col items-center justify-center h-64 text-center text-gray-500">
@@ -140,9 +182,15 @@ function PathwayFlow() {
 
       {/* Navigation spinner overlay */}
       {isNavigating && (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm">
-          <div className="h-10 w-10 rounded-full border-4 border-gray-300 border-t-gray-700 animate-spin" />
-          <p className="mt-3 text-sm text-gray-700">Loading lesson…</p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm">
+          <div className="w-full max-w-md px-6 animate-pulse">
+            <div className="h-6 w-40 bg-slate-200 rounded mb-4 mx-auto" />
+            <div className="space-y-3">
+              <div className="h-3 w-full bg-slate-100 rounded" />
+              <div className="h-3 w-11/12 bg-slate-100 rounded" />
+              <div className="h-3 w-10/12 bg-slate-100 rounded" />
+            </div>
+          </div>
         </div>
       )}
     </div>

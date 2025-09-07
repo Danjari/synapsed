@@ -11,8 +11,15 @@ export default function StudentPageClient() {
 
   if (status === "loading") {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-xl font-semibold animate-pulse">Loading...</div>
+      <div className="flex items-center justify-center h-screen p-6">
+        <div className="w-full max-w-md animate-pulse">
+          <div className="h-6 w-48 bg-slate-200 rounded mb-4 mx-auto" />
+          <div className="space-y-3">
+            <div className="h-3 w-full bg-slate-100 rounded" />
+            <div className="h-3 w-11/12 bg-slate-100 rounded" />
+            <div className="h-3 w-10/12 bg-slate-100 rounded" />
+          </div>
+        </div>
       </div>
     );
   }
@@ -23,8 +30,15 @@ export default function StudentPageClient() {
       router.replace("/sign-in");
     }, 100);
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-xl font-semibold animate-pulse">Redirecting...</div>
+      <div className="flex items-center justify-center h-screen p-6">
+        <div className="w-full max-w-md animate-pulse">
+          <div className="h-6 w-56 bg-slate-200 rounded mb-4 mx-auto" />
+          <div className="space-y-3">
+            <div className="h-3 w-full bg-slate-100 rounded" />
+            <div className="h-3 w-11/12 bg-slate-100 rounded" />
+            <div className="h-3 w-10/12 bg-slate-100 rounded" />
+          </div>
+        </div>
       </div>
     );
   }

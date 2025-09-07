@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
 
 export default function ClassEntryPage() {
   const { data: session } = useSession();
@@ -28,9 +27,15 @@ export default function ClassEntryPage() {
   }, [session?.user?.id, classId, router]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <Loader2 className="animate-spin w-6 h-6 text-slate-500" />
-      <span className="ml-2 text-slate-500">Loading your class...</span>
+    <div className="min-h-screen flex items-center justify-center p-6">
+      <div className="w-full max-w-xl animate-pulse">
+        <div className="h-6 w-48 bg-slate-200 rounded mb-4 mx-auto" />
+        <div className="space-y-3">
+          <div className="h-3 w-full bg-slate-100 rounded" />
+          <div className="h-3 w-11/12 bg-slate-100 rounded" />
+          <div className="h-3 w-10/12 bg-slate-100 rounded" />
+        </div>
+      </div>
     </div>
   );
 }

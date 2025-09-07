@@ -1,13 +1,12 @@
 'use client';
 
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 // import type { PartialBlock } from '@blocknote/core';
 // import Editor from '@/components/Lesson/AiLesson/Editor';
 import AiLessonLayout from '@/components/Lesson/AiLesson/AiLessonLayout';
 import { Button } from '@/components/ui/button';
-import { Sparkles, BookOpen, Brain, ArrowLeft, ChevronUp, ChevronDown, LayoutDashboard } from 'lucide-react';
-import Link from 'next/link';
+import { Sparkles, BookOpen, Brain, ArrowLeft, ChevronUp, ChevronDown } from 'lucide-react';
 import { FlashcardsPanel } from '@/components/Lesson/flashcard/FlashcardsPanel';
 import ContentPage from '@/components/Lesson/contentPage/ContentPage';
 
@@ -33,8 +32,10 @@ export default function LessonPage() {
   // const userEmail = session?.user?.email ?? 'unknown';
   // const userName = session?.user?.name ?? 'unknown';
 
-  const [viewMode, setViewMode] = useState<'overview' | 'content' | 'ai-lesson' | 'flashcards' | 'summary'>('overview');
+  const [viewMode, setViewMode] = useState<'overview' | 'content' | 'ai-lesson' | 'flashcards' | 'summary'>('ai-lesson');
   const [showTopBar, setShowTopBar] = useState(true);
+  const topBarRef = useRef<HTMLDivElement>(null);
+  const [headerHeight, setHeaderHeight] = useState(0);
 
   const fetchNote = useCallback(async () => {
     if (!classId || !nodeId) return;
@@ -51,6 +52,18 @@ export default function LessonPage() {
   useEffect(() => {
     fetchNote();
   }, [fetchNote]);
+
+  // Measure header height to prevent overlap
+  useEffect(() => {
+    const measure = () => {
+      const h = topBarRef.current?.offsetHeight ?? 0;
+      // add extra space for the floating toggle
+      setHeaderHeight(h + 16);
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, [showTopBar]);
 
   // Prevent body scrolling when AI lesson is active
   useEffect(() => {
@@ -106,7 +119,7 @@ export default function LessonPage() {
   return (
     <div className="ai-lesson-page bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex flex-col overflow-hidden">
       {/* Top Bar */}
-      <div className={`transition-all duration-300 ease-in-out ${showTopBar ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'} fixed top-0 left-0 right-0 z-40`}>
+      <div ref={topBarRef} className={`transition-all duration-300 ease-in-out ${showTopBar ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'} fixed top-0 left-0 right-0 z-40`}>
         <div className="relative">
           <div className="flex items-center justify-between p-6 bg-white/95 backdrop-blur-sm border-b border-slate-200 shadow-lg">
             <div className="flex items-center space-x-3">
@@ -114,14 +127,11 @@ export default function LessonPage() {
                 variant="ghost"
                 size="icon"
                 onClick={() => router.push(`/class/${classId}/pathway`)}
-                className="text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-all duration-200"
+                className="text-emerald-700 hover:text-emerald-800 hover:bg-emerald-50 rounded-lg transition-all duration-200"
               >
                 <ArrowLeft className="w-5 h-5" />
               </Button>
-              <Link href="/teacher/dashboard" className="hidden sm:inline-flex items-center gap-2 btn-secondary-emerald rounded-full px-3 py-1.5">
-                <LayoutDashboard className="w-4 h-4" />
-                <span className="text-sm">Dashboard</span>
-              </Link>
+              {/** Dashboard button removed per request **/}
               <div>
                 <h2 className="text-xl font-bold text-slate-800">{nodeTitle || 'Lesson'}</h2>
                 <p className="text-sm text-slate-500 mt-0.5">Interactive Learning Experience</p>
@@ -139,21 +149,21 @@ export default function LessonPage() {
               </button> */}
               <button
                 onClick={() => setViewMode('ai-lesson')}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-md transition-all duration-200 text-sm font-medium ${viewMode === 'ai-lesson' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600 hover:text-slate-800 hover:bg-white/50'}`}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-md transition-all duration-200 text-sm font-medium ${viewMode === 'ai-lesson' ? 'bg-emerald-600 text-white shadow-sm' : 'text-emerald-700 hover:bg-emerald-50'}`}
               >
                 <Sparkles className="w-4 h-4" />
                 <span>AI Lesson</span>
               </button>
               <button
                 onClick={() => setViewMode('content')}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-md transition-all duration-200 text-sm font-medium ${viewMode === 'content' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600 hover:text-slate-800 hover:bg-white/50'}`}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-md transition-all duration-200 text-sm font-medium ${viewMode === 'content' ? 'bg-emerald-600 text-white shadow-sm' : 'text-emerald-700 hover:bg-emerald-50'}`}
               >
                 <BookOpen className="w-4 h-4" />
                 <span>Content</span>
               </button>
               <button
                 onClick={() => setViewMode('flashcards')}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-md transition-all duration-200 text-sm font-medium ${viewMode === 'flashcards' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600 hover:text-slate-800 hover:bg-white/50'}`}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-md transition-all duration-200 text-sm font-medium ${viewMode === 'flashcards' ? 'bg-emerald-600 text-white shadow-sm' : 'text-emerald-700 hover:bg-emerald-50'}`}
               >
                 <Brain className="w-4 h-4" />
                 <span>Flashcards</span>
@@ -200,15 +210,18 @@ export default function LessonPage() {
       )}
 
       {/* Main Content Area */}
-      <div className={`h-screen flex flex-1 min-h-0 relative transition-all duration-300 ${showTopBar ? 'pt-24' : 'pt-0'}`}>
+      <div className={`h-screen flex flex-1 min-h-0 relative transition-all duration-300`} style={{ paddingTop: showTopBar ? headerHeight : 16 }}>
         <div className="flex-1 flex flex-col min-h-0">
           <div className="flex-1 overflow-hidden min-h-0">
             <div className="overflow-hidden h-full">
               {/* AI Lesson Tab */}
-              <div className={`h-full ${viewMode === 'ai-lesson' ? 'block' : 'hidden'}`}>
-                {loading ? (
-                  <div className="h-full p-6">Loading note…</div>
-                ) : (
+              <div className={`h-full relative ${viewMode === 'ai-lesson' ? 'block' : 'hidden'}`}>
+                {loading && (
+                  <div className="absolute inset-0 z-10 bg-white flex items-center justify-center">
+                    <div className="h-10 w-10 rounded-full border-4 border-slate-300 border-t-emerald-600 animate-spin" />
+                  </div>
+                )}
+                {!loading && (
                   <div className="h-full">
                     <AiLessonLayout 
                       classId={classId}
