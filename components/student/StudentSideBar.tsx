@@ -3,7 +3,15 @@
 import TeacherSidebar, { type SidebarItem } from "@/components/teacher/SideBar";
 import { Home, BookOpen, MessageSquare, Award, Settings } from "lucide-react";
 
-export default function StudentSidebar() {
+interface StudentSidebarProps {
+  user: {
+    name?: string | null;
+    email?: string | null;
+    role?: string;
+  };
+}
+
+export default function StudentSidebar({ user }: StudentSidebarProps) {
   const items: SidebarItem[] = [
     { name: "Dashboard", path: "/student/dashboard", icon: Home },
     { name: "Join a Class", path: "/student/join", icon: BookOpen },
@@ -12,7 +20,7 @@ export default function StudentSidebar() {
     { name: "Settings", path: "/settings", icon: Settings },
   ];
 
-  return <TeacherSidebar items={items} />;
+  return <TeacherSidebar items={items} user={user} />;
 }
 
 
