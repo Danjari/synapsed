@@ -187,18 +187,20 @@ class DatabaseContentService {
   // }
 
   /**
-   * TODO: Implement clear document annotations
-   * 
-   * Steps to implement:
-   * 1. Create API endpoint: app/api/documents/[id]/annotations/route.ts (DELETE)
-   * 2. Delete all content references for the document (cascade deletes notes)
-   * 3. Delete document annotation metadata
-   * 4. Update this method to call the new endpoint
+   * Clear all annotations for a document
    */
-  // async clearDocumentAnnotations(documentId: string): Promise<boolean> {
-  //   // Implementation needed - see steps above
-  //   return false
-  // }
+  async clearDocumentAnnotations(documentId: string): Promise<boolean> {
+    try {
+      const response = await fetch(`/api/documents/${documentId}/annotations`, {
+        method: 'DELETE'
+      });
+
+      return response.ok;
+    } catch (error) {
+      console.error('Error clearing document annotations:', error);
+      return false;
+    }
+  }
 
   /**
    * TODO: Implement document annotation export

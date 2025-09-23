@@ -232,11 +232,11 @@ export function AnnotationProvider({ children }: AnnotationProviderProps) {
           documentId: document.id,
           documentName: document.name,
           contentReferences: document.contentReferences || [],
-          notes: document.contentReferences?.flatMap((ref: any) => ref.notes || []) || [],
+          notes: document.contentReferences?.flatMap((ref: { notes?: Note[] }) => ref.notes || []) || [],
           metadata: {
             createdAt: new Date(document.uploadedAt),
             lastModified: new Date(document.lastModified),
-            totalNotes: document.contentReferences?.reduce((total: number, ref: any) => total + (ref.notes?.length || 0), 0) || 0,
+            totalNotes: document.contentReferences?.reduce((total: number, ref: { notes?: Note[] }) => total + (ref.notes?.length || 0), 0) || 0,
             pagesWithNotes: document.annotations?.pagesWithNotes || []
           }
         }
@@ -260,7 +260,7 @@ export function AnnotationProvider({ children }: AnnotationProviderProps) {
 
   // Create content reference
   const createContentReference = useCallback(async (request: CreateContentReferenceRequest): Promise<ContentReference | null> => {
-    const reference = await databaseContentService.createContentReference(request, 'current-user-id')
+    const reference = await databaseContentService.createContentReference(request)
     if (reference) {
       dispatch({ type: 'ADD_CONTENT_REFERENCE', payload: reference })
       return reference

@@ -45,7 +45,7 @@ export default function Sidebar({
   });
   const { data: session } = useSession();
   const name = session?.user?.name || session?.user?.email || "Account";
-  const role = (session as any)?.user?.role || "";
+  const role = (session?.user as { role?: string })?.role || "";
   const initial = typeof name === 'string' ? name.charAt(0).toUpperCase() : 'A';
 
   return (

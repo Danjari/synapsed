@@ -53,7 +53,7 @@ export async function PATCH(
       regenerateJoinToken?: boolean;
     };
 
-    const data: any = {};
+    const data: { title?: string; description?: string | null; joinToken?: string } = {};
     if (typeof title === "string") data.title = title;
     if (typeof description !== "undefined") data.description = description;
     if (regenerateJoinToken) data.joinToken = generateJoinToken();

@@ -25,7 +25,7 @@ export default function SynapsedPathwayPage() {
       try {
         const res = await fetch(`/api/student/classes?enrollmentId=${session.user.id}`);
         const data = await res.json();
-        const cls = (data || []).find((c: any) => c.id === classId);
+        const cls = (data || []).find((c: { id: string }) => c.id === classId);
         if (cls) {
           setTitle(cls.title || title);
           setProf(cls.professor?.name || null);

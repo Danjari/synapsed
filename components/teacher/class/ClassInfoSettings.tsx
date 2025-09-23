@@ -26,8 +26,8 @@ export default function ClassInfoSettings({ classId }: { classId: string }) {
         setTitle(data.title ?? "");
         setDescription(data.description ?? "");
         setJoinToken(data.joinToken ?? "");
-      } catch (e: any) {
-        toast.error(e?.message || "Failed to load class details");
+      } catch (e: unknown) {
+        toast.error((e as Error)?.message || "Failed to load class details");
       } finally {
         setLoading(false);
       }
@@ -48,8 +48,8 @@ export default function ClassInfoSettings({ classId }: { classId: string }) {
       setTitle(data.title);
       setDescription(data.description ?? "");
       toast.success("Class details updated");
-    } catch (e: any) {
-      toast.error(e?.message || "Failed to save changes");
+    } catch (e: unknown) {
+      toast.error((e as Error)?.message || "Failed to save changes");
     } finally {
       setSaving(false);
     }
@@ -76,8 +76,8 @@ export default function ClassInfoSettings({ classId }: { classId: string }) {
       const data = await res.json();
       setJoinToken(data.joinToken);
       toast.success("Join token regenerated");
-    } catch (e: any) {
-      toast.error(e?.message || "Failed to regenerate token");
+    } catch (e: unknown) {
+      toast.error((e as Error)?.message || "Failed to regenerate token");
     } finally {
       setSaving(false);
     }
