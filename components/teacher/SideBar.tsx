@@ -30,16 +30,10 @@ export default function Sidebar({
   items,
   activeId,
   onSelect,
-  user,
 }: {
   items?: SidebarItem[];
   activeId?: string;
   onSelect?: (id: string) => void;
-  user?: {
-    name?: string | null;
-    email?: string | null;
-    role?: string;
-  };
 }) {
   const pathname = usePathname();
   const menuItems = items ?? defaultMenuItems;
@@ -50,9 +44,8 @@ export default function Sidebar({
     return false;
   });
   const { data: session } = useSession();
-  const userData = user || session?.user;
-  const name = userData?.name || userData?.email || "Account";
-  const role = (userData as { role?: string })?.role || "";
+  const name = session?.user?.name || session?.user?.email || "Account";
+  const role = (session?.user as { role?: string })?.role || "";
   const initial = typeof name === 'string' ? name.charAt(0).toUpperCase() : 'A';
 
   return (

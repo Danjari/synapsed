@@ -45,7 +45,7 @@ export default function StudentPageClient() {
 
   return (
     <div className="flex">
-      <Sidebar user={session.user} />
+      <Sidebar />
       
       <div className="flex-1">
         <StudentDashboard user={session.user} />
