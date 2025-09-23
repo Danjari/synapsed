@@ -10,7 +10,7 @@ import {
   getDefaultReactSlashMenuItems,
   useCreateBlockNote,
 } from "@blocknote/react";
-import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
+import { useState, useEffect, forwardRef, useImperativeHandle, useRef } from "react";
 
 // Import your AI extension we can build extension to take in drawing
 import { getAISlashMenuItems } from "@danjari/blocknote-ai-extension";
@@ -27,6 +27,11 @@ type EditorProps = {
   onBlur?: () => void;
   placeholder?: string;
   className?: string;
+  // Context props for auto-save
+  classId?: string;
+  nodeId?: string;
+  nodeTitle?: string;
+  showAICommands?: boolean;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -39,11 +44,17 @@ const Editor = forwardRef<any, EditorProps>(({
   onFocus,
   onBlur,
   placeholder,
-  className
+  className,
+  classId,
+  nodeId,
+  nodeTitle,
+  showAICommands = true
 }, ref) => {
   //const [aiResponses, setAiResponses] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const saveTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Ensure we're on the client side
   useEffect(() => {
@@ -72,6 +83,42 @@ const Editor = forwardRef<any, EditorProps>(({
 
   // Expose editor instance to parent component
   useImperativeHandle(ref, () => editor, [editor]);
+
+  // Auto-save function
+  const autoSave = async (content: unknown, title?: string) => {
+    if (!classId || !nodeId) return; // Only save if context is available
+    
+    setIsSaving(true);
+    try {
+      const res = await fetch('/api/lesson-notes', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          classId, 
+          dbNodeId: nodeId, 
+          content, 
+          title: title || nodeTitle 
+        }),
+      });
+      if (!res.ok) {
+        console.error('Failed to save notes');
+      }
+    } catch (error) {
+      console.error('Auto-save error:', error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Debounced auto-save
+  const debouncedAutoSave = (content: unknown, title?: string) => {
+    if (saveTimerRef.current) {
+      clearTimeout(saveTimerRef.current);
+    }
+    saveTimerRef.current = setTimeout(() => {
+      autoSave(content, title);
+    }, 1500); // 1.5 second delay
+  };
 
   const handleAICommand = async (action: string, payload?: { selectedText?: string }) => {
     //console.log("🤖 AI Command:", action, payload);
@@ -144,33 +191,43 @@ const Editor = forwardRef<any, EditorProps>(({
         </div>
       )}
       
-      {/* AI Controls - Fixed at top */}
-      <div className="flex-shrink-0 mb-4 flex gap-2 flex-wrap">
-        <button
-          onClick={() => handleAICommand('explain')}
-          className="px-2 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300 transition-colors"
-        >
-          Explain
-        </button>
-        <button
-          onClick={() => handleAICommand('summarize')}
-          className="px-2 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300 transition-colors"
-        >
-          Summarize
-        </button>
-        <button
-          onClick={() => handleAICommand('quiz-me')}
-          className="px-2 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300 transition-colors"
-        >
-          Quiz Me
-        </button>
-        <button
-          onClick={() => handleAICommand('diagram')}
-          className="px-2 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300 transition-colors"
-        >
-          Create Diagram
-        </button>
-      </div>
+      {/* AI Controls - Fixed at top (only show if showAICommands is true) */}
+      {showAICommands && (
+        <div className="flex-shrink-0 mb-4 flex gap-2 flex-wrap">
+          <button
+            onClick={() => handleAICommand('explain')}
+            className="px-2 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300 transition-colors"
+          >
+            Explain
+          </button>
+          <button
+            onClick={() => handleAICommand('summarize')}
+            className="px-2 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300 transition-colors"
+          >
+            Summarize
+          </button>
+          <button
+            onClick={() => handleAICommand('quiz-me')}
+            className="px-2 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300 transition-colors"
+          >
+            Quiz Me
+          </button>
+          <button
+            onClick={() => handleAICommand('diagram')}
+            className="px-2 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300 transition-colors"
+          >
+            Create Diagram
+          </button>
+        </div>
+      )}
+
+      {/* Saving indicator */}
+      {isSaving && (
+        <div className="flex-shrink-0 mb-2 flex items-center gap-2 text-sm text-gray-500">
+          <div className="w-3 h-3 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin" />
+          <span>Saving...</span>
+        </div>
+      )}
       
       {/* Editor Container - Takes remaining space and scrollable */}
       <div className="flex-1 border rounded-lg overflow-hidden">
@@ -179,8 +236,13 @@ const Editor = forwardRef<any, EditorProps>(({
             editor={editor}
             slashMenu={false}
             onChange={() => {
-              onChange?.(editor.document)
-              onContentChange?.(editor.document.map(block => block.content || '').join('\n'))
+              const content = editor.document;
+              onChange?.(content);
+              onContentChange?.(content.map(block => block.content || '').join('\n'));
+              // Auto-save if context is available
+              if (classId && nodeId) {
+                debouncedAutoSave(content, nodeTitle);
+              }
             }}
             onFocus={onFocus}
             onBlur={onBlur}
@@ -190,7 +252,7 @@ const Editor = forwardRef<any, EditorProps>(({
               triggerCharacter="/"
               getItems={async (query) => {
                 const defaultItems = getDefaultReactSlashMenuItems(editor);
-                const aiItems = getAISlashMenuItems(editor, handleAICommand);
+                const aiItems = showAICommands ? getAISlashMenuItems(editor, handleAICommand) : [];
                 const allItems = [...defaultItems, ...aiItems];
                 return filterSuggestionItems(allItems, query);
               }}

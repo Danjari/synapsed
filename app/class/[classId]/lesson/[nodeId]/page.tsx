@@ -234,7 +234,11 @@ export default function LessonPage() {
 
               {/* Content Tab */}
               <div className={`h-full ${viewMode === 'content' ? 'block' : 'hidden'}`}>
-                <ContentPage />
+                <ContentPage 
+                  classId={classId}
+                  nodeId={nodeId}
+                  nodeTitle={nodeTitle}
+                />
               </div>
 
               {/* Flashcards Tab */}

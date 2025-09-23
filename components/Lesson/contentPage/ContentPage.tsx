@@ -34,7 +34,13 @@ const NotesPanelClient = dynamic(
   }
 )
 
-function ContentPageInner() {
+interface ContentPageProps {
+  classId?: string;
+  nodeId?: string;
+  nodeTitle?: string;
+}
+
+function ContentPageInner({ classId, nodeId, nodeTitle }: ContentPageProps) {
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [selectedDocument, setSelectedDocument] = useState<string | null>(null)
   const [selectedDocumentUrl, setSelectedDocumentUrl] = useState<string | null>(null)
@@ -125,9 +131,14 @@ function ContentPageInner() {
                 <PDFViewer documentUrl={selectedDocumentUrl} documentId={selectedDocument} />
               </div>
             }
-            rightPane={
+              rightPane={
               <div className="h-full p-4">
-                <NotesPanelClient documentId={selectedDocument} />
+                <NotesPanelClient 
+                  documentId={selectedDocument}
+                  classId={classId}
+                  nodeId={nodeId}
+                  nodeTitle={nodeTitle}
+                />
               </div>
             }
             initialWidth={paneWidth}
@@ -141,10 +152,10 @@ function ContentPageInner() {
   )
 }
 
-export default function PDFAnnotationApp() {
+export default function PDFAnnotationApp(props: ContentPageProps) {
   return (
     <AnnotationProvider>
-      <ContentPageInner />
+      <ContentPageInner {...props} />
     </AnnotationProvider>
   )
 }
