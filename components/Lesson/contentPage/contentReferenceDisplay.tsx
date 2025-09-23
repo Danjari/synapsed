@@ -88,7 +88,7 @@ export function ContentReferenceDisplay({ pageNumber, scale, rotation }: Content
     
     // Check if any notes have important tags
     const hasImportantNotes = notes.some(note => 
-      note.metadata.tags?.some((tag: string) => 
+      note.metadata?.tags?.some((tag: string) => 
         tag.toLowerCase().includes('important') || 
         tag.toLowerCase().includes('critical') ||
         tag.toLowerCase().includes('urgent')

@@ -25,7 +25,7 @@ export default function LessonPage() {
 
   // Note: lesson note state is now managed by LessonNoteProvider
 
-  // const userId = session?.user?.id ?? 'unknown';
+  // const userId = session?.user?.id ?? 'unknown'; 
   // const userEmail = session?.user?.email ?? 'unknown';
   // const userName = session?.user?.name ?? 'unknown';
 

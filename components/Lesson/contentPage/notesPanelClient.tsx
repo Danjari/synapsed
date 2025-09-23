@@ -149,7 +149,7 @@ export function NotesPanelClient({ documentId, classId, nodeId, nodeTitle }: Not
                 placeholder="Add a quick note..."
                 className="flex-1 px-3 py-2 text-sm border border-border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
                 onKeyPress={async (e) => {
-                  if (e.key === 'Enter' && e.currentTarget.value.trim()) {
+                  if (e.key === 'Enter' && e.currentTarget?.value.trim()) {
                     const note = await createNote({
                       contentReferenceId: activeContentReference.id,
                       content: e.currentTarget.value.trim(),
