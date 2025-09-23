@@ -129,7 +129,7 @@ const StudentDashboard = ({ user }: { user?: User }) => {
                   <CourseCard
                     title={cls.title}
                     professor={cls.professor?.name}
-                    progress={cls.progress}
+                    progress={cls.progress ?? 0}
                     link={cls.link || "#"}
                   />
                 </div>
