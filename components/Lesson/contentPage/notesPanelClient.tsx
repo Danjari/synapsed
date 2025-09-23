@@ -151,9 +151,8 @@ export function NotesPanelClient({ documentId }: NotesPanelProps) {
                     const note = await createNote({
                       contentReferenceId: activeContentReference.id,
                       content: e.currentTarget.value.trim(),
-                      tags: [],
-                      lastModified: new Date(),
-                      createdBy: 'you'
+                      tags: []
+                      // implement last modified in next iteration 
                     })
                     if (note) {
                       setNoteCreationFeedback('Note created successfully!')
@@ -170,9 +169,7 @@ export function NotesPanelClient({ documentId }: NotesPanelProps) {
                     const note = await createNote({
                       contentReferenceId: activeContentReference.id,
                       content: input.value.trim(),
-                      tags: [],
-                      lastModified: new Date(),
-                      createdBy: 'you' // TODO: Get proper user name in next iteration
+                      tags: []
                     })
                     if (note) {
                       setNoteCreationFeedback('Note created successfully!')
