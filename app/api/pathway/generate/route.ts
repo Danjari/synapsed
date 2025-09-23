@@ -21,9 +21,9 @@ export async function GET(req: Request) {
   const prompt = searchParams.get('prompt') || 'Intro to linear algebra';
   const studentId = searchParams.get('studentId') || 'demo';
   const classId = searchParams.get('classId') || 'default';
-  console.log("prompt received", prompt)
-  console.log("studentId received", studentId)
-  console.log("ClassID received", classId)
+  //console.log("prompt received", prompt)
+  //console.log("studentId received", studentId)
+  //console.log("ClassID received", classId)
 
   const generatePathwayFunction = {
     name: 'generate_learning_pathway',

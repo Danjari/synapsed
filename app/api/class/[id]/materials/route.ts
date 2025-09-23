@@ -11,7 +11,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       where: { classId: new ObjectId(classId).toString() },
       orderBy: { uploadedAt: 'desc' },
     });
-    console.log("here is the mat",materials)
+    //console.log("here is the mat",materials)
 
     return NextResponse.json(materials);
   } catch (error) {

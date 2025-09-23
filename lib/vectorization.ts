@@ -36,7 +36,7 @@ export async function vectorizeAndUpdate(material: Material) {
       },
     });
 
-    console.log(`✅ Vectorization complete for ${material.title}`);
+    //console.log(`✅ Vectorization complete for ${material.title}`);
   } catch (err) {
     console.error(`❌ Vectorization failed for ${material.title}:`, err);
   }

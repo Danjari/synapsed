@@ -33,7 +33,7 @@ export function useFlashDeck(nodeId: string, nodeTitle?: string, markdownContent
   const [error, setError] = useState<string | null>(null);
 
   const fetchDeck = useCallback(async () => {
-    console.log('fetchDeck called for nodeId:', nodeId);
+    //console.log('fetchDeck called for nodeId:', nodeId);
     setLoading(true);
     setError(null);
     try {
@@ -84,7 +84,7 @@ export function useFlashDeck(nodeId: string, nodeTitle?: string, markdownContent
   };
 
   useEffect(() => {
-    console.log('useEffect triggered for nodeId:', nodeId);
+    //console.log('useEffect triggered for nodeId:', nodeId);
     if (nodeId) {
       fetchDeck();
     }

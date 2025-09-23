@@ -11,7 +11,7 @@ export async function POST(req: Request) {
   const { role } = await req.json()
   
   // Logging the received role for debugging purposes
-  console.log("Body receive in set-role:",role)
+  //console.log("Body receive in set-role:",role)
 
   // Validating if the user is authenticated and the role is valid
   if (!session?.user?.email || !Object.values(Role).includes(role)) {

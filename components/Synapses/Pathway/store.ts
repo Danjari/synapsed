@@ -220,7 +220,7 @@ import {
         // NEW: Dynamic fetch from your mock API
         const res = await fetch(`/api/pathway/get?studentId=${studentId}&classId=${classId}`);
         const skeleton = await res.json();
-        console.log("Skeleton:", skeleton);
+        //console.log("Skeleton:", skeleton);
 
         
 

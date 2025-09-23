@@ -53,7 +53,7 @@ export function PDFViewerClient({ documentUrl, documentId }: PDFViewerProps) {
   }, [documentId, loadDocumentAnnotations])
 
   const onDocumentLoadSuccess = useCallback(({ numPages }: { numPages: number }) => {
-    console.log("[v0] PDF loaded successfully with", numPages, "pages")
+    //console.log(" PDF loaded successfully with", numPages, "pages")
     setNumPages(numPages)
     setPageNumber(1)
     setLoading(false)
@@ -61,7 +61,7 @@ export function PDFViewerClient({ documentUrl, documentId }: PDFViewerProps) {
   }, [])
 
   const onDocumentLoadError = useCallback((error: Error) => {
-    console.log("[v0] PDF load error:", error)
+    //console.log(" PDF load error:", error)
     setError("Failed to load PDF document")
     setLoading(false)
     console.error("PDF load error:", error)
@@ -97,14 +97,14 @@ export function PDFViewerClient({ documentUrl, documentId }: PDFViewerProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onPageLoadSuccess = useCallback((page: any) => {
     // Log page dimensions for debugging
-    console.log('Page loaded successfully:', {
-      pageNumber,
-      pageWidth: page.width,
-      pageHeight: page.height,
-      scale,
-      rotation,
-      orientation: page.width > page.height ? 'landscape' : 'portrait'
-    })
+    // //console.log('Page loaded successfully:', {
+    //   pageNumber,
+    //   pageWidth: page.width,
+    //   pageHeight: page.height,
+    //   scale,
+    //   rotation,
+    //   orientation: page.width > page.height ? 'landscape' : 'portrait'
+    // })
     // find a way to fix the any for later. 
     // Extract text content from the page for content detection
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -197,11 +197,11 @@ export function PDFViewerClient({ documentUrl, documentId }: PDFViewerProps) {
       documentName
     }
     
-    // Debug logging
-    console.log('Click coordinates:', { pageX, pageY, containerX, containerY })
-    console.log('Page dimensions:', { width: rect.width, height: rect.height })
-    console.log('Optimal coordinates:', optimalCoordinates)
-    console.log('Has overlap:', hasOverlap)
+    // // Debug logging
+    // console.log('Click coordinates:', { pageX, pageY, containerX, containerY })
+    // console.log('Page dimensions:', { width: rect.width, height: rect.height })
+    // console.log('Optimal coordinates:', optimalCoordinates)
+    // console.log('Has overlap:', hasOverlap)
     
     // Create the content reference
     const contentReference = createContentReference(request)

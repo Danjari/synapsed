@@ -12,9 +12,9 @@ interface FlashcardData {
 
 export async function POST(request: NextRequest) {
   try {
-    console.log('POST request received');
+    //console.log('POST request received');
     const body = await request.json();
-    console.log('Request body:', body);
+    //console.log('Request body:', body);
     
     const { nodeId, nodeTitle, markdownContent } = body;
     
@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'nodeId is required' }, { status: 400 });
     }
     
-    console.log('Starting flashcard generation for nodeId:', nodeId);
+    //console.log('Starting flashcard generation for nodeId:', nodeId);
     
     // Check if PathwayNode exists, if not create a temporary one for testing
     let pathwayNode = await prisma.pathwayNode.findUnique({
@@ -54,17 +54,17 @@ export async function POST(request: NextRequest) {
       });
     }
     
-    console.log('About to call Gemini');
+    //console.log('About to call Gemini');
     
     // Generate flashcards using Gemini
     const aiResponse = await callGemini(nodeTitle, markdownContent);
-    console.log('Gemini response received:', aiResponse);
+    //console.log('Gemini response received:', aiResponse);
     
     // Parse JSON response with error handling
     let cardsData;
     try {
       cardsData = JSON.parse(aiResponse);
-      console.log('Parsed cards data:', cardsData);
+      //console.log('Parsed cards data:', cardsData);
     } catch (parseError) {
       console.error('Failed to parse AI response:', String(parseError));
       return NextResponse.json({ error: 'Invalid AI response format' }, { status: 500 });
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
     
     // Validate cards structure
     if (!Array.isArray(cardsData)) {
-      console.error('Cards data is not an array:', cardsData);
+      //console.error('Cards data is not an array:', cardsData);
       return NextResponse.json({ error: 'Invalid cards format' }, { status: 500 });
     }
     
@@ -112,8 +112,8 @@ export async function POST(request: NextRequest) {
     });
     
     return NextResponse.json(deck);
-  } catch (error) {
-    console.error('Flashcard generation error:', String(error));
+  } catch {
+    //console.error('Flashcard generation error:', String(error));
     return NextResponse.json({ error: 'Generation failed' }, { status: 500 });
   }
 } 

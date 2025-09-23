@@ -213,12 +213,12 @@ export function NotesPanelClient({ documentId, classId, nodeId, nodeTitle }: Not
                           className="w-full px-2 py-1 text-sm border border-blue-300 rounded bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                           onKeyPress={async (e) => {
                             if (e.key === 'Enter') {
-                              console.log('Updating note via Enter:', { id: note.id, content: editingNoteContent })
+                              //console.log('Updating note via Enter:', { id: note.id, content: editingNoteContent })
                               const success = await updateNote({
                                 id: note.id,
                                 content: editingNoteContent
                               })
-                              console.log('Update result via Enter:', success)
+                              //console.log('Update result via Enter:', success)
                               if (success) {
                                 setNoteCreationFeedback('Note updated successfully!')
                                 setTimeout(() => setNoteCreationFeedback(null), 2000)
@@ -248,12 +248,12 @@ export function NotesPanelClient({ documentId, classId, nodeId, nodeTitle }: Not
                         <>
                           <button
                             onClick={async () => {
-                              console.log('Updating note:', { id: note.id, content: editingNoteContent })
+                              //console.log('Updating note:', { id: note.id, content: editingNoteContent })
                               const success = await updateNote({
                                 id: note.id,
                                 content: editingNoteContent
                               })
-                              console.log('Update result:', success)
+                              //console.log('Update result:', success)
                               if (success) {
                                 setNoteCreationFeedback('Note updated successfully!')
                                 setTimeout(() => setNoteCreationFeedback(null), 2000)

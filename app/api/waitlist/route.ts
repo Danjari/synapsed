@@ -13,7 +13,7 @@ try {
 
     const response = await loops.findContact({email: email});
 
-    console.log(`The findContact response is: ${response}`)
+    //console.log(`The findContact response is: ${response}`)
 
     if (response.length != 0){
 
@@ -30,7 +30,7 @@ try {
     return Response.json({ success: resp.success });
 
 } catch (error) {
-    console.log(`An error occured while sending the email to the server: ${error}`);
+    console.error(`An error occured while sending the email to the server: ${error}`);
     return Response.json({ success: false });
 }
   

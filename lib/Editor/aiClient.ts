@@ -2,7 +2,7 @@ export async function callAI(action: string, selectedText: string, fullContext?:
     const prompt = getPromptForAction(action, selectedText, fullContext);
     const requestBody = { action, text: selectedText, prompt, fullContext };
     
-    console.log('Sending AI request:', { action, selectedTextLength: selectedText.length, fullContextLength: fullContext?.length });
+    //console.log('Sending AI request:', { action, selectedTextLength: selectedText.length, fullContextLength: fullContext?.length });
     
     const response = await fetch('/api/editorAi', {
       method: 'POST',

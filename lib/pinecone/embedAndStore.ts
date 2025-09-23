@@ -64,6 +64,6 @@ export async function embedAndStore(
   await index.namespace(namespace).upsert(vectors);
   console.timeEnd("Upsert");
 
-  const verify = await index.namespace(namespace).fetch(vectors.slice(0, 5).map(v => v.id));
-  console.log("🧐 Fetched back:", verify);
+   await index.namespace(namespace).fetch(vectors.slice(0, 5).map(v => v.id));
+  //console.log("🧐 Fetched back:", verify);
 }

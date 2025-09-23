@@ -13,7 +13,7 @@ export default function JoinClassPage() {
 
   const handleJoin = async () => {
     if (!token.trim()) return alert("Please enter a valid token");
-    console.log("user id: ", session?.user?.name)
+    //console.log("user id: ", session?.user?.name)
     if (!session?.user?.id) return alert("You must be signed in");
 
     try {

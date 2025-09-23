@@ -34,14 +34,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log(`📤 Processing file: ${file.name} (${file.size} bytes)`);
+    //console.log(`📤 Processing file: ${file.name} (${file.size} bytes)`);
 
     // Upload to Mistral for OCR processing
     const uploadRes = await uploadToMistral(file);
     const markdown = await getOcrMarkdown(uploadRes.id);
     const chunks = await chunkMarkdownByPage(markdown);
 
-    console.log(`✅ Successfully processed ${chunks.length} chunks`);
+    //console.log(`✅ Successfully processed ${chunks.length} chunks`);
 
     // vectorize and store
     const dummyClassDetails = {
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
       title: file.name
     };
 
-    console.log("Embedding and storing chunks...");
+    //console.log("Embedding and storing chunks...");
 
     await embedAndStore(chunks, 'shayans-namespace', dummyClassDetails);
 
