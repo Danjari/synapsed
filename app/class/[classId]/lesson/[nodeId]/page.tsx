@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 // import type { PartialBlock } from '@blocknote/core';
 // import Editor from '@/components/Lesson/AiLesson/Editor';
 import AiLessonLayout from '@/components/Lesson/AiLesson/AiLessonLayout';
@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Sparkles, BookOpen, Brain, ArrowLeft, ChevronUp, ChevronDown } from 'lucide-react';
 import { FlashcardsPanel } from '@/components/Lesson/flashcard/FlashcardsPanel';
 import ContentPage from '@/components/Lesson/contentPage/ContentPage';
+import { LessonNoteProvider } from '@/lib/context/LessonNoteContext';
 
 export default function LessonPage() {
 
@@ -22,11 +23,7 @@ export default function LessonPage() {
   console.log('nodeId received in lesson page', nodeId);
   const nodeTitle = searchParams.get('nodeTitle') ?? '';
 
-  const [loading, setLoading] = useState(true);
-  // const [saving, setSaving] = useState(false);
-  type LessonNoteResponse = { content?: unknown; contentText?: string } | null;
-  const [note, setNote] = useState<LessonNoteResponse>(null);
-  // const saveTimer = useRef<NodeJS.Timeout | null>(null);
+  // Note: lesson note state is now managed by LessonNoteProvider
 
   // const userId = session?.user?.id ?? 'unknown';
   // const userEmail = session?.user?.email ?? 'unknown';
@@ -37,21 +34,7 @@ export default function LessonPage() {
   const topBarRef = useRef<HTMLDivElement>(null);
   const [headerHeight, setHeaderHeight] = useState(0);
 
-  const fetchNote = useCallback(async () => {
-    if (!classId || !nodeId) return;
-    setLoading(true);
-    try {
-      const res = await fetch(`/api/lesson-notes?classId=${classId}&dbNodeId=${nodeId}`);
-      const data = await res.json();
-      setNote(data);
-    } finally {
-      setLoading(false);
-    }
-  }, [classId, nodeId]);
-
-  useEffect(() => {
-    fetchNote();
-  }, [fetchNote]);
+  // Note: fetchNote is now handled by LessonNoteProvider
 
   // Measure header height to prevent overlap
   useEffect(() => {
@@ -117,7 +100,8 @@ export default function LessonPage() {
   // }, [classId, nodeId]);
 
   return (
-    <div className="ai-lesson-page bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex flex-col overflow-hidden">
+    <LessonNoteProvider classId={classId} nodeId={nodeId}>
+      <div className="ai-lesson-page bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex flex-col overflow-hidden">
       {/* Top Bar */}
       <div ref={topBarRef} className={`transition-all duration-300 ease-in-out ${showTopBar ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'} fixed top-0 left-0 right-0 z-40`}>
         <div className="relative">
@@ -216,20 +200,13 @@ export default function LessonPage() {
             <div className="overflow-hidden h-full">
               {/* AI Lesson Tab */}
               <div className={`h-full relative ${viewMode === 'ai-lesson' ? 'block' : 'hidden'}`}>
-                {loading && (
-                  <div className="absolute inset-0 z-10 bg-white flex items-center justify-center">
-                    <div className="h-10 w-10 rounded-full border-4 border-slate-300 border-t-emerald-600 animate-spin" />
-                  </div>
-                )}
-                {!loading && (
-                  <div className="h-full">
-                    <AiLessonLayout 
-                      classId={classId}
-                      lessonId={nodeId}
-                      initialChatWidth={50}
-                    />
-                  </div>
-                )}
+                <div className="h-full">
+                  <AiLessonLayout 
+                    classId={classId}
+                    lessonId={nodeId}
+                    initialChatWidth={50}
+                  />
+                </div>
               </div>
 
               {/* Content Tab */}
@@ -248,7 +225,7 @@ export default function LessonPage() {
                     key={`${nodeId}-${nodeTitle}`}
                     nodeId={nodeId || ''} 
                     nodeTitle={nodeTitle || ''} 
-                    markdownContent={note?.contentText ?? ''} 
+                    markdownContent={''} // Note: will need to get from context if needed
                   />
                 </div>
               </div>
@@ -266,7 +243,8 @@ export default function LessonPage() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </LessonNoteProvider>
   );
 }
 

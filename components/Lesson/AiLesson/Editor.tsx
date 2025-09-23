@@ -10,11 +10,12 @@ import {
   getDefaultReactSlashMenuItems,
   useCreateBlockNote,
 } from "@blocknote/react";
-import { useState, useEffect, forwardRef, useImperativeHandle, useRef } from "react";
+import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 
 // Import your AI extension we can build extension to take in drawing
 import { getAISlashMenuItems } from "@danjari/blocknote-ai-extension";
 import { callAI } from "@/lib/Editor/aiClient";
+import { useLessonNote } from "@/lib/context/LessonNoteContext";
 
 type EditorProps = {
   initialContent?: PartialBlock[];
@@ -45,16 +46,16 @@ const Editor = forwardRef<any, EditorProps>(({
   onBlur,
   placeholder,
   className,
-  classId,
-  nodeId,
+
   nodeTitle,
   showAICommands = true
 }, ref) => {
   //const [aiResponses, setAiResponses] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isClient, setIsClient] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const saveTimerRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Use lesson note context for saving
+  const { saveNote, updateNote, isSaving } = useLessonNote();
 
   // Ensure we're on the client side
   useEffect(() => {
@@ -83,42 +84,6 @@ const Editor = forwardRef<any, EditorProps>(({
 
   // Expose editor instance to parent component
   useImperativeHandle(ref, () => editor, [editor]);
-
-  // Auto-save function
-  const autoSave = async (content: unknown, title?: string) => {
-    if (!classId || !nodeId) return; // Only save if context is available
-    
-    setIsSaving(true);
-    try {
-      const res = await fetch('/api/lesson-notes', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          classId, 
-          dbNodeId: nodeId, 
-          content, 
-          title: title || nodeTitle 
-        }),
-      });
-      if (!res.ok) {
-        console.error('Failed to save notes');
-      }
-    } catch (error) {
-      console.error('Auto-save error:', error);
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  // Debounced auto-save
-  const debouncedAutoSave = (content: unknown, title?: string) => {
-    if (saveTimerRef.current) {
-      clearTimeout(saveTimerRef.current);
-    }
-    saveTimerRef.current = setTimeout(() => {
-      autoSave(content, title);
-    }, 1500); // 1.5 second delay
-  };
 
   const handleAICommand = async (action: string, payload?: { selectedText?: string }) => {
     //console.log("🤖 AI Command:", action, payload);
@@ -239,10 +204,10 @@ const Editor = forwardRef<any, EditorProps>(({
               const content = editor.document;
               onChange?.(content);
               onContentChange?.(content.map(block => block.content || '').join('\n'));
-              // Auto-save if context is available
-              if (classId && nodeId) {
-                debouncedAutoSave(content, nodeTitle);
-              }
+              // Update context immediately (optimistic update)
+              updateNote(content, nodeTitle);
+              // Auto-save with debouncing (handled by context)
+              saveNote(content, nodeTitle);
             }}
             onFocus={onFocus}
             onBlur={onBlur}

@@ -1,11 +1,12 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import "@blocknote/core/fonts/inter.css"
 import { useAnnotation } from "@/lib/content/annotation-context"
 import { formatTimestamp } from "@/lib/utils/annotationUtils"
 import { MessageSquare, Plus, FileText, Clock, Edit3, Trash2 } from "lucide-react"
 import Editor from "@/components/Lesson/AiLesson/Editor"
+import { useLessonNote } from "@/lib/context/LessonNoteContext"
 
 interface NotesPanelProps {
   documentId: string | null
@@ -15,11 +16,8 @@ interface NotesPanelProps {
 }
 
 export function NotesPanelClient({ documentId, classId, nodeId, nodeTitle }: NotesPanelProps) {
-
-
-  // State for loading lesson notes
-  const [lessonNote, setLessonNote] = useState<{ content?: unknown; contentText?: string } | null>(null);
-  const [loadingNote, setLoadingNote] = useState(false);
+  // Use lesson note context
+  const { lessonNote, isLoading } = useLessonNote();
 
   // Annotation context
   const {  
@@ -37,25 +35,7 @@ export function NotesPanelClient({ documentId, classId, nodeId, nodeTitle }: Not
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null)
   const [editingNoteContent, setEditingNoteContent] = useState<string>('')
 
-  // Fetch lesson notes when context is available
-  useEffect(() => {
-    const fetchLessonNote = async () => {
-      if (!classId || !nodeId) return;
-      
-      setLoadingNote(true);
-      try {
-        const res = await fetch(`/api/lesson-notes?classId=${classId}&dbNodeId=${nodeId}`);
-        const data = await res.json();
-        setLessonNote(data);
-      } catch (error) {
-        console.error('Failed to fetch lesson note:', error);
-      } finally {
-        setLoadingNote(false);
-      }
-    };
-
-    fetchLessonNote();
-  }, [classId, nodeId]);
+  // Note: lesson note fetching is now handled by LessonNoteProvider
 
   // Get notes from the global context instead of local state
   const notes = activeContentReference 
@@ -341,7 +321,7 @@ export function NotesPanelClient({ documentId, classId, nodeId, nodeTitle }: Not
 
       {/* AI Lesson Editor */}
       <div className="flex-1 overflow-hidden">
-        {loadingNote ? (
+        {isLoading ? (
           <div className="h-full flex items-center justify-center">
             <div className="text-center">
               <div className="w-8 h-8 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin mx-auto mb-2" />

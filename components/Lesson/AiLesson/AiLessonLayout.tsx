@@ -1,10 +1,11 @@
 "use client"
 
 import type React from "react"
-import { useState, useCallback, useRef, useEffect } from "react"
+import { useState, useCallback, useRef } from "react"
 import { ResizablePane } from "../contentPage/resizblePanel"
 import ChatSection from "./ChatSection"
 import Editor from "./Editor"
+import { useLessonNote } from "@/lib/context/LessonNoteContext"
 
 interface AiLessonLayoutProps {
   classId?: string
@@ -20,8 +21,9 @@ export default function AiLessonLayout({
   const [chatWidth, setChatWidth] = useState(initialChatWidth)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const editorRef = useRef<any>(null)
-  const [lessonNote, setLessonNote] = useState<{ content?: unknown; contentText?: string } | null>(null)
-  const [loadingNote, setLoadingNote] = useState(false)
+  
+  // Use lesson note context
+  const { lessonNote, isLoading } = useLessonNote()
 
   const handleWidthChange = useCallback((width: number) => {
     setChatWidth(width)
@@ -49,25 +51,7 @@ export default function AiLessonLayout({
     }
   }, [])
 
-  // Fetch lesson notes when context is available
-  useEffect(() => {
-    const fetchLessonNote = async () => {
-      if (!classId || !lessonId) return;
-      
-      setLoadingNote(true);
-      try {
-        const res = await fetch(`/api/lesson-notes?classId=${classId}&dbNodeId=${lessonId}`);
-        const data = await res.json();
-        setLessonNote(data);
-      } catch (error) {
-        console.error('Failed to fetch lesson note:', error);
-      } finally {
-        setLoadingNote(false);
-      }
-    };
-
-    fetchLessonNote();
-  }, [classId, lessonId]);
+  // Note: lesson note fetching is now handled by LessonNoteProvider
 
   const handleEditorContentChange = useCallback(() => {
     // This can be used for other purposes if needed
@@ -98,7 +82,7 @@ export default function AiLessonLayout({
               <p className="text-sm text-muted-foreground">Take notes as you learn</p>
             </div> */}
             <div className="flex-1 overflow-hidden p-4">
-              {loadingNote ? (
+              {isLoading ? (
                 <div className="h-full flex items-center justify-center">
                   <div className="text-center">
                     <div className="w-8 h-8 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin mx-auto mb-2" />
