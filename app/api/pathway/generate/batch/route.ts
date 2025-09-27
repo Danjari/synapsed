@@ -34,7 +34,7 @@ export async function POST(req: Request) {
 
   // Fallback to dummy data if no real syllabus is available
   if (!syllabusContent && !learningObjectives) {
-    console.log("No syllabus content found, using fallback data");
+    console.log("No syllabus content found, using fallback data for probability and statistics");
     syllabusContent = `
 Course Schedule: Tentative breakdown of course topics with corresponding sections
 of the required textbook and numbers of the recorded lectures (L)
