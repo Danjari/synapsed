@@ -134,6 +134,19 @@ model ClassMaterial {
 
   isVectorized   Boolean      @default(false)
   vectorNamespace String?     // e.g., "calculus-101"
+  
+  // Syllabus processing fields
+  extractedText  String?      // Raw extracted text from syllabus
+  syllabusProcessed Boolean   @default(false)
+  processedAt    DateTime?
+  learningObjectives String?  // Structured learning objectives
+  courseSchedule String?      // Structured course schedule
+  assessmentMethods String?   // Assessment and grading methods
+  prerequisites String?       // Course prerequisites
+  courseDescription String?     // Course description
+  instructorInfo String?      // Instructor information
+  gradingPolicy String?       // Grading policies
+  processingConfidence Int?   // AI confidence score (0-100)
 }
 
 

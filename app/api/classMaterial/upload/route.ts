@@ -77,6 +77,21 @@ export async function POST(req: Request) {
         mimeType: material.mimeType ?? ""
       });
     }
+
+    // Auto-process syllabus files for pathway generation
+    if (category === "SYLLABUS" && (type === "PDF" || type === "DOCX")) {
+      // Trigger syllabus processing in background
+      try {
+        await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/syllabus/extract`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ materialId: material.id }),
+        });
+      } catch (error) {
+        console.error("Failed to auto-process syllabus:", error);
+        // Don't fail the upload if syllabus processing fails
+      }
+    }
   }
 
   return NextResponse.json({ success: true, materials: results });

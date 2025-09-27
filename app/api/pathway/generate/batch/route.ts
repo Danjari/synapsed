@@ -8,8 +8,34 @@ export async function POST(req: Request) {
   const { classId } = await req.json();
   if (!classId) return NextResponse.json({ error: "Missing classId" }, { status: 400 });
 
-  // Dummy data for now
-  const dummySyllabus = `
+  // Get real syllabus content for this class
+  let syllabusContent = "";
+  let learningObjectives = "";
+  let assessmentMethods = "";
+  let prerequisites = "";
+  let courseDescription = "";
+  
+  try {
+    const syllabusResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/syllabus/content?classId=${classId}`);
+    if (syllabusResponse.ok) {
+      const syllabusData = await syllabusResponse.json();
+      if (syllabusData.hasSyllabus) {
+        syllabusContent = syllabusData.content.courseSchedule || "";
+        learningObjectives = syllabusData.content.learningObjectives || "";
+        assessmentMethods = syllabusData.content.assessmentMethods || "";
+        prerequisites = syllabusData.content.prerequisites || "";
+        courseDescription = syllabusData.content.courseDescription || "";
+        console.log(`📚 Using real syllabus content (confidence: ${syllabusData.content.averageConfidence}%)`);
+      }
+    }
+  } catch (error) {
+    console.error("Failed to fetch syllabus content:", error);
+  }
+
+  // Fallback to dummy data if no real syllabus is available
+  if (!syllabusContent && !learningObjectives) {
+    console.log("No syllabus content found, using fallback data");
+    syllabusContent = `
 Course Schedule: Tentative breakdown of course topics with corresponding sections
 of the required textbook and numbers of the recorded lectures (L)
 Day Date Reading Topics
@@ -102,7 +128,7 @@ Mon May 5 11.8 Correlation
 Wed May 7 Review
 `;
 
-  const dummyLearningObjectives = `
+    learningObjectives = `
 Course Description
 Most real-world phenomena include non-deterministic or non-deterministically predictable
 features. The course is designed to provide an introduction to the mathematical treatment
@@ -149,6 +175,7 @@ High Low Med
 CLO4: Apply various techniques of
 Bayesian Statistics Low High High
 `;
+  }
 
   // Get all student survey responses for this class
   const responses = await prisma.studentSurveyResponse.findMany({ where: { classId } });
@@ -156,16 +183,26 @@ Bayesian Statistics Low High High
   const questions = Array.isArray(survey?.questions) ? survey.questions : [];
 
   for (const response of responses) {
-    // Build prompt from answers and questions
+    // Build comprehensive prompt from real syllabus content and student responses
     const prompt =
-      `Course Syllabus:\n${dummySyllabus}\n\n` +
-      `Learning Objectives:\n${dummyLearningObjectives}\n\n` +
+      `Course Description:\n${courseDescription}\n\n` +
+      `Prerequisites:\n${prerequisites}\n\n` +
+      `Learning Objectives:\n${learningObjectives}\n\n` +
+      `Course Schedule:\n${syllabusContent}\n\n` +
+      `Assessment Methods:\n${assessmentMethods}\n\n` +
+      `Student Survey Responses:\n` +
       (response.answers as SurveyAnswer[]).map((ans) => {
         const q = (questions as SurveyQuestion[]).find((q) => q.id == ans.questionId);
         return `Q: ${q?.text || "Unknown"}\nA: ${ans.answer}`;
       }).join("\n") +
-      `\n\nBased on the above, generate a personalized learning pathway for this student taking into consideration the CLOs and the interest of the student.
-      needs to be studied by the student.`;
+      `\n\nBased on the comprehensive course information above and the student's survey responses, generate a personalized learning pathway that:
+      1. Aligns with the course learning objectives and schedule
+      2. Considers the student's learning preferences and interests
+      3. Takes into account any prerequisites or background knowledge
+      4. Incorporates the assessment methods and grading structure
+      5. Provides a structured progression through the course material
+      
+      Create 12-15 pathway nodes that are modular, well-connected, and personalized to this student's needs.`;
 
     await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/pathway/generate?studentId=${response.studentId}&classId=${classId}&prompt=${encodeURIComponent(prompt)}`);
   }
