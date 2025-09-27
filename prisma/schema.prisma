@@ -129,6 +129,7 @@ model ClassMaterial {
   url            String
   type           MaterialType
   mimeType       String?
+  category       MaterialCategory @default(CONTENT)
   uploadedAt     DateTime     @default(now())
 
   isVectorized   Boolean      @default(false)
@@ -140,6 +141,12 @@ enum MaterialType {
   PDF
   DOCX
   MP4
+}
+
+enum MaterialCategory {
+  SYLLABUS
+  CONTENT
+  EXERCISES
 }
 
 enum Role {

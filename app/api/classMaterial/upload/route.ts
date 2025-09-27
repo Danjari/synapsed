@@ -18,6 +18,7 @@ function bufferFromFile(file: File): Promise<Buffer> {
 export async function POST(req: Request) {
   const formData = await req.formData();
   const classId = formData.get("classId") as string;
+  const category = formData.get("category") as string || "CONTENT";
   const files = formData.getAll("files") as File[];
 
   if (!classId || files.length === 0) {
@@ -28,7 +29,7 @@ export async function POST(req: Request) {
 
   for (const file of files) {
     const buffer = await bufferFromFile(file);
-    const fileUrl = await uploadToR2(buffer, file.name, file.type, classId);
+    const fileUrl = await uploadToR2(buffer, file.name, file.type, classId, category.toLowerCase());
 
     const extension = file.name.split(".").pop()?.toLowerCase();
     const type =
@@ -58,7 +59,8 @@ export async function POST(req: Request) {
         title: file.name,
         url: fileUrl,
         type: type,
-        mimeType:mimeType,
+        mimeType: mimeType,
+        category: category as "CONTENT" | "SYLLABUS" | "EXERCISES",
         uploadedAt: new Date(),
         isVectorized: false,
         vectorNamespace: `class_${classId}`,
@@ -67,11 +69,14 @@ export async function POST(req: Request) {
 
     results.push(material);
 
-    await vectorizeAndUpdate({
-      ...material,
-      vectorNamespace: material.vectorNamespace ?? "",
-      mimeType: material.mimeType ?? ""
-    });
+    // Only vectorize content category materials
+    if (category === "CONTENT") {
+      await vectorizeAndUpdate({
+        ...material,
+        vectorNamespace: material.vectorNamespace ?? "",
+        mimeType: material.mimeType ?? ""
+      });
+    }
   }
 
   return NextResponse.json({ success: true, materials: results });
