@@ -1,166 +1,3 @@
-// "use client";
-
-// import { useEffect, useState } from "react";
-// import { useSession } from "next-auth/react";
-// import { useParams, useRouter } from "next/navigation";
-// import { Button } from "@/components/ui/button";
-// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-// import { toast } from "sonner";
-
-// type SurveyQuestion = {
-//   id: string;
-//   text: string;
-//   type: "short-answer" | "multiple-choice";
-//   options?: string[];
-// };
-
-// type SurveyState = "intro" | "survey" | "submitted";
-
-// export default function StudentSurveyPage() {
-//   const { data: session } = useSession();
-//   const router = useRouter();
-//   const { classId } = useParams();
-//   const studentId = session?.user?.id;
-
-//   const [state, setState] = useState<SurveyState>("intro");
-//   const [questions, setQuestions] = useState<SurveyQuestion[]>([]);
-//   const [answers, setAnswers] = useState<{ [key: string]: string }>({});
-//   const [current, setCurrent] = useState(0);
-
-//   useEffect(() => {
-//     if (!classId) return;
-
-//     fetch(`/api/survey/${classId}`)
-//       .then(res => res.json())
-//       .then(data => setQuestions(data?.questions || []));
-//   }, [classId]);
-
-//   const handleAnswer = (value: string) => {
-//     setAnswers(prev => ({ ...prev, [questions[current].id]: value }));
-//   };
-
-//   const handleSubmit = async () => {
-//     const payload = {
-//       studentId,
-//       classId,
-//       answers: Object.entries(answers).map(([questionId, answer]) => ({ questionId, answer })),
-//     };
-
-//     const res = await fetch("/api/survey/submit", {
-//       method: "POST",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify(payload),
-//     });
-
-//     if (res.ok) {
-//       toast("Survey submitted", { description: "Thanks for your answers!" });
-//       setState("submitted");
-//     } else {
-//       toast("Error", { description: "Submission failed" });
-//     }
-//   };
-
-//   if (state === "intro") {
-//     return (
-//       <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center p-6">
-//         <div className="text-center max-w-2xl">
-//           <h1 className="text-4xl font-bold text-slate-800 mb-4">Welcome to Your Class!</h1>
-//           <p className="text-xl text-slate-600 mb-8">
-//             Let’s start with a short survey so we can customize your learning path.
-//           </p>
-//           <Button
-//             onClick={() => setState("survey")}
-//             className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-300 hover:scale-105"
-//           >
-//             Start Survey
-//           </Button>
-//         </div>
-//       </div>
-//     );
-//   }
-
-//   if (state === "submitted") {
-//     return (
-//       <div className="min-h-screen flex items-center justify-center bg-purple-50 p-6">
-//         <Card className="text-center max-w-xl w-full">
-//           <CardHeader>
-//             <CardTitle className="text-3xl font-bold text-slate-800 mb-2">Thank You!</CardTitle>
-//             <p className="text-slate-600">Your answers have been recorded. Your personalized path is on the way 🚀</p>
-//           </CardHeader>
-//           <CardContent>
-//             <Button onClick={() => router.push(`/class/${classId}`)} className="mt-6">
-//               Go to Class
-//             </Button>
-//           </CardContent>
-//         </Card>
-//       </div>
-//     );
-//   }
-
-//   const q = questions[current];
-
-//   return (
-//     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex flex-col items-center justify-center p-6">
-//       <Card className="w-full max-w-2xl">
-//         <CardHeader>
-//           <CardTitle className="text-2xl text-slate-800 mb-2">{q?.text}</CardTitle>
-//         </CardHeader>
-//         <CardContent className="space-y-4">
-//           {q?.type === "short-answer" && (
-//             <textarea
-//               value={answers[q.id] || ""}
-//               onChange={(e) => handleAnswer(e.target.value)}
-//               placeholder="Type your answer..."
-//               className="w-full p-3 border rounded-md"
-//               rows={4}
-//             />
-//           )}
-
-//           {q?.type === "multiple-choice" && (
-//             <div className="space-y-2">
-//               {q.options?.map((opt, index) => (
-//                 <label
-//                   key={index}
-//                   className={`block border p-3 rounded-lg cursor-pointer ${
-//                     answers[q.id] === opt
-//                       ? "border-indigo-500 bg-indigo-50 text-indigo-700"
-//                       : "border-slate-300 hover:bg-slate-50"
-//                   }`}
-//                 >
-//                   <input
-//                     type="radio"
-//                     name={q.id}
-//                     value={opt}
-//                     className="mr-2"
-//                     checked={answers[q.id] === opt}
-//                     onChange={() => handleAnswer(opt)}
-//                   />
-//                   {opt}
-//                 </label>
-//               ))}
-//             </div>
-//           )}
-
-//           <div className="flex justify-between mt-6">
-//             <Button variant="outline" onClick={() => setCurrent((c) => c - 1)} disabled={current === 0}>
-//               Back
-//             </Button>
-
-//             {current < questions.length - 1 ? (
-//               <Button onClick={() => setCurrent((c) => c + 1)} disabled={!answers[q.id]}>
-//                 Next
-//               </Button>
-//             ) : (
-//               <Button onClick={handleSubmit} disabled={!answers[q.id]}>
-//                 Submit Survey
-//               </Button>
-//             )}
-//           </div>
-//         </CardContent>
-//       </Card>
-//     </div>
-//   );
-// }
 
 "use client";
 
@@ -174,7 +11,7 @@ import { toast } from "sonner";
 import { ArrowRight, CheckCircle } from "lucide-react";
 
 type SurveyQuestion = {
-  id: string;
+  questionId: string;
   text: string;
   type: "short-answer" | "multiple-choice";
   options?: string[];
@@ -198,11 +35,19 @@ export default function StudentSurveyPage() {
 
     fetch(`/api/survey/${classId}`)
       .then((res) => res.json())
-      .then((data) => setQuestions(data?.questions || []));
+      .then((data) => {
+        console.log('🔍 Survey questions fetched:', {
+          questionsCount: data?.questions?.length,
+          firstQuestion: data?.questions?.[0],
+          firstQuestionKeys: data?.questions?.[0] ? Object.keys(data.questions[0]) : []
+        });
+        setQuestions(data?.questions || []);
+      });
   }, [classId]);
 
   const handleAnswer = (value: string) => {
-    setAnswers((prev) => ({ ...prev, [questions[current].id]: value }));
+    const questionId = questions[current].questionId;
+    setAnswers((prev) => ({ ...prev, [questionId]: value }));
   };
 
   const handleSubmit = async () => {
@@ -281,7 +126,46 @@ export default function StudentSurveyPage() {
     );
   }
 
+  // Handle case where no questions exist
+  if (questions.length === 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center p-6">
+        <Card className="w-full max-w-xl text-center">
+          <CardHeader>
+            <CardTitle className="text-2xl text-slate-800">No Survey Available</CardTitle>
+            <p className="text-slate-600">This class doesn&apos;t have a survey set up yet. Please contact your professor.</p>
+          </CardHeader>
+          <CardContent>
+            <Button onClick={() => router.push(`/class/${classId}`)} className="mt-4">
+              Go Back to Class
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   const q = questions[current];
+  
+  // Handle case where current question is undefined
+  if (!q) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center p-6">
+        <Card className="w-full max-w-xl text-center">
+          <CardHeader>
+            <CardTitle className="text-2xl text-slate-800">Survey Error</CardTitle>
+            <p className="text-slate-600">There was an issue loading the survey questions.</p>
+          </CardHeader>
+          <CardContent>
+            <Button onClick={() => router.push(`/class/${classId}`)} className="mt-4">
+              Go Back to Class
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   const progress = ((current + 1) / questions.length) * 100;
 
   return (
@@ -309,7 +193,7 @@ export default function StudentSurveyPage() {
             <CardContent className="space-y-4">
               {q?.type === "short-answer" && (
                 <textarea
-                  value={answers[q.id] || ""}
+                  value={answers[q.questionId] || ""}
                   onChange={(e) => handleAnswer(e.target.value)}
                   placeholder="Type your answer..."
                   className="w-full p-3 border rounded-md"
@@ -323,17 +207,17 @@ export default function StudentSurveyPage() {
                     <label
                       key={index}
                       className={`block border p-3 rounded-lg cursor-pointer ${
-                        answers[q.id] === opt
+                        answers[q.questionId] === opt
                           ? "border-emerald-500 bg-emerald-50 text-emerald-700"
                           : "border-slate-300 hover:bg-slate-50"
                       }`}
                     >
                       <input
                         type="radio"
-                        name={q.id}
+                        name={q.questionId}
                         value={opt}
                         className="mr-2"
-                        checked={answers[q.id] === opt}
+                        checked={answers[q.questionId] === opt}
                         onChange={() => handleAnswer(opt)}
                       />
                       {opt}
@@ -361,7 +245,7 @@ export default function StudentSurveyPage() {
                 className={`w-10 h-10 rounded-full text-sm font-medium transition-colors ${
                   index === current
                     ? "bg-emerald-600 text-white"
-                    : answers[questions[index].id]
+                    : answers[questions[index]?.questionId]
                       ? "bg-emerald-500 text-white"
                       : "bg-slate-200 text-slate-600 hover:bg-slate-300"
                 }`}
@@ -374,13 +258,13 @@ export default function StudentSurveyPage() {
           {current === questions.length - 1 ? (
             <Button
               onClick={handleSubmit}
-              disabled={!answers[q.id]}
+              disabled={!answers[q.questionId]}
               className="bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300"
             >
               Submit Survey
             </Button>
           ) : (
-            <Button onClick={() => setCurrent((c) => c + 1)} disabled={!answers[q.id]} className="bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300">
+            <Button onClick={() => setCurrent((c) => c + 1)} disabled={!answers[q.questionId]} className="bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300">
               Next
             </Button>
           )}

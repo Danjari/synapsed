@@ -29,7 +29,7 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ classI
         answers: Array.isArray(res.answers)
           ? (res.answers as SurveyAnswer[]).map((ans) => {
               const question = Array.isArray(survey?.questions)
-                ? (survey.questions as SurveyQuestion[]).find((q) => q.id == ans.questionId)
+                ? (survey.questions as SurveyQuestion[]).find((q) => q.questionId == ans.questionId || q.id == ans.questionId)
                 : undefined;
               return {
                 question: question?.text || "Unknown question",

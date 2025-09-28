@@ -1,8 +1,10 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { CheckCircle, Edit, Eye, MoreHorizontal, Plus } from "lucide-react"
+import { Edit, Eye, MoreHorizontal, Plus, Sparkles } from "lucide-react"
 import StudentSurveyDialog from "./Dialogs/StudentViewSurveyAnswerDialog";
+import SurveyTemplateDialog from "./Dialogs/SurveyTemplateDialog";
+import ProfessorPathwayPreviewDialog from "./Dialogs/ProfessorPathwayPreviewDialog";
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -20,14 +22,9 @@ import { toast } from "sonner"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
-import TableSkeleton from "@/components/ui/table-skeleton"
+import { PathwayData } from "@/lib/types/pathwayTypes"
 
-// Sample learning paths
-const learningPaths = [
-  { id: 1, student: "Alex Johnson", generatedAt: "2023-09-06", status: "approved" },
-  { id: 2, student: "Jamie Smith", generatedAt: "2023-09-07", status: "approved" },
-  { id: 3, student: "Morgan Wilson", generatedAt: "2023-09-09", status: "pending" },
-]
+// Real learning paths will be fetched from API
 
 type SurveyResponse = {
   studentId: string;
@@ -38,17 +35,24 @@ type SurveyResponse = {
 
 type SurveyQuestion = { id: string; text: string; type: string; options?: string[] };
 
+
+
 export function SurveyLearningPath({ classId }: { classId: string }) {
   const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false)
-  const [selectedPath, setSelectedPath] = useState<(typeof learningPaths)[0] | null>(null)
+  const [selectedPath, setSelectedPath] = useState<PathwayData | null>(null)
   const [isGenerateDialogOpen, setIsGenerateDialogOpen] = useState(false)
   const [isSurveyBuilderOpen, setIsSurveyBuilderOpen] = useState(false)
   const [isSurveyViewOpen, setIsSurveyViewOpen] = useState(false);
+  const [isTemplateDialogOpen, setIsTemplateDialogOpen] = useState(false);
   const [surveyQuestions, setSurveyQuestions] = useState<SurveyQuestion[]>([])
   const [selectedStudentResponse, setSelectedStudentResponse] = useState<SurveyResponse | null>(null);
   const [isSaveConfirmOpen, setIsSaveConfirmOpen] = useState(false)
   const [surveyResponses, setSurveyResponses] = useState<SurveyResponse[]>([]);
   const [loadingResponses, setLoadingResponses] = useState(true);
+  
+  // Pathway management state
+  const [pathways, setPathways] = useState<PathwayData[]>([]);
+  const [loadingPathways, setLoadingPathways] = useState(true);
 
   useEffect(() => {
     fetch(`/api/survey/${classId}`)
@@ -63,6 +67,43 @@ export function SurveyLearningPath({ classId }: { classId: string }) {
       .then((data) => setSurveyResponses(Array.isArray(data) ? data : []))
       .finally(() => setLoadingResponses(false))
   }, [classId])
+
+  // Fetch pathways
+  useEffect(() => {
+    const fetchPathways = async () => {
+      try {
+        setLoadingPathways(true);
+        const response = await fetch(`/api/pathway/professor/${classId}`);
+        if (response.ok) {
+          const data = await response.json();
+          setPathways(data.pathways || []);
+        } else {
+          console.error('Failed to fetch pathways');
+          setPathways([]);
+        }
+      } catch (error) {
+        console.error('Error fetching pathways:', error);
+        setPathways([]);
+      } finally {
+        setLoadingPathways(false);
+      }
+    };
+
+    fetchPathways();
+  }, [classId]);
+
+  // Refresh pathways after updates
+  const refreshPathways = async () => {
+    try {
+      const response = await fetch(`/api/pathway/professor/${classId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setPathways(data.pathways || []);
+      }
+    } catch (error) {
+      console.error('Error refreshing pathways:', error);
+    }
+  };
 
   const handleSaveSurvey = async () => {
     const res = await fetch("/api/survey/save", {
@@ -87,12 +128,42 @@ export function SurveyLearningPath({ classId }: { classId: string }) {
     }
   }
 
-  const handleApprovePathClick = () => {
-    toast(
-      "Learning path approved", { description: `Learning path for ${selectedPath?.student} has been approved.`, }
-    )
-    setIsPreviewDialogOpen(false)
+  const handleApplyTemplate = async (templateQuestions: SurveyQuestion[]) => {
+    try {
+      // Merge template questions with existing questions
+      const mergedQuestions = [...surveyQuestions, ...templateQuestions];
+      
+      // Save to database
+      const response = await fetch('/api/survey/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          classId,
+          questions: mergedQuestions,
+        }),
+      });
+
+      if (response.ok) {
+        // Update local state only after successful save
+        setSurveyQuestions(mergedQuestions);
+        setIsTemplateDialogOpen(false);
+        
+        toast("Template applied and saved", {
+          description: `${templateQuestions.length} questions added to your survey.`
+        });
+      } else {
+        throw new Error('Failed to save survey');
+      }
+    } catch (error) {
+      console.error('Error applying template:', error);
+      toast("Error", {
+        description: "Failed to save template. Please try again."
+      });
+    }
   }
+
 
   const handleGeneratePaths = async () => {
     const res = await fetch("/api/pathway/generate/batch", {
@@ -125,55 +196,86 @@ export function SurveyLearningPath({ classId }: { classId: string }) {
             <CardTitle>Survey Management</CardTitle>
             <CardDescription>Create and manage student surveys.</CardDescription>
           </div>
-          <Button onClick={() => setIsSurveyBuilderOpen(true)}>
-            <Edit className="mr-2 h-4 w-4" />
-            Create/Edit Survey
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              onClick={() => setIsTemplateDialogOpen(true)}
+              className="bg-purple-50 border-purple-200 text-purple-700 hover:bg-purple-100"
+            >
+              <Sparkles className="mr-2 h-4 w-4" />
+              Generate Template
+            </Button>
+            <Button onClick={() => setIsSurveyBuilderOpen(true)}>
+              <Edit className="mr-2 h-4 w-4" />
+              Create/Edit Survey
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="rounded-md border">
-            {loadingResponses ? (
-              <TableSkeleton columns={4} rows={6} />
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Student</TableHead>
-                    <TableHead className="hidden md:table-cell">Completed At</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="w-[80px]"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {surveyResponses.map((response) => (
-                    <TableRow key={response.studentId}>
-                      <TableCell className="font-medium">{response.name}</TableCell>
-                      <TableCell className="hidden md:table-cell">
-                        {new Date(response.submittedAt).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={response.answers.length > 0 ? "default" : "secondary"}>
-                          {response.answers.length > 0 ? "Processed" : "Pending"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => {
-                            setSelectedStudentResponse(response);
-                            setIsSurveyViewOpen(true);
-                          }}
-                        >
-                          <Eye className="h-4 w-4" />
-                          <span className="sr-only">View</span>
-                        </Button>
-                      </TableCell>
+            <Table>
+              {loadingResponses ? (
+                <>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Student</TableHead>
+                      <TableHead className="hidden md:table-cell">Completed At</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="w-[80px]"></TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
+                  </TableHeader>
+                  <TableBody>
+                    {Array.from({ length: 6 }).map((_, i) => (
+                      <TableRow key={i}>
+                        <TableCell><div className="h-4 bg-gray-200 rounded animate-pulse" /></TableCell>
+                        <TableCell><div className="h-4 bg-gray-200 rounded animate-pulse" /></TableCell>
+                        <TableCell><div className="h-4 bg-gray-200 rounded animate-pulse" /></TableCell>
+                        <TableCell><div className="h-4 bg-gray-200 rounded animate-pulse" /></TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </>
+              ) : (
+                <>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Student</TableHead>
+                      <TableHead className="hidden md:table-cell">Completed At</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="w-[80px]"></TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {surveyResponses.map((response) => (
+                      <TableRow key={response.studentId}>
+                        <TableCell className="font-medium">{response.name}</TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          {new Date(response.submittedAt).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={response.answers.length > 0 ? "default" : "secondary"}>
+                            {response.answers.length > 0 ? "Processed" : "Pending"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                              setSelectedStudentResponse(response);
+                              setIsSurveyViewOpen(true);
+                            }}
+                          >
+                            <Eye className="h-4 w-4" />
+                            <span className="sr-only">View</span>
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </>
+              )}
+            </Table>
           </div>
         </CardContent>
       </Card>
@@ -183,6 +285,13 @@ export function SurveyLearningPath({ classId }: { classId: string }) {
         studentName={selectedStudentResponse?.name}
         completedAt={selectedStudentResponse?.submittedAt}
         answers={selectedStudentResponse?.answers}
+      />
+
+      <SurveyTemplateDialog
+        open={isTemplateDialogOpen}
+        onClose={() => setIsTemplateDialogOpen(false)}
+        onApplyTemplate={handleApplyTemplate}
+        classId={classId}
       />
 
 
@@ -209,92 +318,122 @@ export function SurveyLearningPath({ classId }: { classId: string }) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {learningPaths.map((path) => (
-                  <TableRow key={path.id}>
-                    <TableCell className="font-medium">{path.student}</TableCell>
-                    <TableCell className="hidden md:table-cell">
-                      {new Date(path.generatedAt).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={path.status === "approved" ? "default" : "secondary"}>
-                        {path.status === "approved" ? "Approved" : "Pending"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="h-4 w-4" />
-                            <span className="sr-only">Actions</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem
-                            onClick={() => {
-                              setSelectedPath(path)
-                              setIsPreviewDialogOpen(true)
-                            }}
-                          >
-                            Preview
-                          </DropdownMenuItem>
-                          {path.status === "pending" && <DropdownMenuItem>Approve</DropdownMenuItem>}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                {loadingPathways ? (
+                  Array.from({ length: 3 }).map((_, i) => (
+                    <TableRow key={i}>
+                      <TableCell><div className="h-4 bg-gray-200 rounded animate-pulse" /></TableCell>
+                      <TableCell><div className="h-4 bg-gray-200 rounded animate-pulse" /></TableCell>
+                      <TableCell><div className="h-4 bg-gray-200 rounded animate-pulse" /></TableCell>
+                      <TableCell><div className="h-4 bg-gray-200 rounded animate-pulse" /></TableCell>
+                    </TableRow>
+                  ))
+                ) : pathways.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={4} className="text-center py-8 text-gray-500">
+                      No pathways generated yet. Click &quot;Generate Learning Paths&quot; to create them.
                     </TableCell>
                   </TableRow>
-                ))}
+                ) : (
+                  pathways.map((pathway) => (
+                    <TableRow key={pathway.id}>
+                      <TableCell className="font-medium">{pathway.studentName}</TableCell>
+                      <TableCell className="hidden md:table-cell">
+                        {new Date(pathway.createdAt).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        <Badge 
+                          variant={
+                            pathway.status === "approved" 
+                              ? "default" 
+                              : pathway.status === "rejected"
+                              ? "destructive"
+                              : "secondary"
+                          }
+                        >
+                          {pathway.status === "approved" 
+                            ? "Approved" 
+                            : pathway.status === "rejected"
+                            ? "Rejected"
+                            : "Pending"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                              <MoreHorizontal className="h-4 w-4" />
+                              <span className="sr-only">Actions</span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setSelectedPath(pathway)
+                                setIsPreviewDialogOpen(true)
+                              }}
+                            >
+                              Preview
+                            </DropdownMenuItem>
+                            {pathway.status === "pending" && (
+                              <>
+                                <DropdownMenuItem
+                                  onClick={async () => {
+                                    try {
+                                      const response = await fetch(`/api/pathway/professor/${classId}`, {
+                                        method: "PUT",
+                                        headers: { "Content-Type": "application/json" },
+                                        body: JSON.stringify({
+                                          pathwayId: pathway.id,
+                                          status: "approved",
+                                        }),
+                                      });
+                                      if (response.ok) {
+                                        toast("Pathway approved", { description: "Student can now access this pathway." });
+                                        refreshPathways();
+                                      }
+                                    } catch {
+                                      toast("Error", { description: "Failed to approve pathway." });
+                                    }
+                                  }}
+                                >
+                                  Approve
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={async () => {
+                                    try {
+                                      const response = await fetch(`/api/pathway/professor/${classId}`, {
+                                        method: "PUT",
+                                        headers: { "Content-Type": "application/json" },
+                                        body: JSON.stringify({
+                                          pathwayId: pathway.id,
+                                          status: "rejected",
+                                        }),
+                                      });
+                                      if (response.ok) {
+                                        toast("Pathway rejected", { description: "Student will not see this pathway." });
+                                        refreshPathways();
+                                      }
+                                    } catch {
+                                      toast("Error", { description: "Failed to reject pathway." });
+                                    }
+                                  }}
+                                >
+                                  Reject
+                                </DropdownMenuItem>
+                              </>
+                            )}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
               </TableBody>
             </Table>
           </div>
         </CardContent>
       </Card>
 
-      <Dialog open={isPreviewDialogOpen} onOpenChange={setIsPreviewDialogOpen}>
-        <DialogContent className="max-w-3xl">
-          <DialogHeader>
-            <DialogTitle>Learning Path Preview</DialogTitle>
-            <DialogDescription>Preview the AI-generated learning path for {selectedPath?.student}.</DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="rounded-lg border p-4">
-              <h3 className="mb-2 font-semibold">Module 1: Quantum Mechanics Fundamentals</h3>
-              <ul className="space-y-2">
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-green-500" />
-                  <span>Introduction to Wave Functions</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-green-500" />
-                  <span>Schrödinger Equation</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-green-500" />
-                  <span>Quantum Operators</span>
-                </li>
-              </ul>
-            </div>
-            <div className="rounded-lg border p-4">
-              <h3 className="mb-2 font-semibold">Module 2: Advanced Quantum Concepts</h3>
-              <ul className="space-y-2">
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-green-500" />
-                  <span>Quantum Entanglement</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-green-500" />
-                  <span>Quantum Tunneling</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsPreviewDialogOpen(false)}>
-              Close
-            </Button>
-            {selectedPath?.status === "pending" && <Button onClick={handleApprovePathClick}>Approve Path</Button>}
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       <Dialog open={isGenerateDialogOpen} onOpenChange={setIsGenerateDialogOpen}>
         <DialogContent>
@@ -504,13 +643,34 @@ export function SurveyLearningPath({ classId }: { classId: string }) {
               Cancel
             </Button>
             <Button
-              onClick={() => {
-                // In a real app, this would call an API to save the survey
-                toast("Survey saved",{
-                  description: "Your survey has been saved successfully.",
-                })
-                setIsSaveConfirmOpen(false)
-                setIsSurveyBuilderOpen(false)
+              onClick={async () => {
+                try {
+                  const response = await fetch('/api/survey/save', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                      classId,
+                      questions: surveyQuestions,
+                    }),
+                  });
+
+                  if (response.ok) {
+                    toast("Survey saved", {
+                      description: "Your survey has been saved successfully.",
+                    });
+                    setIsSaveConfirmOpen(false);
+                    setIsSurveyBuilderOpen(false);
+                  } else {
+                    throw new Error('Failed to save survey');
+                  }
+                } catch (error) {
+                  console.error('Error saving survey:', error);
+                  toast("Error", {
+                    description: "Failed to save survey. Please try again.",
+                  });
+                }
               }}
             >
               Save Survey
@@ -518,6 +678,15 @@ export function SurveyLearningPath({ classId }: { classId: string }) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <ProfessorPathwayPreviewDialog
+        key={selectedPath?.id || 'dialog'}
+        open={isPreviewDialogOpen}
+        onClose={() => setIsPreviewDialogOpen(false)}
+        pathway={selectedPath}
+        classId={classId}
+        onPathwayUpdate={refreshPathways}
+      />
     </div>
   )
 }

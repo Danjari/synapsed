@@ -10,9 +10,9 @@ const r2 = new S3Client({
   },
 });
 
-export async function uploadToR2(fileBuffer: Buffer, fileName: string, mimeType: string, classId: string) {
+export async function uploadToR2(fileBuffer: Buffer, fileName: string, mimeType: string, classId: string, category: string = 'content') {
   const uniqueSuffix = crypto.randomUUID();
-  const objectKey = `synapsed/class_${classId}/${uniqueSuffix}-${fileName}`;
+  const objectKey = `synapsed/class_${classId}/${category}/${uniqueSuffix}-${fileName}`;
 
   const command = new PutObjectCommand({
     Bucket: process.env.R2_BUCKET_NAME!,

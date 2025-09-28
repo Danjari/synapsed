@@ -9,6 +9,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
+    // Ensure answers is properly formatted for JSON storage
+    const formattedAnswers = answers.map((answer: { questionId?: string; question_id?: string; answer?: string; value?: string; text?: string }) => ({
+      questionId: answer.questionId || answer.question_id,
+      answer: answer.answer || answer.value || answer.text
+    }));
+
     const existing = await prisma.studentSurveyResponse.findFirst({
       where: { studentId, classId },
     });
@@ -18,20 +24,56 @@ export async function POST(req: NextRequest) {
       await prisma.studentSurveyResponse.update({
         where: { id: existing.id },
         data: {
-          answers,
+          answers: formattedAnswers,
           submittedAt: new Date(),
         },
       });
     } else {
       // Create new survey response
-      await prisma.studentSurveyResponse.create({
-        data: {
-          studentId,
-          classId,
-          answers,
-          submittedAt: new Date(),
-        },
-      });
+      const createData = {
+        studentId,
+        classId,
+        answers: formattedAnswers,
+        submittedAt: new Date(),
+      };
+      
+      try {
+        await prisma.studentSurveyResponse.create({
+          data: createData,
+        });
+      } catch (createError: unknown) {
+        if (createError && typeof createError === 'object' && 'code' in createError && createError.code === 'P2002') {
+          // Unique constraint error - try to update instead
+          const existingResponse = await prisma.studentSurveyResponse.findFirst({
+            where: { studentId, classId },
+          });
+          
+          if (existingResponse) {
+            await prisma.studentSurveyResponse.update({
+              where: { id: existingResponse.id },
+              data: {
+                answers: formattedAnswers,
+                submittedAt: new Date(),
+              },
+            });
+          } else {
+            // Delete and recreate as fallback
+            await prisma.studentSurveyResponse.deleteMany({
+              where: { studentId, classId }
+            });
+            await prisma.studentSurveyResponse.create({
+              data: {
+                studentId,
+                classId,
+                answers: formattedAnswers,
+                submittedAt: new Date(),
+              },
+            });
+          }
+        } else {
+          throw createError;
+        }
+      }
     }
 
     return NextResponse.json({ success: true });
