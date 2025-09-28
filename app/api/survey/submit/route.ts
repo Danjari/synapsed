@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
       await prisma.studentSurveyResponse.update({
         where: { id: existing.id },
         data: {
-          answers: JSON.stringify(formattedAnswers),
+          answers: formattedAnswers,
           submittedAt: new Date(),
         },
       });
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
       const createData = {
         studentId,
         classId,
-        answers: JSON.stringify(formattedAnswers),
+        answers: formattedAnswers,
         submittedAt: new Date(),
       };
       
@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
             await prisma.studentSurveyResponse.update({
               where: { id: existingResponse.id },
               data: {
-                answers: JSON.stringify(formattedAnswers),
+                answers: formattedAnswers,
                 submittedAt: new Date(),
               },
             });
@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
               data: {
                 studentId,
                 classId,
-                answers: JSON.stringify(formattedAnswers),
+                answers: formattedAnswers,
                 submittedAt: new Date(),
               },
             });

@@ -194,7 +194,10 @@ model LearningPathway {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   studentId  String
   classId    String
-  status     String   @default("pending") // or "approved"
+  status     String   @default("pending") // "pending" | "approved" | "rejected"
+  professorNotes String?  // Optional focus text for regeneration
+  approvedAt DateTime?
+  rejectedAt DateTime?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 

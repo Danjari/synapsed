@@ -8,7 +8,11 @@ export async function GET(req: Request) {
   if (!studentId || !classId) return NextResponse.json({ nodes: [] });
 
   const pathway = await prisma.learningPathway.findFirst({
-    where: { studentId, classId },
+    where: { 
+      studentId, 
+      classId,
+      status: "approved" // Only return approved pathways to students
+    },
     include: { nodes: true }
   });
   return NextResponse.json({ nodes: pathway?.nodes ?? [] });
