@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { ArrowRight, CheckCircle } from "lucide-react";
 
 type SurveyQuestion = {
-  id: string;
+  questionId: string;
   text: string;
   type: "short-answer" | "multiple-choice";
   options?: string[];
@@ -35,11 +35,19 @@ export default function StudentSurveyPage() {
 
     fetch(`/api/survey/${classId}`)
       .then((res) => res.json())
-      .then((data) => setQuestions(data?.questions || []));
+      .then((data) => {
+        console.log('🔍 Survey questions fetched:', {
+          questionsCount: data?.questions?.length,
+          firstQuestion: data?.questions?.[0],
+          firstQuestionKeys: data?.questions?.[0] ? Object.keys(data.questions[0]) : []
+        });
+        setQuestions(data?.questions || []);
+      });
   }, [classId]);
 
   const handleAnswer = (value: string) => {
-    setAnswers((prev) => ({ ...prev, [questions[current].id]: value }));
+    const questionId = questions[current].questionId;
+    setAnswers((prev) => ({ ...prev, [questionId]: value }));
   };
 
   const handleSubmit = async () => {
@@ -185,7 +193,7 @@ export default function StudentSurveyPage() {
             <CardContent className="space-y-4">
               {q?.type === "short-answer" && (
                 <textarea
-                  value={answers[q.id] || ""}
+                  value={answers[q.questionId] || ""}
                   onChange={(e) => handleAnswer(e.target.value)}
                   placeholder="Type your answer..."
                   className="w-full p-3 border rounded-md"
@@ -199,17 +207,17 @@ export default function StudentSurveyPage() {
                     <label
                       key={index}
                       className={`block border p-3 rounded-lg cursor-pointer ${
-                        answers[q.id] === opt
+                        answers[q.questionId] === opt
                           ? "border-emerald-500 bg-emerald-50 text-emerald-700"
                           : "border-slate-300 hover:bg-slate-50"
                       }`}
                     >
                       <input
                         type="radio"
-                        name={q.id}
+                        name={q.questionId}
                         value={opt}
                         className="mr-2"
-                        checked={answers[q.id] === opt}
+                        checked={answers[q.questionId] === opt}
                         onChange={() => handleAnswer(opt)}
                       />
                       {opt}
@@ -237,7 +245,7 @@ export default function StudentSurveyPage() {
                 className={`w-10 h-10 rounded-full text-sm font-medium transition-colors ${
                   index === current
                     ? "bg-emerald-600 text-white"
-                    : answers[questions[index]?.id]
+                    : answers[questions[index]?.questionId]
                       ? "bg-emerald-500 text-white"
                       : "bg-slate-200 text-slate-600 hover:bg-slate-300"
                 }`}
@@ -250,13 +258,13 @@ export default function StudentSurveyPage() {
           {current === questions.length - 1 ? (
             <Button
               onClick={handleSubmit}
-              disabled={!answers[q.id]}
+              disabled={!answers[q.questionId]}
               className="bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300"
             >
               Submit Survey
             </Button>
           ) : (
-            <Button onClick={() => setCurrent((c) => c + 1)} disabled={!answers[q.id]} className="bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300">
+            <Button onClick={() => setCurrent((c) => c + 1)} disabled={!answers[q.questionId]} className="bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300">
               Next
             </Button>
           )}

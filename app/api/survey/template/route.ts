@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI, Type } from '@google/genai';
 import { getSyllabusContext, getClassInfo, SyllabusContext } from "@/lib/survey/syllabusService";
 
-const geminiClient = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+const geminiClient = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
 
 export async function POST(req: NextRequest) {
   try {
@@ -45,9 +45,49 @@ export async function POST(req: NextRequest) {
 }
 
 async function generateContextualSurveyTemplate(syllabusContext: SyllabusContext, subject?: string, level: string = "undergraduate") {
-  const model = geminiClient.getGenerativeModel({ model: "gemini-2.0-flash" });
+  try {
+    const generateSurveyFunction = {
+      name: "generateSurveyTemplate",
+      description: "Generate a comprehensive student survey template based on course information",
+      parameters: {
+        type: Type.OBJECT,
+        properties: {
+          questions: {
+            type: Type.ARRAY,
+            items: {
+              type: Type.OBJECT,
+              properties: {
+                questionId: {
+                  type: Type.STRING,
+                  description: "Unique identifier for the question"
+                },
+                text: {
+                  type: Type.STRING,
+                  description: "The question text"
+                },
+                type: {
+                  type: Type.STRING,
+                  enum: ["short-answer", "multiple-choice"],
+                  description: "Type of question"
+                },
+                options: {
+                  type: Type.ARRAY,
+                  items: { type: Type.STRING },
+                  description: "Answer options for multiple-choice questions (empty for short-answer)"
+                }
+              },
+              required: ["questionId", "text", "type"]
+            },
+            description: "Array of survey questions"
+          }
+        },
+        required: ["questions"]
+      }
+    };
 
-  const prompt = `You are an expert educational assessment specialist. Generate a comprehensive student survey template based on the following course information:
+    const response = await geminiClient.models.generateContent({
+      model: 'gemini-2.0-flash',
+      contents: `You are an expert educational assessment specialist. Generate a comprehensive student survey template based on the following course information:
 
 COURSE DETAILS:
 - Course Name: ${syllabusContext.courseName}
@@ -112,56 +152,40 @@ IMPORTANT REQUIREMENTS:
 - Include appropriate multiple-choice options where relevant
 - Ensure questions are actionable for creating personalized learning paths
 
-Return ONLY a valid JSON array in this exact format:
-[
-  {
-    "id": "unique_id_1",
-    "text": "Question text here",
-    "type": "short-answer",
-    "options": []
-  },
-  {
-    "id": "unique_id_2", 
-    "text": "Question text here",
-    "type": "multiple-choice",
-    "options": ["Option 1", "Option 2", "Option 3", "Option 4"]
-  }
-]
+Generate questions that will help create personalized learning experiences for students.`,
+      config: {
+        tools: [{
+          functionDeclarations: [generateSurveyFunction]
+        }]
+      }
+    });
 
-Generate questions that will help create personalized learning experiences for students.`;
+    // Check if function was called
+    if (response.functionCalls && response.functionCalls.length > 0) {
+      const functionCall = response.functionCalls[0];
+      if (functionCall.name === 'generateSurveyTemplate') {
+        const extractedData = functionCall.args;
+        
+        console.log('✅ Function calling successful for survey template');
+        console.log('📊 Generated questions count:', Array.isArray(extractedData?.questions) ? extractedData.questions.length : 0);
+        
+        // Validate and clean the extracted questions
+        const questionsArray = Array.isArray(extractedData?.questions) ? extractedData.questions : [];
+        const validatedQuestions = questionsArray.map((q: { questionId?: string; text?: string; type?: string; options?: string[] }, index: number) => ({
+          questionId: q.questionId || `template_${Date.now()}_${index}`,
+          text: q.text || "",
+          type: q.type === "multiple-choice" ? "multiple-choice" : "short-answer",
+          options: q.type === "multiple-choice" ? (q.options || []) : []
+        }));
 
-  try {
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
-
-    // Clean the response to remove any markdown formatting
-    let cleanResponse = text.trim();
-    
-    // Remove markdown code blocks if present
-    if (cleanResponse.startsWith('```json')) {
-      cleanResponse = cleanResponse.replace(/^```json\n/, '').replace(/\n```$/, '');
-    } else if (cleanResponse.startsWith('```')) {
-      cleanResponse = cleanResponse.replace(/^```\n/, '').replace(/\n```$/, '');
+        return validatedQuestions;
+      }
     }
 
-    // Parse and validate JSON
-    const questions = JSON.parse(cleanResponse);
-    
-    // Validate the structure
-    if (!Array.isArray(questions)) {
-      throw new Error("Response is not an array");
-    }
+    // Fallback if function calling fails
+    console.warn('⚠️ Function calling failed for survey template, falling back to text parsing');
+    return generateFallbackTemplate(syllabusContext, subject);
 
-    // Ensure each question has required fields
-    const validatedQuestions = questions.map((q: { id?: string; text?: string; type?: string; options?: string[] }, index: number) => ({
-      id: q.id || `template_${Date.now()}_${index}`,
-      text: q.text || "",
-      type: q.type === "multiple-choice" ? "multiple-choice" : "short-answer",
-      options: q.type === "multiple-choice" ? (q.options || []) : []
-    }));
-
-    return validatedQuestions;
   } catch (error) {
     console.error("AI generation error:", error);
     
@@ -177,13 +201,13 @@ function generateFallbackTemplate(syllabusContext: SyllabusContext, subject?: st
   
   return [
     {
-      id: "goals_1",
+      questionId: "goals_1",
       text: `What are your primary learning goals for ${courseName}?`,
       type: "short-answer",
       options: []
     },
     {
-      id: "goals_2", 
+      questionId: "goals_2", 
       text: "What motivated you to enroll in this course?",
       type: "multiple-choice",
       options: [
@@ -195,7 +219,7 @@ function generateFallbackTemplate(syllabusContext: SyllabusContext, subject?: st
       ]
     },
     {
-      id: "prereq_1",
+      questionId: "prereq_1",
       text: hasPrerequisites 
         ? `Rate your current understanding of the prerequisites for ${courseName}: ${syllabusContext.prerequisites.substring(0, 100)}...`
         : `Rate your current understanding of prerequisite topics for ${courseName}`,
@@ -209,7 +233,7 @@ function generateFallbackTemplate(syllabusContext: SyllabusContext, subject?: st
       ]
     },
     {
-      id: "learning_1",
+      questionId: "learning_1",
       text: "What is your preferred learning style?",
       type: "multiple-choice",
       options: [
@@ -221,13 +245,13 @@ function generateFallbackTemplate(syllabusContext: SyllabusContext, subject?: st
       ]
     },
     {
-      id: "bloom_remember",
+      questionId: "bloom_remember",
       text: `List 3 key concepts you remember from previous ${subject || 'related'} courses`,
       type: "short-answer",
       options: []
     },
     {
-      id: "bloom_understand", 
+      questionId: "bloom_understand", 
       text: hasLearningObjectives 
         ? `Based on the course learning objectives, what do you expect to learn in ${courseName}?`
         : "Explain in your own words what you expect to learn in this course",
@@ -235,19 +259,19 @@ function generateFallbackTemplate(syllabusContext: SyllabusContext, subject?: st
       options: []
     },
     {
-      id: "bloom_apply",
+      questionId: "bloom_apply",
       text: "How do you plan to apply what you learn in this course?",
       type: "short-answer", 
       options: []
     },
     {
-      id: "bloom_analyze",
+      questionId: "bloom_analyze",
       text: "What challenges do you anticipate in this course?",
       type: "short-answer",
       options: []
     },
     {
-      id: "bloom_evaluate",
+      questionId: "bloom_evaluate",
       text: "How do you prefer to receive feedback on your work?",
       type: "multiple-choice",
       options: [
@@ -259,7 +283,7 @@ function generateFallbackTemplate(syllabusContext: SyllabusContext, subject?: st
       ]
     },
     {
-      id: "bloom_create",
+      questionId: "bloom_create",
       text: "What kind of projects or assignments would you find most engaging?",
       type: "short-answer",
       options: []

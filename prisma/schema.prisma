@@ -32,7 +32,7 @@ model User {
 
   enrollments ClassEnrollment[]
 
-  surveyResponse StudentSurveyResponse?
+  surveyResponses StudentSurveyResponse[]
 
   // Flashcard progress
   nodeProgress NodeProgress[]
@@ -172,13 +172,13 @@ model Survey {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   classId   String   @unique @db.ObjectId
   class     Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
-  questions Json     // Array of { id, text, type, options? }
+  questions Json     // Array of { questionId, text, type, options? }
   createdAt DateTime @default(now())
 }
 
 model StudentSurveyResponse {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  studentId  String   @unique @db.ObjectId
+  studentId  String   @db.ObjectId
   student    User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   classId    String   @db.ObjectId
