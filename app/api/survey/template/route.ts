@@ -1,25 +1,38 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { getSyllabusContext, getClassInfo, SyllabusContext } from "@/lib/survey/syllabusService";
 
 const geminiClient = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { classId, courseName, subject, level = "undergraduate" } = body;
+    const { classId, subject, level = "undergraduate" } = body;
 
-    if (!classId || !courseName) {
-      return NextResponse.json({ error: "classId and courseName are required" }, { status: 400 });
+    if (!classId) {
+      return NextResponse.json({ error: "classId is required" }, { status: 400 });
     }
 
-    // Generate survey template using AI
-    const templateQuestions = await generateSurveyTemplate(courseName, subject, level);
+    // Get class information and syllabus context
+    const classInfo = await getClassInfo(classId);
+    if (!classInfo) {
+      return NextResponse.json({ error: "Class not found" }, { status: 404 });
+    }
+
+    const syllabusContext = await getSyllabusContext(classId);
+
+    // Generate survey template using AI with contextual information
+    const templateQuestions = await generateContextualSurveyTemplate(syllabusContext, subject, level);
     
     return NextResponse.json({ 
       success: true, 
       questions: templateQuestions,
       metadata: {
-        courseName,
+        courseName: syllabusContext.courseName,
+        courseDescription: syllabusContext.courseDescription,
+        hasSyllabus: syllabusContext.hasSyllabus,
+        syllabusConfidence: syllabusContext.syllabusConfidence,
+        materialCount: syllabusContext.materialCount,
         subject,
         level,
         generatedAt: new Date().toISOString()
@@ -31,39 +44,70 @@ export async function POST(req: NextRequest) {
   }
 }
 
-async function generateSurveyTemplate(courseName: string, subject?: string, level: string = "undergraduate") {
+async function generateContextualSurveyTemplate(syllabusContext: SyllabusContext, subject?: string, level: string = "undergraduate") {
   const model = geminiClient.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-  const prompt = `You are an expert educational assessment specialist. Generate a comprehensive student survey template for the course "${courseName}"${subject ? ` in ${subject}` : ''} at the ${level} level.
+  const prompt = `You are an expert educational assessment specialist. Generate a comprehensive student survey template based on the following course information:
 
-Create 12-15 survey questions that cover:
+COURSE DETAILS:
+- Course Name: ${syllabusContext.courseName}
+- Description: ${syllabusContext.courseDescription}
+- Academic Level: ${level}
+- Subject Area: ${subject || 'Not specified'}
 
-1. STUDENT GOALS & MOTIVATION (3-4 questions):
-   - Learning objectives and career goals
-   - Motivation for taking the course
-   - Expected outcomes and applications
+SYLLABUS INFORMATION:
+- Prerequisites: ${syllabusContext.prerequisites}
+- Learning Objectives: ${syllabusContext.learningObjectives}
+- Assessment Methods: ${syllabusContext.assessmentMethods}
+- Course Schedule: ${syllabusContext.courseSchedule}
+- Grading Policy: ${syllabusContext.gradingPolicy}
 
-2. PREREQUISITE KNOWLEDGE ASSESSMENT (2-3 questions):
-   - Previous experience with related topics
-   - Confidence levels in prerequisite skills
-   - Specific knowledge gaps or strengths
+SYLLABUS DATA QUALITY:
+- Has Syllabus Data: ${syllabusContext.hasSyllabus}
+- Processing Confidence: ${syllabusContext.syllabusConfidence}%
+- Material Count: ${syllabusContext.materialCount}
 
-3. LEARNING STYLE & PREFERENCES (2-3 questions):
-   - Preferred learning methods
-   - Study habits and time management
-   - Technology comfort level
+Create 12-15 survey questions that are specifically tailored to this course. Focus on:
 
-4. BLOOM'S TAXONOMY ASSESSMENT (6-8 questions):
-   - REMEMBER: Recall of basic facts and concepts
-   - UNDERSTAND: Comprehension and explanation abilities
-   - APPLY: Application of knowledge to new situations
-   - ANALYZE: Breaking down complex information
-   - EVALUATE: Making judgments and critiques
-   - CREATE: Generating new ideas or solutions
+1. PREREQUISITE ASSESSMENT (3-4 questions):
+   - Based on the actual prerequisites: ${syllabusContext.prerequisites}
+   - Assess specific knowledge areas mentioned in prerequisites
+   - Evaluate confidence in prerequisite skills
+   - Identify knowledge gaps in required background
 
-Requirements:
+2. LEARNING OBJECTIVES READINESS (3-4 questions):
+   - Based on the course learning objectives: ${syllabusContext.learningObjectives}
+   - Assess readiness for specific learning outcomes
+   - Evaluate prior experience with course topics
+   - Understand student expectations for course content
+
+3. ASSESSMENT PREPARATION (2-3 questions):
+   - Based on assessment methods: ${syllabusContext.assessmentMethods}
+   - Understand student preferences for evaluation methods
+   - Assess comfort with different assessment types
+   - Evaluate study and preparation strategies
+
+4. COURSE-SPECIFIC GOALS (3-4 questions):
+   - Based on course description: ${syllabusContext.courseDescription}
+   - Understand student goals aligned with course content
+   - Assess motivation for taking this specific course
+   - Evaluate career/academic goals related to course topics
+
+5. BLOOM'S TAXONOMY ASSESSMENT (2-3 questions):
+   - REMEMBER: Recall of prerequisite concepts
+   - UNDERSTAND: Comprehension of course-related topics
+   - APPLY: Application of knowledge to course scenarios
+   - ANALYZE: Analytical thinking about course content
+   - EVALUATE: Critical evaluation of course-related concepts
+   - CREATE: Creative thinking about course applications
+
+IMPORTANT REQUIREMENTS:
+- Make questions SPECIFIC to this course's actual content and prerequisites
+- Reference actual prerequisite topics when available
+- Align with actual learning objectives when available
+- Use the course description to inform goal-related questions
+- If syllabus data is limited, create more general but relevant questions
 - Mix of short-answer and multiple-choice questions
-- Questions should be specific to the course content
 - Use clear, student-friendly language
 - Include appropriate multiple-choice options where relevant
 - Ensure questions are actionable for creating personalized learning paths
@@ -110,7 +154,7 @@ Generate questions that will help create personalized learning experiences for s
     }
 
     // Ensure each question has required fields
-    const validatedQuestions = questions.map((q: any, index: number) => ({
+    const validatedQuestions = questions.map((q: { id?: string; text?: string; type?: string; options?: string[] }, index: number) => ({
       id: q.id || `template_${Date.now()}_${index}`,
       text: q.text || "",
       type: q.type === "multiple-choice" ? "multiple-choice" : "short-answer",
@@ -122,11 +166,15 @@ Generate questions that will help create personalized learning experiences for s
     console.error("AI generation error:", error);
     
     // Fallback template if AI fails
-    return generateFallbackTemplate(courseName, subject);
+    return generateFallbackTemplate(syllabusContext, subject);
   }
 }
 
-function generateFallbackTemplate(courseName: string, subject?: string) {
+function generateFallbackTemplate(syllabusContext: SyllabusContext, subject?: string) {
+  const courseName = syllabusContext.courseName;
+  const hasPrerequisites = syllabusContext.prerequisites && syllabusContext.prerequisites !== "No prerequisites specified";
+  const hasLearningObjectives = syllabusContext.learningObjectives && syllabusContext.learningObjectives !== "No learning objectives specified";
+  
   return [
     {
       id: "goals_1",
@@ -148,7 +196,9 @@ function generateFallbackTemplate(courseName: string, subject?: string) {
     },
     {
       id: "prereq_1",
-      text: `Rate your current understanding of prerequisite topics for ${courseName}`,
+      text: hasPrerequisites 
+        ? `Rate your current understanding of the prerequisites for ${courseName}: ${syllabusContext.prerequisites.substring(0, 100)}...`
+        : `Rate your current understanding of prerequisite topics for ${courseName}`,
       type: "multiple-choice", 
       options: [
         "Very confident",
@@ -178,7 +228,9 @@ function generateFallbackTemplate(courseName: string, subject?: string) {
     },
     {
       id: "bloom_understand", 
-      text: "Explain in your own words what you expect to learn in this course",
+      text: hasLearningObjectives 
+        ? `Based on the course learning objectives, what do you expect to learn in ${courseName}?`
+        : "Explain in your own words what you expect to learn in this course",
       type: "short-answer",
       options: []
     },

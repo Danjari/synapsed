@@ -61,11 +61,50 @@ export async function POST(req: Request) {
       }, { status: 500 });
     }
 
-    // Store in cache
+    // Debug: Check what we actually got
+    // console.log('🔍 Processing result:', {
+    //   success: result.success,
+    //   hasContent: !!result.content,
+    //   contentKeys: result.content ? Object.keys(result.content) : 'null',
+    //   confidence: result.confidence
+    // });
+
+    if (!result.content) {
+      console.error('❌ No content returned from processing');
+      return NextResponse.json({
+        success: false,
+        error: "No content extracted from syllabus",
+        processingTime: result.processingTime,
+      }, { status: 500 });
+    }
+
+    // Store in cache - convert AI response to expected format
     const contentWithText = {
-      ...result.content!,
-      extractedText: "" // SyllabusContent doesn't have rawText, using empty string
+      extractedText: "", // SyllabusContent doesn't have rawText, using empty string
+      learningObjectives: Array.isArray(result.content!.learningObjectives) 
+        ? result.content!.learningObjectives.join('\n') 
+        : result.content!.learningObjectives || "",
+      courseSchedule: Array.isArray(result.content!.courseSchedule)
+        ? JSON.stringify(result.content!.courseSchedule)
+        : result.content!.courseSchedule || "",
+      assessmentMethods: result.content!.assessmentMethods || "",
+      prerequisites: result.content!.prerequisites || "",
+      courseDescription: result.content!.courseDescription || "",
+      instructorInfo: typeof result.content!.instructorInfo === 'object'
+        ? JSON.stringify(result.content!.instructorInfo)
+        : result.content!.instructorInfo || "",
+      gradingPolicy: typeof result.content!.gradingPolicy === 'object'
+        ? JSON.stringify(result.content!.gradingPolicy)
+        : result.content!.gradingPolicy || "",
     };
+    
+    // console.log('🔍 Content being passed to cache:', {
+    //   hasContent: !!contentWithText,
+    //   contentKeys: Object.keys(contentWithText),
+    //   learningObjectivesLength: contentWithText.learningObjectives?.length || 0,
+    //   confidence: result.confidence
+    // });
+    
     await SyllabusCache.set(materialId, contentWithText, result.confidence!);
 
     return NextResponse.json({

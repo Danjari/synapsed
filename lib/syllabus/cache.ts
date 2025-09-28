@@ -66,7 +66,27 @@ export class SyllabusCache {
    * Store processed content in cache
    */
   static async set(materialId: string, content: CacheEntry['content'], confidence: number): Promise<void> {
+    // console.log('🔍 Cache.set called with:', {
+    //   materialId,
+    //   hasContent: !!content,
+    //   contentType: typeof content,
+    //   contentKeys: content ? Object.keys(content) : 'null',
+    //   confidence
+    // });
+    
     try {
+      // Debug each field to find the null value
+      // console.log('🔍 Content field values:', {
+      //   extractedText: content.extractedText,
+      //   learningObjectives: content.learningObjectives?.substring(0, 50) + '...',
+      //   courseSchedule: content.courseSchedule?.substring(0, 50) + '...',
+      //   assessmentMethods: content.assessmentMethods,
+      //   prerequisites: content.prerequisites?.substring(0, 50) + '...',
+      //   courseDescription: content.courseDescription?.substring(0, 50) + '...',
+      //   instructorInfo: content.instructorInfo?.substring(0, 50) + '...',
+      //   gradingPolicy: content.gradingPolicy?.substring(0, 50) + '...',
+      // });
+      
       await prisma.classMaterial.update({
         where: { id: materialId },
         data: {

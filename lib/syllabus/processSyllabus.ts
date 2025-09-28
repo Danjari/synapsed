@@ -1,8 +1,9 @@
 import { Mistral } from '@mistralai/mistralai';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+
+import { GoogleGenAI, Type } from '@google/genai';
 
 const mistralClient = new Mistral({ apiKey: process.env.MISTRAL_API_KEY! });
-const geminiClient = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+const geminiClient = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
 
 export interface SyllabusContent {
   learningObjectives: string;
@@ -62,7 +63,7 @@ export async function processSyllabusFromUrl(
     const parsedContent = await parseSyllabusWithAI(fullText);
     
     const processingTime = Date.now() - startTime;
-    console.log(`✅ Syllabus processed in ${processingTime}ms`);
+    //console.log(`✅ Syllabus processed in ${processingTime}ms`);
 
     return {
       success: true,
@@ -85,57 +86,111 @@ export async function processSyllabusFromUrl(
  * AI-powered syllabus content parsing using Gemini
  */
 async function parseSyllabusWithAI(text: string): Promise<SyllabusContent> {
-  const prompt = `
-Analyze this course syllabus and extract the following information in JSON format:
+  try {
+    const extractSyllabusFunction = {
+      name: "extractSyllabusContent",
+      description: "Extract structured content from a course syllabus",
+      parameters: {
+        type: Type.OBJECT,
+        properties: {
+          learningObjectives: {
+            type: Type.ARRAY,
+            items: { type: Type.STRING },
+            description: "List of course learning objectives/outcomes (CLOs) also called PLOs"
+          },
+          courseSchedule: {
+            type: Type.ARRAY,
+            items: {
+              type: Type.OBJECT,
+              properties: {
+                week: { type: Type.STRING },
+                date: { type: Type.STRING },
+                day: { type: Type.STRING },
+                topic: { type: Type.STRING },
+                reading: { type: Type.STRING }
+              }
+            },
+            description: "Course schedule with topics, dates, and readings"
+          },
+          assessmentMethods: {
+            type: Type.ARRAY,
+            items: { type: Type.STRING },
+            description: "Grading methods, assignments, exams, etc."
+          },
+          prerequisites: {
+            type: Type.STRING,
+            description: "Required prerequisites or recommended background"
+          },
+          courseDescription: {
+            type: Type.STRING,
+            description: "Course description and overview"
+          },
+          instructorInfo: {
+            type: Type.OBJECT,
+            description: "Instructor contact information and office hours"
+          },
+          gradingPolicy: {
+            type: Type.OBJECT,
+            description: "Grading scale, policies, and procedures"
+          }
+        },
+        required: ["learningObjectives", "courseSchedule", "assessmentMethods", "prerequisites", "courseDescription"]
+      }
+    };
 
-{
-  "learningObjectives": "List of course learning objectives/outcomes (CLOs)",
-  "courseSchedule": "Course schedule with topics, dates, and readings",
-  "assessmentMethods": "Grading methods, assignments, exams, etc.",
-  "prerequisites": "Required prerequisites or recommended background",
-  "courseDescription": "Course description and overview",
-  "instructorInfo": "Instructor contact information and office hours",
-  "gradingPolicy": "Grading scale, policies, and procedures"
-}
-
-Instructions:
-- Extract information accurately from the text
-- If a section is not found, use "Not specified"
-- For course schedule, include dates, topics, and readings if available
-- For learning objectives, list each objective clearly
-- Be concise but comprehensive
-- Return only valid JSON, no additional text
+    const response = await geminiClient.models.generateContent({
+      model: 'gemini-2.0-flash',
+      contents: `Analyze this course syllabus and extract the structured information. Focus on accuracy and completeness.
 
 Syllabus text:
-${text.substring(0, 8000)} // Limit to avoid token limits
-`;
+${text}`,
+      config: {
+        tools: [{
+          functionDeclarations: [extractSyllabusFunction]
+        }]
+      }
+    });
+    
+    // Check if function was called
+    if (response.functionCalls && response.functionCalls.length > 0) {
+      const functionCall = response.functionCalls[0];
+      if (functionCall.name === 'extractSyllabusContent') {
+        const extractedContent = functionCall.args;
+        
+        console.log('✅ Function calling successful');
+        console.log('📊 Extracted content keys:', Object.keys(extractedContent || {}));
+        
+        // Validate and clean the extracted content
+        const validatedContent = {
+          learningObjectives: Array.isArray(extractedContent?.learningObjectives) 
+            ? extractedContent.learningObjectives.join('\n')
+            : "No learning objectives specified",
+          courseSchedule: Array.isArray(extractedContent?.courseSchedule) 
+            ? JSON.stringify(extractedContent.courseSchedule)
+            : "No schedule specified",
+          assessmentMethods: Array.isArray(extractedContent?.assessmentMethods) 
+            ? extractedContent.assessmentMethods.join('\n')
+            : "No assessment methods specified",
+          prerequisites: extractedContent?.prerequisites || "No prerequisites specified",
+          courseDescription: extractedContent?.courseDescription || "No description available",
+          instructorInfo: typeof extractedContent?.instructorInfo === 'object'
+            ? JSON.stringify(extractedContent.instructorInfo)
+            : extractedContent?.instructorInfo || "No instructor info specified",
+          gradingPolicy: typeof extractedContent?.gradingPolicy === 'object'
+            ? JSON.stringify(extractedContent.gradingPolicy)
+            : extractedContent?.gradingPolicy || "No grading policy specified"
+        };
 
-  try {
-    const model = geminiClient.getGenerativeModel({ model: 'gemini-2.0-flash' });
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
-    
-    // Parse JSON response
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-      throw new Error('No JSON found in AI response');
-    }
-    
-    const parsed = JSON.parse(jsonMatch[0]);
-    
-    // Validate required fields
-    const requiredFields = ['learningObjectives', 'courseSchedule', 'assessmentMethods'];
-    for (const field of requiredFields) {
-      if (!parsed[field] || parsed[field] === 'Not specified') {
-        console.warn(`⚠️ Missing or empty field: ${field}`);
+        return validatedContent as SyllabusContent;
       }
     }
-    
-    return parsed as SyllabusContent;
-    
+
+    // Fallback if function calling fails
+    console.warn('⚠️ Function calling failed, falling back to text parsing');
+    return fallbackParsing(text);
+
   } catch (error) {
-    console.error('AI parsing failed, falling back to simple parsing:', error);
+    console.error('Function calling failed, falling back to simple parsing:', error);
     return fallbackParsing(text);
   }
 }
@@ -250,15 +305,101 @@ async function processWithRetry<T>(
  */
 function calculateConfidence(content: SyllabusContent): number {
   let score = 0;
-  const maxScore = 7;
+  //const maxScore = 100;
   
-  // Check if each field has meaningful content
-  const fields = Object.values(content);
-  for (const field of fields) {
-    if (field && field !== 'Not specified' && field.length > 20) {
-      score++;
+  // Weighted scoring based on field importance and quality
+  const fieldWeights = {
+    learningObjectives: 25,    // Most important for surveys
+    prerequisites: 20,       // Critical for student assessment
+    courseDescription: 15,   // Important for context
+    assessmentMethods: 15,  // Important for survey questions
+    courseSchedule: 10,     // Useful but less critical
+    instructorInfo: 10,     // Nice to have
+    gradingPolicy: 5        // Least important for surveys
+  };
+  
+  // Check learning objectives quality
+  if (content.learningObjectives && content.learningObjectives !== 'No learning objectives specified') {
+    const objectives = content.learningObjectives.split('\n').filter(obj => obj.trim().length > 10);
+    if (objectives.length >= 3) {
+      score += fieldWeights.learningObjectives;
+    } else if (objectives.length >= 1) {
+      score += fieldWeights.learningObjectives * 0.6;
     }
   }
   
-  return Math.round((score / maxScore) * 100);
+  // Check prerequisites quality
+  if (content.prerequisites && content.prerequisites !== 'No prerequisites specified') {
+    if (content.prerequisites.length > 50 && !content.prerequisites.includes('Not specified')) {
+      score += fieldWeights.prerequisites;
+    } else if (content.prerequisites.length > 20) {
+      score += fieldWeights.prerequisites * 0.5;
+    }
+  }
+  
+  // Check course description quality
+  if (content.courseDescription && content.courseDescription !== 'No description available') {
+    if (content.courseDescription.length > 100) {
+      score += fieldWeights.courseDescription;
+    } else if (content.courseDescription.length > 50) {
+      score += fieldWeights.courseDescription * 0.7;
+    }
+  }
+  
+  // Check assessment methods
+  if (content.assessmentMethods && content.assessmentMethods !== 'No assessment methods specified') {
+    const methods = content.assessmentMethods.split('\n').filter(method => method.trim().length > 5);
+    if (methods.length >= 2) {
+      score += fieldWeights.assessmentMethods;
+    } else if (methods.length >= 1) {
+      score += fieldWeights.assessmentMethods * 0.6;
+    }
+  }
+  
+  // Check course schedule
+  if (content.courseSchedule && content.courseSchedule !== 'No schedule specified') {
+    try {
+      const schedule = JSON.parse(content.courseSchedule);
+      if (Array.isArray(schedule) && schedule.length >= 5) {
+        score += fieldWeights.courseSchedule;
+      } else if (schedule.length >= 2) {
+        score += fieldWeights.courseSchedule * 0.6;
+      }
+    } catch {
+      // If not JSON, check if it's meaningful text
+      if (content.courseSchedule.length > 100) {
+        score += fieldWeights.courseSchedule * 0.5;
+      }
+    }
+  }
+  
+  // Check instructor info
+  if (content.instructorInfo && content.instructorInfo !== 'No instructor info specified') {
+    try {
+      const instructor = JSON.parse(content.instructorInfo);
+      if (Object.keys(instructor).length > 0) {
+        score += fieldWeights.instructorInfo;
+      }
+    } catch {
+      if (content.instructorInfo.length > 30) {
+        score += fieldWeights.instructorInfo * 0.5;
+      }
+    }
+  }
+  
+  // Check grading policy
+  if (content.gradingPolicy && content.gradingPolicy !== 'No grading policy specified') {
+    try {
+      const policy = JSON.parse(content.gradingPolicy);
+      if (Object.keys(policy).length > 0) {
+        score += fieldWeights.gradingPolicy;
+      }
+    } catch {
+      if (content.gradingPolicy.length > 30) {
+        score += fieldWeights.gradingPolicy * 0.5;
+      }
+    }
+  }
+  
+  return Math.min(Math.round(score), 100);
 }

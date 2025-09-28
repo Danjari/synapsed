@@ -213,7 +213,6 @@ export function SurveyLearningPath({ classId }: { classId: string }) {
         onClose={() => setIsTemplateDialogOpen(false)}
         onApplyTemplate={handleApplyTemplate}
         classId={classId}
-        courseName="Advanced Physics 101"
       />
 
 

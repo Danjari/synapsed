@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -16,7 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Loader2, Sparkles, Edit3, CheckCircle, X } from "lucide-react"
+import { Loader2, Sparkles, Edit3, CheckCircle, X, AlertCircle, CheckCircle2 } from "lucide-react"
 import { toast } from "sonner"
 
 type SurveyQuestion = { id: string; text: string; type: string; options?: string[] };
@@ -29,12 +29,22 @@ interface SurveyTemplateDialogProps {
   courseName?: string;
 }
 
+interface ClassInfo {
+  title: string;
+  description: string | null;
+}
+
+interface SyllabusStatus {
+  hasSyllabus: boolean;
+  confidence: number;
+  materialCount: number;
+}
+
 export default function SurveyTemplateDialog({ 
   open, 
   onClose, 
   onApplyTemplate, 
-  classId,
-  courseName = "this course"
+  classId
 }: SurveyTemplateDialogProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [templateQuestions, setTemplateQuestions] = useState<SurveyQuestion[]>([]);
@@ -42,6 +52,43 @@ export default function SurveyTemplateDialog({
   const [customSubject, setCustomSubject] = useState("");
   const [customLevel, setCustomLevel] = useState("undergraduate");
   const [editingQuestion, setEditingQuestion] = useState<string | null>(null);
+  const [classInfo, setClassInfo] = useState<ClassInfo | null>(null);
+  const [syllabusStatus, setSyllabusStatus] = useState<SyllabusStatus | null>(null);
+
+  // Load class information and syllabus status
+  useEffect(() => {
+    if (!open || !classId) return;
+
+    const loadClassInfo = async () => {
+      try {
+        // Fetch class information
+        const classResponse = await fetch(`/api/class/${classId}`);
+        if (classResponse.ok) {
+          const classData = await classResponse.json();
+          setClassInfo({
+            title: classData.title,
+            description: classData.description
+          });
+          setCustomCourseName(classData.title);
+        }
+
+        // Fetch syllabus status
+        const syllabusResponse = await fetch(`/api/syllabus/content?classId=${classId}`);
+        if (syllabusResponse.ok) {
+          const syllabusData = await syllabusResponse.json();
+          setSyllabusStatus({
+            hasSyllabus: syllabusData.hasSyllabus,
+            confidence: syllabusData.content?.averageConfidence || 0,
+            materialCount: syllabusData.content?.materialCount || 0
+          });
+        }
+      } catch (error) {
+        console.error("Error loading class info:", error);
+      }
+    };
+
+    loadClassInfo();
+  }, [open, classId]);
 
   const handleGenerateTemplate = async () => {
     setIsGenerating(true);
@@ -51,7 +98,6 @@ export default function SurveyTemplateDialog({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           classId,
-          courseName: customCourseName || courseName,
           subject: customSubject || undefined,
           level: customLevel
         })
@@ -192,12 +238,34 @@ export default function SurveyTemplateDialog({
         </DialogHeader>
 
         <div className="space-y-6">
+          {/* Syllabus Status */}
+          {syllabusStatus && (
+            <Card className={syllabusStatus.hasSyllabus ? "border-green-200 bg-green-50" : "border-yellow-200 bg-yellow-50"}>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  {syllabusStatus.hasSyllabus ? (
+                    <CheckCircle2 className="h-5 w-5 text-green-600" />
+                  ) : (
+                    <AlertCircle className="h-5 w-5 text-yellow-600" />
+                  )}
+                  Syllabus Data Status
+                </CardTitle>
+                <CardDescription>
+                  {syllabusStatus.hasSyllabus 
+                    ? `Syllabus data available (${syllabusStatus.materialCount} materials, ${syllabusStatus.confidence}% confidence)`
+                    : "No syllabus data found. Template will use generic questions."
+                  }
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          )}
+
           {/* Template Configuration */}
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">Template Configuration</CardTitle>
               <CardDescription>
-                Customize the template generation for your specific course.
+                {classInfo ? `Generate template for: ${classInfo.title}` : "Customize the template generation for your specific course."}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -206,9 +274,10 @@ export default function SurveyTemplateDialog({
                   <Label htmlFor="course-name">Course Name</Label>
                   <Input
                     id="course-name"
-                    value={customCourseName}
-                    onChange={(e) => setCustomCourseName(e.target.value)}
-                    placeholder={courseName}
+                    value={classInfo?.title || customCourseName}
+                    disabled={true}
+                    className="bg-gray-50"
+                    placeholder="Loading course information..."
                   />
                 </div>
                 <div className="space-y-2">
