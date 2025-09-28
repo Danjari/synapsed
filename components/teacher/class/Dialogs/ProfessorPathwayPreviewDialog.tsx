@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -61,6 +61,15 @@ export default function ProfessorPathwayPreviewDialog({
   const [isLoading, setIsLoading] = useState(false);
   const [focusText, setFocusText] = useState("");
   const [showRegenerate, setShowRegenerate] = useState(false);
+
+  // Reset dialog state when it closes
+  useEffect(() => {
+    if (!open) {
+      setIsLoading(false);
+      setFocusText("");
+      setShowRegenerate(false);
+    }
+  }, [open]);
 
   if (!pathway) return null;
 

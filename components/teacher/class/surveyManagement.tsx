@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { CheckCircle, Edit, Eye, MoreHorizontal, Plus, Sparkles } from "lucide-react"
+import { Edit, Eye, MoreHorizontal, Plus, Sparkles } from "lucide-react"
 import StudentSurveyDialog from "./Dialogs/StudentViewSurveyAnswerDialog";
 import SurveyTemplateDialog from "./Dialogs/SurveyTemplateDialog";
 import ProfessorPathwayPreviewDialog from "./Dialogs/ProfessorPathwayPreviewDialog";
@@ -22,7 +22,6 @@ import { toast } from "sonner"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
-import TableSkeleton from "@/components/ui/table-skeleton"
 import { PathwayData } from "@/lib/types/pathwayTypes"
 
 // Real learning paths will be fetched from API
@@ -165,12 +164,6 @@ export function SurveyLearningPath({ classId }: { classId: string }) {
     }
   }
 
-  const handleApprovePathClick = () => {
-    toast(
-      "Learning path approved", { description: `Learning path for ${selectedPath?.studentName} has been approved.`, }
-    )
-    setIsPreviewDialogOpen(false)
-  }
 
   const handleGeneratePaths = async () => {
     const res = await fetch("/api/pathway/generate/batch", {
@@ -220,48 +213,69 @@ export function SurveyLearningPath({ classId }: { classId: string }) {
         </CardHeader>
         <CardContent>
           <div className="rounded-md border">
-            {loadingResponses ? (
-              <TableSkeleton columns={4} rows={6} />
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Student</TableHead>
-                    <TableHead className="hidden md:table-cell">Completed At</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="w-[80px]"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {surveyResponses.map((response) => (
-                    <TableRow key={response.studentId}>
-                      <TableCell className="font-medium">{response.name}</TableCell>
-                      <TableCell className="hidden md:table-cell">
-                        {new Date(response.submittedAt).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={response.answers.length > 0 ? "default" : "secondary"}>
-                          {response.answers.length > 0 ? "Processed" : "Pending"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => {
-                            setSelectedStudentResponse(response);
-                            setIsSurveyViewOpen(true);
-                          }}
-                        >
-                          <Eye className="h-4 w-4" />
-                          <span className="sr-only">View</span>
-                        </Button>
-                      </TableCell>
+            <Table>
+              {loadingResponses ? (
+                <>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Student</TableHead>
+                      <TableHead className="hidden md:table-cell">Completed At</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="w-[80px]"></TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
+                  </TableHeader>
+                  <TableBody>
+                    {Array.from({ length: 6 }).map((_, i) => (
+                      <TableRow key={i}>
+                        <TableCell><div className="h-4 bg-gray-200 rounded animate-pulse" /></TableCell>
+                        <TableCell><div className="h-4 bg-gray-200 rounded animate-pulse" /></TableCell>
+                        <TableCell><div className="h-4 bg-gray-200 rounded animate-pulse" /></TableCell>
+                        <TableCell><div className="h-4 bg-gray-200 rounded animate-pulse" /></TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </>
+              ) : (
+                <>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Student</TableHead>
+                      <TableHead className="hidden md:table-cell">Completed At</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="w-[80px]"></TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {surveyResponses.map((response) => (
+                      <TableRow key={response.studentId}>
+                        <TableCell className="font-medium">{response.name}</TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          {new Date(response.submittedAt).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={response.answers.length > 0 ? "default" : "secondary"}>
+                            {response.answers.length > 0 ? "Processed" : "Pending"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                              setSelectedStudentResponse(response);
+                              setIsSurveyViewOpen(true);
+                            }}
+                          >
+                            <Eye className="h-4 w-4" />
+                            <span className="sr-only">View</span>
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </>
+              )}
+            </Table>
           </div>
         </CardContent>
       </Card>
@@ -305,7 +319,14 @@ export function SurveyLearningPath({ classId }: { classId: string }) {
               </TableHeader>
               <TableBody>
                 {loadingPathways ? (
-                  <TableSkeleton />
+                  Array.from({ length: 3 }).map((_, i) => (
+                    <TableRow key={i}>
+                      <TableCell><div className="h-4 bg-gray-200 rounded animate-pulse" /></TableCell>
+                      <TableCell><div className="h-4 bg-gray-200 rounded animate-pulse" /></TableCell>
+                      <TableCell><div className="h-4 bg-gray-200 rounded animate-pulse" /></TableCell>
+                      <TableCell><div className="h-4 bg-gray-200 rounded animate-pulse" /></TableCell>
+                    </TableRow>
+                  ))
                 ) : pathways.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={4} className="text-center py-8 text-gray-500">
@@ -413,52 +434,6 @@ export function SurveyLearningPath({ classId }: { classId: string }) {
         </CardContent>
       </Card>
 
-      <Dialog open={isPreviewDialogOpen} onOpenChange={setIsPreviewDialogOpen}>
-        <DialogContent className="max-w-3xl">
-          <DialogHeader>
-            <DialogTitle>Learning Path Preview</DialogTitle>
-            <DialogDescription>Preview the AI-generated learning path for {selectedPath?.studentName}.</DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="rounded-lg border p-4">
-              <h3 className="mb-2 font-semibold">Module 1: Quantum Mechanics Fundamentals</h3>
-              <ul className="space-y-2">
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-green-500" />
-                  <span>Introduction to Wave Functions</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-green-500" />
-                  <span>Schrödinger Equation</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-green-500" />
-                  <span>Quantum Operators</span>
-                </li>
-              </ul>
-            </div>
-            <div className="rounded-lg border p-4">
-              <h3 className="mb-2 font-semibold">Module 2: Advanced Quantum Concepts</h3>
-              <ul className="space-y-2">
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-green-500" />
-                  <span>Quantum Entanglement</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-green-500" />
-                  <span>Quantum Tunneling</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsPreviewDialogOpen(false)}>
-              Close
-            </Button>
-            {selectedPath?.status === "pending" && <Button onClick={handleApprovePathClick}>Approve Path</Button>}
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       <Dialog open={isGenerateDialogOpen} onOpenChange={setIsGenerateDialogOpen}>
         <DialogContent>
@@ -705,6 +680,7 @@ export function SurveyLearningPath({ classId }: { classId: string }) {
       </Dialog>
 
       <ProfessorPathwayPreviewDialog
+        key={selectedPath?.id || 'dialog'}
         open={isPreviewDialogOpen}
         onClose={() => setIsPreviewDialogOpen(false)}
         pathway={selectedPath}
