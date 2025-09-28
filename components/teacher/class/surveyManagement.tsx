@@ -89,15 +89,40 @@ export function SurveyLearningPath({ classId }: { classId: string }) {
     }
   }
 
-  const handleApplyTemplate = (templateQuestions: SurveyQuestion[]) => {
-    // Merge template questions with existing questions
-    const mergedQuestions = [...surveyQuestions, ...templateQuestions];
-    setSurveyQuestions(mergedQuestions);
-    setIsTemplateDialogOpen(false);
-    
-    toast("Template applied", {
-      description: `${templateQuestions.length} questions added to your survey.`
-    });
+  const handleApplyTemplate = async (templateQuestions: SurveyQuestion[]) => {
+    try {
+      // Merge template questions with existing questions
+      const mergedQuestions = [...surveyQuestions, ...templateQuestions];
+      
+      // Save to database
+      const response = await fetch('/api/survey/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          classId,
+          questions: mergedQuestions,
+        }),
+      });
+
+      if (response.ok) {
+        // Update local state only after successful save
+        setSurveyQuestions(mergedQuestions);
+        setIsTemplateDialogOpen(false);
+        
+        toast("Template applied and saved", {
+          description: `${templateQuestions.length} questions added to your survey.`
+        });
+      } else {
+        throw new Error('Failed to save survey');
+      }
+    } catch (error) {
+      console.error('Error applying template:', error);
+      toast("Error", {
+        description: "Failed to save template. Please try again."
+      });
+    }
   }
 
   const handleApprovePathClick = () => {
