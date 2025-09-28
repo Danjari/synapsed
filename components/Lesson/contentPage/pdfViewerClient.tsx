@@ -120,7 +120,7 @@ export function PDFViewerClient({ documentUrl, documentId }: PDFViewerProps) {
       console.warn('Could not extract text from page:', error)
       setPageText('')
     })
-  }, [pageNumber, scale, rotation])
+  }, [])
 
       // Handle clicks on PDF content
     const handlePageClick = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
@@ -236,7 +236,7 @@ export function PDFViewerClient({ documentUrl, documentId }: PDFViewerProps) {
     } else {
       console.error('Failed to create content reference')
     }
-  }, [documentUrl, pageNumber, pageText, createContentReference, currentDocument])
+  }, [documentUrl, pageNumber, pageText, createContentReference, currentDocument, documentId])
 
   if (!documentUrl) {
     return (

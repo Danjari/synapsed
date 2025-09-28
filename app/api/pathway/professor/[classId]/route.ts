@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 // GET: Fetch all pathways for a class with student info
-export async function GET(req: NextRequest, { params }: { params: { classId: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ classId: string }> }) {
   try {
-    const { classId } = params;
+    const { classId } = await params;
 
     const pathways = await prisma.learningPathway.findMany({
       where: { classId },
@@ -109,9 +109,9 @@ export async function PUT(req: NextRequest) {
 }
 
 // POST: Regenerate pathway with custom focus
-export async function POST(req: NextRequest, { params }: { params: { classId: string } }) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ classId: string }> }) {
   try {
-    const { classId } = params;
+    const { classId } = await params;
     const { studentId, focusText } = await req.json();
 
     if (!studentId) {
