@@ -1,8 +1,9 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { CheckCircle, Edit, Eye, MoreHorizontal, Plus } from "lucide-react"
+import { CheckCircle, Edit, Eye, MoreHorizontal, Plus, Sparkles } from "lucide-react"
 import StudentSurveyDialog from "./Dialogs/StudentViewSurveyAnswerDialog";
+import SurveyTemplateDialog from "./Dialogs/SurveyTemplateDialog";
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -44,6 +45,7 @@ export function SurveyLearningPath({ classId }: { classId: string }) {
   const [isGenerateDialogOpen, setIsGenerateDialogOpen] = useState(false)
   const [isSurveyBuilderOpen, setIsSurveyBuilderOpen] = useState(false)
   const [isSurveyViewOpen, setIsSurveyViewOpen] = useState(false);
+  const [isTemplateDialogOpen, setIsTemplateDialogOpen] = useState(false);
   const [surveyQuestions, setSurveyQuestions] = useState<SurveyQuestion[]>([])
   const [selectedStudentResponse, setSelectedStudentResponse] = useState<SurveyResponse | null>(null);
   const [isSaveConfirmOpen, setIsSaveConfirmOpen] = useState(false)
@@ -87,6 +89,17 @@ export function SurveyLearningPath({ classId }: { classId: string }) {
     }
   }
 
+  const handleApplyTemplate = (templateQuestions: SurveyQuestion[]) => {
+    // Merge template questions with existing questions
+    const mergedQuestions = [...surveyQuestions, ...templateQuestions];
+    setSurveyQuestions(mergedQuestions);
+    setIsTemplateDialogOpen(false);
+    
+    toast("Template applied", {
+      description: `${templateQuestions.length} questions added to your survey.`
+    });
+  }
+
   const handleApprovePathClick = () => {
     toast(
       "Learning path approved", { description: `Learning path for ${selectedPath?.student} has been approved.`, }
@@ -125,10 +138,20 @@ export function SurveyLearningPath({ classId }: { classId: string }) {
             <CardTitle>Survey Management</CardTitle>
             <CardDescription>Create and manage student surveys.</CardDescription>
           </div>
-          <Button onClick={() => setIsSurveyBuilderOpen(true)}>
-            <Edit className="mr-2 h-4 w-4" />
-            Create/Edit Survey
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              onClick={() => setIsTemplateDialogOpen(true)}
+              className="bg-purple-50 border-purple-200 text-purple-700 hover:bg-purple-100"
+            >
+              <Sparkles className="mr-2 h-4 w-4" />
+              Generate Template
+            </Button>
+            <Button onClick={() => setIsSurveyBuilderOpen(true)}>
+              <Edit className="mr-2 h-4 w-4" />
+              Create/Edit Survey
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="rounded-md border">
@@ -183,6 +206,14 @@ export function SurveyLearningPath({ classId }: { classId: string }) {
         studentName={selectedStudentResponse?.name}
         completedAt={selectedStudentResponse?.submittedAt}
         answers={selectedStudentResponse?.answers}
+      />
+
+      <SurveyTemplateDialog
+        open={isTemplateDialogOpen}
+        onClose={() => setIsTemplateDialogOpen(false)}
+        onApplyTemplate={handleApplyTemplate}
+        classId={classId}
+        courseName="Advanced Physics 101"
       />
 
 
