@@ -89,13 +89,13 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      const updateData: { title?: string; questions?: unknown } = {};
-      if (title) updateData.title = title;
-      if (questions) updateData.questions = questions;
-
+      // Build update data dynamically
       const updatedSurvey = await prisma.survey.update({
         where: { id },
-        data: updateData,
+        data: {
+          ...(title && { title }),
+          ...(questions && { questions }),
+        },
       });
 
       return NextResponse.json({ success: true, survey: updatedSurvey });

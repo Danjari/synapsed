@@ -173,7 +173,7 @@ model Survey {
   classId        String   @db.ObjectId
   class          Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
   title          String
-  status         SurveyStatus @default(DRAFT)
+  status         SurveyStatus @default(ARCHIVED)
   questions      Json     // Array of { id, text, type, options?, required, order, duplicatedFrom? }
   publishedAt    DateTime?
   duplicatedFrom String?  @db.ObjectId // Reference to original survey if duplicated

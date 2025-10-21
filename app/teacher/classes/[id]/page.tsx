@@ -4,7 +4,7 @@ import ContentManagement from "@/components/teacher/class/contentmanagement/cont
 import { useParams } from "next/navigation"
 import { useState } from "react"
 import { TeacherDashboard } from "@/components/teacher/class/teacherDashboard"
-import { SurveyLearningPath } from "@/components/teacher/class/surveyManagement"
+import { NewSurveyManagement } from "@/components/teacher/class/NewSurveyManagement"
 import ClassInfoSettings from "@/components/teacher/class/ClassInfoSettings"
 export default function Page() {
   const params = useParams()
@@ -22,7 +22,7 @@ export default function Page() {
       case "content-management":
         return <ContentManagement classId={classId} />
       case "survey-learning-path":
-        return <SurveyLearningPath classId={classId} />
+        return <NewSurveyManagement classId={classId} />
       // case "quizzes-assessments":
       //   return <QuizzesAssessments classId={classId} />
       // case "analytics":
