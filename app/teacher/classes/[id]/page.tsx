@@ -1,15 +1,33 @@
 'use client'
 import { StudentManagement } from "@/components/teacher/class/studentManagement"
 import ContentManagement from "@/components/teacher/class/contentmanagement/contentManagement"
-import { useParams } from "next/navigation"
-import { useState } from "react"
+import { useParams, useRouter, useSearchParams } from "next/navigation"
+import { useEffect, useState } from "react"
 import { TeacherDashboard } from "@/components/teacher/class/teacherDashboard"
 import { NewSurveyManagement } from "@/components/teacher/class/NewSurveyManagement"
 import ClassInfoSettings from "@/components/teacher/class/ClassInfoSettings"
+
 export default function Page() {
   const params = useParams()
+  const router = useRouter()
+  const searchParams = useSearchParams()
   const classId = params.id as string
-  const [activeSection, setActiveSection] = useState("class-info")
+  
+  // Initialize from URL query param, default to "class-info"
+  const tabFromUrl = searchParams.get('tab') || 'class-info'
+  const [activeSection, setActiveSection] = useState(tabFromUrl)
+
+  // Sync state with URL on mount and when URL changes
+  useEffect(() => {
+    const tab = searchParams.get('tab') || 'class-info'
+    setActiveSection(tab)
+  }, [searchParams])
+
+  // Update URL when section changes
+  const handleSectionChange = (section: string) => {
+    setActiveSection(section)
+    router.push(`/teacher/classes/${classId}?tab=${section}`)
+  }
 
   if (!classId) return null;
 
@@ -33,7 +51,7 @@ export default function Page() {
   }
 
   return (
-    <TeacherDashboard activeSection={activeSection} setActiveSection={setActiveSection}>
+    <TeacherDashboard activeSection={activeSection} setActiveSection={handleSectionChange}>
       {renderContent()}
     </TeacherDashboard>
   )
