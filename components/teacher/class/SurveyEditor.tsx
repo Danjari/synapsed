@@ -49,6 +49,8 @@ export function SurveyEditor({ open, onClose, survey, onSave }: SurveyEditorProp
   const [questions, setQuestions] = useState<Question[]>(survey.questions || [])
   const [isSaving, setIsSaving] = useState(false)
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
+  const [showConflictDialog, setShowConflictDialog] = useState(false)
+  const [conflictData, setConflictData] = useState<{title: string} | null>(null)
 
   useEffect(() => {
     setTitle(survey.title)
@@ -222,26 +224,10 @@ export function SurveyEditor({ open, onClose, survey, onSave }: SurveyEditorProp
           // Conflict - another survey is active
           const publishData = await publishResponse.json()
           
-          // Show confirmation
-          const confirmed = confirm(
-            `Another survey "${publishData.existingSurvey.title}" is already active.\n\n` +
-            `Do you want to archive it and publish this survey instead?\n\n` +
-            `Note: Students can only see one active survey at a time.`
-          )
-          
-          if (confirmed) {
-            // Retry with forcePublish
-            await handleSave(publish, true)
-            return
-          } else {
-            // Just save as draft
-            toast("Survey saved", {
-              description: "Your survey has been saved as a draft"
-            })
-            onSave()
-            onClose()
-            return
-          }
+          // Show React dialog instead of native confirm
+          setConflictData(publishData.existingSurvey)
+          setShowConflictDialog(true)
+          return
         } else if (!publishResponse.ok) {
           throw new Error('Failed to publish survey')
         } else {
@@ -271,6 +257,7 @@ export function SurveyEditor({ open, onClose, survey, onSave }: SurveyEditorProp
   }
 
   return (
+    <>
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
@@ -464,6 +451,52 @@ export function SurveyEditor({ open, onClose, survey, onSave }: SurveyEditorProp
         </DialogFooter>
       </DialogContent>
     </Dialog>
+
+    {/* Conflict Confirmation Dialog */}
+    <Dialog open={showConflictDialog} onOpenChange={setShowConflictDialog}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Another Survey is Active</DialogTitle>
+          <DialogDescription>
+            Another survey &quot;{conflictData?.title}&quot; is already active for this class.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            Do you want to archive the existing survey and activate this one instead?
+          </p>
+          <p className="text-sm font-medium">
+            Note: Students can only see one active survey at a time.
+          </p>
+        </div>
+        <DialogFooter>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setShowConflictDialog(false)
+              setIsSaving(false)
+              toast("Survey saved", {
+                description: "Your survey has been saved as a draft"
+              })
+              onSave()
+              onClose()
+            }}
+          >
+            Keep as Draft
+          </Button>
+          <Button
+            onClick={async () => {
+              setShowConflictDialog(false)
+              // Retry with forcePublish
+              await handleSave(true, true)
+            }}
+          >
+            Archive Old & Activate This
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+    </>
   )
 }
 
