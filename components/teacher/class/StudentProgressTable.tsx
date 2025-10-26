@@ -85,6 +85,12 @@ export function StudentProgressTable({ classId, surveys }: StudentProgressTableP
           .catch(() => [])
       )
       const allResponses = (await Promise.all(responsePromises)).flat()
+      
+      console.log('🔍 Survey responses fetched:', {
+        activeSurveysCount: activeSurveys.length,
+        totalResponses: allResponses.length,
+        sampleResponse: allResponses[0]
+      })
 
       // Build student progress data
       const studentProgress: StudentProgress[] = enrolledStudents.map((enrollment: {
@@ -94,7 +100,21 @@ export function StudentProgressTable({ classId, surveys }: StudentProgressTableP
         const studentResponses = allResponses.filter((r: { studentId: string }) => r.studentId === student.id)
         const studentPathways = pathways.filter((p: { studentId: string }) => p.studentId === student.id)
         
-        const latestResponse = studentResponses.length > 0 ? studentResponses[0] : null
+        // Sort responses by submittedAt date (most recent first) and get the latest
+        const latestResponse = studentResponses.length > 0 
+          ? studentResponses.sort((a: any, b: any) => 
+              new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime()
+            )[0] 
+          : null
+          
+        // Debug logging for individual students
+        if (studentResponses.length > 0) {
+          console.log(`📊 Student ${student.name} (${student.id}):`, {
+            responsesCount: studentResponses.length,
+            latestResponse: latestResponse,
+            surveyStatus: latestResponse ? 'completed' : 'not_started'
+          })
+        }
         const latestPathway = studentPathways.length > 0 ? studentPathways[0] : null
 
         return {
@@ -155,6 +175,10 @@ export function StudentProgressTable({ classId, surveys }: StudentProgressTableP
       return
     }
 
+    // Close any other open dialogs first
+    setIsSurveyViewOpen(false)
+    setIsPathwayViewOpen(false)
+    
     // Set default survey if only one active
     if (activeSurveys.length === 1) {
       setSelectedSurveyId(activeSurveys[0].id)
@@ -355,6 +379,10 @@ export function StudentProgressTable({ classId, surveys }: StudentProgressTableP
                             {student.surveyResponse && (
                               <DropdownMenuItem
                                 onClick={() => {
+                                  // Close any other open dialogs first
+                                  setIsGenerateDialogOpen(false)
+                                  setIsPathwayViewOpen(false)
+                                  
                                   setSelectedStudentResponse(student)
                                   setIsSurveyViewOpen(true)
                                 }}
@@ -367,6 +395,10 @@ export function StudentProgressTable({ classId, surveys }: StudentProgressTableP
                               <>
                                 <DropdownMenuItem
                                   onClick={() => {
+                                    // Close any other open dialogs first
+                                    setIsGenerateDialogOpen(false)
+                                    setIsSurveyViewOpen(false)
+                                    
                                     setSelectedPathway(student.pathway || null)
                                     setIsPathwayViewOpen(true)
                                   }}
@@ -395,6 +427,10 @@ export function StudentProgressTable({ classId, surveys }: StudentProgressTableP
                             {student.surveyResponse && (
                               <DropdownMenuItem
                                 onClick={() => {
+                                  // Close any other open dialogs first
+                                  setIsSurveyViewOpen(false)
+                                  setIsPathwayViewOpen(false)
+                                  
                                   setSelectedStudents(new Set([student.studentId]))
                                   handleGeneratePaths()
                                 }}

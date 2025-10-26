@@ -43,6 +43,9 @@ model User {
   // New relations for content management
   documents    Document[] @relation("UserDocuments")
   notes        Note[]     @relation("UserNotes")
+  
+  // AI Tutor conversations
+  conversations Conversation[]
 }
 
 model Class {
@@ -71,6 +74,9 @@ model Class {
 
   // Document in this class 
   documents    Document[]
+  
+  // AI Tutor conversations in this class
+  conversations Conversation[]
 }
 
 model Account {
@@ -442,5 +448,42 @@ enum ContentType {
   SLIDE
   TABLE
   EQUATION
+}
+
+// AI Tutor Conversation Models
+model Conversation {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  threadId  String    @unique
+  userId    String    @db.ObjectId
+  classId   String?   @db.ObjectId
+  lessonId  String?   @db.ObjectId
+  title     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  
+  // Relations
+  user        User         @relation(fields: [userId], references: [id])
+  class       Class?       @relation(fields: [classId], references: [id])
+  messages    Message[]
+  
+  @@map("conversations")
+}
+
+model Message {
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  conversationId String       @db.ObjectId
+  role           MessageRole
+  content        String
+  timestamp      DateTime     @default(now())
+  
+  // Relations
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  
+  @@map("messages")
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
 }
 

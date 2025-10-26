@@ -35,6 +35,7 @@ interface ChatSectionProps {
   onAddToNotes?: (content: string) => void
   classId?: string
   lessonId?: string
+  userId?: string
 }
 
 function formatRelativeTime(date: Date): string {
@@ -76,10 +77,11 @@ const convertMathToLatex = (content: string): string => {
     .replace(/∞/g, '$\\infty$')
 }
 
-export default function ChatPage({ onAddToNotes }: ChatSectionProps = {}) {
+export default function ChatPage({ onAddToNotes, classId, lessonId, userId }: ChatSectionProps = {}) {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState("")
   const [isTyping, setIsTyping] = useState(false)
+  const [threadId, setThreadId] = useState<string | null>(null)
   // Removed isChatMode since we're always in chat mode
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -131,8 +133,14 @@ export default function ChatPage({ onAddToNotes }: ChatSectionProps = {}) {
       textareaRef.current.style.height = "auto"
     }
 
+    // Generate thread ID if not exists
+    const currentThreadId = threadId || Date.now().toString()
+    if (!threadId) {
+      setThreadId(currentThreadId)
+    }
+
     try {
-      const response = await fetch('/api/chat', {
+      const response = await fetch('/api/agent-chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -147,7 +155,11 @@ export default function ChatPage({ onAddToNotes }: ChatSectionProps = {}) {
               role: "user",
               content: `${userMessage.content}\n\nPlease format any mathematical expressions using LaTeX syntax with $ for inline math and $$ for display math.`
             }
-          ]
+          ],
+          threadId: currentThreadId,
+          classId,
+          lessonId,
+          userId
         }),
       })
       if (!response.ok) {

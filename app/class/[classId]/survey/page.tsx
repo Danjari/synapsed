@@ -11,9 +11,10 @@ import { toast } from "sonner";
 import { ArrowRight, CheckCircle } from "lucide-react";
 
 type SurveyQuestion = {
-  questionId: string;
+  id: string;
+  questionId?: string; // For backward compatibility
   text: string;
-  type: "short-answer" | "multiple-choice";
+  type: "short-answer" | "multiple-choice" | "text" | "multiple_choice" | "rating" | "ranking";
   options?: string[];
 };
 
@@ -39,15 +40,18 @@ export default function StudentSurveyPage() {
         console.log('🔍 Survey questions fetched:', {
           questionsCount: data?.questions?.length,
           firstQuestion: data?.questions?.[0],
-          firstQuestionKeys: data?.questions?.[0] ? Object.keys(data.questions[0]) : []
+          firstQuestionKeys: data?.questions?.[0] ? Object.keys(data.questions[0]) : [],
+          allQuestionTypes: data?.questions?.map((q: SurveyQuestion) => ({ id: q.questionId, type: q.type, text: q.text?.substring(0, 50) }))
         });
         setQuestions(data?.questions || []);
       });
   }, [classId]);
 
   const handleAnswer = (value: string) => {
-    const questionId = questions[current].questionId;
-    setAnswers((prev) => ({ ...prev, [questionId]: value }));
+    const questionId = questions[current].id || questions[current].questionId;
+    if (questionId) {
+      setAnswers((prev) => ({ ...prev, [questionId]: value }));
+    }
   };
 
   const handleSubmit = async () => {
@@ -146,6 +150,11 @@ export default function StudentSurveyPage() {
   }
 
   const q = questions[current];
+  const questionId = q?.id || q?.questionId;
+  const isTextQuestion = q?.type === "short-answer" || q?.type === "text";
+  const isMultipleChoice = q?.type === "multiple-choice" || q?.type === "multiple_choice";
+  const isRating = q?.type === "rating";
+  const isRanking = q?.type === "ranking";
   
   // Handle case where current question is undefined
   if (!q) {
@@ -191,9 +200,9 @@ export default function StudentSurveyPage() {
               <CardTitle className="text-xl text-slate-800">{q?.text}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {q?.type === "short-answer" && (
+              {isTextQuestion && (
                 <textarea
-                  value={answers[q.questionId] || ""}
+                  value={questionId ? (answers[questionId] || "") : ""}
                   onChange={(e) => handleAnswer(e.target.value)}
                   placeholder="Type your answer..."
                   className="w-full p-3 border rounded-md"
@@ -201,28 +210,104 @@ export default function StudentSurveyPage() {
                 />
               )}
 
-              {q?.type === "multiple-choice" && (
+              {isMultipleChoice && (
                 <div className="space-y-2">
                   {q.options?.map((opt, index) => (
                     <label
                       key={index}
                       className={`block border p-3 rounded-lg cursor-pointer ${
-                        answers[q.questionId] === opt
+                        questionId && answers[questionId] === opt
                           ? "border-emerald-500 bg-emerald-50 text-emerald-700"
                           : "border-slate-300 hover:bg-slate-50"
                       }`}
                     >
                       <input
                         type="radio"
-                        name={q.questionId}
+                        name={questionId || ""}
                         value={opt}
                         className="mr-2"
-                        checked={answers[q.questionId] === opt}
+                        checked={questionId ? answers[questionId] === opt : false}
                         onChange={() => handleAnswer(opt)}
                       />
                       {opt}
                     </label>
                   ))}
+                </div>
+              )}
+
+              {isRating && (
+                <div className="space-y-4">
+                  <div className="text-sm text-slate-600 mb-4">
+                    Rate from 1 (not comfortable) to 5 (very comfortable)
+                  </div>
+                  <div className="flex space-x-4 justify-center">
+                    {[1, 2, 3, 4, 5].map((rating) => (
+                      <label
+                        key={rating}
+                        className={`w-12 h-12 rounded-full border-2 flex items-center justify-center cursor-pointer transition-all ${
+                          questionId && answers[questionId] === rating.toString()
+                            ? "border-emerald-500 bg-emerald-500 text-white"
+                            : "border-slate-300 hover:border-emerald-400 hover:bg-emerald-50"
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name={questionId || ""}
+                          value={rating.toString()}
+                          className="sr-only"
+                          checked={questionId ? answers[questionId] === rating.toString() : false}
+                          onChange={() => handleAnswer(rating.toString())}
+                        />
+                        <span className="font-semibold">{rating}</span>
+                      </label>
+                    ))}
+                  </div>
+                  <div className="flex justify-between text-xs text-slate-500">
+                    <span>Not comfortable</span>
+                    <span>Very comfortable</span>
+                  </div>
+                </div>
+              )}
+
+              {isRanking && (
+                <div className="space-y-3">
+                  <div className="text-sm text-slate-600 mb-4">
+                    Drag to reorder or click to select your preference
+                  </div>
+                  <div className="space-y-2">
+                    {q.options?.map((opt, index) => (
+                      <label
+                        key={index}
+                        className={`block border p-3 rounded-lg cursor-pointer ${
+                          questionId && answers[questionId] === opt
+                            ? "border-emerald-500 bg-emerald-50 text-emerald-700"
+                            : "border-slate-300 hover:bg-slate-50"
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name={questionId || ""}
+                          value={opt}
+                          className="mr-2"
+                          checked={questionId ? answers[questionId] === opt : false}
+                          onChange={() => handleAnswer(opt)}
+                        />
+                        <span className="font-medium">{opt}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Fallback for unknown question types */}
+              {!isTextQuestion && !isMultipleChoice && !isRating && !isRanking && (
+                <div className="p-4 border border-yellow-200 bg-yellow-50 rounded-lg">
+                  <p className="text-yellow-800 text-sm">
+                    <strong>Unknown question type:</strong> {q?.type}
+                  </p>
+                  <p className="text-yellow-700 text-xs mt-1">
+                    This question type is not yet supported. Please contact your professor.
+                  </p>
                 </div>
               )}
             </CardContent>
@@ -245,7 +330,10 @@ export default function StudentSurveyPage() {
                 className={`w-10 h-10 rounded-full text-sm font-medium transition-colors ${
                   index === current
                     ? "bg-emerald-600 text-white"
-                    : answers[questions[index]?.questionId]
+                    : (() => {
+                        const questionId = questions[index]?.id || questions[index]?.questionId;
+                        return questionId && answers[questionId];
+                      })()
                       ? "bg-emerald-500 text-white"
                       : "bg-slate-200 text-slate-600 hover:bg-slate-300"
                 }`}
@@ -258,13 +346,13 @@ export default function StudentSurveyPage() {
           {current === questions.length - 1 ? (
             <Button
               onClick={handleSubmit}
-              disabled={!answers[q.questionId]}
+              disabled={!questionId || !answers[questionId]}
               className="bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300"
             >
               Submit Survey
             </Button>
           ) : (
-            <Button onClick={() => setCurrent((c) => c + 1)} disabled={!answers[q.questionId]} className="bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300">
+            <Button onClick={() => setCurrent((c) => c + 1)} disabled={!questionId || !answers[questionId]} className="bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300">
               Next
             </Button>
           )}

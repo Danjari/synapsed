@@ -30,7 +30,7 @@ export async function GET(
       }, { status: 200 });
     }
 
-    return NextResponse.json(survey);
+    return NextResponse.json({ questions: survey.questions });
   } catch (error) {
     console.error("[GET_SURVEY]", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
