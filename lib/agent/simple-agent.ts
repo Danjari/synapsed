@@ -7,10 +7,10 @@ import type { BaseMessage } from "@langchain/core/messages";
 import { MongoDBSaver } from "@langchain/langgraph-checkpoint-mongodb";
 import { MongoClient } from "mongodb";
 
-// Define MessagesState schema
-const MessagesState = z.object({
-  messages: z.array(z.custom<BaseMessage>()),
-});
+// Define MessagesState with channel configuration for proper memory
+interface MessagesState {
+  messages: BaseMessage[];
+}
 
 // Initialize the model
 const model = new ChatGoogleGenerativeAI({
@@ -68,20 +68,18 @@ const tools = Object.values(toolsByName);
 const modelWithTools = model.bindTools(tools);
 
 // Define the LLM call node
-async function callLlm(state: z.infer<typeof MessagesState>) {
-  console.log('callLlm node invoked with messages:', state.messages);
+async function callLlm(state: MessagesState) {
   const result = await modelWithTools.invoke([
     new SystemMessage(
       "You are a helpful educational assistant for Synapsed. You help students and teachers with their academic needs."
     ),
     ...state.messages,
   ]);
-  console.log('callLlm result:', result);
   return { messages: [result] };
 }
 
 // Define the tool call node
-async function callTools(state: z.infer<typeof MessagesState>) {
+async function callTools(state: MessagesState) {
   const lastMessage = state.messages[state.messages.length - 1];
   
   if (!(lastMessage instanceof AIMessage) || !lastMessage.tool_calls?.length) {
@@ -109,7 +107,7 @@ async function callTools(state: z.infer<typeof MessagesState>) {
 }
 
 // Define the should continue function
-function shouldContinue(state: z.infer<typeof MessagesState>): string {
+function shouldContinue(state: MessagesState): string {
   const lastMessage = state.messages[state.messages.length - 1];
   
   if (lastMessage instanceof AIMessage && lastMessage.tool_calls?.length) {
@@ -119,12 +117,22 @@ function shouldContinue(state: z.infer<typeof MessagesState>): string {
   return END as string;
 }
 
-// Build the graph
-const workflow = new (StateGraph as any)({ channels: MessagesState.shape } as any)
+// Build the graph with proper memory channel configuration
+const workflow = new StateGraph({
+  channels: {
+    messages: {
+      reducer: (x: BaseMessage[] = [], y: BaseMessage[] = []) => {
+        const arr = Array.isArray(y) ? y : [y];
+        return [...x, ...arr];
+      },
+      default: () => [],
+    },
+  },
+} as any)
   .addNode("llm", callLlm)
   .addNode("tools", callTools)
   .addEdge(START, "llm")
-  .addConditionalEdges("llm", shouldContinue as any, {
+  .addConditionalEdges("llm", shouldContinue, {
     tools: "tools",
     [END]: END,
   })
@@ -134,66 +142,67 @@ const workflow = new (StateGraph as any)({ channels: MessagesState.shape } as an
 let checkpointer: MongoDBSaver;
 let mongoClient: MongoClient;
 
-// Initialize MongoDB connection
+// Initialize MongoDB connection (similar to PostgresSaver.fromConnString)
 async function initializeMongoDB() {
   if (!mongoClient) {
     const connectionString = process.env.DATABASE_URL || "mongodb://localhost:27017";
     mongoClient = new MongoClient(connectionString);
     await mongoClient.connect();
     checkpointer = new MongoDBSaver({ client: mongoClient });
+    // await checkpointer.setup(); // Uncomment if MongoDB needs setup like Postgres
   }
   return checkpointer;
 }
 
-// Initialize on module load
-const checkpointerPromise = initializeMongoDB();
+// Compile agent once with MongoDB checkpointer
+let compiledAgent: any;
+let compilationPromise: Promise<any>;
+
+async function getCompiledAgent() {
+  if (!compiledAgent) {
+    if (!compilationPromise) {
+      compilationPromise = (async () => {
+        const checkpointer = await initializeMongoDB();
+        compiledAgent = workflow.compile({ checkpointer });
+        return compiledAgent;
+      })();
+    }
+    await compilationPromise;
+  }
+  return compiledAgent;
+}
 
 // Helper function to invoke the agent with a simple message
 export async function invokeAgent(userMessage: string, threadId?: string) {
   try {
-    console.log('Invoking agent with message:', userMessage, 'threadId:', threadId);
-    
-    // Ensure MongoDB is initialized
-    const checkpointer = await checkpointerPromise;
-    
-    // Compile the agent with MongoDB checkpointer
-    const agentWithMemory = workflow.compile({ checkpointer }) as any;
+    // Get compiled agent (will compile once on first call)
+    const agent = await getCompiledAgent();
     
     // Pass config with thread_id if provided for memory
-    const config = threadId ? { configurable: { thread_id: threadId } } : undefined;
+    const config = threadId ? { configurable: { thread_id: threadId } } : { configurable: {} };
     
-    const result = await agentWithMemory.invoke(
+    // Pass only the new message - the reducer will merge with previous messages from checkpointer
+    const result = await agent.invoke(
       { messages: [new HumanMessage(userMessage)] },
       config
-    ) as z.infer<typeof MessagesState>;
+    );
     
-    console.log('Agent result:', result);
-    
-    // Log all messages to see what we got
-    result.messages.forEach((msg: BaseMessage, index: number) => {
-      console.log(`Message ${index}: type=${msg.constructor.name}, content=`, msg.content);
-    });
-    
-    // Find the first AIMessage in the result
-    const aiMessage = result.messages.find((msg: BaseMessage) => msg instanceof AIMessage);
+    // Find the LAST AIMessage in the result (the most recent response)
+    const aiMessages = result.messages.filter((msg: BaseMessage) => msg instanceof AIMessage);
+    const aiMessage = aiMessages[aiMessages.length - 1];
     
     if (aiMessage) {
-      console.log('Found AIMessage:', aiMessage);
       return aiMessage.content || "No content in AI message";
     }
     
     // If no AIMessage, return the last message
     const lastMessage = result.messages[result.messages.length - 1];
-    console.log('No AIMessage found, last message:', lastMessage);
     
     if (!lastMessage) {
-      console.error('No messages in result');
       return "No response generated - no messages returned";
     }
     
-    const response = lastMessage.content || "No response generated - message has no content property";
-    console.log('Returning response:', response);
-    return response;
+    return lastMessage.content || "No response generated - message has no content property";
   } catch (error) {
     console.error('Error in invokeAgent:', error);
     throw error;

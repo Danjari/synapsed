@@ -4,7 +4,6 @@ import { invokeAgent } from '@/lib/agent/simple-agent';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    console.log('Received request body:', body);
     
     // Support both old format (message) and new format (messages array)
     const { message, messages } = body;
@@ -31,8 +30,6 @@ export async function POST(request: NextRequest) {
     }
 
     const response = await invokeAgent(userMessage, body.threadId);
-
-    console.log('Agent response RETURNED BY THE AGENT:', response);
 
     return NextResponse.json({ response });
   } catch (error) {
