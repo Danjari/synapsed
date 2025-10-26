@@ -1,138 +1,45 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { MongoClient } from 'mongodb';
-import { callEnhancedTutorAgent } from '@/lib/agent/enhanced-tutor-agent';
-import { callTutorAgent } from '@/lib/agent/tutor-agent';
-import { ConversationService } from '@/lib/agent/conversation-service';
+import { invokeAgent } from '@/lib/agent/simple-agent';
 
-
-
-
-// Initialize MongoDB client
-const client = new MongoClient(process.env.DATABASE_URL!);
-
-// Main API handler
-export async function POST(req: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    const { 
-      messages, 
-      threadId, 
-      classId, 
-      lessonId, 
-      userId, 
-      studentId,
-      studentLevel,
-      currentTopic,
-      progress,
-      useEnhanced = true
-    } = await req.json();
-
-    if (!messages || !Array.isArray(messages)) {
-      return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
-    }
-
-    if (!threadId) {
-      return NextResponse.json({ error: 'Thread ID is required' }, { status: 400 });
-    }
-
-    // Get the last user message
-    const lastMessage = messages[messages.length - 1];
-    if (!lastMessage || lastMessage.role !== 'user') {
-      return NextResponse.json({ error: 'Last message must be from user' }, { status: 400 });
-    }
-
-    console.log(lastMessage.content);
-    // Convert message content to string safely
-    const messageContent: string = String(lastMessage.content);
-
-    // Connect to MongoDB
-    await client.connect();
+    const body = await request.json();
+    console.log('Received request body:', body);
     
-    try {
-      let response: string;
-      
-      if (useEnhanced) {
-        // Use our sophisticated enhanced tutor agent with all the LangGraph components
-        response = await callEnhancedTutorAgent(
-          client,
-          messageContent,
-          threadId,
-          classId,
-          lessonId,
-          studentId || userId, // Use studentId if provided, fallback to userId
-          studentLevel,
-          currentTopic,
-          progress
-        );
-      } else {
-        // Fallback to original tutor agent
-        response = await callTutorAgent(
-          client,
-          messageContent,
-          threadId
+    // Support both old format (message) and new format (messages array)
+    const { message, messages } = body;
+
+    // If using the new format with messages array, extract the last user message
+    let userMessage: string;
+    if (messages && Array.isArray(messages)) {
+      // Get the last message from the user
+      const lastUserMessage = messages.filter((m: { role: string; content: string }) => m.role === 'user').pop();
+      if (!lastUserMessage) {
+        return NextResponse.json(
+          { error: 'No user message found in messages array' },
+          { status: 400 }
         );
       }
-
-      // Save conversation to database if userId is provided
-      if (userId) {
-        try {
-          await ConversationService.saveConversation({
-            threadId,
-            userId,
-            classId,
-            lessonId,
-            title: messages.length === 1 ? messageContent.substring(0, 50) + '...' : undefined,
-            messages: [
-              ...messages.map(msg => ({
-                role: msg.role as 'user' | 'assistant',
-                content: msg.content,
-                timestamp: new Date()
-              })),
-              {
-                role: 'assistant' as const,
-                content: response,
-                timestamp: new Date()
-              }
-            ]
-          });
-        } catch (dbError) {
-          console.error('Error saving conversation to database:', dbError);
-          // Don't fail the request if database save fails
-        }
-      }
-
-      return NextResponse.json({ 
-        message: response,
-        threadId,
-        timestamp: new Date().toISOString(),
-        enhanced: useEnhanced,
-        context: {
-          classId,
-          lessonId,
-          studentLevel,
-          currentTopic,
-          progress
-        }
-      });
-    } finally {
-      // Don't close the client here as it's reused
+      userMessage = lastUserMessage.content;
+    } else if (message && typeof message === 'string') {
+      userMessage = message;
+    } else {
+      return NextResponse.json(
+        { error: 'Either "message" or "messages" array with user messages is required' },
+        { status: 400 }
+      );
     }
-  } catch (error) {
-    console.error('Error in agent chat API:', error);
-    return NextResponse.json({ 
-      error: 'Failed to process request',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
-  }
-}
 
-// Handle preflight requests
-export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    },
-  });
+    const response = await invokeAgent(userMessage, body.threadId);
+
+    console.log('Agent response RETURNED BY THE AGENT:', response);
+
+    return NextResponse.json({ response });
+  } catch (error) {
+    console.error('Agent error:', error);
+    return NextResponse.json(
+      { error: 'Failed to process request', details: error instanceof Error ? error.message : 'Unknown error' },
+      { status: 500 }
+    );
+  }
 }

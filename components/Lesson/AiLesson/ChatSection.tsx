@@ -153,7 +153,7 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId }: Ch
             })),
             {
               role: "user",
-              content: `${userMessage.content}\n\nPlease format any mathematical expressions using LaTeX syntax with $ for inline math and $$ for display math.`
+              content: `${userMessage.content}`
             }
           ],
           threadId: currentThreadId,
@@ -166,9 +166,10 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId }: Ch
         throw new Error('Failed to get response')
       }
       const data = await response.json()
+      
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: convertMathToLatex(cleanAIResponse(data.message)),
+        content: convertMathToLatex(cleanAIResponse(data.response)),
         role: "assistant",
         timestamp: new Date(),
       }
