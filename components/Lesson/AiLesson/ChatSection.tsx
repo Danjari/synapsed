@@ -3,6 +3,7 @@
 import type React from "react"
 
 import { useState, useRef, useEffect } from "react"
+import { useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Send, Plus } from "lucide-react"
@@ -77,11 +78,15 @@ const convertMathToLatex = (content: string): string => {
     .replace(/∞/g, '$\\infty$')
 }
 
-export default function ChatPage({ onAddToNotes, classId, lessonId, userId }: ChatSectionProps = {}) {
+export default function ChatPage({ onAddToNotes, classId, lessonId, userId: propUserId }: ChatSectionProps = {}) {
+  const { data: session } = useSession()
+  const userId = propUserId || (session?.user as { id?: string })?.id
+  
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState("")
   const [isTyping, setIsTyping] = useState(false)
   const [threadId, setThreadId] = useState<string | null>(null)
+  const [isLoadingConversation, setIsLoadingConversation] = useState(true)
   // Removed isChatMode since we're always in chat mode
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -109,6 +114,55 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId }: Ch
     }
   }, [])
 
+  // Load existing conversation on mount
+  useEffect(() => {
+    async function loadConversation() {
+      if (!userId || !classId || !lessonId) {
+        setIsLoadingConversation(false)
+        return
+      }
+
+      try {
+        const response = await fetch(
+          `/api/conversations/by-lesson?userId=${userId}&classId=${classId}&lessonId=${lessonId}`
+        )
+        
+        if (!response.ok) {
+          throw new Error('Failed to load conversation')
+        }
+
+        const data = await response.json()
+        
+        if (data.conversation) {
+          // Set threadId for agent memory continuity
+          setThreadId(data.conversation.threadId)
+          
+          // Load messages into state
+          const loadedMessages: Message[] = data.conversation.messages.map((msg: {
+            id: string
+            content: string
+            role: 'USER' | 'ASSISTANT'
+            timestamp: string
+          }) => ({
+            id: msg.id,
+            content: msg.content,
+            role: msg.role.toLowerCase() as 'user' | 'assistant',
+            timestamp: new Date(msg.timestamp),
+          }))
+          
+          setMessages(loadedMessages)
+        }
+      } catch (error) {
+        console.error('Error loading conversation:', error)
+        // If error, just continue with empty messages
+      } finally {
+        setIsLoadingConversation(false)
+      }
+    }
+
+    loadConversation()
+  }, [userId, classId, lessonId])
+
   // Removed timestamp update interval to prevent unnecessary re-renders
 
   // Removed startChat function since we're going straight to chat
@@ -133,12 +187,6 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId }: Ch
       textareaRef.current.style.height = "auto"
     }
 
-    // Generate thread ID if not exists
-    const currentThreadId = threadId || Date.now().toString()
-    if (!threadId) {
-      setThreadId(currentThreadId)
-    }
-
     try {
       const response = await fetch('/api/agent-chat', {
         method: 'POST',
@@ -156,7 +204,7 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId }: Ch
               content: `${userMessage.content}`
             }
           ],
-          threadId: currentThreadId,
+          threadId, // Use existing threadId if available
           classId,
           lessonId,
           userId
@@ -166,6 +214,11 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId }: Ch
         throw new Error('Failed to get response')
       }
       const data = await response.json()
+      
+      // Update threadId if returned from API (for new conversations)
+      if (data.threadId && data.threadId !== threadId) {
+        setThreadId(data.threadId)
+      }
       
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -215,12 +268,17 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId }: Ch
       <div className="h-full overflow-y-auto px-4 py-6">
         <div className="max-w-3xl mx-auto">
           <div className="space-y-6">
-            {messages.length === 0 && (
+            {isLoadingConversation ? (
+              <div className="text-center py-8">
+                <div className="w-8 h-8 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin mx-auto mb-2" />
+                <p className="text-gray-500">Loading conversation...</p>
+              </div>
+            ) : messages.length === 0 ? (
               <div className="text-center py-8">
                 <h3 className="text-lg font-medium text-gray-900 mb-2">AI Tutor</h3>
                 <p className="text-gray-500">Ask me anything about your lesson!</p>
               </div>
-            )}
+            ) : null}
             {messages.map((message, index) => (
               <div
                 key={message.id}

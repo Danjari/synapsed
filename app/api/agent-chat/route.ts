@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { invokeAgent } from '@/lib/agent/simple-agent';
+import { ConversationService } from '@/lib/agent/conversation-service';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     
     // Support both old format (message) and new format (messages array)
-    const { message, messages } = body;
+    const { message, messages, userId, classId, lessonId, threadId } = body;
 
     // If using the new format with messages array, extract the last user message
     let userMessage: string;
@@ -29,9 +30,44 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const response = await invokeAgent(userMessage, body.threadId);
+    // Get or create conversation for persistence
+    let conversation;
+    if (userId) {
+      conversation = await ConversationService.getOrCreateConversation({
+        userId,
+        classId,
+        lessonId,
+        threadId, // Use provided threadId if exists, otherwise service will generate
+      });
 
-    return NextResponse.json({ response });
+      // Save user message to database
+      await ConversationService.saveMessage({
+        conversationId: conversation.id,
+        role: 'USER',
+        content: userMessage,
+      });
+    }
+
+    // Use conversation's threadId if available, otherwise use provided threadId
+    const agentThreadId = conversation?.threadId || threadId;
+
+    // Invoke agent with the threadId for memory continuity
+    const response = await invokeAgent(userMessage, agentThreadId);
+
+    // Save assistant message to database if conversation exists
+    if (conversation) {
+      await ConversationService.saveMessage({
+        conversationId: conversation.id,
+        role: 'ASSISTANT',
+        content: response,
+      });
+    }
+
+    return NextResponse.json({
+      response,
+      conversationId: conversation?.id,
+      threadId: agentThreadId,
+    });
   } catch (error) {
     console.error('Agent error:', error);
     return NextResponse.json(
