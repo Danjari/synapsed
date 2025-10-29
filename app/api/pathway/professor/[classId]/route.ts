@@ -156,7 +156,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cla
     }
 
     // Get survey questions
-    const survey = await prisma.survey.findUnique({ where: { classId } });
+    const survey = await prisma.survey.findFirst({ 
+      where: { classId, status: 'ACTIVE' },
+      orderBy: { createdAt: 'desc' }
+    });
     const questions = Array.isArray(survey?.questions) ? survey.questions : [];
 
     // Build enhanced prompt with focus text
