@@ -1,19 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ConversationService } from '@/lib/agent/conversation-service';
+import { prisma } from '@/lib/prisma';
 
 // Get a specific conversation by thread ID
 export async function GET(
   req: NextRequest,
-  { params }: { params: { threadId: string } }
+  { params }: { params: Promise<{ threadId: string }> }
 ) {
   try {
-    const { threadId } = params;
+    const { threadId } = await params;
 
     if (!threadId) {
       return NextResponse.json({ error: 'Thread ID is required' }, { status: 400 });
     }
 
-    const conversation = await ConversationService.getConversation(threadId);
+    const conversation = await ConversationService.getConversationByThreadId(threadId);
 
     if (!conversation) {
       return NextResponse.json({ error: 'Conversation not found' }, { status: 404 });
@@ -32,10 +33,10 @@ export async function GET(
 // Update conversation title
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { threadId: string } }
+  { params }: { params: Promise<{ threadId: string }> }
 ) {
   try {
-    const { threadId } = params;
+    const { threadId } = await params;
     const { title } = await req.json();
 
     if (!threadId) {
@@ -46,7 +47,19 @@ export async function PUT(
       return NextResponse.json({ error: 'Title is required' }, { status: 400 });
     }
 
-    const conversation = await ConversationService.updateConversationTitle(threadId, title);
+    // Get the conversation first to get userId
+    const existing = await ConversationService.getConversationByThreadId(threadId);
+    if (!existing) {
+      return NextResponse.json({ error: 'Conversation not found' }, { status: 404 });
+    }
+
+    const conversation = await ConversationService.saveConversation({
+      threadId,
+      userId: existing.userId,
+      classId: existing.classId || undefined,
+      lessonId: existing.lessonId || undefined,
+      title,
+    });
 
     return NextResponse.json({ conversation });
   } catch (error) {
@@ -61,16 +74,24 @@ export async function PUT(
 // Delete a conversation
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { threadId: string } }
+  { params }: { params: Promise<{ threadId: string }> }
 ) {
   try {
-    const { threadId } = params;
+    const { threadId } = await params;
 
     if (!threadId) {
       return NextResponse.json({ error: 'Thread ID is required' }, { status: 400 });
     }
 
-    await ConversationService.deleteConversation(threadId);
+    // Get the conversation first
+    const conversation = await ConversationService.getConversationByThreadId(threadId);
+    if (!conversation) {
+      return NextResponse.json({ error: 'Conversation not found' }, { status: 404 });
+    }
+
+    await prisma.conversation.delete({
+      where: { threadId },
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {
