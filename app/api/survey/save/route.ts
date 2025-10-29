@@ -37,11 +37,20 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, error: "Missing classId or questions" }, { status: 400 });
     }
 
-    const survey = await prisma.survey.upsert({
+    // Find existing survey for this class
+    const existingSurvey = await prisma.survey.findFirst({
       where: { classId },
-      update: { questions },
-      create: { classId, questions },
+      orderBy: { createdAt: 'desc' }
     });
+
+    const survey = existingSurvey
+      ? await prisma.survey.update({
+          where: { id: existingSurvey.id },
+          data: { questions }
+        })
+      : await prisma.survey.create({
+          data: { classId, questions, title: "Survey" }
+        });
 
     return NextResponse.json({ success: true, survey });
   } catch (error) {
