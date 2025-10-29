@@ -1,7 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState, useCallback } from "react"
 import { Eye, MoreHorizontal, CheckCircle2, XCircle, RefreshCw } from "lucide-react"
+import useSWR from "swr"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -48,8 +49,6 @@ interface StudentProgressTableProps {
 }
 
 export function StudentProgressTable({ classId, surveys }: StudentProgressTableProps) {
-  const [students, setStudents] = useState<StudentProgress[]>([])
-  const [loadingStudents, setLoadingStudents] = useState(true)
   const [selectedStudents, setSelectedStudents] = useState<Set<string>>(new Set())
   const [isGenerateDialogOpen, setIsGenerateDialogOpen] = useState(false)
   const [selectedSurveyId, setSelectedSurveyId] = useState<string>("")
@@ -59,15 +58,9 @@ export function StudentProgressTable({ classId, surveys }: StudentProgressTableP
   const [isPathwayViewOpen, setIsPathwayViewOpen] = useState(false)
   const [selectedPathway, setSelectedPathway] = useState<PathwayData | null>(null)
 
-  useEffect(() => {
-    fetchStudentProgress()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [classId])
-
-  const fetchStudentProgress = async () => {
+  // Fetcher function for student progress data
+  const studentProgressFetcher = async (): Promise<StudentProgress[]> => {
     try {
-      setLoadingStudents(true)
-      
       // Fetch class enrollments
       const enrollmentsResponse = await fetch(`/api/class/${classId}/students`)
       if (!enrollmentsResponse.ok) throw new Error('Failed to fetch enrollments')
@@ -78,19 +71,23 @@ export function StudentProgressTable({ classId, surveys }: StudentProgressTableP
       const pathwaysData = await pathwaysResponse.json()
       const pathways = pathwaysData.pathways || []
 
-      // Fetch survey responses for all active surveys
+      // Fetch survey responses for all active surveys (optimized single call)
       const activeSurveys = surveys.filter(s => s.status === 'ACTIVE')
-      const responsePromises = activeSurveys.map(survey =>
-        fetch(`/api/survey/response/${classId}?surveyId=${survey.id}`)
-          .then(res => res.json())
-          .catch(() => [])
-      )
-      const allResponses = (await Promise.all(responsePromises)).flat()
+      let allResponses: { studentId: string; surveyId: string; submittedAt: string; answers: { question: string; answer: string }[] }[] = []
+      
+      if (activeSurveys.length > 0) {
+        // Make a single call to get all responses for the class
+        const responsesResponse = await fetch(`/api/survey/response/${classId}`)
+        if (responsesResponse.ok) {
+          allResponses = await responsesResponse.json()
+        }
+      }
       
       console.log('🔍 Survey responses fetched:', {
         activeSurveysCount: activeSurveys.length,
         totalResponses: allResponses.length,
-        sampleResponse: allResponses[0]
+        sampleResponse: allResponses[0],
+        activeSurveyIds: activeSurveys.map(s => s.id)
       })
 
       // Build student progress data
@@ -102,11 +99,13 @@ export function StudentProgressTable({ classId, surveys }: StudentProgressTableP
         const studentPathways = pathways.filter((p: { studentId: string }) => p.studentId === student.id)
         
         // Sort responses by submittedAt date (most recent first) and get the latest
-        type SurveyResponse = { studentId: string; submittedAt: string | Date }
+        type SurveyResponse = { studentId: string; submittedAt: string | Date; surveyId: string }
         const latestResponse = studentResponses.length > 0 
-          ? studentResponses.sort((a: SurveyResponse, b: SurveyResponse) => 
-              new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime()
-            )[0] 
+          ? studentResponses
+              .filter((r: SurveyResponse) => activeSurveys.some(s => s.id === r.surveyId)) // Only active surveys
+              .sort((a: SurveyResponse, b: SurveyResponse) => 
+                new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime()
+              )[0] 
           : null
           
         // Debug logging for individual students
@@ -132,16 +131,38 @@ export function StudentProgressTable({ classId, surveys }: StudentProgressTableP
         }
       })
 
-      setStudents(studentProgress)
+      return studentProgress
     } catch (error) {
       console.error('Error fetching student progress:', error)
-      toast("Error", {
-        description: "Failed to load student progress"
-      })
-    } finally {
-      setLoadingStudents(false)
+      throw error
     }
   }
+
+  // Use SWR for student progress data with manual refresh only
+  const { data: students = [], isLoading: loadingStudents, mutate: mutateStudents } = useSWR<StudentProgress[]>(
+    classId ? `student-progress-${classId}` : null,
+    studentProgressFetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      dedupingInterval: 5000,
+    }
+  )
+
+  // Manual refresh function
+  const refreshStudentProgress = useCallback(async () => {
+    try {
+      await mutateStudents()
+      toast("Refreshed", {
+        description: "Student progress data has been updated"
+      })
+    } catch (error) {
+      console.error('Error refreshing student progress:', error)
+      toast("Error", {
+        description: "Failed to refresh student progress"
+      })
+    }
+  }, [mutateStudents])
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
@@ -229,7 +250,7 @@ export function StudentProgressTable({ classId, surveys }: StudentProgressTableP
 
       setIsGenerateDialogOpen(false)
       setSelectedStudents(new Set())
-      fetchStudentProgress()
+      await mutateStudents()
     } catch (error) {
       console.error('Error generating learning paths:', error)
       toast("Error", {
@@ -255,7 +276,7 @@ export function StudentProgressTable({ classId, surveys }: StudentProgressTableP
         toast("Pathway approved", { 
           description: "Student can now access this pathway." 
         })
-        fetchStudentProgress()
+        await mutateStudents()
       }
     } catch {
       toast("Error", { description: "Failed to approve pathway." })
@@ -277,7 +298,7 @@ export function StudentProgressTable({ classId, surveys }: StudentProgressTableP
         toast("Pathway rejected", { 
           description: "Student will not see this pathway." 
         })
-        fetchStudentProgress()
+        await mutateStudents()
       }
     } catch {
       toast("Error", { description: "Failed to reject pathway." })
@@ -314,6 +335,14 @@ export function StudentProgressTable({ classId, surveys }: StudentProgressTableP
             <CardDescription>Track survey completion and learning path status</CardDescription>
           </div>
           <div className="flex gap-2">
+            <Button 
+              variant="outline"
+              onClick={refreshStudentProgress}
+              disabled={loadingStudents}
+            >
+              <RefreshCw className={`mr-2 h-4 w-4 ${loadingStudents ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
             <Button 
               onClick={handleGeneratePaths} 
               disabled={selectedStudents.size === 0}
@@ -522,7 +551,7 @@ export function StudentProgressTable({ classId, surveys }: StudentProgressTableP
         onClose={() => setIsPathwayViewOpen(false)}
         pathway={selectedPathway}
         classId={classId}
-        onPathwayUpdate={fetchStudentProgress}
+        onPathwayUpdate={mutateStudents}
       />
     </>
   )
