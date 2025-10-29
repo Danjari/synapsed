@@ -2,7 +2,7 @@
 
 import type * as React from "react"
 import Link from "next/link"
-import { ArrowLeft, BookOpen, FileText, LayoutDashboard, LineChart, Settings, Users } from "lucide-react"
+import { ArrowLeft, GitFork, FileText, LayoutDashboard, LineChart, Settings, Users } from "lucide-react"
 import Sidebar, { SidebarItem } from "@/components/teacher/SideBar"
 import TopNav from "@/components/teacher/TopNav"
 
@@ -14,11 +14,11 @@ interface TeacherDashboardProps {
 
 export function TeacherDashboard({ children, activeSection, setActiveSection }: TeacherDashboardProps) {
   const classMenuItems: SidebarItem[] = [
-    { id: "class-info", name: "Class Info & Settings", icon: Settings },
-    { id: "student-management", name: "Student Management", icon: Users },
-    { id: "content-management", name: "Content Management", icon: FileText },
-    { id: "survey-learning-path", name: "Survey & Learning Path", icon: BookOpen },
-    { id: "quizzes-assessments", name: "Quizzes & Assessments", icon: LayoutDashboard },
+    { id: "class-info", name: "Settings", icon: Settings },
+    { id: "student-management", name: "Students", icon: Users },
+    { id: "content-management", name: "Files & Materials", icon: FileText },
+    { id: "survey-learning-path", name: "Learning Paths", icon: GitFork },
+    { id: "quizzes-assessments", name: "Assessments", icon: LayoutDashboard },
     { id: "analytics", name: "Analytics", icon: LineChart },
   ]
 

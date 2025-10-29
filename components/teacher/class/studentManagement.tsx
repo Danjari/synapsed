@@ -1,6 +1,7 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
+import useSWR from "swr"
 import { MoreHorizontal, Send } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -37,34 +38,34 @@ interface Enrollment {
 }
 
 export function StudentManagement({ classId }: { classId: string }) {
-  const [students, setStudents] = useState<Student[]>([])
-  const [loading, setLoading] = useState(true)
   const [studentToRemove, setStudentToRemove] = useState<Student | null>(null)
   const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
 
-  useEffect(() => {
-    const fetchStudents = async () => {
-      setLoading(true)
-      try {
-        const res = await fetch(`/api/class/${classId}/students`)
-        const data = await res.json()
-        setStudents(
-          data.map((enrollment: Enrollment) => ({
-            id: enrollment.student.id,
-            name: enrollment.student.name,
-            email: enrollment.student.email,
-            joinDate: enrollment.joinedAt,
-            status: "active",
-          }))
-        )
-      } finally {
-        setLoading(false)
-      }
-    }
+  // Fetcher for students
+  const studentsFetcher = async (url: string) => {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Failed to fetch students');
+    const data = await res.json();
+    return data.map((enrollment: Enrollment) => ({
+      id: enrollment.student.id,
+      name: enrollment.student.name,
+      email: enrollment.student.email,
+      joinDate: enrollment.joinedAt,
+      status: "active" as const,
+    }));
+  };
 
-    if (classId) fetchStudents()
-  }, [classId])
+  // Use SWR for students (cached and fast)
+  const { data: students = [], isLoading: loading, mutate: mutateStudents } = useSWR<Student[]>(
+    classId ? `/api/class/${classId}/students` : null,
+    studentsFetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: true,
+      dedupingInterval: 5000,
+    }
+  );
 
   const filteredStudents = students.filter(
     (student) =>
@@ -73,15 +74,19 @@ export function StudentManagement({ classId }: { classId: string }) {
   )
 
   const handleRemoveStudent = async () => {
-    toast.success("Student removed", {
-      description: `${studentToRemove?.name} has been removed from the class.`,
-    })
-    setStudents((prev) => prev.filter((s) => s.id !== studentToRemove?.id))
-    setIsRemoveDialogOpen(false)
-
-    await fetch(`/api/class/${classId}/student/${studentToRemove?.id}`, {
+    if (!studentToRemove) return;
+    
+    await fetch(`/api/class/${classId}/student/${studentToRemove.id}`, {
       method: "DELETE",
     })
+    
+    toast.success("Student removed", {
+      description: `${studentToRemove.name} has been removed from the class.`,
+    })
+    
+    // Update SWR cache
+    await mutateStudents((prev) => prev?.filter((s) => s.id !== studentToRemove.id), false)
+    setIsRemoveDialogOpen(false)
   }
 
   const handleResendInvite = (student: Student) => {

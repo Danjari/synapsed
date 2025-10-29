@@ -6,8 +6,8 @@ import { useEffect, useRef, useState } from 'react';
 // import Editor from '@/components/Lesson/AiLesson/Editor';
 import AiLessonLayout from '@/components/Lesson/AiLesson/AiLessonLayout';
 import { Button } from '@/components/ui/button';
-import { Sparkles, BookOpen, Brain, ArrowLeft, ChevronUp, ChevronDown } from 'lucide-react';
-import { FlashcardsPanel } from '@/components/Lesson/flashcard/FlashcardsPanel';
+import { Sparkles, BookOpen, ArrowLeft, ChevronUp, ChevronDown } from 'lucide-react';
+//import { FlashcardsPanel } from '@/components/Lesson/flashcard/FlashcardsPanel';
 import ContentPage from '@/components/Lesson/contentPage/ContentPage';
 import { LessonNoteProvider } from '@/lib/context/LessonNoteContext';
 
@@ -145,13 +145,13 @@ export default function LessonPage() {
                 <BookOpen className="w-4 h-4" />
                 <span>Content</span>
               </button>
-              <button
+              {/* <button
                 onClick={() => setViewMode('flashcards')}
                 className={`flex items-center space-x-2 px-4 py-2 rounded-md transition-all duration-200 text-sm font-medium ${viewMode === 'flashcards' ? 'bg-emerald-600 text-white shadow-sm' : 'text-emerald-700 hover:bg-emerald-50'}`}
               >
                 <Brain className="w-4 h-4" />
                 <span>Flashcards</span>
-              </button>
+              </button> */}
               {/* <button
                 onClick={() => setViewMode('summary')}
                 className={`flex items-center space-x-2 px-4 py-2 rounded-md transition-all duration-200 text-sm font-medium ${viewMode === 'summary' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600 hover:text-slate-800 hover:bg-white/50'}`}
@@ -205,6 +205,7 @@ export default function LessonPage() {
                     classId={classId}
                     lessonId={nodeId}
                     initialChatWidth={50}
+                    nodeTitle={nodeTitle}
                   />
                 </div>
               </div>
@@ -219,7 +220,7 @@ export default function LessonPage() {
               </div>
 
               {/* Flashcards Tab */}
-              <div className={`h-full ${viewMode === 'flashcards' ? 'block' : 'hidden'}`}>
+              {/* <div className={`h-full ${viewMode === 'flashcards' ? 'block' : 'hidden'}`}>
                 <div className="h-full bg-white rounded-xl border border-slate-200 shadow-lg overflow-hidden min-h-[600px]">
                   <FlashcardsPanel 
                     key={`${nodeId}-${nodeTitle}`}
@@ -228,7 +229,7 @@ export default function LessonPage() {
                     markdownContent={''} // Note: will need to get from context if needed
                   />
                 </div>
-              </div>
+              </div> */}
 
               {/* Overview Tab (commented out for now) */}
               {/* <div className={`h-full ${viewMode === 'overview' ? 'block' : 'hidden'}`}>

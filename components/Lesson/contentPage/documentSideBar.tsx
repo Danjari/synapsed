@@ -2,7 +2,8 @@
 
 import type React from "react"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useRef } from "react"
+import useSWR from "swr" 
 import {
   ChevronLeft,
   ChevronRight,
@@ -62,39 +63,35 @@ export function DocumentSidebar({ isOpen, onToggle, selectedDocument, onDocument
     { id: "presentations", name: "Presentations", documentCount: 1 },
   ])
 
-  // State for storing document list
-  const [documents, setDocuments] = useState<DocumentItem[]>([])
-
-  // Load documents from database on component mount
-  useEffect(() => {
-    const loadDocuments = async () => {
-      try {
-        const response = await fetch('/api/documents')
-        if (response.ok) {
-          const documents = await response.json()
-          // Convert database documents to DocumentItem format
-          const documentItems: DocumentItem[] = documents.map((doc: DatabaseDocument) => ({
-            id: doc.id,
-            name: doc.name,
-            type: doc.type.toLowerCase(),
-            url: doc.url,
-            lastModified: new Date(doc.lastModified),
-            size: doc.size,
-            folder: doc.folder || 'recent',
-          }))
-          setDocuments(documentItems)
-        } else {
-          console.error('Failed to load documents')
-          setDocuments([])
-        }
-      } catch (error) {
-        console.error('Error loading documents:', error)
-        setDocuments([])
-      }
+  // Fetcher for documents
+  const documentsFetcher = async (url: string) => {
+    const response = await fetch(url)
+    if (!response.ok) {
+      throw new Error('Failed to load documents')
     }
+    const documents = await response.json()
+    // Convert database documents to DocumentItem format
+    return documents.map((doc: DatabaseDocument) => ({
+      id: doc.id,
+      name: doc.name,
+      type: doc.type.toLowerCase(),
+      url: doc.url,
+      lastModified: new Date(doc.lastModified),
+      size: doc.size,
+      folder: doc.folder || 'recent',
+    })) as DocumentItem[]
+  }
 
-    loadDocuments()
-  }, [])
+  // Use SWR for documents (cached and fast)
+  const { data: documents = [], mutate } = useSWR<DocumentItem[]>(
+    '/api/documents',
+    documentsFetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: true, // Revalidate on reconnect to get latest documents
+      dedupingInterval: 5000,
+    }
+  )
 
   // No need to save to localStorage anymore - data is persisted in database
 
@@ -135,7 +132,8 @@ export function DocumentSidebar({ isOpen, onToggle, selectedDocument, onDocument
           folder: newDocument.folder || 'recent',
         }
 
-        setDocuments((prev) => [documentItem, ...prev])
+        // Update SWR cache with new document
+        await mutate([documentItem, ...documents], false)
       } else {
         alert('Failed to upload document')
       }

@@ -15,15 +15,22 @@ export async function GET(
       return NextResponse.json({ error: "Missing classId" }, { status: 400 });
     }
 
-    const survey = await prisma.survey.findUnique({
-      where: { classId },
+    // Only return ACTIVE surveys to students
+    const survey = await prisma.survey.findFirst({
+      where: { 
+        classId,
+        status: 'ACTIVE'
+      },
     });
 
     if (!survey) {
-      return NextResponse.json({ questions: [] }, { status: 200 });
+      return NextResponse.json({ 
+        questions: [],
+        message: "No active survey available" 
+      }, { status: 200 });
     }
 
-    return NextResponse.json(survey);
+    return NextResponse.json({ questions: survey.questions });
   } catch (error) {
     console.error("[GET_SURVEY]", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

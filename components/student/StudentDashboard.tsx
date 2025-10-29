@@ -2,8 +2,9 @@
 import { Calendar, Layers3 } from "lucide-react";
 import CourseCard from "./CourseCard";
 import { User } from "next-auth";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
+import useSWR from 'swr';
 import { Button } from "../ui/button";
 
 // This file defines the StudentDashboard component, which is a client-side component that displays the student's dashboard.
@@ -20,24 +21,28 @@ type ClassType = {
 
 const StudentDashboard = ({ user }: { user?: User }) => {
   const { data: session } = useSession();
-  const [classes, setClasses] = useState<ClassType[]>([]);
-  const [loading, setLoading] = useState(true);
   const [showArchived, setShowArchived] = useState(false);
 
-  useEffect(() => {
-    const fetchClasses = async () => {
-      if (!session?.user?.id) return; // Check if the user is authenticated
-      try {
-        const res = await fetch(`/api/student/classes?enrollmentId=${session.user.id}`); // Fetch classes for the current user
-        const data = await res.json();
-        setClasses(data); // Update the state with the fetched classes
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Fetcher for student classes
+  const classesFetcher = async (url: string) => {
+    const res = await fetch(url);
+    return res.json();
+  };
 
-    fetchClasses(); // Call the fetchClasses function
-  }, [session?.user?.id]); // Dependency array to trigger the effect when the session changes
+  // Use SWR for student classes (cached and fast)
+  const classesKey = session?.user?.id 
+    ? `/api/student/classes?enrollmentId=${session.user.id}`
+    : null;
+  
+  const { data: classes = [], isLoading: loading } = useSWR<ClassType[]>(
+    classesKey,
+    classesFetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: true, // Revalidate on reconnect to get latest classes
+      dedupingInterval: 5000,
+    }
+  );
 
   // Dummy semester grouping for now
   const currentSemester = "Fall 2025";
