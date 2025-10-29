@@ -12,6 +12,7 @@ import {
   Node
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
+import useSWR from 'swr';
 import usePathwayStore, { PathwayState, PathwayNodeData } from './store';
 import PathwayNode from './PathwayNode';
 import PathwayEdge from './PathwayEdge';
@@ -63,10 +64,31 @@ function PathwayFlow() {
   const { classId } = useParams();
   const studentId = session?.user?.id;
   const classIdStr = Array.isArray(classId) ? classId[0] : classId;
-  const [pathwayExists, setPathwayExists] = useState<boolean | null>(null);
   const [isNavigating, setIsNavigating] = useState(false);
   // Show skeleton only when we do not yet have nodes AND we are loading
   const showSkeleton = isLoading && nodes.length === 0;
+
+  // Fetcher for pathway existence check
+  const pathwayExistsFetcher = async (url: string) => {
+    const res = await fetch(url);
+    const data = await res.json();
+    return data.exists;
+  };
+
+  // Use SWR for pathway existence check (cached and fast)
+  const pathwayExistsKey = studentId && classIdStr 
+    ? `/api/pathway/exists/${classIdStr}/${studentId}`
+    : null;
+  
+  const { data: pathwayExists } = useSWR(
+    pathwayExistsKey,
+    pathwayExistsFetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      dedupingInterval: 5000,
+    }
+  );
 
   // Fetch pathway on initial load
   useEffect(() => {
@@ -74,14 +96,6 @@ function PathwayFlow() {
       fetchPathway(prompt, studentId, classIdStr);
     }
   }, [prompt, studentId, classIdStr, fetchPathway]);
-
-  useEffect(() => {
-    if (studentId && classIdStr) {
-      fetch(`/api/pathway/exists/${classIdStr}/${studentId}`)
-        .then(res => res.json())
-        .then(data => setPathwayExists(data.exists));
-    }
-  }, [studentId, classIdStr]);
   
   const handleNodeClick = (event: React.MouseEvent, node: Node) => {
     event.stopPropagation();
@@ -138,7 +152,7 @@ function PathwayFlow() {
         </div>
       )}
       {/* Show message if pathway is not available */}
-      {(!isLoading && pathwayExists === false && (
+      {(!isLoading && pathwayExists === false && pathwayExists !== undefined && (
         <div className="flex flex-col items-center justify-center h-64 text-center text-gray-500">
           <div className="text-2xl mb-2">🍳 Your pathway is cooking!</div>
           <div>Your professor will approve it soon. Come back later.</div>

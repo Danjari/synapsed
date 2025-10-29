@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
+import useSWR from 'swr';
 import { generateFlashcards } from '@/lib/flashcard/aiClient';
 
 interface Flashcard {
@@ -28,30 +29,32 @@ interface QuizQuestion {
 }
 
 export function useFlashDeck(nodeId: string, nodeTitle?: string, markdownContent?: string, quizQuestions?: QuizQuestion[]) {
-  const [deck, setDeck] = useState<FlashcardDeck | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchDeck = useCallback(async () => {
-    //console.log('fetchDeck called for nodeId:', nodeId);
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch(`/api/flashcard/${nodeId}`);
-      if (response.ok) {
-        const data = await response.json();
-        setDeck(data);
-      } else if (response.status === 404) {
-        setDeck(null); // No deck exists yet
-      } else {
-        setError('Failed to fetch deck');
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch deck');
-    } finally {
-      setLoading(false);
+  // Fetcher for flashcard deck
+  const deckFetcher = async (url: string) => {
+    const response = await fetch(url);
+    if (response.ok) {
+      return await response.json();
+    } else if (response.status === 404) {
+      return null; // No deck exists yet
+    } else {
+      throw new Error('Failed to fetch deck');
     }
-  }, [nodeId]);
+  };
+
+  // Use SWR for flashcard deck fetching (cached and fast)
+  const deckKey = nodeId ? `/api/flashcard/${nodeId}` : null;
+  const { data: deck, mutate, isLoading: isLoadingDeck } = useSWR<FlashcardDeck | null>(
+    deckKey,
+    deckFetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      dedupingInterval: 2000,
+    }
+  );
 
   const generateDeck = useCallback(async () => {
     if (!nodeTitle || !markdownContent) {
@@ -63,13 +66,14 @@ export function useFlashDeck(nodeId: string, nodeTitle?: string, markdownContent
     setError(null);
     try {
       const data = await generateFlashcards(nodeId, nodeTitle, markdownContent, quizQuestions);
-      setDeck(data);
+      // Update SWR cache with the new deck
+      await mutate(data, false);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to generate deck');
     } finally {
       setLoading(false);
     }
-  }, [nodeId, nodeTitle, markdownContent, quizQuestions]);
+  }, [nodeId, nodeTitle, markdownContent, quizQuestions, mutate]);
 
   const updateProgress = async (cardId: string, mastered: boolean) => {
     try {
@@ -83,22 +87,12 @@ export function useFlashDeck(nodeId: string, nodeTitle?: string, markdownContent
     }
   };
 
-  useEffect(() => {
-    //console.log('useEffect triggered for nodeId:', nodeId);
-    if (nodeId) {
-      fetchDeck();
-    }
-  }, [nodeId]); // Remove fetchDeck from dependencies since it's already memoized
-
-  // Only fetch deck when nodeId changes, not when markdownContent changes
-  // markdownContent is only used for generation, not fetching
-
   return { 
     deck, 
-    loading, 
+    loading: loading || isLoadingDeck, // Combine generation loading with SWR loading
     error, 
     generateDeck, 
     updateProgress, 
-    refetch: fetchDeck 
+    refetch: mutate // Use SWR's mutate function for manual refetch
   };
 } 

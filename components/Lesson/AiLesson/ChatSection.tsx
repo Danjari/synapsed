@@ -5,6 +5,7 @@ import type React from "react"
 import { useState, useRef, useEffect, useCallback } from "react"
 import { useSession } from "next-auth/react"
 import { useSearchParams } from "next/navigation"
+import useSWR from "swr"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Send, Plus } from "lucide-react"
@@ -92,8 +93,41 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
   const [input, setInput] = useState("")
   const [isTyping, setIsTyping] = useState(false)
   const [threadId, setThreadId] = useState<string | null>(null)
-  const [isLoadingConversation, setIsLoadingConversation] = useState(true)
   const [hasTriggeredIntroduction, setHasTriggeredIntroduction] = useState(false)
+
+  // Fetcher function for SWR
+  const fetcher = async (url: string) => {
+    const response = await fetch(url)
+    if (!response.ok) {
+      throw new Error('Failed to load conversation')
+    }
+    return response.json()
+  }
+
+  // Use SWR for fast, cached conversation loading
+  const conversationKey = userId && classId && lessonId 
+    ? `/api/conversations/by-lesson?userId=${userId}&classId=${classId}&lessonId=${lessonId}`
+    : null
+  
+  const { data, error, isLoading: isLoadingConversation } = useSWR(
+    conversationKey,
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      dedupingInterval: 2000, // Dedupe requests within 2 seconds
+    }
+  )
+
+  // Log errors (but continue gracefully)
+  useEffect(() => {
+    if (error) {
+      console.error('Error loading conversation:', error)
+    }
+  }, [error])
+
+  // Determine if we have an existing conversation
+  const hasExistingConversation = data?.conversation !== null && data?.conversation !== undefined
   // Removed isChatMode since we're always in chat mode
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -103,6 +137,43 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
   useEffect(() => {
     messagesRef.current = messages
   }, [messages])
+
+  // Load conversation data when SWR fetches it
+  useEffect(() => {
+    if (data) {
+      if (data.conversation) {
+        // Set threadId for agent memory continuity
+        setThreadId(data.conversation.threadId)
+        
+        // Load messages into state, filtering out system introduction messages
+        const loadedMessages: Message[] = data.conversation.messages
+          .map((msg: {
+            id: string
+            content: string
+            role: 'USER' | 'ASSISTANT'
+            timestamp: string
+          }) => ({
+            id: msg.id,
+            content: msg.content,
+            role: msg.role.toLowerCase() as 'user' | 'assistant',
+            timestamp: new Date(msg.timestamp),
+          }))
+          .filter((msg: Message) => {
+            // Filter out user messages that are system introduction prompts
+            if (msg.role === 'user' && isSystemIntroductionMessage(msg.content)) {
+              return false
+            }
+            return true
+          })
+        
+        setMessages(loadedMessages)
+      } else {
+        // No conversation found - clear messages
+        setMessages([])
+        setThreadId(null)
+      }
+    }
+  }, [data])
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
@@ -126,63 +197,6 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
       textareaRef.current.focus()
     }
   }, [])
-
-  // Load existing conversation on mount
-  useEffect(() => {
-    async function loadConversation() {
-      if (!userId || !classId || !lessonId) {
-        setIsLoadingConversation(false)
-        return
-      }
-
-      try {
-        const response = await fetch(
-          `/api/conversations/by-lesson?userId=${userId}&classId=${classId}&lessonId=${lessonId}`
-        )
-        
-        if (!response.ok) {
-          throw new Error('Failed to load conversation')
-        }
-
-        const data = await response.json()
-        
-        if (data.conversation) {
-          // Set threadId for agent memory continuity
-          setThreadId(data.conversation.threadId)
-          
-          // Load messages into state, filtering out system introduction messages
-          const loadedMessages: Message[] = data.conversation.messages
-            .map((msg: {
-              id: string
-              content: string
-              role: 'USER' | 'ASSISTANT'
-              timestamp: string
-            }) => ({
-              id: msg.id,
-              content: msg.content,
-              role: msg.role.toLowerCase() as 'user' | 'assistant',
-              timestamp: new Date(msg.timestamp),
-            }))
-            .filter((msg: Message) => {
-              // Filter out user messages that are system introduction prompts
-              if (msg.role === 'user' && isSystemIntroductionMessage(msg.content)) {
-                return false
-              }
-              return true
-            })
-          
-          setMessages(loadedMessages)
-        }
-      } catch (error) {
-        console.error('Error loading conversation:', error)
-        // If error, just continue with empty messages
-      } finally {
-        setIsLoadingConversation(false)
-      }
-    }
-
-    loadConversation()
-  }, [userId, classId, lessonId])
 
   // Removed timestamp update interval to prevent unnecessary re-renders
 
@@ -330,10 +344,17 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
     }
   }, [threadId, classId, lessonId, userId, isTyping])
 
-  // Auto-trigger Socratic introduction when conversation is empty (first time clicking a node)
+  // Auto-trigger Socratic introduction when it's truly the first time (no conversation in DB)
   useEffect(() => {
+    // Only trigger if:
+    // 1. Conversation loading is complete
+    // 2. No existing conversation was found in the DB
+    // 3. No messages in state (as a double-check)
+    // 4. Haven't triggered introduction yet
+    // 5. All required parameters are present
     if (
       !isLoadingConversation &&
+      !hasExistingConversation &&
       messages.length === 0 &&
       !hasTriggeredIntroduction &&
       nodeTitle &&
@@ -349,7 +370,7 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
       // Automatically send the introduction as a system message (hidden from UI)
       sendSystemMessage(introPrompt)
     }
-  }, [isLoadingConversation, messages.length, hasTriggeredIntroduction, nodeTitle, userId, classId, lessonId, studentName, sendSystemMessage])
+  }, [isLoadingConversation, hasExistingConversation, messages.length, hasTriggeredIntroduction, nodeTitle, userId, classId, lessonId, studentName, sendSystemMessage])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
