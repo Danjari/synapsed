@@ -40,8 +40,10 @@ export function ContentReferenceDisplay({ pageNumber, scale, rotation }: Content
       case 'text':
         return <FileText className="w-4 h-4" />
       case 'image':
+        // eslint-disable-next-line jsx-a11y/alt-text
         return <Image className="w-4 h-4" />
       case 'diagram':
+        // eslint-disable-next-line jsx-a11y/alt-text
         return <Image className="w-4 h-4" />
       case 'slide':
         return <StickyNote className="w-4 h-4" />

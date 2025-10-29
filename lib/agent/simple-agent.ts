@@ -128,6 +128,7 @@ const workflow = new StateGraph({
       default: () => [],
     },
   },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- LangGraph StateGraph type requires this due to version mismatch
 } as any)
   .addNode("llm", callLlm)
   .addNode("tools", callTools)
@@ -155,10 +156,12 @@ async function initializeMongoDB() {
 }
 
 // Compile agent once with MongoDB checkpointer
-let compiledAgent: any;
-let compilationPromise: Promise<any>;
+// Using ReturnType to infer the compiled graph type
+type CompiledAgent = ReturnType<typeof workflow.compile>;
+let compiledAgent: CompiledAgent | null = null;
+let compilationPromise: Promise<CompiledAgent> | null = null;
 
-async function getCompiledAgent() {
+async function getCompiledAgent(): Promise<CompiledAgent> {
   if (!compiledAgent) {
     if (!compilationPromise) {
       compilationPromise = (async () => {
@@ -168,6 +171,9 @@ async function getCompiledAgent() {
       })();
     }
     await compilationPromise;
+  }
+  if (!compiledAgent) {
+    throw new Error('Failed to compile agent');
   }
   return compiledAgent;
 }

@@ -61,6 +61,7 @@ export function StudentProgressTable({ classId, surveys }: StudentProgressTableP
 
   useEffect(() => {
     fetchStudentProgress()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [classId])
 
   const fetchStudentProgress = async () => {
@@ -101,8 +102,9 @@ export function StudentProgressTable({ classId, surveys }: StudentProgressTableP
         const studentPathways = pathways.filter((p: { studentId: string }) => p.studentId === student.id)
         
         // Sort responses by submittedAt date (most recent first) and get the latest
+        type SurveyResponse = { studentId: string; submittedAt: string | Date }
         const latestResponse = studentResponses.length > 0 
-          ? studentResponses.sort((a: any, b: any) => 
+          ? studentResponses.sort((a: SurveyResponse, b: SurveyResponse) => 
               new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime()
             )[0] 
           : null
