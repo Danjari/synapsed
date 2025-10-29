@@ -28,7 +28,8 @@ export async function POST(
       data: {
         classId: originalSurvey.classId,
         title: `${originalSurvey.title} (Copy)`,
-        questions: originalSurvey.questions, // Copy all questions
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Prisma JSON type conversion
+        questions: originalSurvey.questions as any, // Copy all questions
         status: 'DRAFT', // Always create as draft
         duplicatedFrom: surveyId,
       },
