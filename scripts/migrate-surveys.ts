@@ -58,7 +58,8 @@ async function migrateSurveys() {
         // Set status to ACTIVE (assuming existing surveys are published)
         if (!('status' in survey)) {
           updates.status = 'ACTIVE';
-          updates.publishedAt = survey.createdAt;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Type guard issue
+          updates.publishedAt = (survey as any).createdAt;
           console.log(`  🟢 Setting status to ACTIVE`);
         }
 
