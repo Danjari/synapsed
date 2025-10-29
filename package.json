@@ -19,7 +19,6 @@
     "@danjari/blocknote-ai-extension": "^0.1.1",
     "@google/genai": "^0.8.0",
     "@langchain/anthropic": "^0.3.26",
-    "@langchain/community": "^1.0.0",
     "@langchain/core": "^0.3.78",
     "@langchain/google-genai": "^0.2.16",
     "@langchain/langgraph": "^1.0.1",
