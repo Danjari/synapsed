@@ -1,6 +1,7 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState, useCallback } from "react"
+import useSWR from "swr"
 import { Edit, Eye, MoreHorizontal, Plus, Sparkles } from "lucide-react"
 import StudentSurveyDialog from "./Dialogs/StudentViewSurveyAnswerDialog";
 import SurveyTemplateDialog from "./Dialogs/SurveyTemplateDialog";
@@ -47,63 +48,71 @@ export function SurveyLearningPath({ classId }: { classId: string }) {
   const [surveyQuestions, setSurveyQuestions] = useState<SurveyQuestion[]>([])
   const [selectedStudentResponse, setSelectedStudentResponse] = useState<SurveyResponse | null>(null);
   const [isSaveConfirmOpen, setIsSaveConfirmOpen] = useState(false)
-  const [surveyResponses, setSurveyResponses] = useState<SurveyResponse[]>([]);
-  const [loadingResponses, setLoadingResponses] = useState(true);
   
-  // Pathway management state
-  const [pathways, setPathways] = useState<PathwayData[]>([]);
-  const [loadingPathways, setLoadingPathways] = useState(true);
-
-  useEffect(() => {
-    fetch(`/api/survey/${classId}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data?.questions?.length) setSurveyQuestions(data.questions)
-      })
-
-    setLoadingResponses(true)
-    fetch(`/api/survey/response/${classId}`)
-      .then((res) => res.json())
-      .then((data) => setSurveyResponses(Array.isArray(data) ? data : []))
-      .finally(() => setLoadingResponses(false))
-  }, [classId])
-
-  // Fetch pathways
-  useEffect(() => {
-    const fetchPathways = async () => {
-      try {
-        setLoadingPathways(true);
-        const response = await fetch(`/api/pathway/professor/${classId}`);
-        if (response.ok) {
-          const data = await response.json();
-          setPathways(data.pathways || []);
-        } else {
-          console.error('Failed to fetch pathways');
-          setPathways([]);
-        }
-      } catch (error) {
-        console.error('Error fetching pathways:', error);
-        setPathways([]);
-      } finally {
-        setLoadingPathways(false);
-      }
-    };
-
-    fetchPathways();
-  }, [classId]);
-
-  // Refresh pathways after updates
-  const refreshPathways = async () => {
-    try {
-      const response = await fetch(`/api/pathway/professor/${classId}`);
-      if (response.ok) {
-        const data = await response.json();
-        setPathways(data.pathways || []);
-      }
-    } catch (error) {
-      console.error('Error refreshing pathways:', error);
-    }
+  // Fetcher for survey questions
+  const surveyFetcher = async (url: string) => {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Failed to fetch survey');
+    const data = await res.json();
+    return data?.questions || [];
   };
+
+  // Fetcher for survey responses
+  const surveyResponsesFetcher = async (url: string) => {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Failed to fetch survey responses');
+    const data = await res.json();
+    return Array.isArray(data) ? data : [];
+  };
+
+  // Fetcher for pathways
+  const pathwaysFetcher = async (url: string) => {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Failed to fetch pathways');
+    const data = await res.json();
+    return data.pathways || [];
+  };
+
+  // Use SWR for survey questions
+  const { mutate: mutateSurvey } = useSWR<SurveyQuestion[]>(
+    classId ? `/api/survey/${classId}` : null,
+    surveyFetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      dedupingInterval: 5000,
+      onSuccess: (data: SurveyQuestion[]) => {
+        if (data?.length) setSurveyQuestions(data);
+      }
+    }
+  );
+
+  // Use SWR for survey responses (cached and fast)
+  const { data: surveyResponses = [], isLoading: loadingResponses, mutate: mutateResponses } = useSWR<SurveyResponse[]>(
+    classId ? `/api/survey/response/${classId}` : null,
+    surveyResponsesFetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: true,
+      dedupingInterval: 5000,
+    }
+  );
+
+  // Use SWR for pathways (cached and fast)
+  const { data: pathways = [], isLoading: loadingPathways, mutate: mutatePathways } = useSWR<PathwayData[]>(
+    classId ? `/api/pathway/professor/${classId}` : null,
+    pathwaysFetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      dedupingInterval: 5000,
+    }
+  );
+
+  // Refresh pathways after updates (uses SWR mutate)
+  const refreshPathways = useCallback(async () => {
+    await mutatePathways();
+  }, [mutatePathways]);
 
   const handleSaveSurvey = async () => {
     const res = await fetch("/api/survey/save", {
@@ -121,6 +130,9 @@ export function SurveyLearningPath({ classId }: { classId: string }) {
       })
       setIsSaveConfirmOpen(false)
       setIsSurveyBuilderOpen(false)
+      // Revalidate survey and responses after saving
+      await mutateSurvey()
+      await mutateResponses()
     } else {
       toast("Error", {
         description: "Failed to save survey. Try again."
@@ -246,7 +258,7 @@ export function SurveyLearningPath({ classId }: { classId: string }) {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {surveyResponses.map((response) => (
+                    {surveyResponses.map((response: SurveyResponse) => (
                       <TableRow key={response.studentId}>
                         <TableCell className="font-medium">{response.name}</TableCell>
                         <TableCell className="hidden md:table-cell">
@@ -334,7 +346,7 @@ export function SurveyLearningPath({ classId }: { classId: string }) {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  pathways.map((pathway) => (
+                  pathways.map((pathway: PathwayData) => (
                     <TableRow key={pathway.id}>
                       <TableCell className="font-medium">{pathway.studentName}</TableCell>
                       <TableCell className="hidden md:table-cell">

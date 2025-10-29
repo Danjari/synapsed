@@ -1,6 +1,7 @@
 "use client"
 
-import { useEffect, useState, useCallback } from "react"
+import { useState } from "react"
+import useSWR from "swr"
 import { Copy, Edit, MoreHorizontal, Plus, Sparkles, Trash } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -46,8 +47,6 @@ type Question = {
 }
 
 export function NewSurveyManagement({ classId }: { classId: string }) {
-  const [surveys, setSurveys] = useState<Survey[]>([])
-  const [loadingSurveys, setLoadingSurveys] = useState(true)
   const [selectedSurvey, setSelectedSurvey] = useState<Survey | null>(null)
   const [isEditorOpen, setIsEditorOpen] = useState(false)
   const [isAIDialogOpen, setIsAIDialogOpen] = useState(false)
@@ -55,30 +54,24 @@ export function NewSurveyManagement({ classId }: { classId: string }) {
   const [aiSubject, setAiSubject] = useState("")
   const [isGeneratingAI, setIsGeneratingAI] = useState(false)
 
-  // Fetch surveys
-  const fetchSurveys = useCallback(async () => {
-    try {
-      setLoadingSurveys(true)
-      const response = await fetch(`/api/surveys?classId=${classId}`)
-      if (response.ok) {
-        const data = await response.json()
-        setSurveys(data.surveys || [])
-      } else {
-        console.error('Failed to fetch surveys')
-      }
-    } catch (error) {
-      console.error('Error fetching surveys:', error)
-      toast("Error", {
-        description: "Failed to load surveys"
-      })
-    } finally {
-      setLoadingSurveys(false)
-    }
-  }, [classId])
+  // Fetcher for surveys
+  const surveysFetcher = async (url: string) => {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Failed to fetch surveys');
+    const data = await response.json();
+    return data.surveys || [];
+  };
 
-  useEffect(() => {
-    fetchSurveys()
-  }, [fetchSurveys])
+  // Use SWR for surveys (cached and fast)
+  const { data: surveys = [], isLoading: loadingSurveys, mutate: mutateSurveys } = useSWR<Survey[]>(
+    classId ? `/api/surveys?classId=${classId}` : null,
+    surveysFetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: true,
+      dedupingInterval: 5000,
+    }
+  );
 
   const handleCreateNew = () => {
     // Create a blank survey to edit
@@ -125,7 +118,7 @@ export function NewSurveyManagement({ classId }: { classId: string }) {
         // Open the generated survey in editor
         setSelectedSurvey(data.survey)
         setIsEditorOpen(true)
-        fetchSurveys()
+        mutateSurveys()
       } else {
         throw new Error('Failed to generate survey')
       }
@@ -152,7 +145,7 @@ export function NewSurveyManagement({ classId }: { classId: string }) {
         })
         setSelectedSurvey(data.survey)
         setIsEditorOpen(true)
-        fetchSurveys()
+        mutateSurveys()
       } else {
         throw new Error('Failed to duplicate survey')
       }
@@ -190,7 +183,7 @@ export function NewSurveyManagement({ classId }: { classId: string }) {
             ? "Previous active survey was archived. Students can now access this survey."
             : "Students can now access this survey"
         })
-        fetchSurveys()
+        mutateSurveys()
       } else if (response.status === 409) {
         // Conflict - another survey is active
         const data = await response.json()
@@ -228,7 +221,7 @@ export function NewSurveyManagement({ classId }: { classId: string }) {
         toast("Survey archived", {
           description: "Survey has been moved to archives"
         })
-        fetchSurveys()
+        mutateSurveys()
       } else {
         throw new Error('Failed to archive survey')
       }
@@ -261,7 +254,7 @@ export function NewSurveyManagement({ classId }: { classId: string }) {
         toast("Survey deleted", {
           description: "Survey has been permanently deleted"
         })
-        fetchSurveys()
+        mutateSurveys()
       } else {
         throw new Error('Failed to delete survey')
       }
@@ -477,11 +470,11 @@ export function NewSurveyManagement({ classId }: { classId: string }) {
           onClose={() => {
             setIsEditorOpen(false)
             setSelectedSurvey(null)
-            fetchSurveys()
+            mutateSurveys()
           }}
           survey={selectedSurvey}
           onSave={() => {
-            fetchSurveys()
+            mutateSurveys()
           }}
         />
       )}

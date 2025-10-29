@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import useSWR from "swr";
 import { File, MoreHorizontal, BookOpen, GraduationCap, FileText } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -25,8 +26,6 @@ interface Material {
 }
 
 export function ContentView({ classId }: { classId: string }) {
-  const [materials, setMaterials] = useState<Material[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
   const [, setFileToRename] = useState<Material | null>(null);
@@ -34,19 +33,23 @@ export function ContentView({ classId }: { classId: string }) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [fileToDelete, setFileToDelete] = useState<Material | null>(null);
 
-  useEffect(() => {
-    const fetchMaterials = async () => {
-      setLoading(true);
-      try {
-        const res = await fetch(`/api/class/${classId}/materials`);
-        const data = await res.json();
-        setMaterials(data);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchMaterials();
-  }, [classId]);
+  // Fetcher for materials
+  const materialsFetcher = async (url: string) => {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Failed to fetch materials');
+    return res.json();
+  };
+
+  // Use SWR for materials (cached and fast)
+  const { data: materials = [], isLoading: loading } = useSWR<Material[]>(
+    classId ? `/api/class/${classId}/materials` : null,
+    materialsFetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: true,
+      dedupingInterval: 5000,
+    }
+  );
 
   const filteredFiles = materials.filter((file) =>
     file.title.toLowerCase().includes(searchQuery.toLowerCase())
