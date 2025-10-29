@@ -179,7 +179,10 @@ Bayesian Statistics Low High High
 
   // Get all student survey responses for this class
   const responses = await prisma.studentSurveyResponse.findMany({ where: { classId } });
-  const survey = await prisma.survey.findUnique({ where: { classId } });
+  const survey = await prisma.survey.findFirst({ 
+    where: { classId, status: 'ACTIVE' },
+    orderBy: { createdAt: 'desc' }
+  });
   const questions = Array.isArray(survey?.questions) ? survey.questions : [];
 
   for (const response of responses) {
