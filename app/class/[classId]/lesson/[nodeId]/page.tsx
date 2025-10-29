@@ -205,6 +205,7 @@ export default function LessonPage() {
                     classId={classId}
                     lessonId={nodeId}
                     initialChatWidth={50}
+                    nodeTitle={nodeTitle}
                   />
                 </div>
               </div>

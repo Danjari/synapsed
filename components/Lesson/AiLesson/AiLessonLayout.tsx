@@ -11,12 +11,14 @@ interface AiLessonLayoutProps {
   classId?: string
   lessonId?: string
   initialChatWidth?: number
+  nodeTitle?: string
 }
 
 export default function AiLessonLayout({ 
   classId, 
   lessonId, 
-  initialChatWidth = 50 
+  initialChatWidth = 50,
+  nodeTitle
 }: AiLessonLayoutProps) {
   const [chatWidth, setChatWidth] = useState(initialChatWidth)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -71,6 +73,7 @@ export default function AiLessonLayout({
                 onAddToNotes={handleAddToNotes}
                 classId={classId}
                 lessonId={lessonId}
+                nodeTitle={nodeTitle}
               />
             </div>
           </div>

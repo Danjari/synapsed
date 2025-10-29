@@ -2,8 +2,9 @@
 
 import type React from "react"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useCallback } from "react"
 import { useSession } from "next-auth/react"
+import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Send, Plus } from "lucide-react"
@@ -11,6 +12,7 @@ import ReactMarkdown from "react-markdown"
 import remarkMath from "remark-math"
 import rehypeKatex from "rehype-katex"
 import "katex/dist/katex.min.css"
+import { getSocraticIntroductionPrompt, isSystemIntroductionMessage } from "@/lib/agent/prompts"
 
 // Custom styles for math rendering
 const mathStyles = `
@@ -37,6 +39,7 @@ interface ChatSectionProps {
   classId?: string
   lessonId?: string
   userId?: string
+  nodeTitle?: string
 }
 
 function formatRelativeTime(date: Date): string {
@@ -78,18 +81,28 @@ const convertMathToLatex = (content: string): string => {
     .replace(/∞/g, '$\\infty$')
 }
 
-export default function ChatPage({ onAddToNotes, classId, lessonId, userId: propUserId }: ChatSectionProps = {}) {
+export default function ChatPage({ onAddToNotes, classId, lessonId, userId: propUserId, nodeTitle: propNodeTitle }: ChatSectionProps = {}) {
   const { data: session } = useSession()
+  const searchParams = useSearchParams()
   const userId = propUserId || (session?.user as { id?: string })?.id
+  const studentName = (session?.user as { name?: string })?.name || "there"
+  const nodeTitle = propNodeTitle || searchParams.get('nodeTitle') || ''
   
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState("")
   const [isTyping, setIsTyping] = useState(false)
   const [threadId, setThreadId] = useState<string | null>(null)
   const [isLoadingConversation, setIsLoadingConversation] = useState(true)
+  const [hasTriggeredIntroduction, setHasTriggeredIntroduction] = useState(false)
   // Removed isChatMode since we're always in chat mode
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const messagesRef = useRef<Message[]>([])
+  
+  // Keep ref in sync with messages state
+  useEffect(() => {
+    messagesRef.current = messages
+  }, [messages])
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
@@ -137,18 +150,26 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
           // Set threadId for agent memory continuity
           setThreadId(data.conversation.threadId)
           
-          // Load messages into state
-          const loadedMessages: Message[] = data.conversation.messages.map((msg: {
-            id: string
-            content: string
-            role: 'USER' | 'ASSISTANT'
-            timestamp: string
-          }) => ({
-            id: msg.id,
-            content: msg.content,
-            role: msg.role.toLowerCase() as 'user' | 'assistant',
-            timestamp: new Date(msg.timestamp),
-          }))
+          // Load messages into state, filtering out system introduction messages
+          const loadedMessages: Message[] = data.conversation.messages
+            .map((msg: {
+              id: string
+              content: string
+              role: 'USER' | 'ASSISTANT'
+              timestamp: string
+            }) => ({
+              id: msg.id,
+              content: msg.content,
+              role: msg.role.toLowerCase() as 'user' | 'assistant',
+              timestamp: new Date(msg.timestamp),
+            }))
+            .filter((msg: Message) => {
+              // Filter out user messages that are system introduction prompts
+              if (msg.role === 'user' && isSystemIntroductionMessage(msg.content)) {
+                return false
+              }
+              return true
+            })
           
           setMessages(loadedMessages)
         }
@@ -167,19 +188,92 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
 
   // Removed startChat function since we're going straight to chat
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!input.trim() || isTyping) return
+  // Helper function to send a system message that won't be displayed in UI
+  // Used for auto-introductions to make it look like the AI initiated the conversation
+  const sendSystemMessage = useCallback(async (messageContent: string) => {
+    if (isTyping) return
+
+    setIsTyping(true)
+
+    // Reset textarea height
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto"
+    }
+
+    try {
+      // Prepare messages array with the system message (but don't add to UI)
+      const currentMessages = messagesRef.current
+      const systemUserMessage = {
+        role: "user" as const,
+        content: messageContent
+      }
+
+      const response = await fetch('/api/agent-chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: [
+            ...currentMessages.map(msg => ({
+              role: msg.role,
+              content: msg.content
+            })),
+            systemUserMessage
+          ],
+          threadId, // Use existing threadId if available
+          classId,
+          lessonId,
+          userId
+        }),
+      })
+      
+      if (!response.ok) {
+        throw new Error('Failed to get response')
+      }
+      
+      const data = await response.json()
+      
+      // Update threadId if returned from API (for new conversations)
+      if (data.threadId && data.threadId !== threadId) {
+        setThreadId(data.threadId)
+      }
+      
+      // Only add the assistant response to the UI (system message stays hidden)
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        content: convertMathToLatex(cleanAIResponse(data.response)),
+        role: "assistant",
+        timestamp: new Date(),
+      }
+      setMessages((prev) => [...prev, assistantMessage])
+    } catch {
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        content: 'Sorry, I encountered an error. Please try again.',
+        role: "assistant",
+        timestamp: new Date(),
+      }
+      setMessages((prev) => [...prev, errorMessage])
+    } finally {
+      setIsTyping(false)
+    }
+  }, [threadId, classId, lessonId, userId, isTyping])
+
+  // Helper function to send a message (used for user-initiated messages)
+  const sendMessage = useCallback(async (messageContent: string) => {
+    if (isTyping) return
 
     const userMessage: Message = {
       id: Date.now().toString(),
-      content: input.trim(),
+      content: messageContent,
       role: "user",
       timestamp: new Date(),
     }
 
-    setMessages((prev) => [...prev, userMessage])
-    setInput("")
+    // Add user message to state optimistically
+    const updatedMessages = [...messagesRef.current, userMessage]
+    setMessages(updatedMessages)
     setIsTyping(true)
 
     // Reset textarea height
@@ -194,25 +288,21 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          messages: [
-            ...messages.map(msg => ({
-              role: msg.role,
-              content: msg.content
-            })),
-            {
-              role: "user",
-              content: `${userMessage.content}`
-            }
-          ],
+          messages: updatedMessages.map(msg => ({
+            role: msg.role,
+            content: msg.content
+          })),
           threadId, // Use existing threadId if available
           classId,
           lessonId,
           userId
         }),
       })
+      
       if (!response.ok) {
         throw new Error('Failed to get response')
       }
+      
       const data = await response.json()
       
       // Update threadId if returned from API (for new conversations)
@@ -238,6 +328,38 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
     } finally {
       setIsTyping(false)
     }
+  }, [threadId, classId, lessonId, userId, isTyping])
+
+  // Auto-trigger Socratic introduction when conversation is empty (first time clicking a node)
+  useEffect(() => {
+    if (
+      !isLoadingConversation &&
+      messages.length === 0 &&
+      !hasTriggeredIntroduction &&
+      nodeTitle &&
+      userId &&
+      classId &&
+      lessonId
+    ) {
+      setHasTriggeredIntroduction(true)
+      
+      // Get Socratic introduction prompt from centralized prompts file
+      const introPrompt = getSocraticIntroductionPrompt(nodeTitle, studentName)
+
+      // Automatically send the introduction as a system message (hidden from UI)
+      sendSystemMessage(introPrompt)
+    }
+  }, [isLoadingConversation, messages.length, hasTriggeredIntroduction, nodeTitle, userId, classId, lessonId, studentName, sendSystemMessage])
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!input.trim() || isTyping) return
+
+    const messageContent = input.trim()
+    if (!messageContent) return
+    
+    setInput("")
+    await sendMessage(messageContent)
   }
 
   // Removed handleSuggestedPrompt since we're going straight to chat
