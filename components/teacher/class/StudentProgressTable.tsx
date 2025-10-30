@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
 import { Eye, MoreHorizontal, CheckCircle2, XCircle, RefreshCw } from "lucide-react"
 import useSWR from "swr"
 import { Button } from "@/components/ui/button"
@@ -83,12 +83,6 @@ export function StudentProgressTable({ classId, surveys }: StudentProgressTableP
         }
       }
       
-      console.log('🔍 Survey responses fetched:', {
-        activeSurveysCount: activeSurveys.length,
-        totalResponses: allResponses.length,
-        sampleResponse: allResponses[0],
-        activeSurveyIds: activeSurveys.map(s => s.id)
-      })
 
       // Build student progress data
       const studentProgress: StudentProgress[] = enrolledStudents.map((enrollment: {
@@ -108,14 +102,6 @@ export function StudentProgressTable({ classId, surveys }: StudentProgressTableP
               )[0] 
           : null
           
-        // Debug logging for individual students
-        if (studentResponses.length > 0) {
-          console.log(`📊 Student ${student.name} (${student.id}):`, {
-            responsesCount: studentResponses.length,
-            latestResponse: latestResponse,
-            surveyStatus: latestResponse ? 'completed' : 'not_started'
-          })
-        }
         const latestPathway = studentPathways.length > 0 ? studentPathways[0] : null
 
         return {
@@ -133,7 +119,6 @@ export function StudentProgressTable({ classId, surveys }: StudentProgressTableP
 
       return studentProgress
     } catch (error) {
-      console.error('Error fetching student progress:', error)
       throw error
     }
   }
@@ -143,11 +128,30 @@ export function StudentProgressTable({ classId, surveys }: StudentProgressTableP
     classId ? `student-progress-${classId}` : null,
     studentProgressFetcher,
     {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true,
       dedupingInterval: 5000,
     }
   )
+
+  // Ensure data is fetched when component mounts and surveys change
+  useEffect(() => {
+    if (classId && surveys.length > 0) {
+      mutateStudents()
+    }
+  }, [classId, surveys, mutateStudents])
+
+  // Cleanup dialog states when component unmounts
+  useEffect(() => {
+    return () => {
+      setIsSurveyViewOpen(false)
+      setIsPathwayViewOpen(false)
+      setIsGenerateDialogOpen(false)
+      setSelectedStudentResponse(null)
+      setSelectedPathway(null)
+    }
+  }, [])
+
 
   // Manual refresh function
   const refreshStudentProgress = useCallback(async () => {
@@ -156,8 +160,7 @@ export function StudentProgressTable({ classId, surveys }: StudentProgressTableP
       toast("Refreshed", {
         description: "Student progress data has been updated"
       })
-    } catch (error) {
-      console.error('Error refreshing student progress:', error)
+    } catch {
       toast("Error", {
         description: "Failed to refresh student progress"
       })
@@ -251,8 +254,7 @@ export function StudentProgressTable({ classId, surveys }: StudentProgressTableP
       setIsGenerateDialogOpen(false)
       setSelectedStudents(new Set())
       await mutateStudents()
-    } catch (error) {
-      console.error('Error generating learning paths:', error)
+    } catch {
       toast("Error", {
         description: "Failed to generate learning paths"
       })
@@ -546,7 +548,6 @@ export function StudentProgressTable({ classId, surveys }: StudentProgressTableP
 
       {/* Pathway Preview Dialog */}
       <ProfessorPathwayPreviewDialog
-        key={selectedPathway?.id || 'dialog'}
         open={isPathwayViewOpen}
         onClose={() => setIsPathwayViewOpen(false)}
         pathway={selectedPathway}
