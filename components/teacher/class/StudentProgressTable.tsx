@@ -1,12 +1,12 @@
 "use client"
 
 import { useState, useCallback, useEffect } from "react"
-import { Eye, MoreHorizontal, CheckCircle2, XCircle, RefreshCw } from "lucide-react"
+import { Eye, CheckCircle2, XCircle, RefreshCw } from "lucide-react"
 import useSWR from "swr"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -367,7 +367,7 @@ export function StudentProgressTable({ classId, surveys }: StudentProgressTableP
                   <TableHead>Student</TableHead>
                   <TableHead>Survey Status</TableHead>
                   <TableHead>Path Status</TableHead>
-                  <TableHead className="w-[80px]"></TableHead>
+                  <TableHead className="w-[220px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -402,78 +402,116 @@ export function StudentProgressTable({ classId, surveys }: StudentProgressTableP
                       <TableCell>{getStatusBadge(student.surveyStatus)}</TableCell>
                       <TableCell>{getStatusBadge(student.pathStatus)}</TableCell>
                       <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            {student.surveyResponse && (
-                              <DropdownMenuItem
-                                onClick={() => {
-                                  // Close any other open dialogs first
-                                  setIsGenerateDialogOpen(false)
-                                  setIsPathwayViewOpen(false)
-                                  
-                                  setSelectedStudentResponse(student)
-                                  setIsSurveyViewOpen(true)
-                                }}
-                              >
-                                <Eye className="mr-2 h-4 w-4" />
-                                View Survey
-                              </DropdownMenuItem>
-                            )}
-                            {student.pathway && (
-                              <>
-                                <DropdownMenuItem
+                        <TooltipProvider>
+                          <div className="flex items-center gap-2">
+                            {/* View Survey */}
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  aria-label="View Survey"
+                                  disabled={!student.surveyResponse}
                                   onClick={() => {
-                                    // Close any other open dialogs first
+                                    setIsGenerateDialogOpen(false)
+                                    setIsPathwayViewOpen(false)
+                                    setSelectedStudentResponse(student)
+                                    setIsSurveyViewOpen(true)
+                                  }}
+                                >
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>View Survey</p>
+                              </TooltipContent>
+                            </Tooltip>
+
+                            {/* View Pathway */}
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  aria-label="View Pathway"
+                                  disabled={!student.pathway}
+                                  onClick={() => {
                                     setIsGenerateDialogOpen(false)
                                     setIsSurveyViewOpen(false)
-                                    
                                     setSelectedPathway(student.pathway || null)
                                     setIsPathwayViewOpen(true)
                                   }}
                                 >
-                                  <Eye className="mr-2 h-4 w-4" />
-                                  View Pathway
-                                </DropdownMenuItem>
-                                {student.pathStatus === 'pending' && (
-                                  <>
-                                    <DropdownMenuItem
-                                      onClick={() => student.pathway && handleApprovePathway(student.pathway)}
-                                    >
-                                      <CheckCircle2 className="mr-2 h-4 w-4" />
-                                      Approve
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                      onClick={() => student.pathway && handleRejectPathway(student.pathway)}
-                                    >
-                                      <XCircle className="mr-2 h-4 w-4" />
-                                      Reject
-                                    </DropdownMenuItem>
-                                  </>
-                                )}
-                              </>
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>View Pathway</p>
+                              </TooltipContent>
+                            </Tooltip>
+
+                            {/* Approve (pending only) */}
+                            {student.pathStatus === 'pending' && student.pathway && (
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    aria-label="Approve Pathway"
+                                    onClick={() => handleApprovePathway(student.pathway!)}
+                                  >
+                                    <CheckCircle2 className="h-4 w-4" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Approve</p>
+                                </TooltipContent>
+                              </Tooltip>
                             )}
-                            {student.surveyResponse && (
-                              <DropdownMenuItem
-                                onClick={() => {
-                                  // Close any other open dialogs first
-                                  setIsSurveyViewOpen(false)
-                                  setIsPathwayViewOpen(false)
-                                  
-                                  setSelectedStudents(new Set([student.studentId]))
-                                  handleGeneratePaths()
-                                }}
-                              >
-                                <RefreshCw className="mr-2 h-4 w-4" />
-                                {student.pathway ? 'Regenerate Path' : 'Generate Path'}
-                              </DropdownMenuItem>
+
+                            {/* Reject (pending only) */}
+                            {student.pathStatus === 'pending' && student.pathway && (
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    aria-label="Reject Pathway"
+                                    onClick={() => handleRejectPathway(student.pathway!)}
+                                  >
+                                    <XCircle className="h-4 w-4" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Reject</p>
+                                </TooltipContent>
+                              </Tooltip>
                             )}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+
+                            {/* Generate/Regenerate Path */}
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  aria-label={student.pathway ? 'Regenerate Path' : 'Generate Path'}
+                                  disabled={!student.surveyResponse}
+                                  onClick={() => {
+                                    setIsSurveyViewOpen(false)
+                                    setIsPathwayViewOpen(false)
+                                    setSelectedStudents(new Set([student.studentId]))
+                                    handleGeneratePaths()
+                                  }}
+                                >
+                                  <RefreshCw className="h-4 w-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>{student.pathway ? 'Regenerate Path' : 'Generate Path'}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </div>
+                        </TooltipProvider>
                       </TableCell>
                     </TableRow>
                   ))
