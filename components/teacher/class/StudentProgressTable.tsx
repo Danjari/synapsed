@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useCallback, useEffect } from "react"
-import { Eye, CheckCircle2, XCircle, RefreshCw } from "lucide-react"
+import { CheckCircle2, XCircle, RefreshCw, ClipboardList, GitFork } from "lucide-react"
 import useSWR from "swr"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -419,7 +419,7 @@ export function StudentProgressTable({ classId, surveys }: StudentProgressTableP
                                     setIsSurveyViewOpen(true)
                                   }}
                                 >
-                                  <Eye className="h-4 w-4" />
+                                  <ClipboardList className="h-4 w-4" />
                                 </Button>
                               </TooltipTrigger>
                               <TooltipContent>
@@ -442,7 +442,7 @@ export function StudentProgressTable({ classId, surveys }: StudentProgressTableP
                                     setIsPathwayViewOpen(true)
                                   }}
                                 >
-                                  <Eye className="h-4 w-4" />
+                                  <GitFork className="h-4 w-4" />
                                 </Button>
                               </TooltipTrigger>
                               <TooltipContent>
