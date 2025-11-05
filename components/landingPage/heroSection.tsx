@@ -1,178 +1,72 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { useEffect, useRef } from "react"
 
+import { motion } from "framer-motion"
+import { Sparkles, ArrowRight } from "lucide-react"
+import { SynapseBackground } from "@/components/landingPage/background"
 export function HeroSection() {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-
-    const ctx = canvas.getContext("2d")
-    if (!ctx) return
-
-    // Set canvas dimensions to match window size
-    const resizeCanvas = () => {
-      canvas.width = window.innerWidth
-      canvas.height = window.innerHeight
-    }
-
-    resizeCanvas()
-    window.addEventListener("resize", resizeCanvas)
-
-    // Branch node class
-    class Node {
-      x: number
-      y: number
-      radius: number
-      vx: number
-      vy: number
-      connections: Node[]
-      targetX: number
-      targetY: number
-      color: string
-
-      constructor(x: number, y: number, radius: number) {
-        this.x = x
-        this.y = y
-        this.radius = radius
-        this.vx = (Math.random() - 0.5) * 0.02 // Reduced from 0.05
-        this.vy = (Math.random() - 0.5) * 0.02 // Reduced from 0.05
-        this.connections = []
-        this.targetX = x + (Math.random() - 0.5) * 100
-        this.targetY = y + (Math.random() - 0.5) * 100
-        this.color = `rgba(120, 80, 160, ${Math.random() * 0.5 + 0.2})`
-      }
-
-      update() {
-        // Move towards target with reduced speed
-        const dx = this.targetX - this.x
-        const dy = this.targetY - this.y
-        this.x += dx * 0.003 // Reduced from 0.008
-        this.y += dy * 0.0005 // Reduced from 0.001
-
-        // Add slight random movement with occasional direction changes
-        if (Math.random() < 0.01) {
-          this.vx = (Math.random() - 0.5) * 0.02
-          this.vy = (Math.random() - 0.5) * 0.02
-        }
-
-        this.x += this.vx
-        this.y += this.vy
-
-        // Bounce off edges
-        if (this.x < this.radius || this.x > canvas!.width - this.radius) {
-          this.vx *= -1
-          this.targetX = Math.random() * canvas!.width
-        }
-        if (this.y < this.radius || this.y > canvas!.height - this.radius) {
-          this.vy *= -1
-          this.targetY = Math.random() * canvas!.height
-        }
-
-        // Increase randomness by changing target more frequently
-        if (Math.random() < 0.002) {
-          // Changed from 0.005
-          this.targetX = Math.random() * canvas!.width
-          this.targetY = Math.random() * canvas!.height
-        }
-      }
-
-      draw() {
-        if (!ctx) return
-        ctx.beginPath()
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
-        ctx.fillStyle = this.color
-        ctx.fill()
-      }
-
-      connect(node: Node) {
-        if (!this.connections.includes(node)) {
-          this.connections.push(node)
-        }
-      }
-
-      drawConnections() {
-        if (!ctx) return
-        this.connections.forEach((node) => {
-          const distance = Math.sqrt(Math.pow(this.x - node.x, 2) + Math.pow(this.y - node.y, 2))
-
-          // Only draw connections within a certain distance
-          if (distance < 150) {
-            ctx.beginPath()
-            ctx.moveTo(this.x, this.y)
-            ctx.lineTo(node.x, node.y)
-            const opacity = 1 - distance / 150
-            ctx.strokeStyle = `rgba(120, 80, 160, ${opacity * 0.2})`
-            ctx.lineWidth = 1
-            ctx.stroke()
-          }
-        })
-      }
-    }
-
-    // Create nodes
-    const nodeCount = Math.floor((window.innerWidth * window.innerHeight) / 15000)
-    const nodes: Node[] = []
-
-    for (let i = 0; i < nodeCount; i++) {
-      const x = Math.random() * canvas.width
-      const y = Math.random() * canvas.height
-      const radius = Math.random() * 2 + 1
-      nodes.push(new Node(x, y, radius))
-    }
-
-    // Connect nodes
-    nodes.forEach((node) => {
-      nodes.forEach((otherNode) => {
-        if (node !== otherNode) {
-          node.connect(otherNode)
-        }
-      })
-    })
-
-    // Animation loop
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-      // Update and draw nodes
-      nodes.forEach((node) => {
-        node.update()
-        node.draw()
-        node.drawConnections()
-      })
-
-      requestAnimationFrame(animate)
-    }
-
-    animate()
-
-    return () => {
-      window.removeEventListener("resize", resizeCanvas)
-    }
-  }, [])
 
   return (
-    <section className="relative w-full h-screen flex items-center justify-center overflow-hidden">
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full -z-10" />
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background opacity-30" />
+    <section className="relative min-h-screen flex items-start justify-center overflow-hidden pt-20 mt-20 md:pt-24">
+      {/* Canvas background - keeping as is */}
+      
+      <SynapseBackground />
+      {/* Static background elements */}
+      <div className="absolute inset-0 overflow-hidden" style={{ zIndex: 2 }}>
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/10 dark:bg-emerald-400/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute top-1/3 right-1/4 w-80 h-80 bg-teal-500/10 dark:bg-teal-400/10 rounded-full blur-3xl animate-pulse [animation-delay:1000ms]" />
+        <div className="absolute bottom-1/4 left-1/3 w-72 h-72 bg-emerald-600/10 dark:bg-emerald-500/10 rounded-full blur-3xl animate-pulse [animation-delay:2000ms]" />
+      </div>
 
-      <div className="container px-4 md:px-6 flex flex-col items-center text-center z-10 max-w-4xl">
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tighter mb-6 animate-fade-up">
-          Personalized Learning. Made Simple.
-        </h1>
-        <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-[800px] animate-fade-up animation-delay-100">
-          Empowering every learner with AI-generated pathways tailored to how they learn best.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4 animate-fade-up animation-delay-200">
-          <Button size="lg" className="bg-purple-600 hover:bg-purple-700">
-            <a href="/waitlist-page">Request a Demo</a>
-          </Button>
-          <Button size="lg" variant="outline" asChild>
-            <a href="/waitlist-page">Join the Waitlist</a>
-          </Button>
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style={{ zIndex: 3 }}>
+        <div className="text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="inline-flex items-center px-4 py-2 rounded-full bg-emerald-100/80 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 text-sm mb-6 md:mb-8 backdrop-blur-sm border border-emerald-200/50 dark:border-emerald-800/50"
+          >
+            <Sparkles className="w-4 h-4 mr-2" />
+            Building the future of education
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="relative z-10 space-y-4 md:space-y-5 lg:space-y-6 mb-6 md:mb-7 lg:mb-9 max-w-md md:max-w-[500px] lg:max-w-[588px] mt-4 md:mt-6 lg:mt-8 px-4 mx-auto"
+          >
+            <h1 className="text-foreground text-3xl md:text-4xl lg:text-6xl font-semibold leading-tight">
+              Enabling Targeted Teaching at scale{" "}
+              <span className="bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-400 bg-clip-text text-transparent">
+                with AI
+              </span>
+            </h1>
+            <p className="text-muted-foreground text-base md:text-base lg:text-lg leading-relaxed max-w-lg mx-auto">
+              SynapsEd delivers personalized learning pathways that adapt to each student&apos;s unique needs, learning style, and progress.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="flex justify-center gap-4 mb-12 md:mb-16"
+          >
+            <a href="/student/dashboard">
+              <Button className="relative z-10 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-8 py-3 rounded-full font-medium text-base shadow-lg ring-1 ring-white/10 transition-all duration-300 group">
+                Student
+                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </a>
+            <a href="/teacher/dashboard">
+              <Button variant="outline" className="relative z-10 border-2 border-emerald-600 text-emerald-700 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 px-8 py-3 rounded-full font-medium text-base transition-all duration-300">
+                Educator
+                <ArrowRight className="ml-2 h-4 w-4 transition-transform" />
+              </Button>
+            </a>
+          </motion.div>
         </div>
       </div>
     </section>
