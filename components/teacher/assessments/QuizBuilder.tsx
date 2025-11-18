@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { QuizNavigation } from './QuizNavigation';
 import { QuestionEditor } from './QuestionEditor';
 import { OCRImportModal } from './OCRImportModal';
@@ -23,24 +23,22 @@ export function QuizBuilder({
   onBack 
 }: QuizBuilderProps) {
   const [quizName, setQuizName] = useState('Untitled Quiz');
-  
-  // TODO: Use classId when saving/loading quiz
   const [questions, setQuestions] = useState<Question[]>([]);
   const [selectedQuestionId, setSelectedQuestionId] = useState<string>('');
+  const [showOCRModal, setShowOCRModal] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>('saved');
   
   // Update selected question when questions change
   useEffect(() => {
     if (questions.length > 0) {
-      // If no question is selected or selected question doesn't exist, select the first one
       if (!selectedQuestionId || !questions.find(q => q.id === selectedQuestionId)) {
         setSelectedQuestionId(questions[0].id);
       }
     } else {
       setSelectedQuestionId('');
     }
-  }, [questions, selectedQuestionId]);
-  const [showOCRModal, setShowOCRModal] = useState(false);
-  const [saveStatus, setSaveStatus] = useState<SaveStatus>('saved');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [questions]);
 
   // Load quiz data if quizId is provided
   useEffect(() => {
@@ -57,21 +55,14 @@ export function QuizBuilder({
   };
 
   const handleAddQuestion = () => {
+    const timestamp = Date.now();
     const newQuestion: Question = {
-      id: Date.now().toString(),
+      id: timestamp.toString(),
       text: 'New Question',
       type: 'multiple-choice',
       options: [
-        {
-          id: `${Date.now()}-1`,
-          text: 'Option 1',
-          isCorrect: false,
-        },
-        {
-          id: `${Date.now()}-2`,
-          text: 'Option 2',
-          isCorrect: false,
-        },
+        { id: `${timestamp}-1`, text: 'Option 1', isCorrect: false },
+        { id: `${timestamp}-2`, text: 'Option 2', isCorrect: false },
       ],
       order: questions.length + 1,
     };
@@ -109,19 +100,11 @@ export function QuizBuilder({
         toast.error('All questions must have text');
         return;
       }
-
-      if (
-        (q.type === 'multiple-choice' || q.type === 'true-false') &&
-        q.options.length < 2
-      ) {
+      if ((q.type === 'multiple-choice' || q.type === 'true-false') && q.options.length < 2) {
         toast.error(`Question "${q.text}" needs at least 2 options`);
         return;
       }
-
-      if (
-        (q.type === 'multiple-choice' || q.type === 'true-false') &&
-        !q.options.some((opt) => opt.isCorrect)
-      ) {
+      if ((q.type === 'multiple-choice' || q.type === 'true-false') && !q.options.some((opt) => opt.isCorrect)) {
         toast.error(`Question "${q.text}" needs at least one correct answer`);
         return;
       }
@@ -129,7 +112,6 @@ export function QuizBuilder({
 
     setSaveStatus('saving');
     // TODO: Save to API
-    // Simulate API call
     setTimeout(() => {
       setSaveStatus('saved');
       toast.success('Quiz saved successfully');
@@ -138,10 +120,10 @@ export function QuizBuilder({
 
   const handlePublish = async () => {
     await handleSave();
-    if (saveStatus === 'saved') {
-      // TODO: Publish quiz via API
+    // TODO: Publish quiz via API - check saveStatus after API call completes
+    setTimeout(() => {
       toast.success('Quiz published successfully');
-    }
+    }, 1100);
   };
 
   const handlePreview = () => {
@@ -154,7 +136,10 @@ export function QuizBuilder({
     }
   };
 
-  const selectedQuestion = questions.find((q) => q.id === selectedQuestionId);
+  const selectedQuestion = useMemo(
+    () => questions.find((q) => q.id === selectedQuestionId),
+    [questions, selectedQuestionId]
+  );
 
   return (
     <div className="min-h-screen w-full">
@@ -254,7 +239,7 @@ export function QuizBuilder({
 
           {/* Question Editor (Right Panel) */}
           <div className="col-span-8">
-            {selectedQuestion && questions.length > 0 ? (
+            {selectedQuestion ? (
               <QuestionEditor
                 question={selectedQuestion}
                 onUpdateQuestion={handleUpdateQuestion}

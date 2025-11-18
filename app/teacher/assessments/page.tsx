@@ -1,15 +1,17 @@
 "use client";
 
-import { useRouter } from 'next/navigation';
+import { Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Sidebar from '@/components/teacher/SideBar';
 import TopNav from '@/components/teacher/TopNav';
 import { QuizDashboard } from '@/components/teacher/assessments/QuizDashboard';
 
-export default function AssessmentsPage() {
+function AssessmentsContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const classId = searchParams.get('classId') || 'default';
 
   const handleCreateQuiz = () => {
-    // Generate a new quiz ID and navigate to builder
     const newQuizId = `quiz-${Date.now()}`;
     router.push(`/teacher/assessments/${newQuizId}`);
   };
@@ -19,20 +21,25 @@ export default function AssessmentsPage() {
   };
 
   return (
+    <QuizDashboard
+      classId={classId}
+      onCreateQuiz={handleCreateQuiz}
+      onEditQuiz={handleEditQuiz}
+    />
+  );
+}
+
+export default function AssessmentsPage() {
+  return (
     <div className="min-h-screen">
       <div className="flex min-h-screen">
-        {/* Sidebar */}
         <Sidebar />
-
-        {/* Main Content */}
         <div className="flex-1 flex flex-col">
           <TopNav />
-
           <main className="flex-1">
-            <QuizDashboard
-              onCreateQuiz={handleCreateQuiz}
-              onEditQuiz={handleEditQuiz}
-            />
+            <Suspense fallback={<div className="flex items-center justify-center h-full">Loading...</div>}>
+              <AssessmentsContent />
+            </Suspense>
           </main>
         </div>
       </div>
