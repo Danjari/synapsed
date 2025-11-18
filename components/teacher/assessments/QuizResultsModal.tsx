@@ -10,7 +10,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Quiz, Student } from './types';
-import { X, Download, Search } from 'lucide-react';
+import { Download, Search } from 'lucide-react';
 
 interface QuizResultsModalProps {
   quiz: Quiz;

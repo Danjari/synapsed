@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Question, AnswerOption } from './types';
@@ -174,9 +174,11 @@ export function QuestionEditor({
           <Label className="mb-2 block">Question Image</Label>
           {question.image ? (
             <div className="relative border border-slate-300 dark:border-slate-600 rounded-md overflow-hidden">
-              <img
+              <Image
                 src={question.image}
                 alt="Question"
+                width={800}
+                height={256}
                 className="max-h-64 mx-auto"
               />
               <button

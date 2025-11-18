@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Quiz } from './types';
 import { Edit, Eye, BarChart3, Lock, Unlock } from 'lucide-react';
 

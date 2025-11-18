@@ -66,7 +66,7 @@ export function QuizNavigation({
         {questions.length === 0 ? (
           <div className="text-center py-8 text-slate-500 dark:text-slate-400">
             <p className="text-sm">No questions yet</p>
-            <p className="text-xs mt-2">Click "Add Question" to get started</p>
+            <p className="text-xs mt-2">Click &quot;Add Question&quot; to get started</p>
           </div>
         ) : (
           questions.map((question, index) => (

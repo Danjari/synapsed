@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { QuizNavigation } from './QuizNavigation';
 import { QuestionEditor } from './QuestionEditor';
 import { OCRImportModal } from './OCRImportModal';
@@ -17,8 +16,12 @@ interface QuizBuilderProps {
   onBack?: () => void;
 }
 
-export function QuizBuilder({ quizId, classId, onBack }: QuizBuilderProps) {
-  const router = useRouter();
+export function QuizBuilder({ 
+  quizId, 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  classId, 
+  onBack 
+}: QuizBuilderProps) {
   const [quizName, setQuizName] = useState('Untitled Quiz');
   
   // TODO: Use classId when saving/loading quiz

@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from 'next/navigation';
 import { QuizDashboard } from '@/components/teacher/assessments/QuizDashboard';
 import { QuizBuilder } from '@/components/teacher/assessments/QuizBuilder';
 import { useState } from 'react';
@@ -10,7 +9,6 @@ interface ClassAssessmentsManagementProps {
 }
 
 export function ClassAssessmentsManagement({ classId }: ClassAssessmentsManagementProps) {
-  const router = useRouter();
   const [currentView, setCurrentView] = useState<'dashboard' | 'builder'>('dashboard');
   const [editingQuizId, setEditingQuizId] = useState<string | null>(null);
 

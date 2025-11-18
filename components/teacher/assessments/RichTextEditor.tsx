@@ -5,7 +5,6 @@ import {
   Bold,
   Italic,
   Underline,
-  Code,
   List,
   ListOrdered,
 } from 'lucide-react';

@@ -16,6 +16,7 @@ interface QuizDashboardProps {
 }
 
 export function QuizDashboard({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   classId,
   onCreateQuiz,
   onEditQuiz,
