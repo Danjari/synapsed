@@ -11,7 +11,7 @@ function QuizBuilderContent() {
   const params = useParams();
   const searchParams = useSearchParams();
   const quizId = params.id as string;
-  const classId = searchParams.get('classId') || 'default';
+  const classId: string = searchParams.get('classId') || 'default';
 
   const handleBack = () => {
     router.push('/teacher/assessments');
