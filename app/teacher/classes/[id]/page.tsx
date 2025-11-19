@@ -5,6 +5,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { TeacherDashboard } from "@/components/teacher/class/teacherDashboard"
 import { NewSurveyManagement } from "@/components/teacher/class/NewSurveyManagement"
+import { ClassAssessmentsManagement } from "@/components/teacher/class/ClassAssessmentsManagement"
 import ClassInfoSettings from "@/components/teacher/class/ClassInfoSettings"
 
 export default function Page() {
@@ -41,12 +42,12 @@ export default function Page() {
         return <ContentManagement classId={classId} />
       case "survey-learning-path":
         return <NewSurveyManagement classId={classId} />
-      // case "quizzes-assessments":
-      //   return <QuizzesAssessments classId={classId} />
+      case "quizzes-assessments":
+        return <ClassAssessmentsManagement classId={classId} />
       // case "analytics":
       //   return <Analytics classId={classId} />
-      // default:
-      //   return <ClassInfo classId={classId} />
+      default:
+        return <ClassInfoSettings classId={classId} />
     }
   }
 
