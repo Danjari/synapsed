@@ -143,12 +143,18 @@ async function callTools(state: MessagesState) {
       }
       const result = await tool.invoke(toolCall);
       
-      // DEBUG: Log tool result
+      // DEBUG: Log tool result with detailed inspection
+      const resultKeys = result && typeof result === 'object' ? Object.keys(result) : [];
       console.log("🔧 [callTools] Tool result for", toolCall.name, ":", {
         resultType: typeof result,
         isObject: typeof result === 'object',
+        isNull: result === null,
+        isArray: Array.isArray(result),
+        keys: resultKeys,
         hasContent: result && typeof result === 'object' && 'content' in result,
         hasSources: result && typeof result === 'object' && 'sources' in result,
+        sourcesType: result && typeof result === 'object' && 'sources' in result ? typeof result.sources : 'N/A',
+        sourcesIsArray: result && typeof result === 'object' && 'sources' in result ? Array.isArray(result.sources) : false,
         resultPreview: typeof result === 'string' 
           ? result.substring(0, 200) 
           : JSON.stringify(result, null, 2).substring(0, 500)
@@ -162,15 +168,28 @@ async function callTools(state: MessagesState) {
         content = result;
         // No sources for string results
         toolSourcesMap.delete(toolCallId);
-      } else if (result && typeof result === 'object' && 'content' in result) {
+        console.log("📝 [callTools] String result, no sources");
+      } else if (result && typeof result === 'object' && result !== null && 'content' in result) {
         // Extract sources if present and store them separately
-        if ('sources' in result && Array.isArray(result.sources)) {
+        const hasSources = 'sources' in result;
+        const sourcesIsArray = hasSources && Array.isArray(result.sources);
+        
+        console.log("🔍 [callTools] Checking sources:", {
+          hasSources,
+          sourcesIsArray,
+          sourcesValue: hasSources ? result.sources : 'N/A',
+          sourcesLength: sourcesIsArray ? (result.sources as unknown[]).length : 0
+        });
+        
+        if (hasSources && sourcesIsArray) {
           const sourcesMetadata = result.sources as SourceMetadata[];
           toolSourcesMap.set(toolCallId, sourcesMetadata);
-          console.log("📚 [callTools] Extracted and stored", sourcesMetadata.length, "sources for tool_call_id:", toolCallId);
+          console.log("📚 [callTools] ✅ Extracted and stored", sourcesMetadata.length, "sources for tool_call_id:", toolCallId);
+          console.log("📚 [callTools] Sources:", JSON.stringify(sourcesMetadata.slice(0, 2), null, 2));
         } else {
           // No sources, clear any previous entry
           toolSourcesMap.delete(toolCallId);
+          console.log("⚠️ [callTools] No valid sources found, cleared map entry");
         }
         
         // Give LLM ONLY the content string - clean, natural text without JSON structure
@@ -180,11 +199,13 @@ async function callTools(state: MessagesState) {
           contentLength: content.length,
           contentPreview: content.substring(0, 100),
           sourcesStored: toolSourcesMap.has(toolCallId),
-          sourcesCount: toolSourcesMap.get(toolCallId)?.length || 0
+          sourcesCount: toolSourcesMap.get(toolCallId)?.length || 0,
+          mapSize: toolSourcesMap.size
         });
       } else {
         content = JSON.stringify(result);
         toolSourcesMap.delete(toolCallId);
+        console.log("📦 [callTools] Non-standard result format, stringified");
       }
       
       return new ToolMessage({

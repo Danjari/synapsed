@@ -474,6 +474,7 @@ model Message {
   conversationId String       @db.ObjectId
   role           MessageRole
   content        String
+  sources        Json?       // Source metadata for RAG citations
   timestamp      DateTime     @default(now())
   
   // Relations

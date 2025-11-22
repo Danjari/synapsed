@@ -69,6 +69,7 @@ export async function POST(request: NextRequest) {
         conversationId: conversation.id,
         role: 'ASSISTANT',
         content: agentResponse.content,
+        sources: agentResponse.sources,
       });
     }
 

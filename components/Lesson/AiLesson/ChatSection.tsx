@@ -156,11 +156,13 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
             content: string
             role: 'USER' | 'ASSISTANT'
             timestamp: string
+            sources?: SourceMetadata[]
           }) => ({
             id: msg.id,
             content: msg.content,
             role: msg.role.toLowerCase() as 'user' | 'assistant',
             timestamp: new Date(msg.timestamp),
+            sources: msg.sources && Array.isArray(msg.sources) ? msg.sources : undefined,
           }))
           .filter((msg: Message) => {
             // Filter out user messages that are system introduction prompts

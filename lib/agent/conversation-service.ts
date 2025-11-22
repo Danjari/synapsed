@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { MessageRole } from '@prisma/client';
+import type { SourceMetadata } from './simple-agent';
 
 interface ConversationParams {
   userId: string;
@@ -13,6 +14,7 @@ interface SaveMessageParams {
   conversationId: string;
   role: MessageRole;
   content: string;
+  sources?: SourceMetadata[];
 }
 
 /**
@@ -116,13 +118,14 @@ export class ConversationService {
    * Save a message to a conversation
    */
   static async saveMessage(params: SaveMessageParams) {
-    const { conversationId, role, content } = params;
+    const { conversationId, role, content, sources } = params;
 
     const message = await prisma.message.create({
       data: {
         conversationId,
         role,
         content,
+        sources: sources && sources.length > 0 ? sources : null,
       },
     });
 
