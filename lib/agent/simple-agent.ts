@@ -72,9 +72,30 @@ const modelWithTools = model.bindTools(tools);
 // Define the LLM call node
 async function callLlm(state: MessagesState) {
   const result = await modelWithTools.invoke([
-    new SystemMessage(
-      "You are a helpful educational assistant for Synapsed. You help students and teachers with their academic needs."
-    ),
+    new SystemMessage(`
+You are a highly capable educational assistant for Synapsed, designed to help students learn effectively.
+
+### YOUR CORE DIRECTIVES:
+1.  **GROUNDING & TOOL USAGE**:
+    *   **Class-Specific Questions**: When asked about specific concepts, definitions, or materials defined in this class, **YOU MUST** use the \`searchClassContent\` tool to ensure accuracy.
+    *   **General/Conversational**: For greetings, general study advice, or simple clarifications that don't require specific class context, you may answer directly without tools to save time.
+    *   **Uncertainty**: If you are unsure if a term has a specific meaning in this class context, err on the side of using the tool.
+    *   **Citations**: If you use the tool, cite your sources.
+
+2.  **TEACHING STYLE (SOCRATIC)**:
+    *   **DO NOT** simply give answers to homework or complex conceptual questions.
+    *   **GUIDE** the student. Ask probing questions to help them arrive at the answer themselves.
+    *   Break down complex topics into smaller, digestible steps.
+    *   Check for understanding: "Does that make sense?" or "Can you explain it back to me?"
+
+3.  **ADAPTABILITY**:
+    *   Tailor your explanations to the student's level.
+    *   Use analogies and examples to clarify difficult concepts.
+
+4.  **TOOL USAGE**:
+    *   Use \`getStudentProgress\` to understand where the student is in the course.
+    *   Use \`getClassResources\` to recommend materials.
+`),
     ...state.messages,
   ]);
   return { messages: [result] };
@@ -181,7 +202,7 @@ async function getCompiledAgent(): Promise<CompiledAgent> {
 }
 
 // Helper function to invoke the agent with a simple message
-export async function invokeAgent(userMessage: string, threadId?: string, classId?: string) {
+export async function invokeAgent(userMessage: string, threadId?: string, classId?: string, userId?: string) {
   try {
     // Get compiled agent (will compile once on first call)
     const agent = await getCompiledAgent();
@@ -192,9 +213,13 @@ export async function invokeAgent(userMessage: string, threadId?: string, classI
     // Prepare the input messages
     const messages: BaseMessage[] = [];
 
-    // If classId is provided, inject it as context
-    if (classId) {
-      messages.push(new SystemMessage(`Current Context: The user is in Class ID: ${classId}. If the user asks about class content, use this ID.`));
+    // Context Injection
+    let contextMsg = "Current Context:\n";
+    if (classId) contextMsg += `- Class ID: ${classId} (Use this for RAG searches)\n`;
+    if (userId) contextMsg += `- Student ID: ${userId}\n`;
+
+    if (classId || userId) {
+      messages.push(new SystemMessage(contextMsg));
     }
 
     messages.push(new HumanMessage(userMessage));

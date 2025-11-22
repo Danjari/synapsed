@@ -11,14 +11,25 @@ export const searchClassContent = new DynamicStructuredTool({
   }),
   func: async (input) => {
     const { query, classId } = input as { query: string; classId: string };
-    
+
     try {
       const namespace = `class_${classId}`;
       const matches = await queryPinecone(query, namespace);
-      
+
+      console.log(`🔍 RAG Search for "${query}" in ${namespace}`);
+      console.log(`📊 Found ${matches.length} matches`);
+
       if (!matches || matches.length === 0) {
+        console.log("❌ No matches found");
         return "No relevant information found in the class content.";
       }
+
+      // Log details for verification
+      matches.forEach((match, i) => {
+        console.log(`\n[Match ${i + 1}] Score: ${match.score}`);
+        console.log(`Metadata:`, match.metadata);
+        console.log(`Content Preview: ${match.metadata?.text?.toString().substring(0, 100)}...`);
+      });
 
       // Format the results for the agent
       const formattedResults = matches.map((match) => {

@@ -5,7 +5,7 @@ import { ConversationService } from '@/lib/agent/conversation-service';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
+
     // Support both old format (message) and new format (messages array)
     const { message, messages, userId, classId, lessonId, threadId } = body;
 
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     const agentThreadId = conversation?.threadId || threadId;
 
     // Invoke agent with the threadId for memory continuity
-    const response = await invokeAgent(userMessage, agentThreadId);
+    const response = await invokeAgent(userMessage, agentThreadId, classId, userId);
 
     // Save assistant message to database if conversation exists
     if (conversation) {
