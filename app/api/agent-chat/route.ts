@@ -54,15 +54,6 @@ export async function POST(request: NextRequest) {
     // Invoke agent with the threadId for memory continuity
     const agentResponse = await invokeAgent(userMessage, agentThreadId, classId, userId);
 
-    // DEBUG: Log agent response
-    console.log("📥 [API] Agent response received:", {
-      hasContent: !!agentResponse.content,
-      contentLength: agentResponse.content?.length || 0,
-      hasSources: !!agentResponse.sources,
-      sourcesCount: agentResponse.sources?.length || 0,
-      sources: agentResponse.sources ? JSON.stringify(agentResponse.sources, null, 2) : 'none'
-    });
-
     // Save assistant message to database if conversation exists
     if (conversation) {
       try {
@@ -92,14 +83,6 @@ export async function POST(request: NextRequest) {
       conversationId: conversation?.id,
       threadId: agentThreadId,
     };
-
-    // DEBUG: Log API response being sent
-    console.log("📤 [API] Sending response to frontend:", {
-      hasResponse: !!apiResponse.response,
-      hasSources: !!apiResponse.sources,
-      sourcesCount: apiResponse.sources?.length || 0,
-      sources: apiResponse.sources ? JSON.stringify(apiResponse.sources, null, 2) : 'none'
-    });
 
     return NextResponse.json(apiResponse);
   } catch (error) {

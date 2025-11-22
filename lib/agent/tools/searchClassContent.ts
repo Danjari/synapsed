@@ -16,23 +16,12 @@ export const searchClassContent = new DynamicStructuredTool({
       const namespace = `class_${classId}`;
       const matches = await queryPinecone(query, namespace);
 
-      console.log(`🔍 RAG Search for "${query}" in ${namespace}`);
-      console.log(`📊 Found ${matches.length} matches`);
-
       if (!matches || matches.length === 0) {
-        console.log("❌ No matches found");
         return {
           content: "No relevant information found in the class content.",
           sources: [],
         };
       }
-
-      // Log details for verification
-      matches.forEach((match, i) => {
-        console.log(`\n[Match ${i + 1}] Score: ${match.score}`);
-        console.log(`Metadata:`, match.metadata);
-        console.log(`Content Preview: ${match.metadata?.text?.toString().substring(0, 100)}...`);
-      });
 
       // Extract sources metadata
       const sources = matches.map((match) => {
@@ -50,9 +39,6 @@ export const searchClassContent = new DynamicStructuredTool({
           classId: metadata.classId,
         };
       });
-
-      // DEBUG: Log sources being returned
-      console.log("🔍 [searchClassContent] Sources extracted:", JSON.stringify(sources, null, 2));
 
       // Format the results for the agent WITHOUT source citations
       // Sources will be shown in the tooltip, not in the message content
@@ -74,9 +60,6 @@ export const searchClassContent = new DynamicStructuredTool({
         content: content,
         sources: sources,
       };
-
-      // DEBUG: Log full result being returned
-      console.log("📦 [searchClassContent] Returning result with sources:", JSON.stringify(result, null, 2));
 
       // Return object with both content and sources
       // The content will be used by the LLM, and sources will be extracted by the agent

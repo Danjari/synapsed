@@ -259,15 +259,6 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
         setThreadId(data.threadId)
       }
 
-      // DEBUG: Log API response received (system message)
-      console.log("📥 [Frontend] API response received (system):", {
-        hasResponse: !!data.response,
-        hasSources: !!data.sources,
-        sourcesType: Array.isArray(data.sources) ? 'array' : typeof data.sources,
-        sourcesCount: Array.isArray(data.sources) ? data.sources.length : 0,
-        sources: data.sources ? JSON.stringify(data.sources, null, 2) : 'none'
-      });
-
       // Only add the assistant response to the UI (system message stays hidden)
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -276,14 +267,6 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
         timestamp: new Date(),
         sources: data.sources || undefined,
       }
-
-      // DEBUG: Log message being added (system)
-      console.log("💬 [Frontend] Adding assistant message (system):", {
-        id: assistantMessage.id,
-        hasSources: !!assistantMessage.sources,
-        sourcesCount: assistantMessage.sources?.length || 0,
-        sources: assistantMessage.sources ? JSON.stringify(assistantMessage.sources, null, 2) : 'none'
-      });
 
       setMessages((prev) => [...prev, assistantMessage])
     } catch {
@@ -344,16 +327,6 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
 
       const data = await response.json()
 
-      // DEBUG: Log API response received
-      console.log("📥 [Frontend] API response received:", {
-        hasResponse: !!data.response,
-        hasSources: !!data.sources,
-        sourcesType: Array.isArray(data.sources) ? 'array' : typeof data.sources,
-        sourcesCount: Array.isArray(data.sources) ? data.sources.length : 0,
-        sources: data.sources ? JSON.stringify(data.sources, null, 2) : 'none',
-        fullData: data
-      });
-
       // Update threadId if returned from API (for new conversations)
       if (data.threadId && data.threadId !== threadId) {
         setThreadId(data.threadId)
@@ -366,15 +339,6 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
         timestamp: new Date(),
         sources: data.sources || undefined,
       }
-
-      // DEBUG: Log message being added
-      console.log("💬 [Frontend] Adding assistant message:", {
-        id: assistantMessage.id,
-        contentLength: assistantMessage.content.length,
-        hasSources: !!assistantMessage.sources,
-        sourcesCount: assistantMessage.sources?.length || 0,
-        sources: assistantMessage.sources ? JSON.stringify(assistantMessage.sources, null, 2) : 'none'
-      });
 
       setMessages((prev) => [...prev, assistantMessage])
     } catch {
@@ -561,47 +525,23 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <div 
-                              className="h-7 w-7 flex items-center justify-center text-gray-400 hover:text-gray-600 cursor-help transition-all duration-200"
-                              onClick={() => {
-                                // DEBUG: Log sources when tooltip is clicked
-                                console.log("🖱️ [Frontend] Tooltip clicked for message:", {
-                                  messageId: message.id,
-                                  hasSources: !!message.sources,
-                                  sourcesType: Array.isArray(message.sources) ? 'array' : typeof message.sources,
-                                  sourcesCount: message.sources?.length || 0,
-                                  sources: message.sources ? JSON.stringify(message.sources, null, 2) : 'none',
-                                  fullMessage: message
-                                });
-                              }}
-                            >
+                            <div className="h-7 w-7 flex items-center justify-center text-gray-400 hover:text-gray-600 cursor-help transition-all duration-200">
                               <Info className="w-4 h-4" />
                             </div>
                           </TooltipTrigger>
                           <TooltipContent side="top" className="bg-gray-900 text-white text-xs max-w-xs">
                             <div className="space-y-1">
                               <p className="font-semibold mb-1">Sources:</p>
-                              {(() => {
-                                // DEBUG: Log sources when rendering tooltip
-                                console.log("🎨 [Frontend] Rendering tooltip for message:", {
-                                  messageId: message.id,
-                                  hasSources: !!message.sources,
-                                  sourcesType: Array.isArray(message.sources) ? 'array' : typeof message.sources,
-                                  sourcesCount: message.sources?.length || 0,
-                                  sources: message.sources ? JSON.stringify(message.sources, null, 2) : 'none'
-                                });
-                                
-                                if (message.sources && message.sources.length > 0) {
-                                  return message.sources.map((source, index) => (
-                                    <p key={index}>
-                                      {source.title}
-                                      {source.page && source.page !== "?" && ` (Page ${source.page})`}
-                                    </p>
-                                  ));
-                                } else {
-                                  return <p className="text-gray-400 italic">No sources available</p>;
-                                }
-                              })()}
+                              {message.sources && message.sources.length > 0 ? (
+                                message.sources.map((source, index) => (
+                                  <p key={index}>
+                                    {source.title}
+                                    {source.page && source.page !== "?" && ` (Page ${source.page})`}
+                                  </p>
+                                ))
+                              ) : (
+                                <p className="text-gray-400 italic">No sources available</p>
+                              )}
                             </div>
                           </TooltipContent>
                         </Tooltip>

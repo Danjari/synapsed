@@ -108,15 +108,6 @@ You are a highly capable educational assistant for Synapsed, designed to help st
     ...history,
   ]);
   
-  // DEBUG: Log if tool calls were made
-  if (result.tool_calls && result.tool_calls.length > 0) {
-    console.log("🔧 [callLlm] LLM made tool calls:", result.tool_calls.map(tc => ({ name: tc.name, id: tc.id })));
-  } else {
-    const lastMsg = history[history.length - 1];
-    const lastMsgContent = typeof lastMsg?.content === 'string' ? lastMsg.content : String(lastMsg?.content || '');
-    console.log("⚠️ [callLlm] LLM did NOT make any tool calls. Last user message:", lastMsgContent.substring(0, 200));
-  }
-  
   return { messages: [result] };
 }
 
@@ -143,23 +134,6 @@ async function callTools(state: MessagesState) {
       }
       const result = await tool.invoke(toolCall);
       
-      // DEBUG: Log tool result with detailed inspection
-      const resultKeys = result && typeof result === 'object' ? Object.keys(result) : [];
-      console.log("🔧 [callTools] Tool result for", toolCall.name, ":", {
-        resultType: typeof result,
-        isObject: typeof result === 'object',
-        isNull: result === null,
-        isArray: Array.isArray(result),
-        keys: resultKeys,
-        hasContent: result && typeof result === 'object' && 'content' in result,
-        hasSources: result && typeof result === 'object' && 'sources' in result,
-        sourcesType: result && typeof result === 'object' && 'sources' in result ? typeof result.sources : 'N/A',
-        sourcesIsArray: result && typeof result === 'object' && 'sources' in result ? Array.isArray(result.sources) : false,
-        resultPreview: typeof result === 'string' 
-          ? result.substring(0, 200) 
-          : JSON.stringify(result, null, 2).substring(0, 500)
-      });
-      
       // Handle different return types
       let content: string;
       const toolCallId = toolCall.id || '';
@@ -168,44 +142,24 @@ async function callTools(state: MessagesState) {
         content = result;
         // No sources for string results
         toolSourcesMap.delete(toolCallId);
-        console.log("📝 [callTools] String result, no sources");
       } else if (result && typeof result === 'object' && result !== null && 'content' in result) {
         // Extract sources if present and store them separately
         const hasSources = 'sources' in result;
         const sourcesIsArray = hasSources && Array.isArray(result.sources);
         
-        console.log("🔍 [callTools] Checking sources:", {
-          hasSources,
-          sourcesIsArray,
-          sourcesValue: hasSources ? result.sources : 'N/A',
-          sourcesLength: sourcesIsArray ? (result.sources as unknown[]).length : 0
-        });
-        
         if (hasSources && sourcesIsArray) {
           const sourcesMetadata = result.sources as SourceMetadata[];
           toolSourcesMap.set(toolCallId, sourcesMetadata);
-          console.log("📚 [callTools] ✅ Extracted and stored", sourcesMetadata.length, "sources for tool_call_id:", toolCallId);
-          console.log("📚 [callTools] Sources:", JSON.stringify(sourcesMetadata.slice(0, 2), null, 2));
         } else {
           // No sources, clear any previous entry
           toolSourcesMap.delete(toolCallId);
-          console.log("⚠️ [callTools] No valid sources found, cleared map entry");
         }
         
         // Give LLM ONLY the content string - clean, natural text without JSON structure
         content = result.content as string;
-        
-        console.log("✅ [callTools] Prepared tool result:", {
-          contentLength: content.length,
-          contentPreview: content.substring(0, 100),
-          sourcesStored: toolSourcesMap.has(toolCallId),
-          sourcesCount: toolSourcesMap.get(toolCallId)?.length || 0,
-          mapSize: toolSourcesMap.size
-        });
       } else {
         content = JSON.stringify(result);
         toolSourcesMap.delete(toolCallId);
-        console.log("📦 [callTools] Non-standard result format, stringified");
       }
       
       return new ToolMessage({
@@ -296,9 +250,6 @@ function extractSourcesFromMessages(messages: BaseMessage[]): SourceMetadata[] {
   const sources: SourceMetadata[] = [];
   const seenSources = new Set<string>();
 
-  console.log("🔍 [extractSourcesFromMessages] Processing", messages.length, "messages");
-  console.log("🗺️ [extractSourcesFromMessages] Sources map has", toolSourcesMap.size, "entries");
-
   for (const msg of messages) {
     // Check message type - handle both instanceof and type string (for serialized messages)
     const isToolMessage = msg instanceof ToolMessage || msg._getType() === 'tool';
@@ -324,7 +275,6 @@ function extractSourcesFromMessages(messages: BaseMessage[]): SourceMetadata[] {
       
       if (toolCallId && toolSourcesMap.has(toolCallId)) {
         const toolSources = toolSourcesMap.get(toolCallId) || [];
-        console.log("📚 [extractSourcesFromMessages] Found", toolSources.length, "sources for tool_call_id:", toolCallId);
         
         for (const source of toolSources) {
           // Create a unique key to avoid duplicates
@@ -338,18 +288,12 @@ function extractSourcesFromMessages(messages: BaseMessage[]): SourceMetadata[] {
               classId: source.classId,
             };
             sources.push(sourceMetadata);
-            console.log("➕ [extractSourcesFromMessages] Added source:", sourceMetadata);
-          } else {
-            console.log("⏭️ [extractSourcesFromMessages] Skipped duplicate source:", key);
           }
         }
-      } else {
-        console.log("ℹ️ [extractSourcesFromMessages] No sources found for tool_call_id:", toolCallId || 'unknown');
       }
     }
   }
 
-  console.log("📊 [extractSourcesFromMessages] Final extracted sources:", JSON.stringify(sources, null, 2));
   return sources;
 }
 
@@ -380,21 +324,8 @@ export async function invokeAgent(userMessage: string, threadId?: string, classI
       config
     );
 
-    // DEBUG: Log all message types in result
-    console.log("📋 [invokeAgent] Message types in result:", result.messages.map((msg: BaseMessage, idx: number) => ({
-      index: idx,
-      type: msg._getType ? msg._getType() : 'unknown',
-      isAIMessage: msg instanceof AIMessage,
-      isToolMessage: msg instanceof ToolMessage,
-      isHumanMessage: msg instanceof HumanMessage,
-      hasToolCalls: msg instanceof AIMessage && !!msg.tool_calls?.length,
-      toolCalls: msg instanceof AIMessage ? msg.tool_calls?.map(tc => ({ name: tc.name, id: tc.id })) : null
-    })));
-
     // Extract sources from tool messages
-    console.log("🚀 [invokeAgent] Starting source extraction from", result.messages.length, "messages");
     const sources = extractSourcesFromMessages(result.messages);
-    console.log("✅ [invokeAgent] Extracted", sources.length, "sources:", JSON.stringify(sources, null, 2));
     
     // Clean up sources map for tool calls in this result to prevent memory leaks
     // Extract tool_call_ids from ToolMessages in the result
@@ -411,7 +342,6 @@ export async function invokeAgent(userMessage: string, threadId?: string, classI
     for (const toolCallId of toolCallIdsInResult) {
       toolSourcesMap.delete(toolCallId);
     }
-    console.log("🧹 [invokeAgent] Cleaned up", toolCallIdsInResult.size, "source map entries");
 
     // Find the LAST AIMessage in the result (the most recent response)
     const aiMessages = result.messages.filter((msg: BaseMessage) => msg instanceof AIMessage);
@@ -449,12 +379,6 @@ export async function invokeAgent(userMessage: string, threadId?: string, classI
       content,
       sources: sources.length > 0 ? sources : undefined,
     };
-
-    console.log("📤 [invokeAgent] Returning response:", {
-      contentLength: content.length,
-      sourcesCount: sources.length,
-      sources: sources.length > 0 ? JSON.stringify(sources, null, 2) : 'none'
-    });
 
     return response;
   } catch (error) {
