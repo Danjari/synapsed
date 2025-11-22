@@ -80,7 +80,7 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
   const userId = propUserId || (session?.user as { id?: string })?.id
   const studentName = (session?.user as { name?: string })?.name || "there"
   const nodeTitle = propNodeTitle || searchParams.get('nodeTitle') || ''
-  
+
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState("")
   const [isTyping, setIsTyping] = useState(false)
@@ -98,10 +98,10 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
   }
 
   // Use SWR for fast, cached conversation loading
-  const conversationKey = userId && classId && lessonId 
+  const conversationKey = userId && classId && lessonId
     ? `/api/conversations/by-lesson?userId=${userId}&classId=${classId}&lessonId=${lessonId}`
     : null
-  
+
   const { data, error, isLoading: isLoadingConversation } = useSWR(
     conversationKey,
     fetcher,
@@ -125,7 +125,7 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const messagesRef = useRef<Message[]>([])
-  
+
   // Keep ref in sync with messages state
   useEffect(() => {
     messagesRef.current = messages
@@ -137,7 +137,7 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
       if (data.conversation) {
         // Set threadId for agent memory continuity
         setThreadId(data.conversation.threadId)
-        
+
         // Load messages into state, filtering out system introduction messages
         const loadedMessages: Message[] = data.conversation.messages
           .map((msg: {
@@ -158,7 +158,7 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
             }
             return true
           })
-        
+
         setMessages(loadedMessages)
       } else {
         // No conversation found - clear messages
@@ -234,18 +234,18 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
           userId
         }),
       })
-      
+
       if (!response.ok) {
         throw new Error('Failed to get response')
       }
-      
+
       const data = await response.json()
-      
+
       // Update threadId if returned from API (for new conversations)
       if (data.threadId && data.threadId !== threadId) {
         setThreadId(data.threadId)
       }
-      
+
       // Only add the assistant response to the UI (system message stays hidden)
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -305,18 +305,18 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
           userId
         }),
       })
-      
+
       if (!response.ok) {
         throw new Error('Failed to get response')
       }
-      
+
       const data = await response.json()
-      
+
       // Update threadId if returned from API (for new conversations)
       if (data.threadId && data.threadId !== threadId) {
         setThreadId(data.threadId)
       }
-      
+
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         content: convertMathToLatex(cleanAIResponse(data.response)),
@@ -356,7 +356,7 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
       lessonId
     ) {
       setHasTriggeredIntroduction(true)
-      
+
       // Get Socratic introduction prompt from centralized prompts file
       const introPrompt = getSocraticIntroductionPrompt(nodeTitle, studentName)
 
@@ -371,7 +371,7 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
 
     const messageContent = input.trim()
     if (!messageContent) return
-    
+
     setInput("")
     await sendMessage(messageContent)
   }
@@ -472,188 +472,186 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
             {messages.map((message, index) => (
               <div
                 key={message.id}
-                className={`flex ${
-                  message.role === "user" ? "justify-end" : "justify-start"
-                } animate-in fade-in slide-in-from-bottom-2 ease-out duration-500`}
+                className={`flex ${message.role === "user" ? "justify-end" : "justify-start"
+                  } animate-in fade-in slide-in-from-bottom-2 ease-out duration-500`}
                 style={{ animationDelay: `${index * 30}ms` }}
               >
                 <div className={message.role === "user" ? "max-w-[75%] sm:max-w-md" : "w-full"}>
                   <div
-                    className={`px-4 py-3 transition-all duration-300 ease-out ${
-                      message.role === "user"
+                    className={`px-4 py-3 transition-all duration-300 ease-out ${message.role === "user"
                         ? "bg-gray-100 text-gray-900 rounded-[20px] rounded-br-[8px]"
                         : "bg-transparent text-gray-900 rounded-[20px] rounded-bl-[8px]"
                     }`}
                   >
-                    <div className="whitespace-pre-wrap break-words leading-relaxed text-[15px]">
-                      <ReactMarkdown
-                        remarkPlugins={[remarkMath]}
-                        rehypePlugins={[rehypeKatex]}
-                        components={{
-                          a: ({ ...props}) => (
-                            <a
-                              {...props}
-                              className="text-blue-600 underline hover:text-blue-800 font-semibold transition-colors duration-200"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            />
-                          ),
-                        }}
-                      >
-                        {message.content}
-                      </ReactMarkdown>
-                    </div>
-                    {message.role === "assistant" && onAddToNotes && (
-                      <div className="mt-3 flex justify-end animate-in fade-in duration-300">
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => onAddToNotes(message.content)}
-                                className="h-7 w-7 p-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all duration-200"
-                              >
-                                <Plus className="w-4 h-4" />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent side="top" className="bg-gray-900 text-white text-xs">
-                              <p>Add to Notes</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </div>
-                    )}
+                  <div className="whitespace-pre-wrap break-words leading-relaxed text-[15px]">
+                    <ReactMarkdown
+                      remarkPlugins={[remarkMath]}
+                      rehypePlugins={[rehypeKatex]}
+                      components={{
+                        a: ({ ...props }) => (
+                          <a
+                            {...props}
+                            className="text-blue-600 underline hover:text-blue-800 font-semibold transition-colors duration-200"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          />
+                        ),
+                      }}
+                    >
+                      {message.content}
+                    </ReactMarkdown>
                   </div>
+                  {message.role === "assistant" && onAddToNotes && (
+                    <div className="mt-3 flex justify-end animate-in fade-in duration-300">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => onAddToNotes(message.content)}
+                              className="h-7 w-7 p-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all duration-200"
+                            >
+                              <Plus className="w-4 h-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" className="bg-gray-900 text-white text-xs">
+                            <p>Add to Notes</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                  )}
                 </div>
+              </div>
               </div>
             ))}
 
-            {/* Typing Indicator */}
-            {isTyping && (
-              <div className="flex justify-start animate-in fade-in slide-in-from-bottom-2 ease-out duration-500">
-                <div className="w-full">
-                  <div className="bg-transparent text-gray-900 px-4 py-3 rounded-[20px] rounded-bl-[8px]">
-                    <div className="flex items-center space-x-2">
-                      <div className="flex space-x-1">
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce transition-all duration-300"></div>
-                        <div
-                          className="w-2 h-2 bg-gray-400 rounded-full animate-bounce transition-all duration-300"
-                          style={{ animationDelay: "0.15s" }}
-                        ></div>
-                        <div
-                          className="w-2 h-2 bg-gray-400 rounded-full animate-bounce transition-all duration-300"
-                          style={{ animationDelay: "0.3s" }}
-                        ></div>
-                      </div>
-                      <span className="text-sm text-gray-500 ml-1 animate-pulse">typing...</span>
+          {/* Typing Indicator */}
+          {isTyping && (
+            <div className="flex justify-start animate-in fade-in slide-in-from-bottom-2 ease-out duration-500">
+              <div className="w-full">
+                <div className="bg-transparent text-gray-900 px-4 py-3 rounded-[20px] rounded-bl-[8px]">
+                  <div className="flex items-center space-x-2">
+                    <div className="flex space-x-1">
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce transition-all duration-300"></div>
+                      <div
+                        className="w-2 h-2 bg-gray-400 rounded-full animate-bounce transition-all duration-300"
+                        style={{ animationDelay: "0.15s" }}
+                      ></div>
+                      <div
+                        className="w-2 h-2 bg-gray-400 rounded-full animate-bounce transition-all duration-300"
+                        style={{ animationDelay: "0.3s" }}
+                      ></div>
                     </div>
+                    <span className="text-sm text-gray-500 ml-1 animate-pulse">typing...</span>
                   </div>
                 </div>
               </div>
-            )}
-          </div>
-
-          <div ref={messagesEndRef} className="h-4" />
+            </div>
+          )}
         </div>
+
+        <div ref={messagesEndRef} className="h-4" />
       </div>
     </div>
+  </div>
 
-    {/* Fixed Input Bar */}
-    <div className="flex-shrink-0 backdrop-blur-md bg-white/80 relative z-20">
-      <div className="px-4 py-3">
-        <div className="max-w-3xl mx-auto">
-          <div className="relative">
-            <form onSubmit={handleSubmit} className="relative">
-              <div
-                className="border border-gray-300 rounded-2xl p-4 relative transition-all duration-500 ease-in-out overflow-hidden bg-white/95 backdrop-blur-sm shadow-sm"
-              >
-                {isRecording ? (
-                  <div className="flex items-center justify-between h-12 animate-in fade-in-0 slide-in-from-top-2 duration-500 w-full">
-                    <WaveAnimation />
-                    <div className="flex items-center gap-2 ml-4">
+    {/* Fixed Input Bar */ }
+  <div className="flex-shrink-0 backdrop-blur-md bg-white/80 relative z-20">
+    <div className="px-4 py-3">
+      <div className="max-w-3xl mx-auto">
+        <div className="relative">
+          <form onSubmit={handleSubmit} className="relative">
+            <div
+              className="border border-gray-300 rounded-2xl p-4 relative transition-all duration-500 ease-in-out overflow-hidden bg-white/95 backdrop-blur-sm shadow-sm"
+            >
+              {isRecording ? (
+                <div className="flex items-center justify-between h-12 animate-in fade-in-0 slide-in-from-top-2 duration-500 w-full">
+                  <WaveAnimation />
+                  <div className="flex items-center gap-2 ml-4">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleCancelRecording}
+                      className="h-8 w-8 p-0 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-110"
+                    >
+                      <X className="h-5 w-5" />
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={handleConfirmRecording}
+                      className="h-8 w-8 p-0 rounded-lg transition-all duration-200 hover:scale-110 bg-teal-600 hover:bg-teal-700 text-white"
+                    >
+                      <Check className="h-5 w-5" />
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="animate-in fade-in-0 slide-in-from-bottom-2 duration-500">
+                  <textarea
+                    ref={textareaRef}
+                    value={input}
+                    onChange={handleInputChange}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Type a message..."
+                    className="w-full bg-transparent text-gray-900 placeholder-gray-400 resize-none border-none outline-none text-base leading-relaxed min-h-[24px] max-h-32 transition-all duration-200"
+                    rows={1}
+                    disabled={isTyping}
+                    onInput={(e) => {
+                      const target = e.target as HTMLTextAreaElement
+                      target.style.height = "auto"
+                      target.style.height = target.scrollHeight + "px"
+                    }}
+                  />
+                  <div className="flex items-center justify-between mt-8">
+                    <div className="flex items-center gap-2">
                       <Button
                         type="button"
                         variant="ghost"
                         size="sm"
-                        onClick={handleCancelRecording}
                         className="h-8 w-8 p-0 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-110"
                       >
-                        <X className="h-5 w-5" />
+                        <Plus className="h-5 w-5" />
                       </Button>
                       <Button
                         type="button"
+                        variant="ghost"
                         size="sm"
-                        onClick={handleConfirmRecording}
-                        className="h-8 w-8 p-0 rounded-lg transition-all duration-200 hover:scale-110 bg-teal-600 hover:bg-teal-700 text-white"
+                        className="h-8 w-8 p-0 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-110"
                       >
-                        <Check className="h-5 w-5" />
+                        <Settings2 className="h-5 w-5" />
                       </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="animate-in fade-in-0 slide-in-from-bottom-2 duration-500">
-                    <textarea
-                      ref={textareaRef}
-                      value={input}
-                      onChange={handleInputChange}
-                      onKeyDown={handleKeyDown}
-                      placeholder="Type a message..."
-                      className="w-full bg-transparent text-gray-900 placeholder-gray-400 resize-none border-none outline-none text-base leading-relaxed min-h-[24px] max-h-32 transition-all duration-200"
-                      rows={1}
-                      disabled={isTyping}
-                      onInput={(e) => {
-                        const target = e.target as HTMLTextAreaElement
-                        target.style.height = "auto"
-                        target.style.height = target.scrollHeight + "px"
-                      }}
-                    />
-                    <div className="flex items-center justify-between mt-8">
-                      <div className="flex items-center gap-2">
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-110"
-                        >
-                          <Plus className="h-5 w-5" />
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-110"
-                        >
-                          <Settings2 className="h-5 w-5" />
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={handleMicClick}
-                          disabled={isTyping}
-                          className="h-8 w-8 p-0 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          <Mic className="h-5 w-5 transition-transform duration-200" />
-                        </Button>
-                      </div>
                       <Button
-                        type="submit"
+                        type="button"
+                        variant="ghost"
                         size="sm"
-                        disabled={!input.trim() || isTyping}
-                        className="h-8 w-8 p-0 bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 text-gray-700 rounded-lg transition-all duration-200 hover:scale-110 disabled:hover:scale-100"
+                        onClick={handleMicClick}
+                        disabled={isTyping}
+                        className="h-8 w-8 p-0 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        <ArrowUp className="h-5 w-5" />
+                        <Mic className="h-5 w-5 transition-transform duration-200" />
                       </Button>
                     </div>
+                    <Button
+                      type="submit"
+                      size="sm"
+                      disabled={!input.trim() || isTyping}
+                      className="h-8 w-8 p-0 bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 text-gray-700 rounded-lg transition-all duration-200 hover:scale-110 disabled:hover:scale-100"
+                    >
+                      <ArrowUp className="h-5 w-5" />
+                    </Button>
                   </div>
-                )}
-              </div>
-            </form>
-          </div>
+                </div>
+              )}
+            </div>
+          </form>
         </div>
       </div>
     </div>
-</div>
+  </div>
+</div >
 )
 }

@@ -62,7 +62,6 @@ const getFlashcards = new DynamicStructuredTool({
 const toolsByName: Record<string, DynamicStructuredTool> = {
   [getStudentProgress.name]: getStudentProgress,
   [getClassResources.name]: getClassResources,
-  [getFlashcards.name]: getFlashcards,
   [searchClassContent.name]: searchClassContent,
 };
 
@@ -71,6 +70,13 @@ const modelWithTools = model.bindTools(tools);
 
 // Define the LLM call node
 async function callLlm(state: MessagesState) {
+  // Filter out any existing SystemMessages from the history to avoid duplicates
+  // We check both instanceof and the type string to be safe against serialization issues
+  const history = state.messages.filter(msg => {
+    const isSystem = msg instanceof SystemMessage || msg._getType() === 'system';
+    return !isSystem;
+  });
+
   const result = await modelWithTools.invoke([
     new SystemMessage(`
 You are a highly capable educational assistant for Synapsed, designed to help students learn effectively.
@@ -80,13 +86,12 @@ You are a highly capable educational assistant for Synapsed, designed to help st
     *   **Class-Specific Questions**: When asked about specific concepts, definitions, or materials defined in this class, **YOU MUST** use the \`searchClassContent\` tool to ensure accuracy.
     *   **General/Conversational**: For greetings, general study advice, or simple clarifications that don't require specific class context, you may answer directly without tools to save time.
     *   **Uncertainty**: If you are unsure if a term has a specific meaning in this class context, err on the side of using the tool.
-    *   **Citations**: If you use the tool, cite your sources.
+    *   **Citations**: If you use the tool, cite your sources in the format: **Source:** [Title](link) (Page X).
 
 2.  **TEACHING STYLE (SOCRATIC)**:
     *   **DO NOT** simply give answers to homework or complex conceptual questions.
     *   **GUIDE** the student. Ask probing questions to help them arrive at the answer themselves.
     *   Break down complex topics into smaller, digestible steps.
-    *   Check for understanding: "Does that make sense?" or "Can you explain it back to me?"
 
 3.  **ADAPTABILITY**:
     *   Tailor your explanations to the student's level.
@@ -96,7 +101,7 @@ You are a highly capable educational assistant for Synapsed, designed to help st
     *   Use \`getStudentProgress\` to understand where the student is in the course.
     *   Use \`getClassResources\` to recommend materials.
 `),
-    ...state.messages,
+    ...history,
   ]);
   return { messages: [result] };
 }
@@ -214,15 +219,13 @@ export async function invokeAgent(userMessage: string, threadId?: string, classI
     const messages: BaseMessage[] = [];
 
     // Context Injection
-    let contextMsg = "Current Context:\n";
-    if (classId) contextMsg += `- Class ID: ${classId} (Use this for RAG searches)\n`;
-    if (userId) contextMsg += `- Student ID: ${userId}\n`;
-
+    let fullUserMessage = userMessage;
     if (classId || userId) {
-      messages.push(new SystemMessage(contextMsg));
+      const contextMsg = `[System Context]\n${classId ? `- Class ID: ${classId}\n` : ""}${userId ? `- Student ID: ${userId}\n` : ""}[End Context]\n\n`;
+      fullUserMessage = contextMsg + userMessage;
     }
 
-    messages.push(new HumanMessage(userMessage));
+    messages.push(new HumanMessage(fullUserMessage));
 
     // Pass only the new message - the reducer will merge with previous messages from checkpointer
     const result = await agent.invoke(
@@ -248,6 +251,32 @@ export async function invokeAgent(userMessage: string, threadId?: string, classI
     return lastMessage.content || "No response generated - message has no content property";
   } catch (error) {
     console.error('Error in invokeAgent:', error);
+    throw error;
+  }
+}
+
+// Helper function to stream the agent response
+export async function streamAgent(userMessage: string, threadId?: string, classId?: string, userId?: string) {
+  try {
+    const agent = await getCompiledAgent();
+    const config = threadId ? { configurable: { thread_id: threadId } } : { configurable: {} };
+    const messages: BaseMessage[] = [];
+
+    let fullUserMessage = userMessage;
+    if (classId || userId) {
+      const contextMsg = `[System Context]\n${classId ? `- Class ID: ${classId}\n` : ""}${userId ? `- Student ID: ${userId}\n` : ""}[End Context]\n\n`;
+      fullUserMessage = contextMsg + userMessage;
+    }
+
+    messages.push(new HumanMessage(fullUserMessage));
+
+    // Return the stream directly
+    return await agent.streamEvents(
+      { messages },
+      { ...config, version: "v2" }
+    );
+  } catch (error) {
+    console.error('Error in streamAgent:', error);
     throw error;
   }
 }
