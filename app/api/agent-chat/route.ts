@@ -52,22 +52,42 @@ export async function POST(request: NextRequest) {
     const agentThreadId = conversation?.threadId || threadId;
 
     // Invoke agent with the threadId for memory continuity
-    const response = await invokeAgent(userMessage, agentThreadId, classId, userId);
+    const agentResponse = await invokeAgent(userMessage, agentThreadId, classId, userId);
+
+    // DEBUG: Log agent response
+    console.log("📥 [API] Agent response received:", {
+      hasContent: !!agentResponse.content,
+      contentLength: agentResponse.content?.length || 0,
+      hasSources: !!agentResponse.sources,
+      sourcesCount: agentResponse.sources?.length || 0,
+      sources: agentResponse.sources ? JSON.stringify(agentResponse.sources, null, 2) : 'none'
+    });
 
     // Save assistant message to database if conversation exists
     if (conversation) {
       await ConversationService.saveMessage({
         conversationId: conversation.id,
         role: 'ASSISTANT',
-        content: response,
+        content: agentResponse.content,
       });
     }
 
-    return NextResponse.json({
-      response,
+    const apiResponse = {
+      response: agentResponse.content,
+      sources: agentResponse.sources,
       conversationId: conversation?.id,
       threadId: agentThreadId,
+    };
+
+    // DEBUG: Log API response being sent
+    console.log("📤 [API] Sending response to frontend:", {
+      hasResponse: !!apiResponse.response,
+      hasSources: !!apiResponse.sources,
+      sourcesCount: apiResponse.sources?.length || 0,
+      sources: apiResponse.sources ? JSON.stringify(apiResponse.sources, null, 2) : 'none'
     });
+
+    return NextResponse.json(apiResponse);
   } catch (error) {
     console.error('Agent error:', error);
     return NextResponse.json(

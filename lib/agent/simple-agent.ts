@@ -13,6 +13,20 @@ interface MessagesState {
   messages: BaseMessage[];
 }
 
+// Source metadata type
+export interface SourceMetadata {
+  title: string;
+  page?: number | string;
+  materialId?: string;
+  classId?: string;
+}
+
+// Agent response type
+export interface AgentResponse {
+  content: string;
+  sources?: SourceMetadata[];
+}
+
 // Initialize the model
 const model = new ChatGoogleGenerativeAI({
   model: "gemini-2.0-flash-exp",
@@ -46,18 +60,6 @@ const getClassResources = new DynamicStructuredTool({
   },
 });
 
-const getFlashcards = new DynamicStructuredTool({
-  name: "getFlashcards",
-  description: "Generate flashcards for a specific topic",
-  schema: z.object({
-    topic: z.string().describe("The topic to generate flashcards for"),
-  }),
-  func: async (input) => {
-    const { topic } = input as { topic: string };
-    return `Generated 10 flashcards for the topic: ${topic}`;
-  },
-});
-
 // Create tools map
 const toolsByName: Record<string, DynamicStructuredTool> = {
   [getStudentProgress.name]: getStudentProgress,
@@ -83,10 +85,12 @@ You are a highly capable educational assistant for Synapsed, designed to help st
 
 ### YOUR CORE DIRECTIVES:
 1.  **GROUNDING & TOOL USAGE**:
+    *   **CRITICAL**: When explicitly instructed to use \`searchClassContent\` tool, you MUST call it immediately before responding. Do not skip this step.
     *   **Class-Specific Questions**: When asked about specific concepts, definitions, or materials defined in this class, **YOU MUST** use the \`searchClassContent\` tool to ensure accuracy.
     *   **General/Conversational**: For greetings, general study advice, or simple clarifications that don't require specific class context, you may answer directly without tools to save time.
     *   **Uncertainty**: If you are unsure if a term has a specific meaning in this class context, err on the side of using the tool.
-    *   **Citations**: If you use the tool, cite your sources in the format: **Source:** [Title](link) (Page X).
+    *   **Tool Responses**: Tool responses contain clean, natural text content. Use this information naturally in your responses without including citations or source references.
+    *   **IMPORTANT**: Do NOT include source citations (like "Source: ..." or "Page X") in your response. Sources are tracked automatically by the system and displayed separately to the user in a tooltip.
 
 2.  **TEACHING STYLE (SOCRATIC)**:
     *   **DO NOT** simply give answers to homework or complex conceptual questions.
@@ -103,8 +107,22 @@ You are a highly capable educational assistant for Synapsed, designed to help st
 `),
     ...history,
   ]);
+  
+  // DEBUG: Log if tool calls were made
+  if (result.tool_calls && result.tool_calls.length > 0) {
+    console.log("🔧 [callLlm] LLM made tool calls:", result.tool_calls.map(tc => ({ name: tc.name, id: tc.id })));
+  } else {
+    const lastMsg = history[history.length - 1];
+    const lastMsgContent = typeof lastMsg?.content === 'string' ? lastMsg.content : String(lastMsg?.content || '');
+    console.log("⚠️ [callLlm] LLM did NOT make any tool calls. Last user message:", lastMsgContent.substring(0, 200));
+  }
+  
   return { messages: [result] };
 }
+
+// Map to store sources extracted from tool results, keyed by tool_call_id
+// This allows us to separate sources from content - LLM gets clean text, we track sources separately
+const toolSourcesMap = new Map<string, SourceMetadata[]>();
 
 // Define the tool call node
 async function callTools(state: MessagesState) {
@@ -124,9 +142,54 @@ async function callTools(state: MessagesState) {
         });
       }
       const result = await tool.invoke(toolCall);
+      
+      // DEBUG: Log tool result
+      console.log("🔧 [callTools] Tool result for", toolCall.name, ":", {
+        resultType: typeof result,
+        isObject: typeof result === 'object',
+        hasContent: result && typeof result === 'object' && 'content' in result,
+        hasSources: result && typeof result === 'object' && 'sources' in result,
+        resultPreview: typeof result === 'string' 
+          ? result.substring(0, 200) 
+          : JSON.stringify(result, null, 2).substring(0, 500)
+      });
+      
+      // Handle different return types
+      let content: string;
+      const toolCallId = toolCall.id || '';
+      
+      if (typeof result === 'string') {
+        content = result;
+        // No sources for string results
+        toolSourcesMap.delete(toolCallId);
+      } else if (result && typeof result === 'object' && 'content' in result) {
+        // Extract sources if present and store them separately
+        if ('sources' in result && Array.isArray(result.sources)) {
+          const sourcesMetadata = result.sources as SourceMetadata[];
+          toolSourcesMap.set(toolCallId, sourcesMetadata);
+          console.log("📚 [callTools] Extracted and stored", sourcesMetadata.length, "sources for tool_call_id:", toolCallId);
+        } else {
+          // No sources, clear any previous entry
+          toolSourcesMap.delete(toolCallId);
+        }
+        
+        // Give LLM ONLY the content string - clean, natural text without JSON structure
+        content = result.content as string;
+        
+        console.log("✅ [callTools] Prepared tool result:", {
+          contentLength: content.length,
+          contentPreview: content.substring(0, 100),
+          sourcesStored: toolSourcesMap.has(toolCallId),
+          sourcesCount: toolSourcesMap.get(toolCallId)?.length || 0
+        });
+      } else {
+        content = JSON.stringify(result);
+        toolSourcesMap.delete(toolCallId);
+      }
+      
       return new ToolMessage({
-        content: JSON.stringify(result),
-        tool_call_id: toolCall.id || '',
+        content: content,
+        tool_call_id: toolCallId,
       });
     })
   );
@@ -206,8 +269,71 @@ async function getCompiledAgent(): Promise<CompiledAgent> {
   return compiledAgent;
 }
 
+// Helper function to extract sources from tool messages
+// Sources are stored separately in toolSourcesMap, keyed by tool_call_id
+function extractSourcesFromMessages(messages: BaseMessage[]): SourceMetadata[] {
+  const sources: SourceMetadata[] = [];
+  const seenSources = new Set<string>();
+
+  console.log("🔍 [extractSourcesFromMessages] Processing", messages.length, "messages");
+  console.log("🗺️ [extractSourcesFromMessages] Sources map has", toolSourcesMap.size, "entries");
+
+  for (const msg of messages) {
+    // Check message type - handle both instanceof and type string (for serialized messages)
+    const isToolMessage = msg instanceof ToolMessage || msg._getType() === 'tool';
+    
+    if (isToolMessage) {
+      // Get tool_call_id from the ToolMessage
+      let toolCallId: string | undefined;
+      
+      if (msg instanceof ToolMessage) {
+        toolCallId = msg.tool_call_id;
+      } else {
+        // For serialized messages, try to extract tool_call_id
+        try {
+          const msgStr = typeof msg.content === 'string' ? msg.content : String(msg.content);
+          const parsed = JSON.parse(msgStr);
+          if (parsed.kwargs && parsed.kwargs.tool_call_id) {
+            toolCallId = parsed.kwargs.tool_call_id;
+          }
+        } catch {
+          // Not JSON, skip
+        }
+      }
+      
+      if (toolCallId && toolSourcesMap.has(toolCallId)) {
+        const toolSources = toolSourcesMap.get(toolCallId) || [];
+        console.log("📚 [extractSourcesFromMessages] Found", toolSources.length, "sources for tool_call_id:", toolCallId);
+        
+        for (const source of toolSources) {
+          // Create a unique key to avoid duplicates
+          const key = `${source.title}-${source.page}-${source.materialId || ''}`;
+          if (!seenSources.has(key)) {
+            seenSources.add(key);
+            const sourceMetadata = {
+              title: source.title || "Unknown Source",
+              page: source.page,
+              materialId: source.materialId,
+              classId: source.classId,
+            };
+            sources.push(sourceMetadata);
+            console.log("➕ [extractSourcesFromMessages] Added source:", sourceMetadata);
+          } else {
+            console.log("⏭️ [extractSourcesFromMessages] Skipped duplicate source:", key);
+          }
+        }
+      } else {
+        console.log("ℹ️ [extractSourcesFromMessages] No sources found for tool_call_id:", toolCallId || 'unknown');
+      }
+    }
+  }
+
+  console.log("📊 [extractSourcesFromMessages] Final extracted sources:", JSON.stringify(sources, null, 2));
+  return sources;
+}
+
 // Helper function to invoke the agent with a simple message
-export async function invokeAgent(userMessage: string, threadId?: string, classId?: string, userId?: string) {
+export async function invokeAgent(userMessage: string, threadId?: string, classId?: string, userId?: string): Promise<AgentResponse> {
   try {
     // Get compiled agent (will compile once on first call)
     const agent = await getCompiledAgent();
@@ -233,22 +359,83 @@ export async function invokeAgent(userMessage: string, threadId?: string, classI
       config
     );
 
+    // DEBUG: Log all message types in result
+    console.log("📋 [invokeAgent] Message types in result:", result.messages.map((msg: BaseMessage, idx: number) => ({
+      index: idx,
+      type: msg._getType ? msg._getType() : 'unknown',
+      isAIMessage: msg instanceof AIMessage,
+      isToolMessage: msg instanceof ToolMessage,
+      isHumanMessage: msg instanceof HumanMessage,
+      hasToolCalls: msg instanceof AIMessage && !!msg.tool_calls?.length,
+      toolCalls: msg instanceof AIMessage ? msg.tool_calls?.map(tc => ({ name: tc.name, id: tc.id })) : null
+    })));
+
+    // Extract sources from tool messages
+    console.log("🚀 [invokeAgent] Starting source extraction from", result.messages.length, "messages");
+    const sources = extractSourcesFromMessages(result.messages);
+    console.log("✅ [invokeAgent] Extracted", sources.length, "sources:", JSON.stringify(sources, null, 2));
+    
+    // Clean up sources map for tool calls in this result to prevent memory leaks
+    // Extract tool_call_ids from ToolMessages in the result
+    const toolCallIdsInResult = new Set<string>();
+    for (const msg of result.messages) {
+      if (msg instanceof ToolMessage) {
+        if (msg.tool_call_id) {
+          toolCallIdsInResult.add(msg.tool_call_id);
+        }
+      }
+    }
+    // Remove entries for tool calls that are no longer needed
+    // (Keep them until after extraction, then clean up)
+    for (const toolCallId of toolCallIdsInResult) {
+      toolSourcesMap.delete(toolCallId);
+    }
+    console.log("🧹 [invokeAgent] Cleaned up", toolCallIdsInResult.size, "source map entries");
+
     // Find the LAST AIMessage in the result (the most recent response)
     const aiMessages = result.messages.filter((msg: BaseMessage) => msg instanceof AIMessage);
     const aiMessage = aiMessages[aiMessages.length - 1];
 
+    // Helper function to extract string content from message content (which can be string or array)
+    const extractContent = (msgContent: string | string[] | undefined): string => {
+      if (!msgContent) return "";
+      if (typeof msgContent === "string") return msgContent;
+      if (Array.isArray(msgContent)) {
+        // Join array elements, filtering out non-string types
+        return msgContent
+          .map((item) => (typeof item === "string" ? item : JSON.stringify(item)))
+          .join("\n");
+      }
+      return String(msgContent);
+    };
+
+    let content: string;
     if (aiMessage) {
-      return aiMessage.content || "No content in AI message";
+      const extracted = extractContent(aiMessage.content);
+      content = extracted || "No content in AI message";
+    } else {
+      // If no AIMessage, return the last message
+      const lastMessage = result.messages[result.messages.length - 1];
+      if (!lastMessage) {
+        content = "No response generated - no messages returned";
+      } else {
+        const extracted = extractContent(lastMessage.content);
+        content = extracted || "No response generated - message has no content property";
+      }
     }
 
-    // If no AIMessage, return the last message
-    const lastMessage = result.messages[result.messages.length - 1];
+    const response = {
+      content,
+      sources: sources.length > 0 ? sources : undefined,
+    };
 
-    if (!lastMessage) {
-      return "No response generated - no messages returned";
-    }
+    console.log("📤 [invokeAgent] Returning response:", {
+      contentLength: content.length,
+      sourcesCount: sources.length,
+      sources: sources.length > 0 ? JSON.stringify(sources, null, 2) : 'none'
+    });
 
-    return lastMessage.content || "No response generated - message has no content property";
+    return response;
   } catch (error) {
     console.error('Error in invokeAgent:', error);
     throw error;

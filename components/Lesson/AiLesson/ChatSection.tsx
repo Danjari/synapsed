@@ -8,7 +8,7 @@ import { useSearchParams } from "next/navigation"
 import useSWR from "swr"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { Plus, ArrowUp, Settings2, Mic, X, Check } from 'lucide-react'
+import { Plus, ArrowUp, Settings2, Mic, X, Check, Info } from 'lucide-react'
 import ReactMarkdown from "react-markdown"
 import remarkMath from "remark-math"
 import rehypeKatex from "rehype-katex"
@@ -28,11 +28,19 @@ const mathStyles = `
     margin: 0.1em 0;
   }
 `
+interface SourceMetadata {
+  title: string
+  page?: number | string
+  materialId?: string
+  classId?: string
+}
+
 interface Message {
   id: string
   content: string
   role: "user" | "assistant"
   timestamp: Date
+  sources?: SourceMetadata[]
 }
 
 interface ChatSectionProps {
@@ -52,6 +60,9 @@ const cleanAIResponse = (content: string): string => {
     .replace(/^FINAL ANSWER\s*:?/i, "")
     .replace(/^ANSWER\s*:?/i, "")
     .replace(/^RESPONSE\s*:?/i, "")
+    // Remove source citations (they're shown in tooltip instead)
+    .replace(/\s*Source:\s*[^\n]+(?:\(Page\s+\d+\))?/gi, "")
+    .replace(/\s*\[Source:[^\]]+\]/gi, "")
     .trim()
 }
 
@@ -246,13 +257,32 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
         setThreadId(data.threadId)
       }
 
+      // DEBUG: Log API response received (system message)
+      console.log("📥 [Frontend] API response received (system):", {
+        hasResponse: !!data.response,
+        hasSources: !!data.sources,
+        sourcesType: Array.isArray(data.sources) ? 'array' : typeof data.sources,
+        sourcesCount: Array.isArray(data.sources) ? data.sources.length : 0,
+        sources: data.sources ? JSON.stringify(data.sources, null, 2) : 'none'
+      });
+
       // Only add the assistant response to the UI (system message stays hidden)
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         content: convertMathToLatex(cleanAIResponse(data.response)),
         role: "assistant",
         timestamp: new Date(),
+        sources: data.sources || undefined,
       }
+
+      // DEBUG: Log message being added (system)
+      console.log("💬 [Frontend] Adding assistant message (system):", {
+        id: assistantMessage.id,
+        hasSources: !!assistantMessage.sources,
+        sourcesCount: assistantMessage.sources?.length || 0,
+        sources: assistantMessage.sources ? JSON.stringify(assistantMessage.sources, null, 2) : 'none'
+      });
+
       setMessages((prev) => [...prev, assistantMessage])
     } catch {
       const errorMessage: Message = {
@@ -312,6 +342,16 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
 
       const data = await response.json()
 
+      // DEBUG: Log API response received
+      console.log("📥 [Frontend] API response received:", {
+        hasResponse: !!data.response,
+        hasSources: !!data.sources,
+        sourcesType: Array.isArray(data.sources) ? 'array' : typeof data.sources,
+        sourcesCount: Array.isArray(data.sources) ? data.sources.length : 0,
+        sources: data.sources ? JSON.stringify(data.sources, null, 2) : 'none',
+        fullData: data
+      });
+
       // Update threadId if returned from API (for new conversations)
       if (data.threadId && data.threadId !== threadId) {
         setThreadId(data.threadId)
@@ -322,7 +362,18 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
         content: convertMathToLatex(cleanAIResponse(data.response)),
         role: "assistant",
         timestamp: new Date(),
+        sources: data.sources || undefined,
       }
+
+      // DEBUG: Log message being added
+      console.log("💬 [Frontend] Adding assistant message:", {
+        id: assistantMessage.id,
+        contentLength: assistantMessage.content.length,
+        hasSources: !!assistantMessage.sources,
+        sourcesCount: assistantMessage.sources?.length || 0,
+        sources: assistantMessage.sources ? JSON.stringify(assistantMessage.sources, null, 2) : 'none'
+      });
+
       setMessages((prev) => [...prev, assistantMessage])
     } catch {
       const errorMessage: Message = {
@@ -358,9 +409,11 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
       setHasTriggeredIntroduction(true)
 
       // Get Socratic introduction prompt from centralized prompts file
-      const introPrompt = getSocraticIntroductionPrompt(nodeTitle, studentName)
+      // Pass classId to ensure RAG search is triggered for the first interaction
+      const introPrompt = getSocraticIntroductionPrompt(nodeTitle, studentName, classId)
 
       // Automatically send the introduction as a system message (hidden from UI)
+      // This will trigger RAG search and load context into memory
       sendSystemMessage(introPrompt)
     }
   }, [isLoadingConversation, hasExistingConversation, messages.length, hasTriggeredIntroduction, nodeTitle, userId, classId, lessonId, studentName, sendSystemMessage])
@@ -502,7 +555,55 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
                     </ReactMarkdown>
                   </div>
                   {message.role === "assistant" && onAddToNotes && (
-                    <div className="mt-3 flex justify-end animate-in fade-in duration-300">
+                    <div className="mt-3 flex justify-end items-center gap-2 animate-in fade-in duration-300">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div 
+                              className="h-7 w-7 flex items-center justify-center text-gray-400 hover:text-gray-600 cursor-help transition-all duration-200"
+                              onClick={() => {
+                                // DEBUG: Log sources when tooltip is clicked
+                                console.log("🖱️ [Frontend] Tooltip clicked for message:", {
+                                  messageId: message.id,
+                                  hasSources: !!message.sources,
+                                  sourcesType: Array.isArray(message.sources) ? 'array' : typeof message.sources,
+                                  sourcesCount: message.sources?.length || 0,
+                                  sources: message.sources ? JSON.stringify(message.sources, null, 2) : 'none',
+                                  fullMessage: message
+                                });
+                              }}
+                            >
+                              <Info className="w-4 h-4" />
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" className="bg-gray-900 text-white text-xs max-w-xs">
+                            <div className="space-y-1">
+                              <p className="font-semibold mb-1">Sources:</p>
+                              {(() => {
+                                // DEBUG: Log sources when rendering tooltip
+                                console.log("🎨 [Frontend] Rendering tooltip for message:", {
+                                  messageId: message.id,
+                                  hasSources: !!message.sources,
+                                  sourcesType: Array.isArray(message.sources) ? 'array' : typeof message.sources,
+                                  sourcesCount: message.sources?.length || 0,
+                                  sources: message.sources ? JSON.stringify(message.sources, null, 2) : 'none'
+                                });
+                                
+                                if (message.sources && message.sources.length > 0) {
+                                  return message.sources.map((source, index) => (
+                                    <p key={index}>
+                                      {source.title}
+                                      {source.page && source.page !== "?" && ` (Page ${source.page})`}
+                                    </p>
+                                  ));
+                                } else {
+                                  return <p className="text-gray-400 italic">No sources available</p>;
+                                }
+                              })()}
+                            </div>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>

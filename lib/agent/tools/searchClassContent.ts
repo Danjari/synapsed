@@ -21,7 +21,10 @@ export const searchClassContent = new DynamicStructuredTool({
 
       if (!matches || matches.length === 0) {
         console.log("❌ No matches found");
-        return "No relevant information found in the class content.";
+        return {
+          content: "No relevant information found in the class content.",
+          sources: [],
+        };
       }
 
       // Log details for verification
@@ -31,19 +34,59 @@ export const searchClassContent = new DynamicStructuredTool({
         console.log(`Content Preview: ${match.metadata?.text?.toString().substring(0, 100)}...`);
       });
 
-      // Format the results for the agent
-      const formattedResults = matches.map((match) => {
-        const metadata = match.metadata as any;
-        return `
-Source: ${metadata.title || "Unknown Source"} (Page ${metadata.page || "?"})
-Content: ${metadata.text}
-`;
-      }).join("\n---\n");
+      // Extract sources metadata
+      const sources = matches.map((match) => {
+        const metadata = match.metadata as {
+          title?: string;
+          page?: number | string;
+          materialId?: string;
+          classId?: string;
+          text?: string;
+        };
+        return {
+          title: metadata.title || "Unknown Source",
+          page: metadata.page || "?",
+          materialId: metadata.materialId,
+          classId: metadata.classId,
+        };
+      });
 
-      return `Found the following relevant information:\n${formattedResults}`;
+      // DEBUG: Log sources being returned
+      console.log("🔍 [searchClassContent] Sources extracted:", JSON.stringify(sources, null, 2));
+
+      // Format the results for the agent WITHOUT source citations
+      // Sources will be shown in the tooltip, not in the message content
+      const formattedResults = matches.map((match) => {
+        const metadata = match.metadata as {
+          title?: string;
+          page?: number | string;
+          materialId?: string;
+          classId?: string;
+          text?: string;
+        };
+        // Only include the content text, not the source citation
+        return metadata.text || "";
+      }).join("\n\n---\n\n");
+
+      const content = `Found the following relevant information:\n\n${formattedResults}`;
+
+      const result = {
+        content: content,
+        sources: sources,
+      };
+
+      // DEBUG: Log full result being returned
+      console.log("📦 [searchClassContent] Returning result with sources:", JSON.stringify(result, null, 2));
+
+      // Return object with both content and sources
+      // The content will be used by the LLM, and sources will be extracted by the agent
+      return result;
     } catch (error) {
       console.error("Error searching class content:", error);
-      return "An error occurred while searching the class content.";
+      return {
+        content: "An error occurred while searching the class content.",
+        sources: [],
+      };
     }
   },
 });
