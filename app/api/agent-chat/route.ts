@@ -65,12 +65,25 @@ export async function POST(request: NextRequest) {
 
     // Save assistant message to database if conversation exists
     if (conversation) {
-      await ConversationService.saveMessage({
-        conversationId: conversation.id,
-        role: 'ASSISTANT',
-        content: agentResponse.content,
-        sources: agentResponse.sources,
-      });
+      try {
+        await ConversationService.saveMessage({
+          conversationId: conversation.id,
+          role: 'ASSISTANT',
+          content: agentResponse.content,
+          sources: agentResponse.sources,
+        });
+      } catch (saveError) {
+        // Log save error but don't fail the request - user already got the response
+        // Avoid passing error objects directly to prevent Next.js source map issues
+        const saveErrorMessage = saveError instanceof Error ? saveError.message : String(saveError || 'Unknown error');
+        console.error('[Database Save Error]', saveErrorMessage);
+        console.error('[Database Save Error Context]', {
+          conversationId: conversation.id,
+          hasSources: !!agentResponse.sources,
+          sourcesCount: agentResponse.sources?.length || 0,
+          sourcesType: agentResponse.sources ? typeof agentResponse.sources : 'none'
+        });
+      }
     }
 
     const apiResponse = {
@@ -90,9 +103,19 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(apiResponse);
   } catch (error) {
-    console.error('Agent error:', error);
+    // Safely log error - avoid passing error objects directly to prevent Next.js source map issues
+    const errorMessage = error instanceof Error ? error.message : String(error || 'Unknown error');
+    const errorName = error instanceof Error ? error.name : 'Error';
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    
+    // Log as separate string messages to avoid Next.js source map inspection issues
+    console.error('[Agent Error]', errorName + ':', errorMessage);
+    if (errorStack) {
+      console.error('[Agent Error Stack]', errorStack);
+    }
+    
     return NextResponse.json(
-      { error: 'Failed to process request', details: error instanceof Error ? error.message : 'Unknown error' },
+      { error: 'Failed to process request', details: errorMessage },
       { status: 500 }
     );
   }
