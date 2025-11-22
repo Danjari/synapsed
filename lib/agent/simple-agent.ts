@@ -6,6 +6,7 @@ import { SystemMessage, HumanMessage, AIMessage, ToolMessage } from "@langchain/
 import type { BaseMessage } from "@langchain/core/messages";
 import { MongoDBSaver } from "@langchain/langgraph-checkpoint-mongodb";
 import { MongoClient } from "mongodb";
+import { searchClassContent } from "./tools/searchClassContent";
 
 // Define MessagesState with channel configuration for proper memory
 interface MessagesState {
@@ -62,6 +63,7 @@ const toolsByName: Record<string, DynamicStructuredTool> = {
   [getStudentProgress.name]: getStudentProgress,
   [getClassResources.name]: getClassResources,
   [getFlashcards.name]: getFlashcards,
+  [searchClassContent.name]: searchClassContent,
 };
 
 const tools = Object.values(toolsByName);
@@ -81,7 +83,7 @@ async function callLlm(state: MessagesState) {
 // Define the tool call node
 async function callTools(state: MessagesState) {
   const lastMessage = state.messages[state.messages.length - 1];
-  
+
   if (!(lastMessage instanceof AIMessage) || !lastMessage.tool_calls?.length) {
     return { messages: [] };
   }
@@ -109,11 +111,11 @@ async function callTools(state: MessagesState) {
 // Define the should continue function
 function shouldContinue(state: MessagesState): string {
   const lastMessage = state.messages[state.messages.length - 1];
-  
+
   if (lastMessage instanceof AIMessage && lastMessage.tool_calls?.length) {
     return "tools";
   }
-  
+
   return END as string;
 }
 
@@ -179,35 +181,45 @@ async function getCompiledAgent(): Promise<CompiledAgent> {
 }
 
 // Helper function to invoke the agent with a simple message
-export async function invokeAgent(userMessage: string, threadId?: string) {
+export async function invokeAgent(userMessage: string, threadId?: string, classId?: string) {
   try {
     // Get compiled agent (will compile once on first call)
     const agent = await getCompiledAgent();
-    
+
     // Pass config with thread_id if provided for memory
     const config = threadId ? { configurable: { thread_id: threadId } } : { configurable: {} };
-    
+
+    // Prepare the input messages
+    const messages: BaseMessage[] = [];
+
+    // If classId is provided, inject it as context
+    if (classId) {
+      messages.push(new SystemMessage(`Current Context: The user is in Class ID: ${classId}. If the user asks about class content, use this ID.`));
+    }
+
+    messages.push(new HumanMessage(userMessage));
+
     // Pass only the new message - the reducer will merge with previous messages from checkpointer
     const result = await agent.invoke(
-      { messages: [new HumanMessage(userMessage)] },
+      { messages },
       config
     );
-    
+
     // Find the LAST AIMessage in the result (the most recent response)
     const aiMessages = result.messages.filter((msg: BaseMessage) => msg instanceof AIMessage);
     const aiMessage = aiMessages[aiMessages.length - 1];
-    
+
     if (aiMessage) {
       return aiMessage.content || "No content in AI message";
     }
-    
+
     // If no AIMessage, return the last message
     const lastMessage = result.messages[result.messages.length - 1];
-    
+
     if (!lastMessage) {
       return "No response generated - no messages returned";
     }
-    
+
     return lastMessage.content || "No response generated - message has no content property";
   } catch (error) {
     console.error('Error in invokeAgent:', error);
