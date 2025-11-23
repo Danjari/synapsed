@@ -2,18 +2,17 @@
 
 import { QuizDashboard } from '@/components/teacher/assessments/QuizDashboard';
 import { QuizBuilder } from '@/components/teacher/assessments/QuizBuilder';
+import { StudentAssessmentList } from '@/components/teacher/assessments/StudentAssessmentList';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { BarChart3 } from 'lucide-react';
 
 interface ClassAssessmentsManagementProps {
   classId: string;
 }
 
 export function ClassAssessmentsManagement({ classId }: ClassAssessmentsManagementProps) {
-  const router = useRouter();
   const [currentView, setCurrentView] = useState<'dashboard' | 'builder'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'professor-led' | 'ai-led'>('professor-led');
   const [editingQuizId, setEditingQuizId] = useState<string | null>(null);
 
   const handleCreateQuiz = () => {
@@ -31,10 +30,6 @@ export function ClassAssessmentsManagement({ classId }: ClassAssessmentsManageme
     setEditingQuizId(null);
   };
 
-  const handleViewResults = () => {
-    router.push(`/teacher/assessments/results/${classId}`);
-  };
-
   if (currentView === 'builder') {
     return (
       <QuizBuilder 
@@ -46,19 +41,30 @@ export function ClassAssessmentsManagement({ classId }: ClassAssessmentsManageme
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-900">Professor-Led Quizzes</h2>
-        <Button onClick={handleViewResults} variant="outline">
-          <BarChart3 className="h-4 w-4 mr-2" />
-          View Assessment Results
-        </Button>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900">Assessments</h1>
+        <p className="text-gray-600 mt-1">Manage quizzes and view student performance</p>
       </div>
-      <QuizDashboard
-        classId={classId}
-        onCreateQuiz={handleCreateQuiz}
-        onEditQuiz={handleEditQuiz}
-      />
+
+      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
+        <TabsList className="grid w-full max-w-md grid-cols-2">
+          <TabsTrigger value="professor-led">Professor-Led Quiz</TabsTrigger>
+          <TabsTrigger value="ai-led">AI-Led Quiz</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="professor-led" className="mt-6">
+          <QuizDashboard
+            classId={classId}
+            onCreateQuiz={handleCreateQuiz}
+            onEditQuiz={handleEditQuiz}
+          />
+        </TabsContent>
+
+        <TabsContent value="ai-led" className="mt-6">
+          <StudentAssessmentList classId={classId} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

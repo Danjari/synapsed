@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ChevronDown, ChevronRight, CheckCircle2, XCircle } from "lucide-react";
+import { ChevronDown, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { AssessmentDetailView } from "./AssessmentDetailView";
 
@@ -19,9 +19,14 @@ interface AssessmentData {
   submittedAt: string;
   score: number | null;
   feedback: string | null;
-  responses: Record<string, any>;
-  fields: any[];
-  correctAnswers: Record<string, any>;
+  responses: Record<string, string | number | boolean | string[]>;
+  fields: Array<{
+    name: string;
+    type: string;
+    label: string;
+    [key: string]: unknown;
+  }>;
+  correctAnswers: Record<string, string | number | boolean | string[]>;
 }
 
 interface StudentData {
@@ -49,13 +54,6 @@ export function StudentDetailView({ student }: StudentDetailViewProps) {
       newExpanded.add(nodeId);
     }
     setExpandedNodes(newExpanded);
-  };
-
-  const getScoreColor = (score: number | null) => {
-    if (score === null) return "bg-gray-500";
-    if (score >= 80) return "bg-green-500";
-    if (score >= 60) return "bg-yellow-500";
-    return "bg-red-500";
   };
 
   if (student.nodes.length === 0) {

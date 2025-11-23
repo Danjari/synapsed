@@ -1,22 +1,48 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
+import { QuizDashboard } from "./QuizDashboard";
+import { QuizBuilder } from "./QuizBuilder";
+import { useState } from "react";
 
 interface ProfessorQuizResultsProps {
   classId: string;
 }
 
 export function ProfessorQuizResults({ classId }: ProfessorQuizResultsProps) {
-  // TODO: Implement professor-led quiz results
-  // This will show results from quizzes created via QuizBuilder
-  
+  const [currentView, setCurrentView] = useState<'dashboard' | 'builder'>('dashboard');
+  const [editingQuizId, setEditingQuizId] = useState<string | null>(null);
+
+  const handleCreateQuiz = () => {
+    setEditingQuizId(null);
+    setCurrentView('builder');
+  };
+
+  const handleEditQuiz = (quizId: string) => {
+    setEditingQuizId(quizId);
+    setCurrentView('builder');
+  };
+
+  const handleBackToDashboard = () => {
+    setCurrentView('dashboard');
+    setEditingQuizId(null);
+  };
+
+  if (currentView === 'builder') {
+    return (
+      <QuizBuilder 
+        quizId={editingQuizId || undefined} 
+        classId={classId}
+        onBack={handleBackToDashboard} 
+      />
+    );
+  }
+
   return (
-    <Card>
-      <CardContent className="py-8 text-center text-gray-500">
-        <p>Professor-led quiz results will be displayed here.</p>
-        <p className="text-sm mt-2">This feature is coming soon.</p>
-      </CardContent>
-    </Card>
+    <QuizDashboard
+      classId={classId}
+      onCreateQuiz={handleCreateQuiz}
+      onEditQuiz={handleEditQuiz}
+    />
   );
 }
 
