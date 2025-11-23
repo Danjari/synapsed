@@ -46,6 +46,9 @@ model User {
   
   // AI Tutor conversations
   conversations Conversation[]
+  
+  // In-Chat Assessment responses
+  inChatAssessmentResponses InChatAssessmentResponse[]
 }
 
 model Class {
@@ -266,6 +269,9 @@ model PathwayNode {
 
   // Lesson notes attached to this node
   lessonNotes LessonNote[]
+  
+  // In-Chat Assessments for this node
+  inChatAssessments InChatAssessment[]
 }
 
 model FlashcardDeck {
@@ -465,6 +471,7 @@ model Conversation {
   user        User         @relation(fields: [userId], references: [id])
   class       Class?       @relation(fields: [classId], references: [id])
   messages    Message[]
+  inChatAssessments InChatAssessment[]
   
   @@map("conversations")
 }
@@ -474,6 +481,7 @@ model Message {
   conversationId String       @db.ObjectId
   role           MessageRole
   content        String
+  sources        Json?       // Source metadata for RAG citations
   timestamp      DateTime     @default(now())
   
   // Relations
@@ -485,5 +493,45 @@ model Message {
 enum MessageRole {
   USER
   ASSISTANT
+}
+
+// In-Chat Assessment Models
+model InChatAssessment {
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  conversationId String?   @db.ObjectId
+  nodeId         String?   @db.ObjectId
+  nodeTitle      String?
+  topic          String
+  fields         Json      // Formedible field configuration
+  schema         Json      // Zod schema definition
+  correctAnswers Json?     // Correct answers for AI feedback
+  createdAt      DateTime  @default(now())
+  
+  // Relations
+  conversation   Conversation? @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  node           PathwayNode? @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+  responses      InChatAssessmentResponse[]
+  
+  @@index([conversationId])
+  @@index([nodeId])
+  @@map("in_chat_assessments")
+}
+
+model InChatAssessmentResponse {
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  assessmentId   String    @db.ObjectId
+  studentId      String    @db.ObjectId
+  responses      Json      // Student's form responses
+  score          Float?    // Calculated score if applicable
+  feedback       String?   // AI-generated feedback
+  submittedAt     DateTime  @default(now())
+  
+  // Relations
+  assessment     InChatAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  student        User      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  
+  @@index([assessmentId])
+  @@index([studentId])
+  @@map("in_chat_assessment_responses")
 }
 

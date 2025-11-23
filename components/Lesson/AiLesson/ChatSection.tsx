@@ -8,12 +8,15 @@ import { useSearchParams } from "next/navigation"
 import useSWR from "swr"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { Plus, ArrowUp, Settings2, Mic, X, Check } from 'lucide-react'
+import { Plus, ArrowUp, Settings2, Mic, X, Check, Info, ClipboardCheck } from 'lucide-react'
 import ReactMarkdown from "react-markdown"
 import remarkMath from "remark-math"
 import rehypeKatex from "rehype-katex"
 import "katex/dist/katex.min.css"
 import { getSocraticIntroductionPrompt, isSystemIntroductionMessage } from "@/lib/agent/prompts"
+import { InChatAssessmentForm } from "./InChatAssessmentForm"
+import { z } from "zod"
+import type { FieldConfig } from "@/lib/formedible/types"
 
 // Custom styles for math rendering
 const mathStyles = `
@@ -28,11 +31,40 @@ const mathStyles = `
     margin: 0.1em 0;
   }
 `
+interface SourceMetadata {
+  title: string
+  page?: number | string
+  materialId?: string
+  classId?: string
+}
+
+interface InChatAssessmentData {
+  type: "inChatAssessment"
+  topic: string
+  nodeTitle?: string
+  difficulty: "beginner" | "intermediate" | "advanced"
+  fields: Array<FieldConfig & {
+    name: string
+    type: "text" | "textarea" | "select" | "radio" | "multiselect" | "number" | "checkbox"
+    label: string
+    placeholder?: string
+    options?: Array<{ value: string; label: string }>
+    textareaConfig?: { rows: number }
+    numberConfig?: { min?: number; max?: number; step?: number }
+    multiSelectConfig?: { maxSelections: number; searchable?: boolean }
+  }>
+  schema: Record<string, { type: string; required?: boolean; min?: number; message?: string }>
+  zodSchema?: z.ZodObject<Record<string, z.ZodTypeAny>>
+  correctAnswers: Record<string, string | number | boolean | string[]>
+}
+
 interface Message {
   id: string
   content: string
   role: "user" | "assistant"
   timestamp: Date
+  sources?: SourceMetadata[]
+  inChatAssessmentData?: InChatAssessmentData
 }
 
 interface ChatSectionProps {
@@ -52,6 +84,9 @@ const cleanAIResponse = (content: string): string => {
     .replace(/^FINAL ANSWER\s*:?/i, "")
     .replace(/^ANSWER\s*:?/i, "")
     .replace(/^RESPONSE\s*:?/i, "")
+    // Remove source citations (they're shown in tooltip instead)
+    .replace(/\s*Source:\s*[^\n]+(?:\(Page\s+\d+\))?/gi, "")
+    .replace(/\s*\[Source:[^\]]+\]/gi, "")
     .trim()
 }
 
@@ -80,7 +115,7 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
   const userId = propUserId || (session?.user as { id?: string })?.id
   const studentName = (session?.user as { name?: string })?.name || "there"
   const nodeTitle = propNodeTitle || searchParams.get('nodeTitle') || ''
-  
+
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState("")
   const [isTyping, setIsTyping] = useState(false)
@@ -98,10 +133,10 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
   }
 
   // Use SWR for fast, cached conversation loading
-  const conversationKey = userId && classId && lessonId 
+  const conversationKey = userId && classId && lessonId
     ? `/api/conversations/by-lesson?userId=${userId}&classId=${classId}&lessonId=${lessonId}`
     : null
-  
+
   const { data, error, isLoading: isLoadingConversation } = useSWR(
     conversationKey,
     fetcher,
@@ -125,7 +160,7 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const messagesRef = useRef<Message[]>([])
-  
+
   // Keep ref in sync with messages state
   useEffect(() => {
     messagesRef.current = messages
@@ -137,7 +172,7 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
       if (data.conversation) {
         // Set threadId for agent memory continuity
         setThreadId(data.conversation.threadId)
-        
+
         // Load messages into state, filtering out system introduction messages
         const loadedMessages: Message[] = data.conversation.messages
           .map((msg: {
@@ -145,11 +180,13 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
             content: string
             role: 'USER' | 'ASSISTANT'
             timestamp: string
+            sources?: SourceMetadata[]
           }) => ({
             id: msg.id,
             content: msg.content,
             role: msg.role.toLowerCase() as 'user' | 'assistant',
             timestamp: new Date(msg.timestamp),
+            sources: msg.sources && Array.isArray(msg.sources) ? msg.sources : undefined,
           }))
           .filter((msg: Message) => {
             // Filter out user messages that are system introduction prompts
@@ -158,7 +195,7 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
             }
             return true
           })
-        
+
         setMessages(loadedMessages)
       } else {
         // No conversation found - clear messages
@@ -234,25 +271,28 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
           userId
         }),
       })
-      
+
       if (!response.ok) {
         throw new Error('Failed to get response')
       }
-      
+
       const data = await response.json()
-      
+
       // Update threadId if returned from API (for new conversations)
       if (data.threadId && data.threadId !== threadId) {
         setThreadId(data.threadId)
       }
-      
+
       // Only add the assistant response to the UI (system message stays hidden)
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         content: convertMathToLatex(cleanAIResponse(data.response)),
         role: "assistant",
         timestamp: new Date(),
+        sources: data.sources || undefined,
+        inChatAssessmentData: data.inChatAssessmentData || undefined,
       }
+
       setMessages((prev) => [...prev, assistantMessage])
     } catch {
       const errorMessage: Message = {
@@ -305,24 +345,27 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
           userId
         }),
       })
-      
+
       if (!response.ok) {
         throw new Error('Failed to get response')
       }
-      
+
       const data = await response.json()
-      
+
       // Update threadId if returned from API (for new conversations)
       if (data.threadId && data.threadId !== threadId) {
         setThreadId(data.threadId)
       }
-      
+
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         content: convertMathToLatex(cleanAIResponse(data.response)),
         role: "assistant",
         timestamp: new Date(),
+        sources: data.sources || undefined,
+        inChatAssessmentData: data.inChatAssessmentData || undefined,
       }
+
       setMessages((prev) => [...prev, assistantMessage])
     } catch {
       const errorMessage: Message = {
@@ -356,11 +399,13 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
       lessonId
     ) {
       setHasTriggeredIntroduction(true)
-      
+
       // Get Socratic introduction prompt from centralized prompts file
-      const introPrompt = getSocraticIntroductionPrompt(nodeTitle, studentName)
+      // Pass classId to ensure RAG search is triggered for the first interaction
+      const introPrompt = getSocraticIntroductionPrompt(nodeTitle, studentName, classId)
 
       // Automatically send the introduction as a system message (hidden from UI)
+      // This will trigger RAG search and load context into memory
       sendSystemMessage(introPrompt)
     }
   }, [isLoadingConversation, hasExistingConversation, messages.length, hasTriggeredIntroduction, nodeTitle, userId, classId, lessonId, studentName, sendSystemMessage])
@@ -371,7 +416,7 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
 
     const messageContent = input.trim()
     if (!messageContent) return
-    
+
     setInput("")
     await sendMessage(messageContent)
   }
@@ -413,6 +458,56 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
     setIsRecording(false)
     setInput("When speech to text feature ?")
   }
+
+  const handleManualAssessment = useCallback(async () => {
+    if (isTyping || !nodeTitle) return
+
+    setIsTyping(true)
+    try {
+      const response = await fetch('/api/in-chat-assessment/manual-trigger', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          topic: nodeTitle,
+          nodeTitle,
+          classId,
+          lessonId,
+          userId,
+          threadId,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to trigger assessment')
+      }
+
+      const data = await response.json()
+
+      if (data.inChatAssessmentData) {
+        const assessmentMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          content: data.message || 'Here\'s an in-chat assessment to test your understanding:',
+          role: 'assistant',
+          timestamp: new Date(),
+          inChatAssessmentData: data.inChatAssessmentData,
+        }
+        setMessages((prev) => [...prev, assessmentMessage])
+      }
+    } catch (error) {
+      console.error('Error triggering assessment:', error)
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        content: 'Sorry, I couldn\'t create an assessment. Please try again.',
+        role: 'assistant',
+        timestamp: new Date(),
+      }
+      setMessages((prev) => [...prev, errorMessage])
+    } finally {
+      setIsTyping(false)
+    }
+  }, [nodeTitle, classId, lessonId, userId, threadId, isTyping])
 
   const WaveAnimation = () => {
     const [animationKey, setAnimationKey] = useState(0)
@@ -472,25 +567,42 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
             {messages.map((message, index) => (
               <div
                 key={message.id}
-                className={`flex ${
-                  message.role === "user" ? "justify-end" : "justify-start"
-                } animate-in fade-in slide-in-from-bottom-2 ease-out duration-500`}
+                className={`flex ${message.role === "user" ? "justify-end" : "justify-start"
+                  } animate-in fade-in slide-in-from-bottom-2 ease-out duration-500`}
                 style={{ animationDelay: `${index * 30}ms` }}
               >
                 <div className={message.role === "user" ? "max-w-[75%] sm:max-w-md" : "w-full"}>
                   <div
-                    className={`px-4 py-3 transition-all duration-300 ease-out ${
-                      message.role === "user"
+                    className={`px-4 py-3 transition-all duration-300 ease-out ${message.role === "user"
                         ? "bg-gray-100 text-gray-900 rounded-[20px] rounded-br-[8px]"
                         : "bg-transparent text-gray-900 rounded-[20px] rounded-bl-[8px]"
                     }`}
                   >
+                  {message.inChatAssessmentData ? (
+                    <InChatAssessmentForm
+                      inChatAssessmentData={message.inChatAssessmentData}
+                      conversationId={threadId || undefined}
+                      classId={classId}
+                      lessonId={lessonId}
+                      userId={userId || undefined}
+                      onSubmitSuccess={(feedback) => {
+                        // Add feedback as a new assistant message
+                        const feedbackMessage: Message = {
+                          id: (Date.now() + 2).toString(),
+                          content: feedback,
+                          role: "assistant",
+                          timestamp: new Date(),
+                        }
+                        setMessages((prev) => [...prev, feedbackMessage])
+                      }}
+                    />
+                  ) : (
                     <div className="whitespace-pre-wrap break-words leading-relaxed text-[15px]">
                       <ReactMarkdown
                         remarkPlugins={[remarkMath]}
                         rehypePlugins={[rehypeKatex]}
                         components={{
-                          a: ({ ...props}) => (
+                          a: ({ ...props }) => (
                             <a
                               {...props}
                               className="text-blue-600 underline hover:text-blue-800 font-semibold transition-colors duration-200"
@@ -503,157 +615,203 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
                         {message.content}
                       </ReactMarkdown>
                     </div>
-                    {message.role === "assistant" && onAddToNotes && (
-                      <div className="mt-3 flex justify-end animate-in fade-in duration-300">
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => onAddToNotes(message.content)}
-                                className="h-7 w-7 p-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all duration-200"
-                              >
-                                <Plus className="w-4 h-4" />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent side="top" className="bg-gray-900 text-white text-xs">
-                              <p>Add to Notes</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </div>
-                    )}
-                  </div>
+                  )}
+                  {message.role === "assistant" && onAddToNotes && (
+                    <div className="mt-3 flex justify-end items-center gap-2 animate-in fade-in duration-300">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div className="h-7 w-7 flex items-center justify-center text-gray-400 hover:text-gray-600 cursor-help transition-all duration-200">
+                              <Info className="w-4 h-4" />
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" className="bg-gray-900 text-white text-xs max-w-xs">
+                            <div className="space-y-1">
+                              <p className="font-semibold mb-1">Sources:</p>
+                              {message.sources && message.sources.length > 0 ? (
+                                message.sources.map((source, index) => (
+                                  <p key={index}>
+                                    {source.title}
+                                    {source.page && source.page !== "?" && ` (Page ${source.page})`}
+                                  </p>
+                                ))
+                              ) : (
+                                <p className="text-gray-400 italic">No sources available</p>
+                              )}
+                            </div>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => onAddToNotes(message.content)}
+                              className="h-7 w-7 p-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all duration-200"
+                            >
+                              <Plus className="w-4 h-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" className="bg-gray-900 text-white text-xs">
+                            <p>Add to Notes</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                  )}
                 </div>
+              </div>
               </div>
             ))}
 
-            {/* Typing Indicator */}
-            {isTyping && (
-              <div className="flex justify-start animate-in fade-in slide-in-from-bottom-2 ease-out duration-500">
-                <div className="w-full">
-                  <div className="bg-transparent text-gray-900 px-4 py-3 rounded-[20px] rounded-bl-[8px]">
-                    <div className="flex items-center space-x-2">
-                      <div className="flex space-x-1">
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce transition-all duration-300"></div>
-                        <div
-                          className="w-2 h-2 bg-gray-400 rounded-full animate-bounce transition-all duration-300"
-                          style={{ animationDelay: "0.15s" }}
-                        ></div>
-                        <div
-                          className="w-2 h-2 bg-gray-400 rounded-full animate-bounce transition-all duration-300"
-                          style={{ animationDelay: "0.3s" }}
-                        ></div>
-                      </div>
-                      <span className="text-sm text-gray-500 ml-1 animate-pulse">typing...</span>
+          {/* Typing Indicator */}
+          {isTyping && (
+            <div className="flex justify-start animate-in fade-in slide-in-from-bottom-2 ease-out duration-500">
+              <div className="w-full">
+                <div className="bg-transparent text-gray-900 px-4 py-3 rounded-[20px] rounded-bl-[8px]">
+                  <div className="flex items-center space-x-2">
+                    <div className="flex space-x-1">
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce transition-all duration-300"></div>
+                      <div
+                        className="w-2 h-2 bg-gray-400 rounded-full animate-bounce transition-all duration-300"
+                        style={{ animationDelay: "0.15s" }}
+                      ></div>
+                      <div
+                        className="w-2 h-2 bg-gray-400 rounded-full animate-bounce transition-all duration-300"
+                        style={{ animationDelay: "0.3s" }}
+                      ></div>
                     </div>
+                    <span className="text-sm text-gray-500 ml-1 animate-pulse">typing...</span>
                   </div>
                 </div>
               </div>
-            )}
-          </div>
-
-          <div ref={messagesEndRef} className="h-4" />
+            </div>
+          )}
         </div>
+
+        <div ref={messagesEndRef} className="h-4" />
       </div>
     </div>
+  </div>
 
-    {/* Fixed Input Bar */}
-    <div className="flex-shrink-0 backdrop-blur-md bg-white/80 relative z-20">
-      <div className="px-4 py-3">
-        <div className="max-w-3xl mx-auto">
-          <div className="relative">
-            <form onSubmit={handleSubmit} className="relative">
-              <div
-                className="border border-gray-300 rounded-2xl p-4 relative transition-all duration-500 ease-in-out overflow-hidden bg-white/95 backdrop-blur-sm shadow-sm"
-              >
-                {isRecording ? (
-                  <div className="flex items-center justify-between h-12 animate-in fade-in-0 slide-in-from-top-2 duration-500 w-full">
-                    <WaveAnimation />
-                    <div className="flex items-center gap-2 ml-4">
+    {/* Fixed Input Bar */ }
+  <div className="flex-shrink-0 backdrop-blur-md bg-white/80 relative z-20">
+    <div className="px-4 py-3">
+      <div className="max-w-3xl mx-auto">
+        <div className="relative">
+          <form onSubmit={handleSubmit} className="relative">
+            <div
+              className="border border-gray-300 rounded-2xl p-4 relative transition-all duration-500 ease-in-out overflow-hidden bg-white/95 backdrop-blur-sm shadow-sm"
+            >
+              {isRecording ? (
+                <div className="flex items-center justify-between h-12 animate-in fade-in-0 slide-in-from-top-2 duration-500 w-full">
+                  <WaveAnimation />
+                  <div className="flex items-center gap-2 ml-4">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleCancelRecording}
+                      className="h-8 w-8 p-0 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-110"
+                    >
+                      <X className="h-5 w-5" />
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={handleConfirmRecording}
+                      className="h-8 w-8 p-0 rounded-lg transition-all duration-200 hover:scale-110 bg-teal-600 hover:bg-teal-700 text-white"
+                    >
+                      <Check className="h-5 w-5" />
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="animate-in fade-in-0 slide-in-from-bottom-2 duration-500">
+                  <textarea
+                    ref={textareaRef}
+                    value={input}
+                    onChange={handleInputChange}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Type a message..."
+                    className="w-full bg-transparent text-gray-900 placeholder-gray-400 resize-none border-none outline-none text-base leading-relaxed min-h-[24px] max-h-32 transition-all duration-200"
+                    rows={1}
+                    disabled={isTyping}
+                    onInput={(e) => {
+                      const target = e.target as HTMLTextAreaElement
+                      target.style.height = "auto"
+                      target.style.height = target.scrollHeight + "px"
+                    }}
+                  />
+                  <div className="flex items-center justify-between mt-8">
+                    <div className="flex items-center gap-2">
                       <Button
                         type="button"
                         variant="ghost"
                         size="sm"
-                        onClick={handleCancelRecording}
                         className="h-8 w-8 p-0 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-110"
                       >
-                        <X className="h-5 w-5" />
+                        <Plus className="h-5 w-5" />
                       </Button>
                       <Button
                         type="button"
+                        variant="ghost"
                         size="sm"
-                        onClick={handleConfirmRecording}
-                        className="h-8 w-8 p-0 rounded-lg transition-all duration-200 hover:scale-110 bg-teal-600 hover:bg-teal-700 text-white"
+                        className="h-8 w-8 p-0 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-110"
                       >
-                        <Check className="h-5 w-5" />
+                        <Settings2 className="h-5 w-5" />
                       </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="animate-in fade-in-0 slide-in-from-bottom-2 duration-500">
-                    <textarea
-                      ref={textareaRef}
-                      value={input}
-                      onChange={handleInputChange}
-                      onKeyDown={handleKeyDown}
-                      placeholder="Type a message..."
-                      className="w-full bg-transparent text-gray-900 placeholder-gray-400 resize-none border-none outline-none text-base leading-relaxed min-h-[24px] max-h-32 transition-all duration-200"
-                      rows={1}
-                      disabled={isTyping}
-                      onInput={(e) => {
-                        const target = e.target as HTMLTextAreaElement
-                        target.style.height = "auto"
-                        target.style.height = target.scrollHeight + "px"
-                      }}
-                    />
-                    <div className="flex items-center justify-between mt-8">
-                      <div className="flex items-center gap-2">
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-110"
-                        >
-                          <Plus className="h-5 w-5" />
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-110"
-                        >
-                          <Settings2 className="h-5 w-5" />
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={handleMicClick}
-                          disabled={isTyping}
-                          className="h-8 w-8 p-0 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          <Mic className="h-5 w-5 transition-transform duration-200" />
-                        </Button>
-                      </div>
                       <Button
-                        type="submit"
+                        type="button"
+                        variant="ghost"
                         size="sm"
-                        disabled={!input.trim() || isTyping}
-                        className="h-8 w-8 p-0 bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 text-gray-700 rounded-lg transition-all duration-200 hover:scale-110 disabled:hover:scale-100"
+                        onClick={handleMicClick}
+                        disabled={isTyping}
+                        className="h-8 w-8 p-0 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        <ArrowUp className="h-5 w-5" />
+                        <Mic className="h-5 w-5 transition-transform duration-200" />
                       </Button>
+                      {nodeTitle && (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={handleManualAssessment}
+                                disabled={isTyping}
+                                className="h-8 w-8 p-0 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+                                <ClipboardCheck className="h-5 w-5 transition-transform duration-200" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent side="top" className="bg-gray-900 text-white text-xs">
+                              <p>Test My Understanding</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      )}
                     </div>
+                    <Button
+                      type="submit"
+                      size="sm"
+                      disabled={!input.trim() || isTyping}
+                      className="h-8 w-8 p-0 bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 text-gray-700 rounded-lg transition-all duration-200 hover:scale-110 disabled:hover:scale-100"
+                    >
+                      <ArrowUp className="h-5 w-5" />
+                    </Button>
                   </div>
-                )}
-              </div>
-            </form>
-          </div>
+                </div>
+              )}
+            </div>
+          </form>
         </div>
       </div>
     </div>
-</div>
+  </div>
+</div >
 )
 }

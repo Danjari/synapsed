@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
-import { MessageRole } from '@prisma/client';
+import { MessageRole, Prisma } from '@prisma/client';
+import type { SourceMetadata } from './simple-agent';
 
 interface ConversationParams {
   userId: string;
@@ -13,6 +14,7 @@ interface SaveMessageParams {
   conversationId: string;
   role: MessageRole;
   content: string;
+  sources?: SourceMetadata[];
 }
 
 /**
@@ -116,13 +118,32 @@ export class ConversationService {
    * Save a message to a conversation
    */
   static async saveMessage(params: SaveMessageParams) {
-    const { conversationId, role, content } = params;
+    const { conversationId, role, content, sources } = params;
+
+    // Ensure sources is properly formatted for Prisma JSON field
+    let sourcesJson: Prisma.InputJsonValue | null = null;
+    if (sources && Array.isArray(sources) && sources.length > 0) {
+      // Prisma JSON fields expect plain objects/arrays, ensure it's serializable
+      try {
+        // Validate sources structure
+        sourcesJson = sources.map(source => ({
+          title: source.title || '',
+          page: source.page || null,
+          materialId: source.materialId || null,
+          classId: source.classId || null,
+        })) as Prisma.InputJsonValue;
+      } catch (e) {
+        console.error('[ConversationService] Error formatting sources:', e);
+        sourcesJson = null;
+      }
+    }
 
     const message = await prisma.message.create({
       data: {
         conversationId,
         role,
         content,
+        sources: sourcesJson,
       },
     });
 
