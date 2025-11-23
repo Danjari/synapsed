@@ -4,19 +4,8 @@ import { invokeAgent } from '@/lib/agent/simple-agent';
 import { ConversationService } from '@/lib/agent/conversation-service';
 
 export async function POST(request: NextRequest) {
-  console.log('[Assessment Submit] Request received');
   try {
     const body = await request.json();
-    console.log('[Assessment Submit] Body parsed:', {
-      hasAssessmentId: !!body.assessmentId,
-      hasInChatAssessmentData: !!body.inChatAssessmentData,
-      hasResponses: !!body.responses,
-      hasConversationId: !!body.conversationId,
-      hasClassId: !!body.classId,
-      hasLessonId: !!body.lessonId,
-      hasUserId: !!body.userId,
-    });
-    
     const {
       assessmentId,
       inChatAssessmentData,
@@ -28,26 +17,14 @@ export async function POST(request: NextRequest) {
     } = body;
 
     if (!inChatAssessmentData || !responses || !userId) {
-      console.error('[Assessment Submit] Missing required fields:', {
-        hasInChatAssessmentData: !!inChatAssessmentData,
-        hasResponses: !!responses,
-        hasUserId: !!userId,
-      });
       return NextResponse.json(
         { error: 'Missing required fields: inChatAssessmentData, responses, or userId' },
         { status: 400 }
       );
     }
-    
-    console.log('[Assessment Submit] Starting assessment processing:', {
-      topic: inChatAssessmentData.topic,
-      conversationId,
-      userId,
-    });
 
     // First, get conversation to determine actualConversationId before creating assessment
     // Note: conversationId might actually be a threadId (from frontend)
-    console.log('[Assessment Submit] Getting conversation first:', { conversationId, userId });
     let conversation = null;
     let threadId: string | undefined = undefined;
     let actualConversationId: string | null = null;
@@ -55,17 +32,10 @@ export async function POST(request: NextRequest) {
     if (conversationId) {
       // Check if conversationId is actually a threadId (starts with "thread_")
       if (conversationId.startsWith('thread_')) {
-        console.log('[Assessment Submit] conversationId is actually a threadId, looking up by threadId');
         conversation = await ConversationService.getConversationByThreadId(conversationId);
         if (conversation) {
           threadId = conversation.threadId;
           actualConversationId = conversation.id;
-          console.log('[Assessment Submit] Found conversation by threadId:', { 
-            conversationId: conversation.id, 
-            threadId 
-          });
-        } else {
-          console.log('[Assessment Submit] Conversation not found by threadId:', conversationId);
         }
       } else {
         // Try to find by actual conversation ID (ObjectId)
@@ -75,16 +45,12 @@ export async function POST(request: NextRequest) {
         if (conversation) {
           threadId = conversation.threadId;
           actualConversationId = conversation.id;
-          console.log('[Assessment Submit] Found conversation by ID:', { conversationId, threadId });
-        } else {
-          console.log('[Assessment Submit] Conversation not found by ID:', conversationId);
         }
       }
     }
     
     // If no conversation found but we have userId, get or create one
     if (!conversation && userId) {
-      console.log('[Assessment Submit] Creating/getting conversation for user');
       conversation = await ConversationService.getOrCreateConversation({
         userId,
         classId: classId || undefined,
@@ -93,24 +59,17 @@ export async function POST(request: NextRequest) {
       });
       threadId = conversation.threadId;
       actualConversationId = conversation.id;
-      console.log('[Assessment Submit] Conversation ready:', { 
-        conversationId: conversation.id, 
-        threadId 
-      });
     }
 
     // Create or find in-chat assessment record
-    console.log('[Assessment Submit] Looking up assessment:', { assessmentId });
     let assessment;
     if (assessmentId) {
       assessment = await prisma.inChatAssessment.findUnique({
         where: { id: assessmentId },
       });
-      console.log('[Assessment Submit] Found existing assessment:', !!assessment);
     }
 
     if (!assessment) {
-      console.log('[Assessment Submit] Creating new assessment record');
       // Create new in-chat assessment record
       // Use actualConversationId (ObjectId) if we found a conversation, otherwise null
       // Don't use conversationId directly as it might be a threadId
@@ -125,11 +84,9 @@ export async function POST(request: NextRequest) {
           nodeId: lessonId || null,
         },
       });
-      console.log('[Assessment Submit] Assessment created:', assessment.id);
     }
 
     // Calculate score if correct answers are provided
-    console.log('[Assessment Submit] Calculating score');
     let score: number | null = null;
     if (inChatAssessmentData.correctAnswers) {
       const correctAnswers = inChatAssessmentData.correctAnswers;
@@ -178,7 +135,7 @@ export async function POST(request: NextRequest) {
           } else {
             // Exact match for other types
             if (studentStr === correctStr) {
-              correctCount++;
+            correctCount++;
             }
           }
         }
@@ -188,33 +145,39 @@ export async function POST(request: NextRequest) {
         score = (correctCount / totalQuestions) * 100;
       }
     }
-    console.log('[Assessment Submit] Score calculated:', score);
+
+    // Transform responses to use question labels as keys (for professor review)
+    // Keep field names for internal processing, but save formatted version to DB
+    const formattedResponses: Record<string, string | number | boolean | string[]> = {};
+    inChatAssessmentData.fields.forEach((field: { name: string; label: string }) => {
+      const answer = responses[field.name];
+      if (answer !== undefined && answer !== null && answer !== '') {
+        // Use question label as key instead of field name
+        formattedResponses[field.label] = answer;
+      }
+    });
     
     // Save in-chat assessment response (this is independent of conversation, so save immediately)
-    console.log('[Assessment Submit] Saving assessment response');
+    // Save formatted responses with question labels for professor review
     const assessmentResponse = await prisma.inChatAssessmentResponse.create({
       data: {
         assessmentId: assessment.id,
         studentId: userId,
-        responses,
+        responses: formattedResponses, // Save with question labels as keys
         score,
       },
     });
-    
-    // Prepare submission message for agent context
-    const submissionMessage = `I just completed the assessment on "${inChatAssessmentData.topic}". My answers were: ${JSON.stringify(responses, null, 2)}${score !== null ? ` I scored ${score.toFixed(0)}%.` : ''}`;
-    console.log('[Assessment Submit] Submission message prepared, length:', submissionMessage.length);
+
+    // Prepare submission message for agent context (also use formatted version for readability)
+    const submissionMessage = `I just completed the assessment on "${inChatAssessmentData.topic}".\n\n${Object.entries(formattedResponses).map(([question, answer]) => {
+      const formattedAnswer = Array.isArray(answer) ? answer.join(', ') : String(answer);
+      return `Question: ${question}\nAnswer: ${formattedAnswer}`;
+    }).join('\n\n')}${score !== null ? `\n\nI scored ${score.toFixed(0)}%.` : ''}`;
 
     // Generate AI feedback FIRST - this saves to checkpointer automatically
     // Only save messages to Prisma AFTER successful agent invocation to maintain consistency
     // This ensures checkpointer and Prisma stay in sync
     let feedback = '';
-    
-    console.log('[Assessment Submit] Starting feedback generation:', {
-      hasThreadId: !!threadId,
-      hasConversation: !!conversation,
-      agentThreadId: threadId || `assessment-feedback-${userId}-${Date.now()}`,
-    });
     
     try {
       // Create a prompt that includes the submission details
@@ -239,7 +202,6 @@ Be supportive and educational, not judgmental.`;
 
       // Use conversation's threadId for memory continuity, or generate temporary one if no conversation
       const agentThreadId = threadId || `assessment-feedback-${userId}-${Date.now()}`;
-      console.log('[Assessment Submit] Invoking agent with threadId:', agentThreadId);
       
       // Invoke agent FIRST - this saves submission message and feedback to checkpointer
       const agentResponse = await invokeAgent(
@@ -249,48 +211,36 @@ Be supportive and educational, not judgmental.`;
         userId,
         conversation?.id
       );
-      console.log('[Assessment Submit] Agent invocation successful, response length:', agentResponse.content?.length || 0);
 
       feedback = agentResponse.content;
       
       // Agent invocation successful - now save messages to Prisma
       // This ensures checkpointer and Prisma are in sync
       if (conversation) {
-        console.log('[Assessment Submit] Saving messages to Prisma');
         try {
           // Save submission message AFTER successful agent invocation
-          const submissionMsg = await ConversationService.saveMessage({
+          await ConversationService.saveMessage({
             conversationId: conversation.id,
             role: 'USER',
             content: submissionMessage,
           });
-          console.log('[Assessment Submit] Submission message saved:', submissionMsg.id);
 
           // Save feedback as assistant message
-          const feedbackMsg = await ConversationService.saveMessage({
+          await ConversationService.saveMessage({
             conversationId: conversation.id,
             role: 'ASSISTANT',
             content: feedback,
           });
-          console.log('[Assessment Submit] Feedback message saved:', feedbackMsg.id);
         } catch (saveError) {
-          const saveErrorMsg = saveError instanceof Error ? saveError.message : String(saveError);
-          console.error('[Assessment Submit] Error saving messages to conversation:', saveErrorMsg);
+          console.error('Error saving messages to conversation:', saveError);
           // Don't fail the request if message save fails - checkpointer has the messages
         }
-      } else {
-        console.log('[Assessment Submit] No conversation, skipping Prisma message save');
       }
     } catch (error) {
       // Agent invocation failed - don't save to Prisma to maintain consistency
       // Since we save after agent invocation, no rollback needed
       // The checkpointer won't have the messages either, so they stay in sync
-      const errorMsg = error instanceof Error ? error.message : String(error);
-      const errorStack = error instanceof Error ? error.stack : undefined;
-      console.error('[Assessment Submit] Error generating feedback:', errorMsg);
-      if (errorStack) {
-        console.error('[Assessment Submit] Error stack:', errorStack);
-      }
+      console.error('Error generating feedback:', error);
       feedback = score !== null
         ? `Thank you for completing the assessment! You scored ${score.toFixed(0)}%. Keep up the great work!`
         : 'Thank you for completing the assessment!';
@@ -298,17 +248,9 @@ Be supportive and educational, not judgmental.`;
     }
 
     // Update response with feedback
-    console.log('[Assessment Submit] Updating assessment response with feedback');
     await prisma.inChatAssessmentResponse.update({
       where: { id: assessmentResponse.id },
       data: { feedback },
-    });
-
-    console.log('[Assessment Submit] Successfully completed:', {
-      assessmentId: assessment.id,
-      responseId: assessmentResponse.id,
-      score,
-      hasFeedback: !!feedback,
     });
 
     return NextResponse.json({
@@ -319,24 +261,11 @@ Be supportive and educational, not judgmental.`;
       feedback,
     });
   } catch (error) {
-    const errorMsg = error instanceof Error ? error.message : String(error);
-    const errorName = error instanceof Error ? error.name : 'Error';
-    const errorStack = error instanceof Error ? error.stack : undefined;
-    
-    console.error('[Assessment Submit] Fatal error:', errorName, errorMsg);
-    if (errorStack) {
-      console.error('[Assessment Submit] Error stack:', errorStack);
-    }
-    console.error('[Assessment Submit] Error details:', {
-      errorType: typeof error,
-      errorName,
-      hasMessage: error instanceof Error,
-    });
-    
+    console.error('Error submitting in-chat assessment:', error);
     return NextResponse.json(
       {
         error: 'Failed to submit in-chat assessment',
-        details: errorMsg,
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
