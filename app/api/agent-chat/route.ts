@@ -32,6 +32,7 @@ export async function POST(request: NextRequest) {
 
     // Get or create conversation for persistence
     let conversation;
+    
     if (userId) {
       conversation = await ConversationService.getOrCreateConversation({
         userId,
@@ -39,42 +40,55 @@ export async function POST(request: NextRequest) {
         lessonId,
         threadId, // Use provided threadId if exists, otherwise service will generate
       });
-
-      // Save user message to database
-      await ConversationService.saveMessage({
-        conversationId: conversation.id,
-        role: 'USER',
-        content: userMessage,
-      });
     }
 
     // Use conversation's threadId if available, otherwise use provided threadId
     const agentThreadId = conversation?.threadId || threadId;
 
-    // Invoke agent with the threadId for memory continuity
-    const agentResponse = await invokeAgent(userMessage, agentThreadId, classId, userId, conversation?.id);
+    // Invoke agent FIRST - this saves to checkpointer automatically
+    // Only save to Prisma AFTER successful agent invocation to maintain consistency
+    // This ensures checkpointer and Prisma stay in sync
+    let agentResponse;
+    try {
+      agentResponse = await invokeAgent(userMessage, agentThreadId, classId, userId, conversation?.id);
+      
+      // Agent invocation successful - now save messages to Prisma
+      // This ensures checkpointer and Prisma are in sync
+      if (conversation) {
+        try {
+          // Save user message AFTER successful agent invocation
+          await ConversationService.saveMessage({
+            conversationId: conversation.id,
+            role: 'USER',
+            content: userMessage,
+          });
 
-    // Save assistant message to database if conversation exists
-    if (conversation) {
-      try {
-        await ConversationService.saveMessage({
-          conversationId: conversation.id,
-          role: 'ASSISTANT',
-          content: agentResponse.content,
-          sources: agentResponse.sources,
-        });
-      } catch (saveError) {
-        // Log save error but don't fail the request - user already got the response
-        // Avoid passing error objects directly to prevent Next.js source map issues
-        const saveErrorMessage = saveError instanceof Error ? saveError.message : String(saveError || 'Unknown error');
-        console.error('[Database Save Error]', saveErrorMessage);
-        console.error('[Database Save Error Context]', {
-          conversationId: conversation.id,
-          hasSources: !!agentResponse.sources,
-          sourcesCount: agentResponse.sources?.length || 0,
-          sourcesType: agentResponse.sources ? typeof agentResponse.sources : 'none'
-        });
+          // Save assistant message
+          await ConversationService.saveMessage({
+            conversationId: conversation.id,
+            role: 'ASSISTANT',
+            content: agentResponse.content,
+            sources: agentResponse.sources,
+          });
+        } catch (saveError) {
+          // Log save error but don't fail the request - user already got the response
+          // Checkpointer has the messages, Prisma save failure is less critical
+          const saveErrorMessage = saveError instanceof Error ? saveError.message : String(saveError || 'Unknown error');
+          console.error('[Database Save Error]', saveErrorMessage);
+          console.error('[Database Save Error Context]', {
+            conversationId: conversation.id,
+            hasSources: !!agentResponse.sources,
+            sourcesCount: agentResponse.sources?.length || 0,
+            sourcesType: agentResponse.sources ? typeof agentResponse.sources : 'none'
+          });
+        }
       }
+    } catch (agentError) {
+      // Agent invocation failed - don't save to Prisma to maintain consistency
+      // Since we save after agent invocation, no rollback needed
+      // The checkpointer won't have the message either, so they stay in sync
+      console.error('[Agent Invocation Error]', agentError instanceof Error ? agentError.message : String(agentError));
+      throw agentError; // Re-throw to be handled by outer catch
     }
 
     const apiResponse = {

@@ -213,13 +213,15 @@ Conversation with 500 messages:
 
 ### Short-term Fixes
 
-1. **Add Transaction-like Behavior**
+1. ✅ **Add Transaction-like Behavior** - **IMPLEMENTED**
    - Save to Prisma AFTER successful agent invocation
-   - Or use try-catch to rollback Prisma save if agent fails
+   - If agent invocation fails, don't save to Prisma (maintains consistency)
+   - Checkpointer and Prisma stay in sync
 
-2. **Fix Assessment Submission Order**
-   - Save submission message BEFORE generating feedback
-   - Ensure agent sees submission in context
+2. ✅ **Fix Assessment Submission Order** - **IMPLEMENTED**
+   - Include submission details in feedback prompt
+   - Save submission message AFTER successful agent invocation
+   - Ensures checkpointer and Prisma are in sync
 
 3. **Add Message Deduplication**
    - Check if message already exists before saving

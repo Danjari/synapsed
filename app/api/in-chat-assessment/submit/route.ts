@@ -129,7 +129,7 @@ export async function POST(request: NextRequest) {
       threadId = conversation.threadId;
     }
     
-    // Save in-chat assessment response
+    // Save in-chat assessment response (this is independent of conversation, so save immediately)
     const assessmentResponse = await prisma.inChatAssessmentResponse.create({
       data: {
         assessmentId: assessment.id,
@@ -139,28 +139,20 @@ export async function POST(request: NextRequest) {
       },
     });
     
-    // Save assessment submission as a user message in conversation BEFORE generating feedback
-    // This ensures the agent sees the submission in context when generating feedback
-    if (conversation) {
-      try {
-        const submissionMessage = `I just completed the assessment on "${inChatAssessmentData.topic}". My answers were: ${JSON.stringify(responses, null, 2)}${score !== null ? ` I scored ${score.toFixed(0)}%.` : ''}`;
-        await ConversationService.saveMessage({
-          conversationId: conversation.id,
-          role: 'USER',
-          content: submissionMessage,
-        });
-      } catch (saveError) {
-        console.error('Error saving assessment submission message:', saveError);
-        // Don't fail the request if message save fails
-      }
-    }
+    // Prepare submission message for agent context
+    const submissionMessage = `I just completed the assessment on "${inChatAssessmentData.topic}". My answers were: ${JSON.stringify(responses, null, 2)}${score !== null ? ` I scored ${score.toFixed(0)}%.` : ''}`;
 
-    // Generate AI feedback
+    // Generate AI feedback FIRST - this saves to checkpointer automatically
+    // Only save messages to Prisma AFTER successful agent invocation to maintain consistency
+    // This ensures checkpointer and Prisma stay in sync
     let feedback = '';
+    
     try {
-      // Create a prompt that references the submission message (which is now in conversation history)
-      // The agent will see the submission message in its context, so we can reference it naturally
+      // Create a prompt that includes the submission details
       const feedbackPrompt = `The student just completed an assessment on "${inChatAssessmentData.topic}". 
+
+Their submission:
+${submissionMessage}
 
 The correct answers were:
 ${JSON.stringify(inChatAssessmentData.correctAnswers || {}, null, 2)}
@@ -179,6 +171,7 @@ Be supportive and educational, not judgmental.`;
       // Use conversation's threadId for memory continuity, or generate temporary one if no conversation
       const agentThreadId = threadId || `assessment-feedback-${userId}-${Date.now()}`;
       
+      // Invoke agent FIRST - this saves submission message and feedback to checkpointer
       const agentResponse = await invokeAgent(
         feedbackPrompt,
         agentThreadId,
@@ -189,24 +182,37 @@ Be supportive and educational, not judgmental.`;
 
       feedback = agentResponse.content;
       
-      // Save feedback as assistant message in conversation if conversation exists
+      // Agent invocation successful - now save messages to Prisma
+      // This ensures checkpointer and Prisma are in sync
       if (conversation) {
         try {
+          // Save submission message AFTER successful agent invocation
+          await ConversationService.saveMessage({
+            conversationId: conversation.id,
+            role: 'USER',
+            content: submissionMessage,
+          });
+
+          // Save feedback as assistant message
           await ConversationService.saveMessage({
             conversationId: conversation.id,
             role: 'ASSISTANT',
             content: feedback,
           });
         } catch (saveError) {
-          console.error('Error saving feedback message to conversation:', saveError);
-          // Don't fail the request if message save fails
+          console.error('Error saving messages to conversation:', saveError);
+          // Don't fail the request if message save fails - checkpointer has the messages
         }
       }
     } catch (error) {
+      // Agent invocation failed - don't save to Prisma to maintain consistency
+      // Since we save after agent invocation, no rollback needed
+      // The checkpointer won't have the messages either, so they stay in sync
       console.error('Error generating feedback:', error);
       feedback = score !== null
         ? `Thank you for completing the assessment! You scored ${score.toFixed(0)}%. Keep up the great work!`
         : 'Thank you for completing the assessment!';
+      // Note: Assessment response is already saved, which is fine - it's independent data
     }
 
     // Update response with feedback
