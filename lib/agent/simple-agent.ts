@@ -7,11 +7,22 @@ import type { BaseMessage } from "@langchain/core/messages";
 import { MongoDBSaver } from "@langchain/langgraph-checkpoint-mongodb";
 import { MongoClient } from "mongodb";
 import { searchClassContent } from "./tools/searchClassContent";
+import { createInChatAssessment } from "./tools/createInChatAssessment";
 
 // Define MessagesState with channel configuration for proper memory
 interface MessagesState {
   messages: BaseMessage[];
 }
+
+// Context for tool invocations
+interface ToolContext {
+  conversationId?: string;
+  classId?: string;
+  lessonId?: string;
+  userId?: string;
+}
+
+let currentToolContext: ToolContext = {};
 
 // Source metadata type
 export interface SourceMetadata {
@@ -25,6 +36,7 @@ export interface SourceMetadata {
 export interface AgentResponse {
   content: string;
   sources?: SourceMetadata[];
+  inChatAssessmentData?: InChatAssessmentData; // Formedible in-chat assessment configuration
 }
 
 // Initialize the model
@@ -65,6 +77,7 @@ const toolsByName: Record<string, DynamicStructuredTool> = {
   [getStudentProgress.name]: getStudentProgress,
   [getClassResources.name]: getClassResources,
   [searchClassContent.name]: searchClassContent,
+  [createInChatAssessment.name]: createInChatAssessment,
 };
 
 const tools = Object.values(toolsByName);
@@ -104,6 +117,17 @@ You are a highly capable educational assistant for Synapsed, designed to help st
 4.  **TOOL USAGE**:
     *   Use \`getStudentProgress\` to understand where the student is in the course.
     *   Use \`getClassResources\` to recommend materials.
+
+5.  **IN-CHAT ASSESSMENT & UNDERSTANDING EVALUATION**:
+    *   **When to Assess**: After explaining a concept or topic, assess the student's understanding by using the \`createInChatAssessment\` tool.
+    *   **Assessment Timing**: Use in-chat assessments when:
+        - You've just explained a complex concept
+        - The student seems to understand but you want to verify
+        - The student asks to test their knowledge
+        - You want to reinforce learning through practice
+    *   **How to Use**: Call \`createInChatAssessment\` with the topic, nodeTitle (if available), questionCount (2-5 questions is ideal), and appropriate difficulty level.
+    *   **After Assessment**: Once the student completes the in-chat assessment, provide constructive feedback on their answers, highlighting what they understood well and areas for improvement.
+    *   **Continue Learning**: After feedback, continue the conversation naturally, addressing any gaps in understanding.
 `),
     ...history,
   ]);
@@ -114,6 +138,18 @@ You are a highly capable educational assistant for Synapsed, designed to help st
 // Map to store sources extracted from tool results, keyed by tool_call_id
 // This allows us to separate sources from content - LLM gets clean text, we track sources separately
 const toolSourcesMap = new Map<string, SourceMetadata[]>();
+
+// Map to store in-chat assessment data from createInChatAssessment tool, keyed by tool_call_id
+interface InChatAssessmentData {
+  type: string;
+  topic: string;
+  nodeTitle?: string;
+  difficulty: string;
+  fields: unknown[];
+  schema: unknown;
+  correctAnswers: Record<string, unknown>;
+}
+const toolInChatAssessmentMap = new Map<string, InChatAssessmentData>();
 
 // Define the tool call node
 async function callTools(state: MessagesState) {
@@ -132,7 +168,19 @@ async function callTools(state: MessagesState) {
           tool_call_id: toolCall.id || '',
         });
       }
-      const result = await tool.invoke(toolCall);
+      
+      // Inject context into tool call args for createInChatAssessment
+      let toolCallInput = toolCall.args || {};
+      if (toolCall.name === 'createInChatAssessment') {
+        toolCallInput = {
+          ...toolCallInput,
+          conversationId: currentToolContext.conversationId,
+          classId: currentToolContext.classId,
+          lessonId: currentToolContext.lessonId,
+        };
+      }
+      
+      const result = await tool.invoke(toolCallInput);
       
       // Handle different return types
       let content: string;
@@ -153,6 +201,13 @@ async function callTools(state: MessagesState) {
         } else {
           // No sources, clear any previous entry
           toolSourcesMap.delete(toolCallId);
+        }
+        
+        // Extract in-chat assessment data if present (from createInChatAssessment tool)
+        if ('inChatAssessmentData' in result && result.inChatAssessmentData) {
+          toolInChatAssessmentMap.set(toolCallId, result.inChatAssessmentData);
+        } else {
+          toolInChatAssessmentMap.delete(toolCallId);
         }
         
         // Give LLM ONLY the content string - clean, natural text without JSON structure
@@ -298,7 +353,7 @@ function extractSourcesFromMessages(messages: BaseMessage[]): SourceMetadata[] {
 }
 
 // Helper function to invoke the agent with a simple message
-export async function invokeAgent(userMessage: string, threadId?: string, classId?: string, userId?: string): Promise<AgentResponse> {
+export async function invokeAgent(userMessage: string, threadId?: string, classId?: string, userId?: string, conversationId?: string): Promise<AgentResponse> {
   try {
     // Get compiled agent (will compile once on first call)
     const agent = await getCompiledAgent();
@@ -309,10 +364,18 @@ export async function invokeAgent(userMessage: string, threadId?: string, classI
     // Prepare the input messages
     const messages: BaseMessage[] = [];
 
+    // Store context for tool invocations
+    currentToolContext = {
+      conversationId,
+      classId,
+      lessonId: classId, // Using classId as lessonId fallback
+      userId,
+    };
+
     // Context Injection
     let fullUserMessage = userMessage;
     if (classId || userId) {
-      const contextMsg = `[System Context]\n${classId ? `- Class ID: ${classId}\n` : ""}${userId ? `- Student ID: ${userId}\n` : ""}[End Context]\n\n`;
+      const contextMsg = `[System Context]\n${classId ? `- Class ID: ${classId}\n` : ""}${userId ? `- Student ID: ${userId}\n` : ""}${conversationId ? `- Conversation ID: ${conversationId}\n` : ""}[End Context]\n\n`;
       fullUserMessage = contextMsg + userMessage;
     }
 
@@ -327,20 +390,25 @@ export async function invokeAgent(userMessage: string, threadId?: string, classI
     // Extract sources from tool messages
     const sources = extractSourcesFromMessages(result.messages);
     
-    // Clean up sources map for tool calls in this result to prevent memory leaks
-    // Extract tool_call_ids from ToolMessages in the result
+    // Extract in-chat assessment data from tool messages
+    let inChatAssessmentData: InChatAssessmentData | undefined = undefined;
     const toolCallIdsInResult = new Set<string>();
     for (const msg of result.messages) {
       if (msg instanceof ToolMessage) {
         if (msg.tool_call_id) {
           toolCallIdsInResult.add(msg.tool_call_id);
+          // Check if this tool call has in-chat assessment data
+          if (toolInChatAssessmentMap.has(msg.tool_call_id)) {
+            inChatAssessmentData = toolInChatAssessmentMap.get(msg.tool_call_id);
+          }
         }
       }
     }
-    // Remove entries for tool calls that are no longer needed
+    // Clean up maps for tool calls in this result to prevent memory leaks
     // (Keep them until after extraction, then clean up)
     for (const toolCallId of toolCallIdsInResult) {
       toolSourcesMap.delete(toolCallId);
+      toolInChatAssessmentMap.delete(toolCallId);
     }
 
     // Find the LAST AIMessage in the result (the most recent response)
@@ -378,6 +446,7 @@ export async function invokeAgent(userMessage: string, threadId?: string, classI
     const response = {
       content,
       sources: sources.length > 0 ? sources : undefined,
+      inChatAssessmentData,
     };
 
     return response;

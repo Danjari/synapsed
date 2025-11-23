@@ -8,12 +8,15 @@ import { useSearchParams } from "next/navigation"
 import useSWR from "swr"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { Plus, ArrowUp, Settings2, Mic, X, Check, Info } from 'lucide-react'
+import { Plus, ArrowUp, Settings2, Mic, X, Check, Info, ClipboardCheck } from 'lucide-react'
 import ReactMarkdown from "react-markdown"
 import remarkMath from "remark-math"
 import rehypeKatex from "rehype-katex"
 import "katex/dist/katex.min.css"
 import { getSocraticIntroductionPrompt, isSystemIntroductionMessage } from "@/lib/agent/prompts"
+import { InChatAssessmentForm } from "./InChatAssessmentForm"
+import { z } from "zod"
+import type { FieldConfig } from "@/lib/formedible/types"
 
 // Custom styles for math rendering
 const mathStyles = `
@@ -35,12 +38,33 @@ interface SourceMetadata {
   classId?: string
 }
 
+interface InChatAssessmentData {
+  type: "inChatAssessment"
+  topic: string
+  nodeTitle?: string
+  difficulty: "beginner" | "intermediate" | "advanced"
+  fields: Array<FieldConfig & {
+    name: string
+    type: "text" | "textarea" | "select" | "radio" | "multiselect" | "number" | "checkbox"
+    label: string
+    placeholder?: string
+    options?: Array<{ value: string; label: string }>
+    textareaConfig?: { rows: number }
+    numberConfig?: { min?: number; max?: number; step?: number }
+    multiSelectConfig?: { maxSelections: number; searchable?: boolean }
+  }>
+  schema: Record<string, { type: string; required?: boolean; min?: number; message?: string }>
+  zodSchema?: z.ZodObject<Record<string, z.ZodTypeAny>>
+  correctAnswers: Record<string, string | number | boolean | string[]>
+}
+
 interface Message {
   id: string
   content: string
   role: "user" | "assistant"
   timestamp: Date
   sources?: SourceMetadata[]
+  inChatAssessmentData?: InChatAssessmentData
 }
 
 interface ChatSectionProps {
@@ -266,6 +290,7 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
         role: "assistant",
         timestamp: new Date(),
         sources: data.sources || undefined,
+        inChatAssessmentData: data.inChatAssessmentData || undefined,
       }
 
       setMessages((prev) => [...prev, assistantMessage])
@@ -338,6 +363,7 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
         role: "assistant",
         timestamp: new Date(),
         sources: data.sources || undefined,
+        inChatAssessmentData: data.inChatAssessmentData || undefined,
       }
 
       setMessages((prev) => [...prev, assistantMessage])
@@ -433,6 +459,56 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
     setInput("When speech to text feature ?")
   }
 
+  const handleManualAssessment = useCallback(async () => {
+    if (isTyping || !nodeTitle) return
+
+    setIsTyping(true)
+    try {
+      const response = await fetch('/api/in-chat-assessment/manual-trigger', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          topic: nodeTitle,
+          nodeTitle,
+          classId,
+          lessonId,
+          userId,
+          threadId,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to trigger assessment')
+      }
+
+      const data = await response.json()
+
+      if (data.inChatAssessmentData) {
+        const assessmentMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          content: data.message || 'Here\'s an in-chat assessment to test your understanding:',
+          role: 'assistant',
+          timestamp: new Date(),
+          inChatAssessmentData: data.inChatAssessmentData,
+        }
+        setMessages((prev) => [...prev, assessmentMessage])
+      }
+    } catch (error) {
+      console.error('Error triggering assessment:', error)
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        content: 'Sorry, I couldn\'t create an assessment. Please try again.',
+        role: 'assistant',
+        timestamp: new Date(),
+      }
+      setMessages((prev) => [...prev, errorMessage])
+    } finally {
+      setIsTyping(false)
+    }
+  }, [nodeTitle, classId, lessonId, userId, threadId, isTyping])
+
   const WaveAnimation = () => {
     const [animationKey, setAnimationKey] = useState(0)
     useEffect(() => {
@@ -502,24 +578,44 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
                         : "bg-transparent text-gray-900 rounded-[20px] rounded-bl-[8px]"
                     }`}
                   >
-                  <div className="whitespace-pre-wrap break-words leading-relaxed text-[15px]">
-                    <ReactMarkdown
-                      remarkPlugins={[remarkMath]}
-                      rehypePlugins={[rehypeKatex]}
-                      components={{
-                        a: ({ ...props }) => (
-                          <a
-                            {...props}
-                            className="text-blue-600 underline hover:text-blue-800 font-semibold transition-colors duration-200"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          />
-                        ),
+                  {message.inChatAssessmentData ? (
+                    <InChatAssessmentForm
+                      inChatAssessmentData={message.inChatAssessmentData}
+                      conversationId={threadId || undefined}
+                      classId={classId}
+                      lessonId={lessonId}
+                      userId={userId || undefined}
+                      onSubmitSuccess={(feedback) => {
+                        // Add feedback as a new assistant message
+                        const feedbackMessage: Message = {
+                          id: (Date.now() + 2).toString(),
+                          content: feedback,
+                          role: "assistant",
+                          timestamp: new Date(),
+                        }
+                        setMessages((prev) => [...prev, feedbackMessage])
                       }}
-                    >
-                      {message.content}
-                    </ReactMarkdown>
-                  </div>
+                    />
+                  ) : (
+                    <div className="whitespace-pre-wrap break-words leading-relaxed text-[15px]">
+                      <ReactMarkdown
+                        remarkPlugins={[remarkMath]}
+                        rehypePlugins={[rehypeKatex]}
+                        components={{
+                          a: ({ ...props }) => (
+                            <a
+                              {...props}
+                              className="text-blue-600 underline hover:text-blue-800 font-semibold transition-colors duration-200"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            />
+                          ),
+                        }}
+                      >
+                        {message.content}
+                      </ReactMarkdown>
+                    </div>
+                  )}
                   {message.role === "assistant" && onAddToNotes && (
                     <div className="mt-3 flex justify-end items-center gap-2 animate-in fade-in duration-300">
                       <TooltipProvider>
@@ -677,6 +773,27 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
                       >
                         <Mic className="h-5 w-5 transition-transform duration-200" />
                       </Button>
+                      {nodeTitle && (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={handleManualAssessment}
+                                disabled={isTyping}
+                                className="h-8 w-8 p-0 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+                                <ClipboardCheck className="h-5 w-5 transition-transform duration-200" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent side="top" className="bg-gray-900 text-white text-xs">
+                              <p>Test My Understanding</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      )}
                     </div>
                     <Button
                       type="submit"

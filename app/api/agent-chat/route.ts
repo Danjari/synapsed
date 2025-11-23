@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     const agentThreadId = conversation?.threadId || threadId;
 
     // Invoke agent with the threadId for memory continuity
-    const agentResponse = await invokeAgent(userMessage, agentThreadId, classId, userId);
+    const agentResponse = await invokeAgent(userMessage, agentThreadId, classId, userId, conversation?.id);
 
     // Save assistant message to database if conversation exists
     if (conversation) {
@@ -80,6 +80,7 @@ export async function POST(request: NextRequest) {
     const apiResponse = {
       response: agentResponse.content,
       sources: agentResponse.sources,
+      inChatAssessmentData: agentResponse.inChatAssessmentData,
       conversationId: conversation?.id,
       threadId: agentThreadId,
     };
