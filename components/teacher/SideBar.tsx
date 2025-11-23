@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Home, Users, FileText, CheckCircle, Settings, ChevronLeft, ChevronRight, Bell } from "lucide-react";
+import { Home, Users, Settings, ChevronLeft, ChevronRight, Bell } from "lucide-react";
 import type { ComponentType } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useSession, signOut } from "next-auth/react";
@@ -20,9 +20,6 @@ export type SidebarItem = {
 const defaultMenuItems: SidebarItem[] = [
   { name: "Dashboard", path: "/teacher/dashboard", icon: Home },
   { name: "Classes", path: "/teacher/classes", icon: Users },
-  { name: "Surveys", path: "/teacher/surveys", icon: FileText },
-  { name: "Pathways", path: "/teacher/pathways", icon: CheckCircle },
-  { name: "Students", path: "/teacher/students", icon: Users },
   { name: "Settings", path: "/teacher/settings", icon: Settings },
 ];
 
