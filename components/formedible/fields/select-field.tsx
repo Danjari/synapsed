@@ -7,14 +7,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
-import type { BaseFieldProps } from '@/lib/formedible/types';
+import type { FieldComponentProps } from '@/lib/formedible/types';
 import { FieldWrapper } from './base-field-wrapper';
 
-interface SelectFieldSpecificProps extends BaseFieldProps {
-  options: Array<{ value: string; label: string }> | string[];
-}
-
-export const SelectField: React.FC<SelectFieldSpecificProps> = ({
+export const SelectField: React.FC<FieldComponentProps> = ({
   fieldApi,
   label,
   description,

@@ -2,16 +2,14 @@
  * Formedible-specific TypeScript types
  */
 
-import type { FormState } from "@tanstack/form-core";
 import type { FieldConfig, FieldComponentProps } from "@/lib/formedible/types";
 import type React from "react";
 
 /**
  * Form state subscription callback type
  */
-export type FormStateSubscriptionCallback<TFormValues = Record<string, unknown>> = (
-  state: FormState<TFormValues>
-) => void;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type FormStateSubscriptionCallback = (state: any) => void;
 
 /**
  * Form store subscription return type

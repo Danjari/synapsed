@@ -236,7 +236,7 @@ export type FieldComponentProps = BaseFieldProps & {
   // Optional props that specific field types might need
   options?: FieldOptions;
   type?: TextFieldProps["type"];
-  datalist?: string[];
+  datalist?: DatalistConfig;
   // Legacy support for existing configurations
   multiSelectConfig?: {
     maxSelections?: number;
@@ -858,20 +858,8 @@ export interface FieldConfig {
   gridArea?: string; // CSS grid-area value for advanced positioning
 
   // Configuration objects using existing types
-  arrayConfig?: ArrayFieldProps["arrayConfig"];
-  ratingConfig?: RatingFieldProps["ratingConfig"];
-  phoneConfig?: PhoneFieldProps["phoneConfig"];
-  colorConfig?: ColorPickerFieldProps["colorConfig"];
   multiSelectConfig?: MultiSelectConfig;
-  comboboxConfig?: ComboboxConfig;
-  durationConfig?: DurationConfig;
-  autocompleteConfig?: AutocompleteConfig;
-  maskedInputConfig?: MaskedInputConfig;
-  objectConfig?: ObjectConfig;
-  sliderConfig?: SliderFieldProps["sliderConfig"];
   numberConfig?: NumberConfig;
-  dateConfig?: DateFieldProps["dateConfig"];
-  fileConfig?: FileUploadFieldProps["fileConfig"];
   textareaConfig?: TextareaConfig;
   passwordConfig?: PasswordConfig;
   emailConfig?: EmailConfig;

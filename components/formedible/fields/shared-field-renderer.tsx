@@ -2,7 +2,7 @@
 import type { AnyFieldApi, AnyFormApi } from "@tanstack/react-form";
 import React from "react";
 import type { FieldComponentProps, FieldConfig } from "@/lib/formedible/types";
-import type { SharedFieldRendererFieldConfig, FormStoreStateWithValues } from "@/lib/types/formedible";
+import type { SharedFieldRendererFieldConfig } from "@/lib/types/formedible";
 import { resolveDynamicText } from "@/lib/formedible/template-interpolation";
 import { TextField } from "./text-field";
 import { TextareaField } from "./textarea-field";
@@ -47,8 +47,11 @@ export const NestedFieldRenderer = <
   React.useEffect(() => {
     if (!form) return;
     const unsubscribe = form.store.subscribe((state) => {
-      const stateWithValues = state as FormStoreStateWithValues<TFormValues>;
-      setSubscribedValues(stateWithValues.values as TFormValues);
+      // Access values directly from the state
+      const values = (state as { values?: TFormValues }).values;
+      if (values) {
+        setSubscribedValues(values);
+      }
     });
     return unsubscribe;
   }, [form]);
@@ -121,7 +124,11 @@ export const NestedFieldRenderer = <
 
     if (["text", "email", "password", "url", "tel"].includes(type)) {
       props.type = type as "text" | "email" | "password" | "url" | "tel";
-      props.datalist = datalist?.options;
+      if (datalist) {
+        props.datalist = typeof datalist === "object" && "options" in datalist 
+          ? datalist 
+          : { options: datalist as string[] };
+      }
     }
 
     if (type === "multiSelect") props.multiSelectConfig = multiSelectConfig;
@@ -169,8 +176,11 @@ export const SharedFieldRenderer = <
   React.useEffect(() => {
     if (!form) return;
     const unsubscribe = form.store.subscribe((state) => {
-      const stateWithValues = state as FormStoreStateWithValues<TFormValues>;
-      setSubscribedValues(stateWithValues.values as TFormValues);
+      // Access values directly from the state
+      const values = (state as { values?: TFormValues }).values;
+      if (values) {
+        setSubscribedValues(values);
+      }
     });
     return unsubscribe;
   }, [form]);
@@ -242,7 +252,11 @@ export const SharedFieldRenderer = <
 
   if (["text", "email", "password", "url", "tel"].includes(type)) {
     props.type = type as "text" | "email" | "password" | "url" | "tel";
-    props.datalist = datalist?.options;
+    if (datalist) {
+      props.datalist = typeof datalist === "object" && "options" in datalist 
+        ? datalist 
+        : { options: datalist as string[] };
+    }
   }
 
   if (type === "multiSelect") props.multiSelectConfig = multiSelectConfig;

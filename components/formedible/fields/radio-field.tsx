@@ -3,10 +3,10 @@ import React from "react";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
-import type { RadioFieldSpecificProps } from "@/lib/formedible/types";
+import type { FieldComponentProps } from "@/lib/formedible/types";
 import { FieldWrapper } from "./base-field-wrapper";
 
-export const RadioField: React.FC<RadioFieldSpecificProps> = ({
+export const RadioField: React.FC<FieldComponentProps> = ({
   fieldApi,
   label,
   description,

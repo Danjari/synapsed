@@ -6,10 +6,10 @@ import { Badge } from "@/components/ui/badge";
 
 import { cn } from "@/lib/utils";
 import { X, ChevronDown, Check } from "lucide-react";
-import type { MultiSelectFieldSpecificProps } from "@/lib/formedible/types";
+import type { FieldComponentProps } from "@/lib/formedible/types";
 import { FieldWrapper } from "./base-field-wrapper";
 
-export const MultiSelectField: React.FC<MultiSelectFieldSpecificProps> = ({
+export const MultiSelectField: React.FC<FieldComponentProps> = ({
   fieldApi,
   options = [],
   multiSelectConfig = {},

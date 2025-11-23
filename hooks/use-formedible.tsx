@@ -64,11 +64,19 @@ const ConditionalFieldsSubscription = <
 }: ConditionalFieldsSubscriptionProps<TFormValues>) => {
   // For now, subscribe to all form values since we don't have explicit dependencies
   // This could be optimized further by analyzing the condition functions
-  return (
-    <form.Subscribe selector={(state: { values: TFormValues }) => state.values}>
-      {(values: TFormValues) => children(values as Record<string, unknown>)}
-    </form.Subscribe>
-  );
+  const [values, setValues] = React.useState<TFormValues>(form.state.values as TFormValues);
+  
+  React.useEffect(() => {
+    const unsubscribe = form.store.subscribe((state) => {
+      const formValues = (state as { values?: TFormValues }).values;
+      if (formValues) {
+        setValues(formValues);
+      }
+    });
+    return unsubscribe;
+  }, [form]);
+  
+  return <>{children(values as Record<string, unknown>)}</>;
 };
 
 // TanStack Form Best Practice: Individual field conditional renderer
@@ -87,11 +95,19 @@ const FieldConditionalRenderer = ({
 
   // TanStack Form Best Practice: Use subscription with minimal selector
   // This prevents parent re-renders by only subscribing to form state changes
-  return (
-    <form.Subscribe selector={(state: any) => state.values}>
-      {(values: any) => children(conditional(values))}
-    </form.Subscribe>
-  );
+  const [values, setValues] = React.useState<Record<string, unknown>>(form.state.values as Record<string, unknown>);
+  
+  React.useEffect(() => {
+    const unsubscribe = form.store.subscribe((state) => {
+      const formValues = (state as { values?: Record<string, unknown> }).values;
+      if (formValues) {
+        setValues(formValues);
+      }
+    });
+    return unsubscribe;
+  }, [form]);
+  
+  return <>{children(conditional(values))}</>;
 };
 
 // Field components with proper typing - each component accepts FieldComponentProps
@@ -1613,7 +1629,7 @@ export function useFormedible<TFormValues extends Record<string, unknown>>(
             {(field) => {
               // TanStack Form Best Practice: Use FieldConditionalRenderer to prevent parent re-renders
               return (
-                <FieldConditionalRenderer form={form} fieldConfig={fieldConfig}>
+                <FieldConditionalRenderer form={form as any} fieldConfig={fieldConfig}>
                   {(shouldRender) => {
                     if (!shouldRender) {
                       return null;
@@ -1710,7 +1726,11 @@ export function useFormedible<TFormValues extends Record<string, unknown>>(
                                 | "password"
                                 | "url"
                                 | "tel",
-                              datalist: datalist?.options,
+                              datalist: datalist 
+                                ? (typeof datalist === "object" && "options" in datalist 
+                                    ? datalist 
+                                    : { options: datalist as string[] })
+                                : undefined,
                             };
                           } else if (type === "radio") {
                             props = { ...props, options: normalizedOptions };
