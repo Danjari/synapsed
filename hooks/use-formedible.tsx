@@ -23,24 +23,10 @@ import { TextField } from "@/components/formedible/fields/text-field";
 import { TextareaField } from "@/components/formedible/fields/textarea-field";
 import { SelectField } from "@/components/formedible/fields/select-field";
 import { CheckboxField } from "@/components/formedible/fields/checkbox-field";
-import { SwitchField } from "@/components/formedible/fields/switch-field";
 import { NumberField } from "@/components/formedible/fields/number-field";
-import { DateField } from "@/components/formedible/fields/date-field";
-import { SliderField } from "@/components/formedible/fields/slider-field";
-import { FileUploadField } from "@/components/formedible/fields/file-upload-field";
-import { ArrayField } from "@/components/formedible/fields/array-field";
 import { RadioField } from "@/components/formedible/fields/radio-field";
 import { FormTabs } from "@/components/formedible/layout/form-tabs";
 import { MultiSelectField } from "@/components/formedible/fields/multi-select-field";
-import { ColorPickerField } from "@/components/formedible/fields/color-picker-field";
-import { RatingField } from "@/components/formedible/fields/rating-field";
-import { PhoneField } from "@/components/formedible/fields/phone-field";
-import { DurationPickerField } from "@/components/formedible/fields/duration-picker-field";
-import { AutocompleteField } from "@/components/formedible/fields/autocomplete-field";
-import { MaskedInputField } from "@/components/formedible/fields/masked-input-field";
-import { ObjectField } from "@/components/formedible/fields/object-field";
-import { ComboboxField } from "@/components/formedible/fields/combobox-field";
-import { MultiComboboxField } from "@/components/formedible/fields/multicombobox-field";
 import { InlineValidationWrapper } from "@/components/formedible/fields/inline-validation-wrapper";
 import { FieldHelp } from "@/components/formedible/fields/field-help";
 import { FormGrid, GridItem } from "@/components/formedible/layout/form-grid";
@@ -117,24 +103,9 @@ const defaultFieldComponents: Record<string, React.ComponentType<any>> = {
   textarea: TextareaField,
   select: SelectField,
   checkbox: CheckboxField,
-  switch: SwitchField,
   number: NumberField,
-  date: DateField,
-  slider: SliderField,
-  file: FileUploadField,
-  array: ArrayField,
   radio: RadioField,
   multiSelect: MultiSelectField,
-  colorPicker: ColorPickerField,
-  rating: RatingField,
-  phone: PhoneField,
-  location: LocationPickerField,
-  duration: DurationPickerField,
-  autocomplete: AutocompleteField,
-  masked: MaskedInputField,
-  object: ObjectField,
-  combobox: ComboboxField,
-  multicombobox: MultiComboboxField,
 };
 
 const DefaultProgressComponent: React.FC<{
@@ -1612,26 +1583,14 @@ export function useFormedible<TFormValues extends Record<string, unknown>>(
           component: CustomComponent,
           wrapper: CustomWrapper,
           validation,
-          arrayConfig,
-          datalist,
-          help,
-          inlineValidation,
-
-          ratingConfig,
-          phoneConfig,
-          colorConfig,
-          multiSelectConfig,
-          durationConfig,
-          autocompleteConfig,
-          maskedInputConfig,
-          objectConfig,
-          sliderConfig,
-          numberConfig,
-          dateConfig,
-          fileConfig,
-          textareaConfig,
-          passwordConfig,
-          emailConfig,
+                          datalist,
+                          help,
+                          inlineValidation,
+                          multiSelectConfig,
+                          numberConfig,
+                          textareaConfig,
+                          passwordConfig,
+                          emailConfig,
         } = fieldConfig;
 
         return (
@@ -1734,29 +1693,6 @@ export function useFormedible<TFormValues extends Record<string, unknown>>(
 
                           if (type === "select") {
                             props = { ...props, options: normalizedOptions };
-                          } else if (type === "array") {
-                            const mappedArrayConfig = arrayConfig
-                              ? {
-                                  itemType: arrayConfig.itemType || "text",
-                                  itemLabel: arrayConfig.itemLabel,
-                                  itemPlaceholder: arrayConfig.itemPlaceholder,
-                                  minItems: arrayConfig.minItems,
-                                  maxItems: arrayConfig.maxItems,
-                                  itemValidation: arrayConfig.itemValidation,
-                                  itemComponent:
-                                    arrayConfig.itemComponent as React.ComponentType<BaseFieldProps>,
-                                  addButtonLabel: arrayConfig.addButtonLabel,
-                                  removeButtonLabel:
-                                    arrayConfig.removeButtonLabel,
-                                  sortable: arrayConfig.sortable,
-                                  defaultValue: arrayConfig.defaultValue,
-                                  objectConfig: arrayConfig.objectConfig,
-                                }
-                              : undefined;
-                            props = {
-                              ...props,
-                              arrayConfig: mappedArrayConfig,
-                            };
                           } else if (
                             [
                               "text",
@@ -1784,55 +1720,8 @@ export function useFormedible<TFormValues extends Record<string, unknown>>(
                               options: normalizedOptions,
                               multiSelectConfig,
                             };
-                          } else if (type === "combobox") {
-                            props = {
-                              ...props,
-                              options: normalizedOptions,
-                              comboboxConfig: fieldConfig.comboboxConfig,
-                            };
-                          } else if (type === "multicombobox") {
-                            props = {
-                              ...props,
-                              options: normalizedOptions,
-                              multiComboboxConfig:
-                                fieldConfig.multiComboboxConfig,
-                            };
-                          } else if (type === "colorPicker") {
-                            props = { ...props, colorConfig };
-                          } else if (type === "rating") {
-                            props = { ...props, ratingConfig };
-                          } else if (type === "phone") {
-                            props = { ...props, phoneConfig };
-                          } else if (type === "duration") {
-                            props = { ...props, durationConfig };
-                          } else if (type === "autocomplete") {
-                            // Handle dynamic options for autocomplete
-                            const resolvedAutocompleteConfig =
-                              autocompleteConfig
-                                ? {
-                                    ...autocompleteConfig,
-                                    options: resolveOptions(
-                                      autocompleteConfig.options,
-                                      currentValues
-                                    ),
-                                  }
-                                : undefined;
-                            props = {
-                              ...props,
-                              autocompleteConfig: resolvedAutocompleteConfig,
-                            };
-                          } else if (type === "masked") {
-                            props = { ...props, maskedInputConfig };
-                          } else if (type === "object") {
-                            props = { ...props, objectConfig, form };
-                          } else if (type === "slider") {
-                            props = { ...props, sliderConfig };
                           } else if (type === "number") {
                             props = { ...props, numberConfig };
-                          } else if (type === "date") {
-                            props = { ...props, dateConfig };
-                          } else if (type === "file") {
-                            props = { ...props, fileConfig };
                           } else if (type === "textarea") {
                             props = { ...props, textareaConfig };
                           } else if (type === "password") {

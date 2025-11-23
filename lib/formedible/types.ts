@@ -4,7 +4,6 @@ import type {
   FormApi,
   ValidationError,
   FormState,
-  AnyFormApi,
 } from "@tanstack/form-core";
 import { z } from "zod";
 
@@ -120,102 +119,7 @@ export interface MultiSelectFieldProps extends BaseFieldProps {
   maxSelections?: number;
 }
 
-export interface ComboboxFieldSpecificProps extends BaseFieldProps {
-  options: Array<{ value: string; label: string }> | string[];
-  comboboxConfig?: {
-    searchable?: boolean;
-    placeholder?: string;
-    searchPlaceholder?: string;
-    noOptionsText?: string;
-    allowClear?: boolean;
-  };
-}
 
-export interface ComboboxFieldProps extends BaseFieldProps {
-  options: FieldOptions;
-  placeholder?: string;
-  comboboxConfig?: {
-    searchable?: boolean;
-    searchPlaceholder?: string;
-    noOptionsText?: string;
-    allowClear?: boolean;
-  };
-}
-
-export interface MultiComboboxFieldSpecificProps extends BaseFieldProps {
-  options: Array<{ value: string; label: string }> | string[];
-  placeholder?: string;
-  multiComboboxConfig?: {
-    maxSelections?: number;
-    searchable?: boolean;
-    creatable?: boolean;
-    placeholder?: string;
-    searchPlaceholder?: string;
-    noOptionsText?: string;
-  };
-}
-
-export interface MultiComboboxFieldProps extends BaseFieldProps {
-  options: FieldOptions;
-  placeholder?: string;
-  multiComboboxConfig?: {
-    maxSelections?: number;
-    searchable?: boolean;
-    creatable?: boolean;
-    placeholder?: string;
-    searchPlaceholder?: string;
-    noOptionsText?: string;
-  };
-}
-
-// Shared object configuration interface - DRY!
-export interface ObjectConfig {
-  title?: string;
-  description?: string;
-  fields: Array<{
-    name: string;
-    type: string;
-    label?: DynamicText;
-    placeholder?: DynamicText;
-    description?: DynamicText;
-    options?:
-      | string[]
-      | Array<{ value: string; label: string }>
-      | ((
-          values: Record<string, unknown>
-        ) => string[] | Array<{ value: string; label: string }>);
-    min?: number;
-    max?: number;
-    step?: number;
-    [key: string]: unknown;
-  }>;
-  collapsible?: boolean;
-  defaultExpanded?: boolean;
-  showCard?: boolean;
-  layout?: "grid" | "vertical" | "horizontal" | (string & {});
-  columns?: number;
-  collapseLabel?: string;
-  expandLabel?: string;
-}
-
-export interface ArrayFieldProps extends BaseFieldProps {
-  arrayConfig: {
-    itemType: string;
-    itemLabel?: string;
-    itemPlaceholder?: string;
-    itemValidation?: unknown;
-    minItems?: number;
-    maxItems?: number;
-    addButtonLabel?: string;
-    removeButtonLabel?: string;
-    sortable?: boolean;
-    defaultValue?: unknown;
-    itemComponent?: React.ComponentType<BaseFieldProps>;
-    itemProps?: Record<string, unknown>;
-    // Use the shared ObjectConfig - DRY!
-    objectConfig?: ObjectConfig;
-  };
-}
 
 export interface TextFieldProps extends BaseFieldProps {
   type?: "text" | "email" | "password" | "url" | "tel";
@@ -233,130 +137,6 @@ export interface NumberFieldProps extends BaseFieldProps {
   precision?: number;
 }
 
-export interface DateFieldProps extends BaseFieldProps {
-  dateConfig?: {
-    format?: string;
-    minDate?: Date;
-    maxDate?: Date;
-    disabledDates?: Date[];
-    showTime?: boolean;
-    timeFormat?: string;
-    
-    // Days of week restrictions (0=Sunday, 6=Saturday)
-    disabledDaysOfWeek?: number[];
-    
-    // Date range restrictions  
-    disabledDateRanges?: Array<{
-      from: Date;
-      to: Date;
-    }>;
-    
-    // Past/Future restrictions
-    disablePastDates?: boolean;
-    disableFutureDates?: boolean;
-    
-    // Custom disable function (with optional form values access)
-    disableDate?: (date: Date, formValues?: Record<string, unknown>) => boolean;
-  };
-}
-
-export interface SliderFieldProps extends BaseFieldProps {
-  sliderConfig?: {
-    min?: number;
-    max?: number;
-    step?: number;
-    // Value mapping between slider value (int) and display value (arbitrary)
-    valueMapping?: Array<{
-      sliderValue: number;
-      displayValue: string | number;
-      label?: string;
-    }>;
-    // Gradient colors for the slider
-    gradientColors?: {
-      start: string;
-      end: string;
-      direction?: "horizontal" | "vertical";
-    };
-    // Custom visualization component for each step
-    visualizationComponent?: React.ComponentType<{
-      value: number;
-      displayValue: string | number;
-      label?: string;
-      isActive: boolean;
-    }>;
-    // Legacy and additional config
-    valueLabelPrefix?: string;
-    valueLabelSuffix?: string;
-    valueDisplayPrecision?: number;
-    showRawValue?: boolean;
-    showValue?: boolean;
-    showTooltip?: boolean;
-    showTicks?: boolean;
-    orientation?: "horizontal" | "vertical";
-    marks?: Array<{ value: number; label: string }>;
-  };
-}
-
-export interface FileUploadFieldProps extends BaseFieldProps {
-  fileConfig?: {
-    accept?: string;
-    multiple?: boolean;
-    maxSize?: number;
-    maxFiles?: number;
-    allowedTypes?: string[];
-    uploadUrl?: string;
-    onUpload?: (files: File[]) => Promise<string[]>;
-  };
-}
-
-export interface DurationPickerFieldProps extends BaseFieldProps {
-  durationConfig?: DurationConfig;
-}
-
-export interface AutocompleteFieldProps extends BaseFieldProps {
-  autocompleteConfig?: AutocompleteConfig;
-}
-
-export interface MaskedInputFieldProps extends BaseFieldProps {
-  maskedConfig?: MaskedInputConfig;
-}
-
-export interface ColorPickerFieldProps extends BaseFieldProps {
-  colorConfig?: {
-    format?: "hex" | "rgb" | "hsl";
-    showPreview?: boolean; // Show color preview
-    showAlpha?: boolean;
-    presetColors?: string[];
-    allowCustom?: boolean;
-  };
-}
-
-export interface RatingFieldProps extends BaseFieldProps {
-  ratingConfig?: {
-    max?: number;
-    allowHalf?: boolean;
-    allowClear?: boolean;
-    icon?: "star" | "heart" | "thumbs" | React.ComponentType;
-    size?: "sm" | "md" | "lg" | "small" | "medium" | "large";
-    showValue?: boolean;
-  };
-}
-
-export interface PhoneFieldProps extends BaseFieldProps {
-  phoneConfig?: {
-    defaultCountry?: string;
-    preferredCountries?: string[];
-    onlyCountries?: string[];
-    excludeCountries?: string[];
-    format?: "national" | "international";
-  };
-}
-
-export interface ObjectFieldProps extends BaseFieldProps {
-  objectConfig?: ObjectConfig;
-  disabled?: boolean;
-  form?: AnyFormApi;
-}
 
 // Field-specific interfaces moved from field components for centralization
 export interface TextFieldSpecificProps extends BaseFieldProps {
@@ -385,16 +165,6 @@ export interface RadioFieldSpecificProps extends BaseFieldProps {
   direction?: "horizontal" | "vertical";
 }
 
-export interface PhoneFieldSpecificProps extends BaseFieldProps {
-  phoneConfig?: {
-    defaultCountry?: string;
-    format?: "national" | "international";
-    allowedCountries?: string[];
-    placeholder?: string;
-    excludedCountries?: string[];
-  };
-}
-
 export interface MultiSelectFieldSpecificProps extends BaseFieldProps {
   options: Array<{ value: string; label: string }> | string[];
   multiSelectConfig?: {
@@ -405,82 +175,6 @@ export interface MultiSelectFieldSpecificProps extends BaseFieldProps {
     noOptionsText?: string;
     loadingText?: string;
   };
-}
-
-export interface ComboboxFieldSpecificProps extends BaseFieldProps {
-  options: Array<{ value: string; label: string }> | string[];
-  comboboxConfig?: {
-    searchable?: boolean;
-    placeholder?: string;
-    searchPlaceholder?: string;
-    noOptionsText?: string;
-    allowClear?: boolean;
-  };
-}
-
-export interface ColorPickerFieldSpecificProps extends BaseFieldProps {
-  colorConfig?: {
-    format?: "hex" | "rgb" | "hsl";
-    showPreview?: boolean;
-    presetColors?: string[];
-    allowCustom?: boolean;
-    showAlpha?: boolean;
-  };
-}
-
-export interface RatingFieldSpecificProps extends BaseFieldProps {
-  ratingConfig?: {
-    max?: number;
-    allowHalf?: boolean;
-    icon?: "star" | "heart" | "thumbs";
-    size?: "sm" | "md" | "lg";
-    allowClear?: boolean;
-    showValue?: boolean;
-  };
-}
-
-export interface SliderFieldSpecificProps extends BaseFieldProps {
-  sliderConfig?: {
-    min?: number;
-    max?: number;
-    step?: number;
-    // Value mapping between slider value (int) and display value (arbitrary)
-    valueMapping?: Array<{
-      sliderValue: number;
-      displayValue: string | number;
-      label?: string;
-    }>;
-    // Gradient colors for the slider
-    gradientColors?: {
-      start: string;
-      end: string;
-      direction?: "horizontal" | "vertical";
-    };
-    // Custom visualization component for each step
-    visualizationComponent?: React.ComponentType<{
-      value: number;
-      displayValue: string | number;
-      label?: string;
-      isActive: boolean;
-    }>;
-    // Legacy support
-    valueLabelPrefix?: string;
-    valueLabelSuffix?: string;
-    valueDisplayPrecision?: number;
-    showRawValue?: boolean;
-    showValue?: boolean;
-    showTooltip?: boolean;
-    orientation?: "horizontal" | "vertical";
-    marks?: Array<{ value: number; label: string }>;
-  };
-  // Direct props for backwards compatibility
-  min?: number;
-  max?: number;
-  step?: number;
-  valueLabelPrefix?: string;
-  valueLabelSuffix?: string;
-  valueDisplayPrecision?: number;
-  showRawValue?: boolean;
 }
 
 // Layout component interfaces moved from layout components for centralization
@@ -517,36 +211,6 @@ export interface FormTabsProps {
   onTabChange: (tabId: string) => void; // REQUIRED - PARENT CONTROLS STATE
 }
 
-export interface FormAccordionProps {
-  children?: React.ReactNode;
-  sections: {
-    id: string;
-    title: string;
-    content: React.ReactNode;
-    defaultOpen?: boolean;
-  }[];
-  type?: "single" | "multiple";
-  className?: string;
-}
-
-export interface FormStepperStep {
-  id: string;
-  title: string;
-  description?: string;
-  content: React.ReactNode;
-  optional?: boolean;
-}
-
-export interface FormStepperProps {
-  children?: React.ReactNode;
-  steps: FormStepperStep[];
-  currentStep?: number;
-  onStepChange?: (stepIndex: number) => void;
-  onComplete?: () => void;
-  className?: string;
-  allowSkip?: boolean;
-  showStepNumbers?: boolean;
-}
 
 // Wrapper component interfaces moved from field components for centralization
 export interface FieldWrapperProps extends BaseFieldProps {
@@ -571,19 +235,8 @@ export interface InlineValidationWrapperProps {
 export type FieldComponentProps = BaseFieldProps & {
   // Optional props that specific field types might need
   options?: FieldOptions;
-  arrayConfig?: ArrayFieldProps["arrayConfig"];
-  objectConfig?: ObjectConfig;
   type?: TextFieldProps["type"];
   datalist?: string[];
-  dateConfig?: DateFieldProps["dateConfig"];
-  sliderConfig?: SliderFieldProps["sliderConfig"];
-  fileConfig?: FileUploadFieldProps["fileConfig"];
-  durationConfig?: DurationPickerFieldProps["durationConfig"];
-  autocompleteConfig?: AutocompleteFieldProps["autocompleteConfig"];
-  maskedConfig?: MaskedInputFieldProps["maskedConfig"];
-  colorConfig?: ColorPickerFieldProps["colorConfig"];
-  ratingConfig?: RatingFieldProps["ratingConfig"];
-  phoneConfig?: PhoneFieldProps["phoneConfig"];
   // Legacy support for existing configurations
   multiSelectConfig?: {
     maxSelections?: number;
@@ -593,8 +246,6 @@ export type FieldComponentProps = BaseFieldProps & {
     noOptionsText?: string;
     loadingText?: string;
   };
-  comboboxConfig?: ComboboxConfig;
-  maskedInputConfig?: MaskedInputConfig;
   // Allow additional props for extensibility
   [key: string]: unknown;
 };

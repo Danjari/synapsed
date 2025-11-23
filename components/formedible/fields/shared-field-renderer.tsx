@@ -8,19 +8,9 @@ import { TextField } from "./text-field";
 import { TextareaField } from "./textarea-field";
 import { SelectField } from "./select-field";
 import { CheckboxField } from "./checkbox-field";
-import { SwitchField } from "./switch-field";
 import { NumberField } from "./number-field";
-import { DateField } from "./date-field";
-import { SliderField } from "./slider-field";
-import { FileUploadField } from "./file-upload-field";
 import { RadioField } from "./radio-field";
 import { MultiSelectField } from "./multi-select-field";
-import { ColorPickerField } from "./color-picker-field";
-import { RatingField } from "./rating-field";
-import { PhoneField } from "./phone-field";
-import { DurationPickerField } from "./duration-picker-field";
-import { AutocompleteField } from "./autocomplete-field";
-import { MaskedInputField } from "./masked-input-field";
 import type { FieldTypeComponentsRegistry } from "@/lib/types/formedible";
 
 export const FIELD_TYPE_COMPONENTS: FieldTypeComponentsRegistry = {
@@ -32,19 +22,9 @@ export const FIELD_TYPE_COMPONENTS: FieldTypeComponentsRegistry = {
   textarea: TextareaField,
   select: SelectField,
   checkbox: CheckboxField,
-  switch: SwitchField,
   number: NumberField,
-  date: DateField,
-  slider: SliderField,
-  file: FileUploadField,
   radio: RadioField,
   multiSelect: MultiSelectField,
-  colorPicker: ColorPickerField,
-  rating: RatingField,
-  phone: PhoneField,
-  duration: DurationPickerField,
-  autocomplete: AutocompleteField,
-  masked: MaskedInputField,
 };
 
 export const NestedFieldRenderer = <
@@ -81,21 +61,9 @@ export const NestedFieldRenderer = <
     options,
     component: CustomComponent,
     conditional,
-    arrayConfig,
     datalist,
-    ratingConfig,
-    phoneConfig,
-    colorConfig,
     multiSelectConfig,
-    locationConfig,
-    durationConfig,
-    autocompleteConfig,
-    maskedInputConfig,
-    objectConfig,
-    sliderConfig,
     numberConfig,
-    dateConfig,
-    fileConfig,
     textareaConfig,
     passwordConfig,
     emailConfig,
@@ -121,37 +89,6 @@ export const NestedFieldRenderer = <
   }
 
   function renderActualField() {
-    if (type === "array") {
-      // Dynamic import to avoid circular dependencies
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const ArrayField = require("./array-field").ArrayField;
-      return (
-        <ArrayField
-          fieldApi={fieldApi}
-          label={resolvedLabel}
-          description={resolvedDescription}
-          placeholder={resolvedPlaceholder}
-          arrayConfig={arrayConfig}
-        />
-      );
-    }
-
-    if (type === "object") {
-      // Dynamic import to avoid circular dependencies
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const ObjectField = require("./object-field").ObjectField;
-      return (
-        <ObjectField
-          fieldApi={fieldApi}
-          objectConfig={objectConfig}
-          form={form}
-          label={resolvedLabel}
-          description={resolvedDescription}
-          placeholder={resolvedPlaceholder}
-        />
-      );
-    }
-
     const FieldComponent =
       CustomComponent || FIELD_TYPE_COMPONENTS[type] || TextField;
 
@@ -187,29 +124,8 @@ export const NestedFieldRenderer = <
       props.datalist = datalist?.options;
     }
 
-    if (type === "rating") props.ratingConfig = ratingConfig;
-    if (type === "phone") props.phoneConfig = phoneConfig;
-    if (type === "colorPicker") props.colorConfig = colorConfig;
     if (type === "multiSelect") props.multiSelectConfig = multiSelectConfig;
-    if (type === "location") props.locationConfig = locationConfig;
-    if (type === "duration") props.durationConfig = durationConfig;
-    if (type === "autocomplete") {
-      props.autocompleteConfig =
-        autocompleteConfig && resolveOptions
-          ? {
-              ...autocompleteConfig,
-              options: resolveOptions(
-                autocompleteConfig.options,
-                subscribedValues
-              ),
-            }
-          : autocompleteConfig;
-    }
-    if (type === "masked") props.maskedInputConfig = maskedInputConfig;
-    if (type === "slider") props.sliderConfig = sliderConfig;
     if (type === "number") props.numberConfig = numberConfig;
-    if (type === "date") props.dateConfig = dateConfig;
-    if (type === "file") props.fileConfig = fileConfig;
     if (type === "textarea") props.textareaConfig = textareaConfig;
     if (type === "password") props.passwordConfig = passwordConfig;
     if (type === "email") props.emailConfig = emailConfig;
@@ -268,18 +184,8 @@ export const SharedFieldRenderer = <
     component: CustomComponent,
     conditional,
     datalist,
-    ratingConfig,
-    phoneConfig,
-    colorConfig,
     multiSelectConfig,
-    locationConfig,
-    durationConfig,
-    autocompleteConfig,
-    maskedInputConfig,
-    sliderConfig,
     numberConfig,
-    dateConfig,
-    fileConfig,
     textareaConfig,
     passwordConfig,
     emailConfig,
@@ -301,13 +207,6 @@ export const SharedFieldRenderer = <
     : undefined;
 
   if (conditional && !conditional(currentValues || subscribedValues)) {
-    return null;
-  }
-
-  if (type === "array" || type === "object") {
-    console.warn(
-      `SharedFieldRenderer: ${type} fields should handle their own rendering to avoid circular dependencies`
-    );
     return null;
   }
 
@@ -346,29 +245,8 @@ export const SharedFieldRenderer = <
     props.datalist = datalist?.options;
   }
 
-  if (type === "rating") props.ratingConfig = ratingConfig;
-  if (type === "phone") props.phoneConfig = phoneConfig;
-  if (type === "colorPicker") props.colorConfig = colorConfig;
   if (type === "multiSelect") props.multiSelectConfig = multiSelectConfig;
-  if (type === "location") props.locationConfig = locationConfig;
-  if (type === "duration") props.durationConfig = durationConfig;
-  if (type === "autocomplete") {
-    props.autocompleteConfig =
-      autocompleteConfig && resolveOptions
-        ? {
-            ...autocompleteConfig,
-            options: resolveOptions(
-              autocompleteConfig.options,
-              subscribedValues
-            ),
-          }
-        : autocompleteConfig;
-  }
-  if (type === "masked") props.maskedInputConfig = maskedInputConfig;
-  if (type === "slider") props.sliderConfig = sliderConfig;
   if (type === "number") props.numberConfig = numberConfig;
-  if (type === "date") props.dateConfig = dateConfig;
-  if (type === "file") props.fileConfig = fileConfig;
   if (type === "textarea") props.textareaConfig = textareaConfig;
   if (type === "password") props.passwordConfig = passwordConfig;
   if (type === "email") props.emailConfig = emailConfig;
