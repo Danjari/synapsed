@@ -359,7 +359,10 @@ export async function invokeAgent(userMessage: string, threadId?: string, classI
     const agent = await getCompiledAgent();
 
     // Pass config with thread_id if provided for memory
-    const config = threadId ? { configurable: { thread_id: threadId } } : { configurable: {} };
+    // Ensure config is always a valid object (MongoDB checkpointer requires this)
+    const config = threadId 
+      ? { configurable: { thread_id: threadId } } 
+      : { configurable: { thread_id: `temp-${Date.now()}-${Math.random()}` } };
 
     // Prepare the input messages
     const messages: BaseMessage[] = [];

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { invokeAgent } from '@/lib/agent/simple-agent';
+import { ConversationService } from '@/lib/agent/conversation-service';
 
 export async function POST(request: NextRequest) {
   try {
@@ -105,6 +106,29 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Get conversation to use its threadId for memory continuity
+    let conversation = null;
+    let threadId: string | undefined = undefined;
+    
+    if (conversationId) {
+      conversation = await prisma.conversation.findUnique({
+        where: { id: conversationId },
+      });
+      if (conversation) {
+        threadId = conversation.threadId;
+      }
+    }
+    
+    // If no conversation found but we have userId, get or create one
+    if (!conversation && userId) {
+      conversation = await ConversationService.getOrCreateConversation({
+        userId,
+        classId: classId || undefined,
+        lessonId: lessonId || undefined,
+      });
+      threadId = conversation.threadId;
+    }
+    
     // Save in-chat assessment response
     const assessmentResponse = await prisma.inChatAssessmentResponse.create({
       data: {
@@ -114,21 +138,36 @@ export async function POST(request: NextRequest) {
         score,
       },
     });
+    
+    // Save assessment submission as a user message in conversation BEFORE generating feedback
+    // This ensures the agent sees the submission in context when generating feedback
+    if (conversation) {
+      try {
+        const submissionMessage = `I just completed the assessment on "${inChatAssessmentData.topic}". My answers were: ${JSON.stringify(responses, null, 2)}${score !== null ? ` I scored ${score.toFixed(0)}%.` : ''}`;
+        await ConversationService.saveMessage({
+          conversationId: conversation.id,
+          role: 'USER',
+          content: submissionMessage,
+        });
+      } catch (saveError) {
+        console.error('Error saving assessment submission message:', saveError);
+        // Don't fail the request if message save fails
+      }
+    }
 
     // Generate AI feedback
     let feedback = '';
     try {
-      const feedbackPrompt = `A student just completed an in-chat assessment on "${inChatAssessmentData.topic}". 
-
-Their answers were:
-${JSON.stringify(responses, null, 2)}
+      // Create a prompt that references the submission message (which is now in conversation history)
+      // The agent will see the submission message in its context, so we can reference it naturally
+      const feedbackPrompt = `The student just completed an assessment on "${inChatAssessmentData.topic}". 
 
 The correct answers were:
 ${JSON.stringify(inChatAssessmentData.correctAnswers || {}, null, 2)}
 
 ${score !== null ? `Their score was ${score.toFixed(0)}%.` : ''}
 
-Please provide constructive, encouraging feedback:
+Please provide constructive, encouraging feedback based on their submission:
 1. Acknowledge what they got right
 2. Gently correct any misunderstandings
 3. Provide brief explanations for incorrect answers
@@ -137,14 +176,32 @@ Please provide constructive, encouraging feedback:
 
 Be supportive and educational, not judgmental.`;
 
+      // Use conversation's threadId for memory continuity, or generate temporary one if no conversation
+      const agentThreadId = threadId || `assessment-feedback-${userId}-${Date.now()}`;
+      
       const agentResponse = await invokeAgent(
         feedbackPrompt,
-        undefined, // threadId - could use conversation threadId if available
+        agentThreadId,
         classId,
-        userId
+        userId,
+        conversation?.id
       );
 
       feedback = agentResponse.content;
+      
+      // Save feedback as assistant message in conversation if conversation exists
+      if (conversation) {
+        try {
+          await ConversationService.saveMessage({
+            conversationId: conversation.id,
+            role: 'ASSISTANT',
+            content: feedback,
+          });
+        } catch (saveError) {
+          console.error('Error saving feedback message to conversation:', saveError);
+          // Don't fail the request if message save fails
+        }
+      }
     } catch (error) {
       console.error('Error generating feedback:', error);
       feedback = score !== null
