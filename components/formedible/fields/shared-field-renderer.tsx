@@ -18,7 +18,6 @@ import { MultiSelectField } from "./multi-select-field";
 import { ColorPickerField } from "./color-picker-field";
 import { RatingField } from "./rating-field";
 import { PhoneField } from "./phone-field";
-import { LocationPickerField } from "./location-picker-field";
 import { DurationPickerField } from "./duration-picker-field";
 import { AutocompleteField } from "./autocomplete-field";
 import { MaskedInputField } from "./masked-input-field";
@@ -43,7 +42,6 @@ export const FIELD_TYPE_COMPONENTS: FieldTypeComponentsRegistry = {
   colorPicker: ColorPickerField,
   rating: RatingField,
   phone: PhoneField,
-  location: LocationPickerField,
   duration: DurationPickerField,
   autocomplete: AutocompleteField,
   masked: MaskedInputField,

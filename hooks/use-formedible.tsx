@@ -35,7 +35,6 @@ import { MultiSelectField } from "@/components/formedible/fields/multi-select-fi
 import { ColorPickerField } from "@/components/formedible/fields/color-picker-field";
 import { RatingField } from "@/components/formedible/fields/rating-field";
 import { PhoneField } from "@/components/formedible/fields/phone-field";
-import { LocationPickerField } from "@/components/formedible/fields/location-picker-field";
 import { DurationPickerField } from "@/components/formedible/fields/duration-picker-field";
 import { AutocompleteField } from "@/components/formedible/fields/autocomplete-field";
 import { MaskedInputField } from "@/components/formedible/fields/masked-input-field";
@@ -1622,7 +1621,6 @@ export function useFormedible<TFormValues extends Record<string, unknown>>(
           phoneConfig,
           colorConfig,
           multiSelectConfig,
-          locationConfig,
           durationConfig,
           autocompleteConfig,
           maskedInputConfig,
@@ -1805,8 +1803,6 @@ export function useFormedible<TFormValues extends Record<string, unknown>>(
                             props = { ...props, ratingConfig };
                           } else if (type === "phone") {
                             props = { ...props, phoneConfig };
-                          } else if (type === "location") {
-                            props = { ...props, locationConfig };
                           } else if (type === "duration") {
                             props = { ...props, durationConfig };
                           } else if (type === "autocomplete") {

@@ -20,7 +20,6 @@ import { FileUploadField } from './file-upload-field';
 import { ArrayField } from './array-field';
 import { AutocompleteField } from './autocomplete-field';
 import { DurationPickerField } from './duration-picker-field';
-import { LocationPickerField } from './location-picker-field';
 import { MaskedInputField } from './masked-input-field';
 import { ObjectField } from './object-field';
 import { ComboboxField } from './combobox-field';
@@ -52,7 +51,6 @@ export const fieldComponents: Record<string, FieldComponent> = {
   array: ArrayField,
   autocomplete: AutocompleteField,
   duration: DurationPickerField,
-  location: LocationPickerField,
   masked: MaskedInputField,
   object: ObjectField,
 };
