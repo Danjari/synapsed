@@ -65,7 +65,7 @@ function getNestedValue(obj: Record<string, unknown>, path: string): unknown {
   try {
     // Handle array indexing and property access
     const keys = path.split(/[.\[]/).map(key => key.replace(/\]$/, ''));
-    let current: any = obj;
+    let current: PathAccessibleValue = obj;
 
     for (const key of keys) {
       if (current == null) return undefined;

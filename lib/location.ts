@@ -2,11 +2,17 @@ import type {
   LocationSearchResult,
   LocationValue,
 } from "@/lib/formedible/types";
+import type { 
+  NominatimSearchOptions, 
+  NominatimResponseItem,
+  WindowWithLeaflet,
+  LeafletMarker
+} from "@/lib/types/location";
 
 export const builtInProviders = {
   nominatim: async (
     query: string,
-    options: any = {}
+    options: NominatimSearchOptions = {}
   ): Promise<LocationSearchResult[]> => {
     const endpoint =
       options.endpoint || "https://nominatim.openstreetmap.org/search";
@@ -22,7 +28,7 @@ export const builtInProviders = {
       const response = await fetch(`${endpoint}?${params}`);
       const data = await response.json();
 
-      return data.map((item: any, index: number) => ({
+      return (data as NominatimResponseItem[]).map((item: NominatimResponseItem, index: number) => ({
         id: item.place_id || index,
         lat: parseFloat(item.lat),
         lng: parseFloat(item.lon),
@@ -54,7 +60,7 @@ export const builtInProviders = {
   nominatimReverse: async (
     lat: number,
     lng: number,
-    options: any = {}
+    options: NominatimSearchOptions = {}
   ): Promise<LocationValue> => {
     const endpoint =
       options.endpoint || "https://nominatim.openstreetmap.org/reverse";
@@ -127,7 +133,11 @@ export const defaultMapRenderer = (params: {
     defaultLocation,
   } = params;
 
-  const leafletMap = (window as any).L.map(mapContainer, {
+  const windowWithLeaflet = window as WindowWithLeaflet;
+  if (!windowWithLeaflet.L) {
+    throw new Error("Leaflet library not loaded");
+  }
+  const leafletMap = windowWithLeaflet.L.map(mapContainer, {
     center: [
       location?.lat || defaultLocation?.lat || 51.5074,
       location?.lng || defaultLocation?.lng || -0.1278,
@@ -143,7 +153,7 @@ export const defaultMapRenderer = (params: {
     tap: !readonly,
   });
 
-  const osmTileLayer = (window as any).L.tileLayer(
+  const osmTileLayer = windowWithLeaflet.L.tileLayer(
     "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
       attribution:
@@ -154,7 +164,7 @@ export const defaultMapRenderer = (params: {
 
   osmTileLayer.addTo(leafletMap);
 
-  let currentMarker: any = null;
+  let currentMarker: LeafletMarker | null = null;
 
   const updateMarker = (loc: LocationValue | null) => {
     if (currentMarker) {
@@ -163,7 +173,7 @@ export const defaultMapRenderer = (params: {
     }
 
     if (loc) {
-      const customIcon = (window as any).L.divIcon({
+      const customIcon = windowWithLeaflet.L.divIcon({
         className: "custom-div-icon",
         html: `
           <div style="
@@ -193,7 +203,7 @@ export const defaultMapRenderer = (params: {
         iconAnchor: [0, 0],
       });
 
-      currentMarker = (window as any).L.marker([loc.lat, loc.lng], {
+      currentMarker = windowWithLeaflet.L.marker([loc.lat, loc.lng], {
         icon: customIcon,
       });
       currentMarker.addTo(leafletMap);
@@ -203,7 +213,7 @@ export const defaultMapRenderer = (params: {
   };
 
   if (!readonly) {
-    leafletMap.on("click", (e: any) => {
+    leafletMap.on("click", (e: { latlng: { lat: number; lng: number } }) => {
       const { lat, lng } = e.latlng;
 
       onLocationSelect({
@@ -226,7 +236,7 @@ export const defaultMapRenderer = (params: {
       attribution: string;
       maxZoom?: number;
     }) => {
-      const newTileLayer = (window as any).L.tileLayer(tileConfig.url, {
+      const newTileLayer = windowWithLeaflet.L.tileLayer(tileConfig.url, {
         attribution: tileConfig.attribution,
         maxZoom: tileConfig.maxZoom || 18,
       });

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import {
   Command,
   CommandEmpty,
@@ -29,7 +29,6 @@ export const MultiComboboxField: React.FC<MultiComboboxFieldSpecificProps> = ({
   const {
     maxSelections = Infinity,
     searchable = true,
-    creatable = false,
     placeholder = "Select options...",
     searchPlaceholder = "Search options...",
     noOptionsText = "No options found",
@@ -122,7 +121,9 @@ export const MultiComboboxField: React.FC<MultiComboboxFieldSpecificProps> = ({
                           className="h-3 w-3 p-0 rounded-sm hover:bg-destructive hover:text-destructive-foreground flex items-center justify-center"
                           onClick={(e) => {
                             e.stopPropagation();
-                            !isDisabled && handleRemove(value);
+                            if (!isDisabled) {
+                              handleRemove(value);
+                            }
                           }}
                         >
                           <X className="h-2 w-2" />

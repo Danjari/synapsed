@@ -4,7 +4,7 @@ import { invokeAgent } from '@/lib/agent/simple-agent';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { topic, nodeTitle, classId, lessonId, userId, threadId } = body;
+    const { topic, nodeTitle, classId, userId, threadId } = body;
 
     if (!topic || !userId) {
       return NextResponse.json(

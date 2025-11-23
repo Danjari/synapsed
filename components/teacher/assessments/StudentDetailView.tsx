@@ -5,39 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { AssessmentDetailView } from "./AssessmentDetailView";
+import type { StudentAssessmentData } from "@/lib/types/assessments";
 
-interface NodeData {
-  nodeId: string;
-  nodeTitle: string;
-  nodeDescription: string;
-  assessments: AssessmentData[];
-}
-
-interface AssessmentData {
-  assessmentId: string;
-  topic: string;
-  submittedAt: string;
-  score: number | null;
-  feedback: string | null;
-  responses: Record<string, string | number | boolean | string[]>;
-  fields: Array<{
-    name: string;
-    type: string;
-    label: string;
-    [key: string]: unknown;
-  }>;
-  correctAnswers: Record<string, string | number | boolean | string[]>;
-}
-
-interface StudentData {
-  studentId: string;
-  studentName: string;
-  studentEmail: string;
-  aggregateScore: number | null;
-  assessmentCount: number;
-  performanceNotes: string;
-  nodes: NodeData[];
-}
+type StudentData = StudentAssessmentData;
 
 interface StudentDetailViewProps {
   student: StudentData;

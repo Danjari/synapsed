@@ -2,6 +2,8 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { BaseFieldProps, ObjectFieldProps } from "@/lib/formedible/types";
+import type { FormStoreStateWithValues } from "@/lib/types/formedible";
+import type { SubFieldConfig } from "@/lib/types/formedible-field";
 import { FieldWrapper } from "./base-field-wrapper";
 import { NestedFieldRenderer } from "./shared-field-renderer";
 import { resolveDynamicText } from "@/lib/formedible/template-interpolation";
@@ -9,23 +11,26 @@ import { resolveDynamicText } from "@/lib/formedible/template-interpolation";
 export const ObjectField: React.FC<ObjectFieldProps> = ({
   fieldApi,
   objectConfig,
-  disabled,
+  disabled: _disabled,
   form,
   ...wrapperProps
 }) => {
+  // Suppress unused variable warning - disabled is part of the API but handled by FieldWrapper
+  void _disabled;
   const [isExpanded, setIsExpanded] = React.useState(
     objectConfig?.defaultExpanded !== false
   );
 
   // Subscribe to form values for dynamic text resolution
-  const [subscribedValues, setSubscribedValues] = React.useState(
-    fieldApi.form?.state?.values || {}
+  const [subscribedValues, setSubscribedValues] = React.useState<Record<string, unknown>>(
+    (fieldApi.form?.state?.values as Record<string, unknown>) || {}
   );
 
   React.useEffect(() => {
     if (!fieldApi.form) return;
     const unsubscribe = fieldApi.form.store.subscribe((state) => {
-      setSubscribedValues((state as any).values);
+      const stateWithValues = state as FormStoreStateWithValues<Record<string, unknown>>;
+      setSubscribedValues(stateWithValues.values);
     });
     return unsubscribe;
   }, [fieldApi.form]);
@@ -55,7 +60,7 @@ export const ObjectField: React.FC<ObjectFieldProps> = ({
     };
   };
 
-  const renderField = (subFieldConfig: any) => {
+  const renderField = (subFieldConfig: SubFieldConfig) => {
     const fieldValue = fieldApi.state?.value?.[subFieldConfig.name] || "";
     const mockFieldApi = createMockFieldApi(
       subFieldConfig.name,

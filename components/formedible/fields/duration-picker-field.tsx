@@ -16,7 +16,7 @@ interface DurationPickerFieldProps extends BaseFieldProps {
   durationConfig?: DurationConfig;
 }
 
-const parseDuration = (value: any) => {
+const parseDuration = (value: string | number | { hours?: number; minutes?: number; seconds?: number } | null | undefined): { hours: number; minutes: number; seconds: number } => {
   if (!value) return { hours: 0, minutes: 0, seconds: 0 };
 
   if (typeof value === "number") {

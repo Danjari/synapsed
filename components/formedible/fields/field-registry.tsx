@@ -26,11 +26,10 @@ import { ObjectField } from './object-field';
 import { ComboboxField } from './combobox-field';
 import { MultiComboboxField } from './multicombobox-field';
 
-// Type-safe field component registry with flexible props
-export interface FieldComponentProps extends BaseFieldProps {
-  [key: string]: unknown;
-}
+import type { FieldComponentProps } from "@/lib/formedible/types";
 
+// Use a more flexible type to accommodate field-specific props
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type FieldComponent = React.ComponentType<any>;
 
 export const fieldComponents: Record<string, FieldComponent> = {

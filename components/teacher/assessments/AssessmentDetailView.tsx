@@ -4,17 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ChevronDown, ChevronRight, CheckCircle2, XCircle } from "lucide-react";
 import { useState } from "react";
+import type { InChatAssessmentData, FormedibleField, AssessmentResponse } from "@/lib/types/assessments";
 
-interface AssessmentData {
-  assessmentId: string;
-  topic: string;
-  submittedAt: string;
-  score: number | null;
-  feedback: string | null;
-  responses: Record<string, any>;
-  fields: any[];
-  correctAnswers: Record<string, any>;
-}
+type AssessmentData = InChatAssessmentData;
 
 interface AssessmentDetailViewProps {
   assessment: AssessmentData;
@@ -30,7 +22,7 @@ export function AssessmentDetailView({ assessment }: AssessmentDetailViewProps) 
     return "bg-red-500";
   };
 
-  const formatAnswer = (answer: any): string => {
+  const formatAnswer = (answer: AssessmentResponse[string]): string => {
     if (Array.isArray(answer)) {
       return answer.join(", ");
     }
@@ -40,9 +32,9 @@ export function AssessmentDetailView({ assessment }: AssessmentDetailViewProps) 
     return String(answer);
   };
 
-  const isAnswerCorrect = (question: string, studentAnswer: any): boolean => {
+  const isAnswerCorrect = (question: string, studentAnswer: AssessmentResponse[string]): boolean => {
     // Find the field that matches this question label
-    const field = assessment.fields.find((f: any) => f.label === question);
+    const field = assessment.fields.find((f: FormedibleField) => f.label === question);
     if (!field) return false;
     
     // Get correct answer using field name (correctAnswers uses field names as keys)
@@ -137,7 +129,7 @@ export function AssessmentDetailView({ assessment }: AssessmentDetailViewProps) 
                 {Object.entries(assessment.responses).map(([question, answer]) => {
                   const correct = isAnswerCorrect(question, answer);
                   // Find correct answer by matching field label to field name
-                  const field = assessment.fields.find((f: any) => f.label === question);
+                  const field = assessment.fields.find((f: FormedibleField) => f.label === question);
                   const correctAnswer = field ? assessment.correctAnswers[field.name] : undefined;
 
                   return (

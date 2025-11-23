@@ -256,7 +256,7 @@ export interface DateFieldProps extends BaseFieldProps {
     disableFutureDates?: boolean;
     
     // Custom disable function (with optional form values access)
-    disableDate?: (date: Date, formValues?: Record<string, any>) => boolean;
+    disableDate?: (date: Date, formValues?: Record<string, unknown>) => boolean;
   };
 }
 
@@ -805,7 +805,7 @@ export interface LocationValue {
   city?: string;
   state?: string;
   postalCode?: string;
-  [key: string]: any; // Allow additional properties from different services
+  [key: string]: unknown; // Allow additional properties from different services
 }
 
 export interface LocationSearchResult extends LocationValue {
@@ -849,7 +849,7 @@ export interface LocationConfig {
         northeast: { lat: number; lng: number };
         southwest: { lat: number; lng: number };
       };
-      [key: string]: any;
+      [key: string]: unknown;
     }
   ) => Promise<LocationSearchResult[]>;
 
@@ -876,8 +876,8 @@ export interface LocationConfig {
   googleMaps?: {
     apiKey: string;
     libraries?: string[];
-    mapOptions?: any; // Google Maps MapOptions
-    searchOptions?: any; // Google Places search options
+    mapOptions?: Record<string, unknown>; // Google Maps MapOptions
+    searchOptions?: Record<string, unknown>; // Google Places search options
   };
 
   openStreetMap?: {
@@ -888,19 +888,19 @@ export interface LocationConfig {
       countrycodes?: string;
       addressdetails?: boolean;
       limit?: number;
-      [key: string]: any;
+      [key: string]: unknown;
     };
   };
 
   bingMaps?: {
     apiKey: string;
-    mapOptions?: any; // Bing Maps options
-    searchOptions?: any; // Bing geocoding options
+    mapOptions?: Record<string, unknown>; // Bing Maps options
+    searchOptions?: Record<string, unknown>; // Bing geocoding options
   };
 
   // Custom provider configuration
   custom?: {
-    [key: string]: any;
+    [key: string]: unknown;
   };
 
   // Search behavior
@@ -913,7 +913,7 @@ export interface LocationConfig {
       northeast: { lat: number; lng: number };
       southwest: { lat: number; lng: number };
     };
-    [key: string]: any;
+    [key: string]: unknown;
   };
 
   // UI customization
@@ -924,7 +924,7 @@ export interface LocationConfig {
     searchInputClassName?: string;
     mapClassName?: string;
     coordinatesFormat?: "decimal" | "dms"; // Decimal degrees or degrees/minutes/seconds
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }
 
@@ -1120,7 +1120,7 @@ export interface FormProps {
 export interface ConditionalFieldsSubscriptionProps<
   TFormValues extends Record<string, unknown> = Record<string, unknown>
 > {
-  form: any;
+  form: FormedibleFormApi<TFormValues>;
   fields: FieldConfig[];
   conditionalSections: Array<{
     condition: (values: TFormValues) => boolean;
@@ -1136,8 +1136,8 @@ export interface ConditionalFieldsSubscriptionProps<
   children: (currentValues: Record<string, unknown>) => React.ReactNode;
 }
 
-export interface FieldConditionalRendererProps {
-  form: any;
+export interface FieldConditionalRendererProps<TFormValues extends Record<string, unknown> = Record<string, unknown>> {
+  form: FormedibleFormApi<TFormValues>;
   fieldConfig: FieldConfig;
   children: (shouldRender: boolean) => React.ReactNode;
 }

@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import type { FormTabsProps, DynamicText } from "@/lib/formedible/types";
 import type { FormedibleFormApi } from "@/lib/formedible/types";
+import type { FormStoreStateWithValues } from "@/lib/types/formedible";
 import { resolveDynamicText } from "@/lib/formedible/template-interpolation";
 import type { TemplateOptions } from "@/lib/formedible/template-interpolation";
 
@@ -71,7 +72,9 @@ export const EnhancedFormTabs = <TFormValues extends Record<string, unknown>>({
   React.useEffect(() => {
     if (!form) return;
     const unsubscribe = form.store.subscribe((state) => {
-      setFormValues((state as any).values as TFormValues);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const stateWithValues = (state as any) as FormStoreStateWithValues<TFormValues>;
+      setFormValues(stateWithValues.values as TFormValues);
     });
     return unsubscribe;
   }, [form]);

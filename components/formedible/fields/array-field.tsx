@@ -3,6 +3,7 @@ import React, { useCallback, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, GripVertical } from "lucide-react";
 import type { ArrayFieldProps } from "@/lib/formedible/types";
+import type { ArrayFieldItemConfig } from "@/lib/types/formedible";
 import { FieldWrapper } from "./base-field-wrapper";
 import { NestedFieldRenderer } from "./shared-field-renderer";
 import {
@@ -40,7 +41,7 @@ interface SortableItemProps {
 
 const SortableItem: React.FC<SortableItemProps> = ({
   id,
-  index,
+  index: _index, // Required by interface but not used in component
   children,
   isDisabled = false,
   onRemove,
@@ -48,6 +49,8 @@ const SortableItem: React.FC<SortableItemProps> = ({
   removeButtonLabel = "Remove",
   sortable = false,
 }) => {
+  // Suppress unused variable warning - index is part of the API but not used internally
+  void _index;
   const {
     attributes,
     listeners,
@@ -140,7 +143,7 @@ export const ArrayField: React.FC<ArrayFieldProps> = ({
   // Create field config for each item
   const createItemFieldConfig = useCallback(
     (index: number) => {
-      const baseConfig: any = {
+      const baseConfig: ArrayFieldItemConfig = {
         name: `${name}[${index}]`,
         type: itemType || "text",
         label: itemLabel ? `${itemLabel} ${index + 1}` : undefined,
@@ -278,9 +281,9 @@ export const ArrayField: React.FC<ArrayFieldProps> = ({
           </div>
         )}
         <div className="flex-1">
-          <NestedFieldRenderer
-            fieldConfig={createItemFieldConfig(draggedItemIndex)}
-            fieldApi={createItemFieldApi(draggedItemIndex) as any}
+                  <NestedFieldRenderer
+                    fieldConfig={createItemFieldConfig(draggedItemIndex)}
+                    fieldApi={createItemFieldApi(draggedItemIndex) as unknown as typeof fieldApi}
             form={fieldApi.form}
             currentValues={
               (value[draggedItemIndex] || {}) as Record<string, unknown>
@@ -337,7 +340,7 @@ export const ArrayField: React.FC<ArrayFieldProps> = ({
                 >
                   <NestedFieldRenderer
                     fieldConfig={createItemFieldConfig(index)}
-                    fieldApi={createItemFieldApi(index) as any}
+                    fieldApi={createItemFieldApi(index) as unknown as typeof fieldApi}
                     form={fieldApi.form}
                     currentValues={
                       (value[index] || {}) as Record<string, unknown>

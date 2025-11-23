@@ -1,40 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronRight, Search, Filter } from "lucide-react";
+import { ChevronDown, ChevronRight, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { StudentDetailView } from "./StudentDetailView";
+import type { StudentAssessmentData } from "@/lib/types/assessments";
 
-interface StudentData {
-  studentId: string;
-  studentName: string;
-  studentEmail: string;
-  aggregateScore: number | null;
-  assessmentCount: number;
-  performanceNotes: string;
-  nodes: NodeData[];
-}
-
-interface NodeData {
-  nodeId: string;
-  nodeTitle: string;
-  nodeDescription: string;
-  assessments: AssessmentData[];
-}
-
-interface AssessmentData {
-  assessmentId: string;
-  topic: string;
-  submittedAt: string;
-  score: number | null;
-  feedback: string | null;
-  responses: Record<string, any>;
-  fields: any[];
-  correctAnswers: Record<string, any>;
-}
+type StudentData = StudentAssessmentData;
 
 interface StudentAssessmentListProps {
   classId: string;
@@ -51,11 +25,7 @@ export function StudentAssessmentList({ classId }: StudentAssessmentListProps) {
   const [expandedStudent, setExpandedStudent] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  useEffect(() => {
-    fetchData();
-  }, [classId]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       const [studentsRes, aggregatesRes] = await Promise.all([
@@ -81,7 +51,11 @@ export function StudentAssessmentList({ classId }: StudentAssessmentListProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [classId]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const getScoreColor = (score: number | null) => {
     if (score === null) return "bg-gray-500";

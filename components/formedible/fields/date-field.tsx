@@ -10,6 +10,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import type { DateFieldProps } from "@/lib/formedible/types";
+import type { FormStoreStateWithValues } from "@/lib/types/formedible";
 import { buildDisabledMatchers } from "@/lib/formedible/date";
 import { FieldWrapper } from "./base-field-wrapper";
 
@@ -37,7 +38,9 @@ export const DateField: React.FC<DateFieldProps> = ({
   React.useEffect(() => {
     if (!fieldApi.form) return;
     const unsubscribe = fieldApi.form.store.subscribe((state) => {
-      setFormValues((state as any).values);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const stateWithValues = (state as any) as FormStoreStateWithValues<Record<string, unknown>>;
+      setFormValues(stateWithValues.values);
     });
     return unsubscribe;
   }, [fieldApi.form]);

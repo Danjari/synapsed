@@ -6,6 +6,14 @@ import type {
   LocationValue,
   LocationSearchResult,
 } from "@/lib/formedible/types";
+import type { 
+  NominatimSearchOptions, 
+  NominatimResponseItem,
+  WindowWithLeaflet,
+  LeafletMarker,
+  LeafletMapWithLayers,
+  LeafletLayer
+} from "@/lib/types/location";
 import { FieldWrapper } from "./base-field-wrapper";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -27,7 +35,7 @@ const builtInProviders = {
   // OpenStreetMap/Nominatim search
   nominatim: async (
     query: string,
-    options: any = {}
+    options: NominatimSearchOptions = {}
   ): Promise<LocationSearchResult[]> => {
     const endpoint =
       options.endpoint || "https://nominatim.openstreetmap.org/search";
@@ -43,7 +51,7 @@ const builtInProviders = {
       const response = await fetch(`${endpoint}?${params}`);
       const data = await response.json();
 
-      return data.map((item: any, index: number) => ({
+      return (data as NominatimResponseItem[]).map((item: NominatimResponseItem, index: number) => ({
         id: item.place_id || index,
         lat: parseFloat(item.lat),
         lng: parseFloat(item.lon),
@@ -76,7 +84,7 @@ const builtInProviders = {
   nominatimReverse: async (
     lat: number,
     lng: number,
-    options: any = {}
+    options: NominatimSearchOptions = {}
   ): Promise<LocationValue> => {
     const endpoint =
       options.endpoint || "https://nominatim.openstreetmap.org/reverse";
@@ -127,7 +135,11 @@ const defaultMapRenderer = (params: {
   } = params;
 
   // Initialize Leaflet map
-  const leafletMap = (window as any).L.map(mapContainer, {
+  const windowWithLeaflet = window as WindowWithLeaflet;
+  if (!windowWithLeaflet.L) {
+    throw new Error("Leaflet library not loaded");
+  }
+  const leafletMap = windowWithLeaflet.L.map(mapContainer, {
     center: [
       location?.lat || defaultLocation?.lat || 51.5074,
       location?.lng || defaultLocation?.lng || -0.1278,
@@ -144,7 +156,7 @@ const defaultMapRenderer = (params: {
   });
 
   // Default tile layer - OpenStreetMap
-  const osmTileLayer = (window as any).L.tileLayer(
+  const osmTileLayer = windowWithLeaflet.L.tileLayer(
     "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
       attribution:
@@ -157,7 +169,7 @@ const defaultMapRenderer = (params: {
   osmTileLayer.addTo(leafletMap);
 
   // Current marker
-  let currentMarker: any = null;
+  let currentMarker: LeafletMarker | null = null;
 
   // Update marker position
   const updateMarker = (loc: LocationValue | null) => {
@@ -167,7 +179,7 @@ const defaultMapRenderer = (params: {
     }
 
     if (loc) {
-      const customIcon = (window as any).L.divIcon({
+      const customIcon = windowWithLeaflet.L.divIcon({
         className: "custom-div-icon",
         html: `
           <div style="
@@ -197,7 +209,7 @@ const defaultMapRenderer = (params: {
         iconAnchor: [0, 0],
       });
 
-      currentMarker = (window as any).L.marker([loc.lat, loc.lng], {
+      currentMarker = windowWithLeaflet.L.marker([loc.lat, loc.lng], {
         icon: customIcon,
       });
       currentMarker.addTo(leafletMap);
@@ -209,7 +221,7 @@ const defaultMapRenderer = (params: {
 
   // Handle map clicks
   if (!readonly) {
-    leafletMap.on("click", (e: any) => {
+    leafletMap.on("click", (e: { latlng: { lat: number; lng: number } }) => {
       const { lat, lng } = e.latlng;
 
       onLocationSelect({
@@ -239,14 +251,16 @@ const defaultMapRenderer = (params: {
       apiKey?: string;
     }) => {
       // Remove current tile layer
-      leafletMap.eachLayer((layer: any) => {
-        if (layer instanceof (window as any).L.TileLayer) {
-          leafletMap.removeLayer(layer);
+      const mapWithLayers = leafletMap as LeafletMapWithLayers;
+      mapWithLayers.eachLayer((layer: LeafletLayer) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        if (layer instanceof (windowWithLeaflet.L as any).TileLayer) {
+          leafletMap.removeLayer(layer as LeafletMarker);
         }
       });
 
       // Add new tile layer
-      const newTileLayer = (window as any).L.tileLayer(tileConfig.url, {
+      const newTileLayer = windowWithLeaflet.L.tileLayer(tileConfig.url, {
         attribution: tileConfig.attribution,
         maxZoom: tileConfig.maxZoom || 18,
       });
@@ -315,7 +329,8 @@ const DEFAULT_LOCATION = { lat: 51.5074, lng: -0.1278 };
 
 // Load Leaflet CSS and JS dynamically
 const loadLeaflet = () => {
-  if (typeof (window as any).L !== "undefined") {
+  const windowWithLeaflet = window as WindowWithLeaflet;
+  if (typeof windowWithLeaflet.L !== "undefined") {
     return Promise.resolve();
   }
 
@@ -388,9 +403,14 @@ export const LocationPickerField: React.FC<LocationPickerFieldProps> = ({
   const [isManualDialogOpen, setIsManualDialogOpen] = useState(false);
   const [leafletLoaded, setLeafletLoaded] = useState(false);
 
+  interface MapInstance {
+    updateMarker: (loc: LocationValue | null) => void;
+    destroy: () => void;
+    switchTileLayer?: (config: { url: string; attribution: string; maxZoom?: number }) => void;
+  }
   const mapRef = useRef<HTMLDivElement>(null);
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const mapInstanceRef = useRef<any>(null);
+  const mapInstanceRef = useRef<MapInstance | null>(null);
 
   // Load Leaflet on mount only if map is enabled - simple
   useEffect(() => {
@@ -510,8 +530,8 @@ export const LocationPickerField: React.FC<LocationPickerFieldProps> = ({
     // Apply tile provider if not default
     if (mapProvider !== "openstreetmap") {
       const tileConfig = TILE_PROVIDERS[mapProvider as keyof typeof TILE_PROVIDERS];
-      if (tileConfig && 'switchTileLayer' in mapInstance) {
-        (mapInstance as any).switchTileLayer(tileConfig);
+      if (tileConfig && 'switchTileLayer' in mapInstance && mapInstance.switchTileLayer) {
+        mapInstance.switchTileLayer(tileConfig);
       }
     }
 
@@ -678,7 +698,7 @@ export const LocationPickerField: React.FC<LocationPickerFieldProps> = ({
                   <div className="p-4 text-center text-muted-foreground">
                     <div className="text-2xl mb-2">🗺️</div>
                     <div className="text-sm">
-                      No locations found for "{searchQuery}"
+                      No locations found for &quot;{searchQuery}&quot;
                     </div>
                     <div className="text-xs mt-1">
                       Try a different search term or use coordinates

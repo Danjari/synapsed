@@ -2,6 +2,7 @@
 import type { AnyFieldApi, AnyFormApi } from "@tanstack/react-form";
 import React from "react";
 import type { FieldComponentProps, FieldConfig } from "@/lib/formedible/types";
+import type { SharedFieldRendererFieldConfig, FormStoreStateWithValues } from "@/lib/types/formedible";
 import { resolveDynamicText } from "@/lib/formedible/template-interpolation";
 import { TextField } from "./text-field";
 import { TextareaField } from "./textarea-field";
@@ -21,8 +22,9 @@ import { LocationPickerField } from "./location-picker-field";
 import { DurationPickerField } from "./duration-picker-field";
 import { AutocompleteField } from "./autocomplete-field";
 import { MaskedInputField } from "./masked-input-field";
+import type { FieldTypeComponentsRegistry } from "@/lib/types/formedible";
 
-export const FIELD_TYPE_COMPONENTS: Record<string, React.ComponentType<any>> = {
+export const FIELD_TYPE_COMPONENTS: FieldTypeComponentsRegistry = {
   text: TextField,
   email: TextField,
   password: TextField,
@@ -67,7 +69,8 @@ export const NestedFieldRenderer = <
   React.useEffect(() => {
     if (!form) return;
     const unsubscribe = form.store.subscribe((state) => {
-      setSubscribedValues((state as any).values as TFormValues);
+      const stateWithValues = state as FormStoreStateWithValues<TFormValues>;
+      setSubscribedValues(stateWithValues.values as TFormValues);
     });
     return unsubscribe;
   }, [form]);
@@ -121,6 +124,8 @@ export const NestedFieldRenderer = <
 
   function renderActualField() {
     if (type === "array") {
+      // Dynamic import to avoid circular dependencies
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const ArrayField = require("./array-field").ArrayField;
       return (
         <ArrayField
@@ -134,6 +139,8 @@ export const NestedFieldRenderer = <
     }
 
     if (type === "object") {
+      // Dynamic import to avoid circular dependencies
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const ObjectField = require("./object-field").ObjectField;
       return (
         <ObjectField
@@ -171,14 +178,14 @@ export const NestedFieldRenderer = <
       multiple,
     };
 
-    let props: FieldComponentProps = { ...baseProps };
+    const props: FieldComponentProps = { ...baseProps };
 
     if (type === "select" || type === "radio" || type === "multiSelect") {
       props.options = resolvedOptionsList;
     }
 
     if (["text", "email", "password", "url", "tel"].includes(type)) {
-      props.type = type as any;
+      props.type = type as "text" | "email" | "password" | "url" | "tel";
       props.datalist = datalist?.options;
     }
 
@@ -218,13 +225,7 @@ export const NestedFieldRenderer = <
 export interface SharedFieldRendererProps<
   TFormValues extends Record<string, unknown>
 > {
-  fieldConfig: FieldConfig & {
-    crossFieldError?: string;
-    asyncValidationState?: any;
-    wrapperClassName?: string;
-    labelClassName?: string;
-    disabled?: boolean;
-  };
+  fieldConfig: SharedFieldRendererFieldConfig;
   fieldApi: AnyFieldApi;
   form?: AnyFormApi;
   currentValues?: TFormValues;
@@ -254,7 +255,8 @@ export const SharedFieldRenderer = <
   React.useEffect(() => {
     if (!form) return;
     const unsubscribe = form.store.subscribe((state) => {
-      setSubscribedValues((state as any).values as TFormValues);
+      const stateWithValues = state as FormStoreStateWithValues<TFormValues>;
+      setSubscribedValues(stateWithValues.values as TFormValues);
     });
     return unsubscribe;
   }, [form]);
@@ -335,14 +337,14 @@ export const SharedFieldRenderer = <
     multiple,
   };
 
-  let props: FieldComponentProps = { ...baseProps };
+  const props: FieldComponentProps = { ...baseProps };
 
   if (type === "select" || type === "radio" || type === "multiSelect") {
     props.options = resolvedOptionsList;
   }
 
   if (["text", "email", "password", "url", "tel"].includes(type)) {
-    props.type = type as any;
+    props.type = type as "text" | "email" | "password" | "url" | "tel";
     props.datalist = datalist?.options;
   }
 

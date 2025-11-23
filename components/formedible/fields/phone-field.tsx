@@ -104,7 +104,7 @@ export const PhoneField: React.FC<PhoneFieldSpecificProps> = ({
 
       // Find matching country code
       const matchingCountry = Object.entries(COUNTRY_CODES).find(
-        ([_, country]) => {
+        ([, country]) => {
           const countryDigits = extractDigits(country.code);
           return digits.startsWith(countryDigits);
         }

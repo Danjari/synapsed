@@ -277,7 +277,7 @@ export const AutocompleteField: React.FC<AutocompleteFieldProps> = ({
                         }}
                         disabled={isDisabled}
                       >
-                        Use "{inputValue}"
+                        Use &quot;{inputValue}&quot;
                       </Button>
                     )}
                   </div>
