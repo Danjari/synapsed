@@ -60,7 +60,7 @@ const builtInProviders = {
         state: item.address?.state,
         country: item.address?.country,
         postalCode: item.address?.postcode,
-        relevance: parseFloat(item.importance || 0),
+        relevance: parseFloat(String(item.importance || 0)),
         bounds: item.boundingbox
           ? {
               northeast: {
@@ -139,7 +139,8 @@ const defaultMapRenderer = (params: {
   if (!windowWithLeaflet.L) {
     throw new Error("Leaflet library not loaded");
   }
-  const leafletMap = windowWithLeaflet.L.map(mapContainer, {
+  const L = windowWithLeaflet.L; // Store in const so TypeScript knows it's defined
+  const leafletMap = L.map(mapContainer, {
     center: [
       location?.lat || defaultLocation?.lat || 51.5074,
       location?.lng || defaultLocation?.lng || -0.1278,
@@ -156,7 +157,7 @@ const defaultMapRenderer = (params: {
   });
 
   // Default tile layer - OpenStreetMap
-  const osmTileLayer = windowWithLeaflet.L.tileLayer(
+  const osmTileLayer = L.tileLayer(
     "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
       attribution:
@@ -178,8 +179,8 @@ const defaultMapRenderer = (params: {
       currentMarker = null;
     }
 
-    if (loc) {
-      const customIcon = windowWithLeaflet.L.divIcon({
+    if (loc && L) {
+      const customIcon = L.divIcon({
         className: "custom-div-icon",
         html: `
           <div style="
@@ -209,7 +210,7 @@ const defaultMapRenderer = (params: {
         iconAnchor: [0, 0],
       });
 
-      currentMarker = windowWithLeaflet.L.marker([loc.lat, loc.lng], {
+      currentMarker = L.marker([loc.lat, loc.lng], {
         icon: customIcon,
       });
       currentMarker.addTo(leafletMap);
@@ -236,7 +237,8 @@ const defaultMapRenderer = (params: {
   updateMarker(location);
 
   return {
-    cleanup: () => {
+    updateMarker,
+    destroy: () => {
       if (leafletMap) {
         leafletMap.remove();
       }
@@ -254,13 +256,13 @@ const defaultMapRenderer = (params: {
       const mapWithLayers = leafletMap as LeafletMapWithLayers;
       mapWithLayers.eachLayer((layer: LeafletLayer) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        if (layer instanceof (windowWithLeaflet.L as any).TileLayer) {
+        if (layer instanceof (L as any).TileLayer) {
           leafletMap.removeLayer(layer as LeafletMarker);
         }
       });
 
       // Add new tile layer
-      const newTileLayer = windowWithLeaflet.L.tileLayer(tileConfig.url, {
+      const newTileLayer = L.tileLayer(tileConfig.url, {
         attribution: tileConfig.attribution,
         maxZoom: tileConfig.maxZoom || 18,
       });
@@ -405,6 +407,7 @@ export const LocationPickerField: React.FC<LocationPickerFieldProps> = ({
 
   interface MapInstance {
     updateMarker: (loc: LocationValue | null) => void;
+    updateLocation?: (loc: LocationValue) => void;
     destroy: () => void;
     switchTileLayer?: (config: { url: string; attribution: string; maxZoom?: number }) => void;
   }

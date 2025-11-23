@@ -8,7 +8,7 @@
 export interface NominatimSearchOptions {
   endpoint?: string;
   limit?: number;
-  searchOptions?: Record<string, string | number | boolean>;
+  searchOptions?: Record<string, string | number | boolean | unknown>;
   [key: string]: unknown;
 }
 
@@ -20,6 +20,8 @@ export interface NominatimResponseItem {
   lat: string;
   lon: string;
   display_name: string;
+  importance?: string | number;
+  boundingbox?: [string, string, string, string]; // [minlat, maxlat, minlon, maxlon]
   address?: {
     city?: string;
     town?: string;
@@ -60,6 +62,20 @@ export interface LeafletMarker {
   addTo: (map: LeafletMap) => void;
   remove: () => void;
   [key: string]: unknown;
+}
+
+/**
+ * Leaflet layer (base type for all layers)
+ */
+export interface LeafletLayer {
+  [key: string]: unknown;
+}
+
+/**
+ * Leaflet map with eachLayer method
+ */
+export interface LeafletMapWithLayers extends LeafletMap {
+  eachLayer: (callback: (layer: LeafletLayer) => void) => void;
 }
 
 /**

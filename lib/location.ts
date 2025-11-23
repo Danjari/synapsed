@@ -37,8 +37,8 @@ export const builtInProviders = {
         state: item.address?.state,
         country: item.address?.country,
         postalCode: item.address?.postcode,
-        relevance: parseFloat(item.importance || 0),
-        bounds: item.boundingbox
+        relevance: parseFloat(String(item.importance || 0)),
+        bounds: item.boundingbox && Array.isArray(item.boundingbox) && item.boundingbox.length >= 4
           ? {
               northeast: {
                 lat: parseFloat(item.boundingbox[1]),
