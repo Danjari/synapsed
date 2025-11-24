@@ -227,15 +227,17 @@ Return correctAnswers as an array of objects, one per field:
 - For "checkbox" fields: Use boolean value
 
 **GUIDELINES:**
-- Choose the most appropriate field type for each question
-- Use "radio" instead of "select" for multiple choice when possible (better UX)
-- Use "textarea" for questions requiring explanations or longer answers
-- Use "number" for mathematical or quantitative questions
-- Use "checkbox" for true/false questions
-- For select/radio/multiselect: Provide 3-5 options
+- **PRIORITIZE GRADABLE QUESTION TYPES**: For grading purposes, prioritize questions that are easy to automatically grade:
+  - **PRIMARY**: Use "radio" (multiple choice) for single-answer questions - this is the preferred type for most questions
+  - **PRIMARY**: Use "multiselect" for questions where multiple correct answers are possible
+  - **SECONDARY**: Use "checkbox" for true/false questions when appropriate
+  - **MINIMIZE**: Avoid "text" and "textarea" (short answer) questions - they are harder to grade automatically since users can type anything. Only use these when absolutely necessary for the assessment topic
+  - **LIMITED USE**: Use "number" only for mathematical or quantitative questions that require numeric answers
+- Use "radio" instead of "select" for multiple choice (better UX)
+- For select/radio/multiselect: Provide 3-5 options with clear, distinct choices
 - Make questions clear and specific to the topic
 - Ensure questions test understanding, not just memorization
-- Vary question types appropriately
+- When possible, convert short answer questions into multiple choice or multiselect format
 
 Return the assessment structure by calling the function \`create_in_chat_assessment\` with the fields and correctAnswers arrays.`;
 

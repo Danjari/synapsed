@@ -188,7 +188,7 @@ export function InChatAssessmentForm({
   if (feedback) {
     return (
       <div className="bg-green-50 border border-green-200 rounded-lg p-4 my-4">
-        <h3 className="font-semibold text-green-900 mb-2">Assessment Complete!</h3>
+        <h3 className="font-semibold text-green-900 mb-2">Pulse Check Complete!</h3>
         <div className="text-green-800 whitespace-pre-wrap">{feedback}</div>
       </div>
     )
@@ -198,7 +198,7 @@ export function InChatAssessmentForm({
     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 my-4">
       <div className="mb-4">
         <h3 className="font-semibold text-blue-900 mb-1">
-          In-Chat Assessment: {inChatAssessmentData.topic}
+          In-Chat Pulse Check: {inChatAssessmentData.topic}
         </h3>
         {inChatAssessmentData.nodeTitle && (
           <p className="text-sm text-blue-700">Topic: {inChatAssessmentData.nodeTitle}</p>
