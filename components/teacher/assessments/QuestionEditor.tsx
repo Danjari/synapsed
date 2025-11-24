@@ -12,11 +12,13 @@ import { X, Plus, Image as ImageIcon, AlertCircle } from 'lucide-react';
 interface QuestionEditorProps {
   question: Question;
   onUpdateQuestion: (question: Question) => void;
+  quizId?: string;
 }
 
 export function QuestionEditor({
   question,
   onUpdateQuestion,
+  quizId,
 }: QuestionEditorProps) {
   const handleQuestionTextChange = (text: string) => {
     onUpdateQuestion({
@@ -114,24 +116,62 @@ export function QuestionEditor({
     });
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [isUploadingImage, setIsUploadingImage] = React.useState(false);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        onUpdateQuestion({
-          ...question,
-          image: event.target?.result as string,
-        });
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please upload an image file');
+      return;
+    }
+
+    setIsUploadingImage(true);
+
+    try {
+      if (!quizId) {
+        throw new Error('Quiz ID is required to upload images. Please save the quiz first.');
+      }
+
+      // Create form data
+      const formData = new FormData();
+      formData.append('file', file);
+
+      // Upload to API
+      const response = await fetch(
+        `/api/professor/quizzes/${quizId}/questions/${question.id}/image`,
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to upload image');
+      }
+
+      const data = await response.json();
+
+      // Update question with image URL
+      onUpdateQuestion({
+        ...question,
+        imageUrl: data.imageUrl,
+      });
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      alert(error instanceof Error ? error.message : 'Failed to upload image');
+    } finally {
+      setIsUploadingImage(false);
     }
   };
 
   const handleRemoveImage = () => {
     onUpdateQuestion({
       ...question,
-      image: undefined,
+      imageUrl: undefined,
     });
   };
 
@@ -172,10 +212,10 @@ export function QuestionEditor({
         {/* Question Image */}
         <div>
           <Label className="mb-2 block">Question Image</Label>
-          {question.image ? (
+          {question.imageUrl ? (
             <div className="relative border border-slate-300 dark:border-slate-600 rounded-md overflow-hidden">
               <Image
-                src={question.image}
+                src={question.imageUrl}
                 alt="Question"
                 width={800}
                 height={256}
@@ -185,6 +225,7 @@ export function QuestionEditor({
                 type="button"
                 onClick={handleRemoveImage}
                 className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600"
+                disabled={isUploadingImage}
               >
                 <X size={16} />
               </button>
@@ -194,17 +235,18 @@ export function QuestionEditor({
               <div className="flex flex-col items-center">
                 <ImageIcon className="h-12 w-12 text-slate-400" />
                 <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-                  Drag and drop an image, or
+                  {isUploadingImage ? 'Uploading image...' : 'Drag and drop an image, or'}
                 </p>
                 <label className="mt-2 cursor-pointer">
                   <span className="text-emerald-600 hover:text-emerald-500 text-sm font-medium">
-                    Browse files
+                    {isUploadingImage ? 'Uploading...' : 'Browse files'}
                   </span>
                   <input
                     type="file"
                     accept="image/*"
                     className="sr-only"
                     onChange={handleImageUpload}
+                    disabled={isUploadingImage}
                   />
                 </label>
               </div>

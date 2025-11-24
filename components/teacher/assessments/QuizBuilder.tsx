@@ -27,6 +27,8 @@ export function QuizBuilder({
   const [selectedQuestionId, setSelectedQuestionId] = useState<string>('');
   const [showOCRModal, setShowOCRModal] = useState(false);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('saved');
+  const [isLoading, setIsLoading] = useState(false);
+  const [currentQuizId, setCurrentQuizId] = useState<string | undefined>(quizId);
   
   // Update selected question when questions change
   useEffect(() => {
@@ -42,11 +44,49 @@ export function QuizBuilder({
 
   // Load quiz data if quizId is provided
   useEffect(() => {
-    if (quizId) {
-      // TODO: Load quiz from API
-      // For now, use mock data
-      setQuizName('Sample Quiz');
-    }
+    const loadQuiz = async () => {
+      if (!quizId) return;
+      
+      setIsLoading(true);
+      try {
+        const response = await fetch(`/api/professor/quizzes/${quizId}`);
+        if (!response.ok) {
+          throw new Error('Failed to load quiz');
+        }
+        
+        const data = await response.json();
+        const quiz = data.quiz;
+        
+        setQuizName(quiz.title || 'Untitled Quiz');
+        setCurrentQuizId(quiz.id);
+        
+        // Transform questions from API format to frontend format
+        const transformedQuestions: Question[] = (quiz.questions || []).map((q: any) => ({
+          id: q.id,
+          text: q.text || '',
+          richTextContent: q.richTextContent,
+          type: q.type.toLowerCase().replace('_', '-') as 'multiple-choice' | 'short-answer' | 'true-false',
+          imageUrl: q.imageUrl || undefined,
+          order: q.order || 0,
+          options: (q.options || []).map((opt: any) => ({
+            id: opt.id,
+            text: opt.text || '',
+            isCorrect: opt.isCorrect || false,
+            order: opt.order || 0,
+          })),
+        }));
+        
+        setQuestions(transformedQuestions);
+        setSaveStatus('saved');
+      } catch (error) {
+        console.error('Error loading quiz:', error);
+        toast.error('Failed to load quiz');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadQuiz();
   }, [quizId]);
 
   const handleQuizNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,25 +151,103 @@ export function QuizBuilder({
     }
 
     setSaveStatus('saving');
-    // TODO: Save to API
-    setTimeout(() => {
+    
+    try {
+      // Transform questions to API format
+      const questionsForApi = questions.map((q) => ({
+        text: q.text,
+        richTextContent: q.richTextContent,
+        type: q.type,
+        imageUrl: q.imageUrl,
+        order: q.order || 0,
+        options: q.options.map((opt) => ({
+          text: opt.text,
+          isCorrect: opt.isCorrect,
+          order: opt.order || 0,
+        })),
+      }));
+
+      let response;
+      if (currentQuizId) {
+        // Update existing quiz
+        response = await fetch(`/api/professor/quizzes/${currentQuizId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: quizName.trim(),
+            questions: questionsForApi,
+          }),
+        });
+      } else {
+        // Create new quiz
+        response = await fetch(`/api/professor/quizzes/${classId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: quizName.trim(),
+            questions: questionsForApi,
+          }),
+        });
+      }
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save quiz');
+      }
+
+      const data = await response.json();
+      
+      // If this was a new quiz, update the quizId
+      if (!currentQuizId && data.quiz?.id) {
+        setCurrentQuizId(data.quiz.id);
+      }
+
       setSaveStatus('saved');
       toast.success('Quiz saved successfully');
-    }, 1000);
+    } catch (error) {
+      console.error('Error saving quiz:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to save quiz');
+      setSaveStatus('unsaved');
+    }
   };
 
   const handlePublish = async () => {
+    // First save the quiz
     await handleSave();
-    // TODO: Publish quiz via API - check saveStatus after API call completes
-    setTimeout(() => {
+    
+    // Wait a bit for save to complete
+    if (saveStatus === 'saving') {
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+
+    if (!currentQuizId) {
+      toast.error('Please save the quiz first');
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/professor/quizzes/${currentQuizId}/publish`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'publish' }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to publish quiz');
+      }
+
       toast.success('Quiz published successfully');
-    }, 1100);
+    } catch (error) {
+      console.error('Error publishing quiz:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to publish quiz');
+    }
   };
 
   const handlePreview = () => {
     // Navigate to preview page
-    if (quizId) {
-      window.open(`/teacher/assessments/${quizId}/preview`, '_blank');
+    if (currentQuizId) {
+      window.open(`/teacher/assessments/${currentQuizId}/preview`, '_blank');
     } else {
       // For new quizzes, show a message
       toast.info('Please save the quiz first before previewing');
@@ -140,6 +258,17 @@ export function QuizBuilder({
     () => questions.find((q) => q.id === selectedQuestionId),
     [questions, selectedQuestionId]
   );
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin h-12 w-12 border-4 border-emerald-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p className="text-slate-500">Loading quiz...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen w-full">
@@ -243,6 +372,7 @@ export function QuizBuilder({
               <QuestionEditor
                 question={selectedQuestion}
                 onUpdateQuestion={handleUpdateQuestion}
+                quizId={currentQuizId}
               />
             ) : (
               <div className="glass rounded-2xl p-12 flex items-center justify-center h-full">

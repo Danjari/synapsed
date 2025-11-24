@@ -8,14 +8,16 @@ export type AnswerOption = {
   id: string;
   text: string;
   isCorrect: boolean;
+  order?: number;
 };
 
 export type Question = {
   id: string;
   text: string;
+  richTextContent?: any; // BlockNote JSON content
   type: QuestionType;
   options: AnswerOption[];
-  image?: string;
+  imageUrl?: string; // R2 URL instead of base64
   hasError?: boolean;
   order?: number;
 };
@@ -27,6 +29,7 @@ export type Quiz = {
   status: QuizStatus;
   createdAt: Date;
   updatedAt?: Date;
+  publishedAt?: Date;
   submissions: number;
   totalStudents: number;
   gradeAverage?: number;

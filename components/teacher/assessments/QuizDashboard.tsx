@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { QuizTable } from './QuizTable';
@@ -16,50 +16,12 @@ interface QuizDashboardProps {
 }
 
 export function QuizDashboard({
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   classId,
   onCreateQuiz,
   onEditQuiz,
 }: QuizDashboardProps) {
-  // Mock quiz data - will be replaced with API call later
-  // TODO: Filter quizzes by classId when API is connected
-  const [quizzes, setQuizzes] = useState<Quiz[]>([
-    {
-      id: '1',
-      title: 'Introduction to React Hooks',
-      status: 'published',
-      createdAt: new Date('2024-01-15'),
-      submissions: 24,
-      totalStudents: 30,
-      gradeAverage: 87,
-    },
-    {
-      id: '2',
-      title: 'Advanced TypeScript Patterns',
-      status: 'archived',
-      createdAt: new Date('2024-01-10'),
-      submissions: 28,
-      totalStudents: 30,
-      gradeAverage: 92,
-    },
-    {
-      id: '3',
-      title: 'State Management with Redux',
-      status: 'draft',
-      createdAt: new Date('2024-01-20'),
-      submissions: 0,
-      totalStudents: 30,
-    },
-    {
-      id: '4',
-      title: 'CSS Grid and Flexbox Fundamentals',
-      status: 'published',
-      createdAt: new Date('2024-01-18'),
-      submissions: 15,
-      totalStudents: 30,
-      gradeAverage: 78,
-    },
-  ]);
+  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [selectedQuizForResults, setSelectedQuizForResults] = useState<
     string | null
@@ -68,6 +30,28 @@ export function QuizDashboard({
     quizId: string;
     action: 'publish' | 'archive';
   } | null>(null);
+
+  // Load quizzes on mount
+  useEffect(() => {
+    const loadQuizzes = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch(`/api/professor/quizzes/${classId}`);
+        if (!response.ok) {
+          throw new Error('Failed to load quizzes');
+        }
+        
+        const data = await response.json();
+        setQuizzes(data.quizzes || []);
+      } catch (error) {
+        console.error('Error loading quizzes:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadQuizzes();
+  }, [classId]);
 
   const handleToggleStatus = (quizId: string) => {
     const quiz = quizzes.find((q) => q.id === quizId);
@@ -86,24 +70,44 @@ export function QuizDashboard({
     }
   };
 
-  const confirmToggleStatus = () => {
+  const confirmToggleStatus = async () => {
     if (!confirmationDialog) return;
 
-    setQuizzes(
-      quizzes.map((quiz) =>
-        quiz.id === confirmationDialog.quizId
-          ? {
-              ...quiz,
-              status:
-                confirmationDialog.action === 'publish'
-                  ? 'published'
-                  : 'archived',
-            }
-          : quiz,
-      ),
-    );
+    try {
+      const response = await fetch(
+        `/api/professor/quizzes/${confirmationDialog.quizId}/publish`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: confirmationDialog.action }),
+        }
+      );
 
-    setConfirmationDialog(null);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update quiz status');
+      }
+
+      // Update local state
+      setQuizzes(
+        quizzes.map((quiz) =>
+          quiz.id === confirmationDialog.quizId
+            ? {
+                ...quiz,
+                status:
+                  confirmationDialog.action === 'publish'
+                    ? 'published'
+                    : 'archived',
+              }
+            : quiz,
+        ),
+      );
+
+      setConfirmationDialog(null);
+    } catch (error) {
+      console.error('Error updating quiz status:', error);
+      alert(error instanceof Error ? error.message : 'Failed to update quiz status');
+    }
   };
 
   const handleViewResults = (quizId: string) => {
@@ -133,15 +137,23 @@ export function QuizDashboard({
 
       {/* Main Content */}
       <div className="px-4 pb-8">
-        <div className="grid grid-cols-12 gap-6">
-          {/* Metrics Panel */}
-          <div className="col-span-12 lg:col-span-3">
-            <DashboardMetrics quizzes={quizzes} />
+        {isLoading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <div className="animate-spin h-12 w-12 border-4 border-emerald-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+              <p className="text-slate-500">Loading quizzes...</p>
+            </div>
           </div>
+        ) : (
+          <div className="grid grid-cols-12 gap-6">
+            {/* Metrics Panel */}
+            <div className="col-span-12 lg:col-span-3">
+              <DashboardMetrics quizzes={quizzes} />
+            </div>
 
-          {/* Quiz Table */}
-          <div className="col-span-12 lg:col-span-9">
-            {quizzes.length === 0 ? (
+            {/* Quiz Table */}
+            <div className="col-span-12 lg:col-span-9">
+              {quizzes.length === 0 ? (
               <Card className="p-12 text-center">
                 <div className="flex flex-col items-center">
                   <div className="h-24 w-24 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center mb-4">
@@ -170,6 +182,7 @@ export function QuizDashboard({
             )}
           </div>
         </div>
+        )}
       </div>
 
       {/* Results Modal */}
