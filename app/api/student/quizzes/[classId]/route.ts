@@ -66,6 +66,11 @@ export async function GET(
         status = response.submittedAt ? "completed" : "in-progress";
       }
 
+      // Check if quiz is overdue
+      const isOverdue = quiz.dueDate 
+        ? new Date(quiz.dueDate) < new Date() && status !== "completed"
+        : false;
+
       return {
         id: quiz.id,
         title: quiz.title,
@@ -74,6 +79,8 @@ export async function GET(
         status,
         score: response?.score,
         submittedAt: response?.submittedAt,
+        dueDate: quiz.dueDate || undefined,
+        isOverdue,
       };
     });
 

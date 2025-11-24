@@ -78,7 +78,10 @@ export async function GET(
 
     return NextResponse.json({
       quiz: {
-        ...quiz,
+        id: quiz.id,
+        title: quiz.title,
+        description: quiz.description,
+        dueDate: quiz.dueDate,
         questions: questionsForStudent,
         hasSubmitted,
       },

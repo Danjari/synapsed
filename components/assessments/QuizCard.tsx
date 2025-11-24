@@ -13,6 +13,7 @@ type QuizCardProps = {
   dueDate?: Date | string;
   status: "not-started" | "in-progress" | "completed";
   classId: string;
+  isOverdue?: boolean;
 };
 
 export function QuizCard({
@@ -23,6 +24,7 @@ export function QuizCard({
   dueDate,
   status,
   classId,
+  isOverdue = false,
 }: QuizCardProps) {
   const formatDate = (date: Date | string | undefined) => {
     if (!date) return null;
@@ -69,9 +71,12 @@ export function QuizCard({
               <span>{totalQuestions} questions</span>
             </div>
             {dueDate && (
-              <div className="flex items-center gap-1">
+              <div className={`flex items-center gap-1 ${isOverdue ? 'text-red-600 font-medium' : ''}`}>
                 <Clock className="w-4 h-4" />
-                <span>Due {formatDate(dueDate)}</span>
+                <span>
+                  {isOverdue ? 'Overdue: ' : 'Due '}
+                  {formatDate(dueDate)}
+                </span>
               </div>
             )}
           </div>

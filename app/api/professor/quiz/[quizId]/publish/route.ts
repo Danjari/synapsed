@@ -30,7 +30,7 @@ export async function POST(
     }
 
     const body = await request.json();
-    const { action } = body; // 'publish' or 'archive'
+    const { action, dueDate } = body; // 'publish' or 'archive', optional dueDate
 
     if (action !== 'publish' && action !== 'archive') {
       return NextResponse.json(
@@ -39,12 +39,25 @@ export async function POST(
       );
     }
 
+    // Parse dueDate if provided
+    let parsedDueDate: Date | null = null;
+    if (dueDate && action === 'publish') {
+      parsedDueDate = new Date(dueDate);
+      if (isNaN(parsedDueDate.getTime())) {
+        return NextResponse.json(
+          { error: 'Invalid due date format' },
+          { status: 400 }
+        );
+      }
+    }
+
     // Update quiz status
     const updatedQuiz = await prisma.professorQuiz.update({
       where: { id: quizId },
       data: {
         status: action === 'publish' ? 'PUBLISHED' : 'ARCHIVED',
         publishedAt: action === 'publish' ? new Date() : undefined,
+        dueDate: action === 'publish' ? parsedDueDate : null,
       },
     });
 

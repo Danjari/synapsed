@@ -555,6 +555,7 @@ model ProfessorQuiz {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   publishedAt DateTime?
+  dueDate     DateTime? // Due date and time for the quiz
   
   // Relations
   questions   ProfessorQuizQuestion[]
@@ -563,6 +564,7 @@ model ProfessorQuiz {
   @@index([classId])
   @@index([professorId])
   @@index([status])
+  @@index([dueDate])
   @@map("professor_quizzes")
 }
 

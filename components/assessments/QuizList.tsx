@@ -12,6 +12,7 @@ type Quiz = {
   totalQuestions: number;
   dueDate?: Date | string;
   status: "not-started" | "in-progress" | "completed";
+  isOverdue?: boolean;
 };
 
 type QuizListProps = {
@@ -79,6 +80,7 @@ export function QuizList({ classId, studentId }: QuizListProps) {
           key={quiz.id}
           {...quiz}
           classId={classId}
+          isOverdue={quiz.isOverdue}
         />
       ))}
     </div>

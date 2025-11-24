@@ -28,6 +28,7 @@ type Quiz = {
   title: string;
   description?: string;
   questions: QuizQuestion[];
+  dueDate?: Date | string;
 };
 
 type QuizViewProps = {
@@ -169,6 +170,16 @@ export function QuizView({ quizId, classId, studentId, onComplete }: QuizViewPro
               <h1 className="text-2xl font-bold text-slate-800">{quiz.title}</h1>
               {quiz.description && (
                 <p className="text-sm text-slate-600 mt-1">{quiz.description}</p>
+              )}
+              {quiz.dueDate && (
+                <p className={`text-sm mt-1 ${
+                  new Date(quiz.dueDate) < new Date() 
+                    ? 'text-red-600 font-medium' 
+                    : 'text-slate-600'
+                }`}>
+                  Due: {new Date(quiz.dueDate).toLocaleString()}
+                  {new Date(quiz.dueDate) < new Date() && ' (Overdue)'}
+                </p>
               )}
             </div>
             <span className="text-sm text-slate-600">

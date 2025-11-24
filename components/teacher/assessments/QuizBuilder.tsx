@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { QuizNavigation } from './QuizNavigation';
 import { QuestionEditor } from './QuestionEditor';
 import { OCRImportModal } from './OCRImportModal';
+import { PublishQuizDialog } from './PublishQuizDialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Question, SaveStatus } from './types';
@@ -29,6 +30,8 @@ export function QuizBuilder({
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('saved');
   const [isLoading, setIsLoading] = useState(false);
   const [currentQuizId, setCurrentQuizId] = useState<string | undefined>(quizId);
+  const [showPublishDialog, setShowPublishDialog] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
   
   // Update selected question when questions change
   useEffect(() => {
@@ -211,7 +214,7 @@ export function QuizBuilder({
     }
   };
 
-  const handlePublish = async () => {
+  const handlePublishClick = async () => {
     // First save the quiz
     await handleSave();
     
@@ -225,11 +228,25 @@ export function QuizBuilder({
       return;
     }
 
+    // Show publish dialog
+    setShowPublishDialog(true);
+  };
+
+  const handlePublish = async (dueDate: Date | undefined) => {
+    if (!currentQuizId) {
+      toast.error('Please save the quiz first');
+      return;
+    }
+
+    setIsPublishing(true);
     try {
       const response = await fetch(`/api/professor/quiz/${currentQuizId}/publish`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'publish' }),
+        body: JSON.stringify({ 
+          action: 'publish',
+          dueDate: dueDate ? dueDate.toISOString() : null,
+        }),
       });
 
       if (!response.ok) {
@@ -238,9 +255,12 @@ export function QuizBuilder({
       }
 
       toast.success('Quiz published successfully');
+      setShowPublishDialog(false);
     } catch (error) {
       console.error('Error publishing quiz:', error);
       toast.error(error instanceof Error ? error.message : 'Failed to publish quiz');
+    } finally {
+      setIsPublishing(false);
     }
   };
 
@@ -346,9 +366,15 @@ export function QuizBuilder({
             <Save size={16} className="mr-2" />
             Save
           </Button>
-          <Button variant="default" onClick={handlePublish}>
+          <Button variant="default" onClick={handlePublishClick}>
             Publish
           </Button>
+          <PublishQuizDialog
+            open={showPublishDialog}
+            onOpenChange={setShowPublishDialog}
+            onPublish={handlePublish}
+            isLoading={isPublishing}
+          />
         </div>
       </div>
 
