@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Question, AnswerOption } from './types';
-import { RichTextEditor } from './RichTextEditor';
+import { RichTextEditor } from '@/components/richtext/RichTextEditor';
 import { X, Plus, Image as ImageIcon, AlertCircle } from 'lucide-react';
 
 interface QuestionEditorProps {
@@ -20,10 +20,11 @@ export function QuestionEditor({
   onUpdateQuestion,
   quizId,
 }: QuestionEditorProps) {
-  const handleQuestionTextChange = (text: string) => {
+  const handleQuestionTextChange = (text: string, richTextContent?: any) => {
     onUpdateQuestion({
       ...question,
       text,
+      richTextContent: richTextContent || question.richTextContent,
     });
   };
 

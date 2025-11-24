@@ -156,7 +156,7 @@ export function QuizBuilder({
       // Transform questions to API format
       const questionsForApi = questions.map((q) => ({
         text: q.text,
-        richTextContent: q.richTextContent,
+        richTextContent: q.richTextContent || null, // Ensure BlockNote JSON is included
         type: q.type,
         imageUrl: q.imageUrl,
         order: q.order || 0,

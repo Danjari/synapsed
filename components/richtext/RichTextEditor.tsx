@@ -10,7 +10,7 @@ import { useTheme } from "next-themes";
 
 interface RichTextEditorProps {
   value: string; // Can be markdown or JSON string
-  onChange: (value: string) => void;
+  onChange: (value: string, richTextContent?: any) => void;
 }
 
 export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
@@ -59,18 +59,20 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
     }
   }, [editor]);
 
-  // Handle content changes - convert to markdown
+  // Handle content changes - convert to markdown and store BlockNote JSON
   const handleChange = async () => {
     if (editorRef.current) {
       try {
         const blocks = editorRef.current.document;
         // Convert blocks to markdown
         const markdown = await editorRef.current.blocksToMarkdown(blocks);
-        onChange(markdown);
+        // Also pass the BlockNote JSON for rich text rendering
+        onChange(markdown, blocks);
       } catch (error) {
         console.error('Error converting blocks to markdown:', error);
         // Fallback: use plain text
-        const text = editorRef.current.document
+        const blocks = editorRef.current.document;
+        const text = blocks
           .map(block => {
             if (typeof block.content === 'string') return block.content;
             if (Array.isArray(block.content)) {
@@ -81,7 +83,7 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
             return '';
           })
           .join('\n');
-        onChange(text);
+        onChange(text, blocks);
       }
     }
   };
