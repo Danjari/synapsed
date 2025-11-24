@@ -39,7 +39,7 @@ export async function PUT(
       return NextResponse.json({ error: 'Question not found' }, { status: 404 });
     }
 
-    const body = await request.json();
+    const body: UpdateQuestionRequest = await request.json();
     const { text, richTextContent, type, imageUrl, order, options } = body;
 
     // Update question
@@ -69,7 +69,7 @@ export async function PUT(
       // Create new options
       if (options.length > 0) {
         await prisma.professorQuizOption.createMany({
-          data: options.map((opt: any, optIndex: number) => ({
+          data: options.map((opt: QuestionOptionInput, optIndex: number) => ({
             questionId,
             text: opt.text || '',
             isCorrect: opt.isCorrect || false,

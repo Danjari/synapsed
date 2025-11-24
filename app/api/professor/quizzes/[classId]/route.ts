@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
+import { CreateQuizRequest, QuestionInput, QuestionOptionInput } from '@/lib/types/quizzes';
 
 // GET: List all quizzes for a class
 export async function GET(
@@ -128,7 +129,7 @@ export async function POST(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const body = await request.json();
+    const body: CreateQuizRequest = await request.json();
     const { title, description, questions } = body;
 
     if (!title || !title.trim()) {
@@ -144,14 +145,14 @@ export async function POST(
         professorId: session.user.id,
         status: 'DRAFT',
         questions: questions && Array.isArray(questions) ? {
-          create: questions.map((q: any, index: number) => ({
+          create: questions.map((q: QuestionInput, index: number) => ({
             text: q.text || '',
             richTextContent: q.richTextContent || null,
-            type: q.type.toUpperCase().replace('-', '_') as 'MULTIPLE_CHOICE' | 'SHORT_ANSWER' | 'TRUE_FALSE',
+            type: (typeof q.type === 'string' ? q.type.toUpperCase().replace('-', '_') : q.type) as 'MULTIPLE_CHOICE' | 'SHORT_ANSWER' | 'TRUE_FALSE',
             imageUrl: q.imageUrl || null,
             order: q.order || index + 1,
             options: q.options && Array.isArray(q.options) ? {
-              create: q.options.map((opt: any, optIndex: number) => ({
+              create: q.options.map((opt: QuestionOptionInput, optIndex: number) => ({
                 text: opt.text || '',
                 isCorrect: opt.isCorrect || false,
                 order: opt.order || optIndex + 1,

@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 import useSWR from 'swr';
 import { Button } from "../ui/button";
 import { QuizCard } from "@/components/assessments";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { StudentQuiz } from "@/lib/types/quizzes";
 
 // This file defines the StudentDashboard component, which is a client-side component that displays the student's dashboard.
 // It fetches the student's classes and displays them in a course card format. It also displays a task list and progress section.
@@ -47,15 +47,15 @@ const StudentDashboard = ({ user }: { user?: User }) => {
   );
 
   // Fetch quizzes for all classes
-  const quizzesFetcher = async () => {
+  const quizzesFetcher = async (): Promise<StudentQuiz[]> => {
     if (!session?.user?.id) return [];
     try {
-      const allQuizzes: any[] = [];
+      const allQuizzes: StudentQuiz[] = [];
       for (const cls of classes) {
         const res = await fetch(`/api/student/quizzes/${cls.id}?studentId=${session.user.id}`);
         if (res.ok) {
           const data = await res.json();
-          const classQuizzes = (data.quizzes || []).map((q: any) => ({
+          const classQuizzes = (data.quizzes || []).map((q: StudentQuiz) => ({
             ...q,
             classId: cls.id,
             className: cls.title,
@@ -155,7 +155,7 @@ const StudentDashboard = ({ user }: { user?: User }) => {
               <h2 className="text-xl font-semibold text-gray-900">Recent Quizzes</h2>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {quizzes.map((quiz: any) => (
+              {quizzes.map((quiz) => (
                 <QuizCard
                   key={quiz.id}
                   id={quiz.id}
@@ -163,7 +163,9 @@ const StudentDashboard = ({ user }: { user?: User }) => {
                   description={quiz.description}
                   totalQuestions={quiz.totalQuestions}
                   status={quiz.status}
-                  classId={quiz.classId}
+                  classId={quiz.classId || ''}
+                  dueDate={quiz.dueDate}
+                  isOverdue={quiz.isOverdue}
                 />
               ))}
             </div>

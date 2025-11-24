@@ -7,16 +7,17 @@ import "@blocknote/core/fonts/inter.css";
 import "@blocknote/mantine/style.css";
 import { PartialBlock } from "@blocknote/core";
 import { useTheme } from "next-themes";
+import { RichTextContent } from "@/lib/types/quizzes";
 
 interface RichTextEditorProps {
   value: string; // Can be markdown or JSON string
-  onChange: (value: string, richTextContent?: any) => void;
+  onChange: (value: string, richTextContent?: RichTextContent) => void;
 }
 
 export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
   const [isClient, setIsClient] = useState(false);
   const [initialContent, setInitialContent] = useState<PartialBlock[] | undefined>(undefined);
-  const editorRef = useRef<any>(null);
+  const editorRef = useRef<ReturnType<typeof useCreateBlockNote> | null>(null);
   const { theme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 

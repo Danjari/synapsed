@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
+import { CreateQuestionRequest, QuestionOptionInput } from '@/lib/types/quizzes';
 
 // POST: Create a new question for a quiz
 export async function POST(
@@ -29,7 +30,7 @@ export async function POST(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const body = await request.json();
+    const body: CreateQuestionRequest = await request.json();
     const { text, richTextContent, type, imageUrl, order, options } = body;
 
     if (!text || !text.trim()) {
@@ -59,7 +60,7 @@ export async function POST(
         imageUrl: imageUrl || null,
         order: questionOrder,
         options: options && Array.isArray(options) ? {
-          create: options.map((opt: any, optIndex: number) => ({
+          create: options.map((opt: QuestionOptionInput, optIndex: number) => ({
             text: opt.text || '',
             isCorrect: opt.isCorrect || false,
             order: opt.order || optIndex + 1,

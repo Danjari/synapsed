@@ -8,20 +8,9 @@ import { Progress } from "@/components/ui/progress";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import { RichTextDisplay } from "@/components/richtext/RichTextDisplay";
+import { Question, Quiz as QuizType } from "@/lib/types/quizzes";
 
-type QuizQuestion = {
-  id: string;
-  text: string;
-  richTextContent?: any;
-  type: "multiple-choice" | "short-answer" | "true-false";
-  options?: Array<{
-    id: string;
-    text: string;
-    isCorrect: boolean;
-  }>;
-  imageUrl?: string;
-  order: number;
-};
+type QuizQuestion = Question;
 
 type Quiz = {
   id: string;
@@ -46,6 +35,7 @@ export default function QuizPreviewPage() {
     }
 
     console.log('Loading quiz with ID:', quizId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
 
     const loadQuiz = async () => {
       try {
@@ -58,17 +48,19 @@ export default function QuizPreviewPage() {
         }
         
         const data = await response.json();
-        const quizData = data.quiz;
+        const quizData: QuizType = data.quiz;
         
         // Transform questions from API format
-        const transformedQuestions: QuizQuestion[] = (quizData.questions || []).map((q: any) => ({
+        const transformedQuestions: QuizQuestion[] = (quizData.questions || []).map((q) => ({
           id: q.id,
           text: q.text || '',
           richTextContent: q.richTextContent,
-          type: q.type.toLowerCase().replace('_', '-') as "multiple-choice" | "short-answer" | "true-false",
+          type: (typeof q.type === 'string' && q.type.includes('_')
+            ? q.type.toLowerCase().replace('_', '-')
+            : q.type) as "multiple-choice" | "short-answer" | "true-false",
           imageUrl: q.imageUrl || undefined,
           order: q.order || 0,
-          options: (q.options || []).map((opt: any) => ({
+          options: (q.options || []).map((opt) => ({
             id: opt.id,
             text: opt.text || '',
             isCorrect: opt.isCorrect || false,

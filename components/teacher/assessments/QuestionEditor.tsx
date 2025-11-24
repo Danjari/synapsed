@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Question, AnswerOption } from './types';
 import { RichTextEditor } from '@/components/richtext/RichTextEditor';
 import { X, Plus, Image as ImageIcon, AlertCircle } from 'lucide-react';
+import { RichTextContent } from '@/lib/types/quizzes';
 
 interface QuestionEditorProps {
   question: Question;
@@ -20,7 +21,7 @@ export function QuestionEditor({
   onUpdateQuestion,
   quizId,
 }: QuestionEditorProps) {
-  const handleQuestionTextChange = (text: string, richTextContent?: any) => {
+  const handleQuestionTextChange = (text: string, richTextContent?: RichTextContent) => {
     onUpdateQuestion({
       ...question,
       text,

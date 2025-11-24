@@ -1,6 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
+import { QuizSubmitRequest, QuizSubmitResponse } from '@/lib/types/quizzes';
+
+interface QuizAnswerInput {
+  responseId: string;
+  questionId: string;
+  questionText: string;
+  answerText: string;
+  selectedOptionIds: string[];
+  isCorrect: boolean;
+}
 
 // POST: Submit quiz answers
 export async function POST(
@@ -14,7 +24,7 @@ export async function POST(
     }
 
     const { quizId } = await params;
-    const body = await request.json();
+    const body: QuizSubmitRequest = await request.json();
     const { studentId, classId, answers } = body;
 
     if (!studentId || !classId || !answers || !Array.isArray(answers)) {
@@ -68,9 +78,9 @@ export async function POST(
 
     // Calculate score
     let correctCount = 0;
-    let totalQuestions = quiz.questions.length;
+    const totalQuestions = quiz.questions.length;
 
-    const quizAnswers = answers.map((ans: { questionId: string; answerText: string }) => {
+    const quizAnswers: QuizAnswerInput[] = answers.map((ans) => {
       const question = quiz.questions.find(q => q.id === ans.questionId);
       if (!question) return null;
 
@@ -107,7 +117,7 @@ export async function POST(
         score,
         submittedAt: new Date(),
         answers: {
-          create: quizAnswers.map((ans: any) => ({
+          create: quizAnswers.map((ans) => ({
             questionId: ans.questionId,
             questionText: ans.questionText,
             answerText: ans.answerText,
@@ -118,13 +128,15 @@ export async function POST(
       },
     });
 
-    return NextResponse.json({
+    const submitResponse: QuizSubmitResponse = {
       success: true,
       responseId: response.id,
       score,
       totalQuestions,
       correctCount,
-    }, { status: 200 });
+    };
+
+    return NextResponse.json(submitResponse, { status: 200 });
   } catch (error) {
     console.error('Error submitting quiz:', error);
     return NextResponse.json(

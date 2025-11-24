@@ -108,11 +108,11 @@ export async function PUT(
 
       // Create new questions
       await prisma.professorQuizQuestion.createMany({
-        data: questions.map((q: any, index: number) => ({
+        data: questions.map((q: QuestionInput, index: number) => ({
           quizId,
           text: q.text || '',
           richTextContent: q.richTextContent || null,
-          type: q.type.toUpperCase().replace('-', '_') as 'MULTIPLE_CHOICE' | 'SHORT_ANSWER' | 'TRUE_FALSE',
+          type: (typeof q.type === 'string' ? q.type.toUpperCase().replace('-', '_') : q.type) as 'MULTIPLE_CHOICE' | 'SHORT_ANSWER' | 'TRUE_FALSE',
           imageUrl: q.imageUrl || null,
           order: q.order || index + 1,
         })),
@@ -131,7 +131,7 @@ export async function PUT(
         
         if (question.options && Array.isArray(question.options) && createdQuestion) {
           await prisma.professorQuizOption.createMany({
-            data: question.options.map((opt: any, optIndex: number) => ({
+            data: question.options.map((opt: QuestionInput['options'][0], optIndex: number) => ({
               questionId: createdQuestion.id,
               text: opt.text || '',
               isCorrect: opt.isCorrect || false,

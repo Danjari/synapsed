@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Question, SaveStatus } from './types';
 import { AlertCircle, Check, Save, ArrowLeft, Eye } from 'lucide-react';
 import { toast } from 'sonner';
+import { Question as QuestionType } from '@/lib/types/quizzes';
 
 interface QuizBuilderProps {
   quizId?: string;
@@ -64,14 +65,16 @@ export function QuizBuilder({
         setCurrentQuizId(quiz.id);
         
         // Transform questions from API format to frontend format
-        const transformedQuestions: Question[] = (quiz.questions || []).map((q: any) => ({
+        const transformedQuestions: Question[] = (quiz.questions || []).map((q: QuestionType) => ({
           id: q.id,
           text: q.text || '',
           richTextContent: q.richTextContent,
-          type: q.type.toLowerCase().replace('_', '-') as 'multiple-choice' | 'short-answer' | 'true-false',
+          type: (typeof q.type === 'string' && q.type.includes('_') 
+            ? q.type.toLowerCase().replace('_', '-') 
+            : q.type) as 'multiple-choice' | 'short-answer' | 'true-false',
           imageUrl: q.imageUrl || undefined,
           order: q.order || 0,
-          options: (q.options || []).map((opt: any) => ({
+          options: (q.options || []).map((opt) => ({
             id: opt.id,
             text: opt.text || '',
             isCorrect: opt.isCorrect || false,

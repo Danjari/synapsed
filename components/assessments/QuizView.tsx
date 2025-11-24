@@ -52,18 +52,20 @@ export function QuizView({ quizId, classId, studentId, onComplete }: QuizViewPro
         if (!response.ok) {
           throw new Error('Failed to load quiz');
         }
-        const data = await response.json();
+        const data: StudentQuizResponse = await response.json();
         const quizData = data.quiz;
         
         // Transform questions from API format
-        const transformedQuestions: QuizQuestion[] = (quizData.questions || []).map((q: any) => ({
+        const transformedQuestions: QuizQuestion[] = (quizData.questions || []).map((q) => ({
           id: q.id,
           text: q.text || '',
           richTextContent: q.richTextContent,
-          type: q.type.toLowerCase().replace('_', '-') as "multiple-choice" | "short-answer" | "true-false",
+          type: (typeof q.type === 'string' && q.type.includes('_')
+            ? q.type.toLowerCase().replace('_', '-')
+            : q.type) as "multiple-choice" | "short-answer" | "true-false",
           imageUrl: q.imageUrl || undefined,
           order: q.order || 0,
-          options: (q.options || []).map((opt: any) => ({
+          options: (q.options || []).map((opt) => ({
             id: opt.id,
             text: opt.text || '',
             isCorrect: opt.isCorrect || false,

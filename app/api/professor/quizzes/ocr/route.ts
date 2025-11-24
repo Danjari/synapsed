@@ -4,12 +4,9 @@ import { uploadToMistral } from '@/lib/rag/UploadToMistral';
 import { getOcrMarkdown } from '@/lib/rag/ragGetMarkdown';
 import { GoogleGenAI } from '@google/genai';
 import { Type } from '@google/genai';
+import { OCRQuestion, OCRResponse } from '@/lib/types/quizzes';
 
 const geminiClient = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
-
-function bufferFromFile(file: File): Promise<Buffer> {
-  return new Response(file.stream()).arrayBuffer().then(buf => Buffer.from(buf));
-}
 
 export async function POST(request: NextRequest) {
   try {
@@ -40,7 +37,7 @@ export async function POST(request: NextRequest) {
 
     // Step 2: Combine all pages into single text
     const fullText = ocrPages
-      .map((page, index) => `--- Page ${page.page} ---\n${page.markdown}`)
+      .map((page) => `--- Page ${page.page} ---\n${page.markdown}`)
       .join('\n\n');
 
     // Step 3: Use AI to parse questions from OCR text
@@ -107,12 +104,12 @@ Extract all questions with their answers. For multiple-choice questions, identif
     });
 
     // Parse AI response
-    let questions: any[] = [];
+    let questions: OCRQuestion[] = [];
     
     if (aiResponse.functionCalls && aiResponse.functionCalls.length > 0) {
       const functionCall = aiResponse.functionCalls[0];
       if (functionCall.name === 'extractQuizQuestions') {
-        const extracted = functionCall.args;
+        const extracted = functionCall.args as { questions?: OCRQuestion[] };
         questions = Array.isArray(extracted?.questions) ? extracted.questions : [];
       }
     }
@@ -128,7 +125,7 @@ Extract all questions with their answers. For multiple-choice questions, identif
       id: `ocr-${Date.now()}-${index}`,
       text: q.text || '',
       type: q.type || 'multiple-choice',
-      options: (q.options || []).map((opt: any, optIndex: number) => ({
+      options: (q.options || []).map((opt, optIndex: number) => ({
         id: `ocr-${Date.now()}-${index}-${optIndex}`,
         text: opt.text || '',
         isCorrect: opt.isCorrect || false,
@@ -136,11 +133,13 @@ Extract all questions with their answers. For multiple-choice questions, identif
       order: index + 1,
     }));
 
-    return NextResponse.json({
+    const response: OCRResponse = {
       success: true,
       questions: transformedQuestions,
       pagesProcessed: ocrPages.length,
-    });
+    };
+
+    return NextResponse.json(response);
   } catch (error) {
     console.error('Error processing OCR:', error);
     return NextResponse.json(
@@ -151,14 +150,13 @@ Extract all questions with their answers. For multiple-choice questions, identif
 }
 
 // Fallback parsing method
-async function fallbackQuestionParsing(text: string): Promise<any[]> {
+async function fallbackQuestionParsing(text: string): Promise<OCRQuestion[]> {
   // Simple regex-based parsing as fallback
-  const questionPattern = /(\d+[\.\)]\s*)?(.+?)(?=\d+[\.\)]|$)/gs;
-  const questions: any[] = [];
+  const questions: OCRQuestion[] = [];
   
   // Split by common question patterns
   const lines = text.split('\n').filter(line => line.trim().length > 0);
-  let currentQuestion: any = null;
+  let currentQuestion: OCRQuestion | null = null;
   
   for (const line of lines) {
     // Check if line looks like a question

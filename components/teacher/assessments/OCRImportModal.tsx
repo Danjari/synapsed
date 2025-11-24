@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Question } from './types';
+import { OCRResponse } from '@/lib/types/quizzes';
 import { X, Upload, FileText, AlertCircle, Check } from 'lucide-react';
 
 interface OCRImportModalProps {
@@ -111,11 +112,12 @@ export function OCRImportModal({
       setProcessProgress(100);
 
       // Transform to Question format
-      const transformedQuestions: Question[] = data.questions.map((q: any) => ({
+      const responseData = data as OCRResponse;
+      const transformedQuestions: Question[] = responseData.questions.map((q) => ({
         id: q.id || `ocr-${Date.now()}-${Math.random()}`,
         text: q.text || '',
-        type: q.type || 'multiple-choice',
-        options: (q.options || []).map((opt: any, index: number) => ({
+        type: (q.type || 'multiple-choice') as 'multiple-choice' | 'short-answer' | 'true-false',
+        options: (q.options || []).map((opt, index: number) => ({
           id: opt.id || `ocr-opt-${Date.now()}-${index}`,
           text: opt.text || '',
           isCorrect: opt.isCorrect || false,
