@@ -81,6 +81,7 @@ export default function QuizPreviewPage() {
     };
 
     loadQuiz();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quizId]);
 
   const handleAnswer = (value: string) => {

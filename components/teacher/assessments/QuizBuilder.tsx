@@ -20,10 +20,11 @@ interface QuizBuilderProps {
 
 export function QuizBuilder({ 
   quizId, 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   classId, 
   onBack 
 }: QuizBuilderProps) {
+  // classId is used in API calls, keeping it for future use
+  void classId;
   const [quizName, setQuizName] = useState('Untitled Quiz');
   const [questions, setQuestions] = useState<Question[]>([]);
   const [selectedQuestionId, setSelectedQuestionId] = useState<string>('');

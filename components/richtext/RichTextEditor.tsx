@@ -42,7 +42,7 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
     }
     // If no value or not valid JSON, set to undefined (will use default)
     setInitialContent(undefined);
-  }, []); // Only run once on mount
+  }, [value]);
 
   const editor = useCreateBlockNote({
     initialContent: initialContent || [

@@ -9,19 +9,7 @@ import Image from "next/image";
 import { RichTextDisplay } from "@/components/richtext/RichTextDisplay";
 import { toast } from "sonner";
 
-type QuizQuestion = {
-  id: string;
-  text: string;
-  richTextContent?: any;
-  type: "multiple-choice" | "short-answer" | "true-false";
-  options?: Array<{
-    id: string;
-    text: string;
-    isCorrect: boolean;
-  }>;
-  imageUrl?: string;
-  order: number;
-};
+type QuizQuestion = Question;
 
 type Quiz = {
   id: string;
