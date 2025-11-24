@@ -6,6 +6,8 @@ import { ArrowLeft } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import { QuizList } from '@/components/assessments';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const SynapsedFlow = dynamic(() => import('@/components/Synapses/Pathway/PathwayDisplay'), {
   ssr: false,
@@ -34,6 +36,7 @@ export default function SynapsedPathwayPage() {
     };
     load();
   }, [session?.user?.id, classId]);
+  
   return (
     <main className="min-h-screen">
       <div className="px-4 py-6 max-w-screen-xl mx-auto">
@@ -49,8 +52,30 @@ export default function SynapsedPathwayPage() {
             </h1>
           </div>
         </header>
-        <div className="glass rounded-2xl overflow-hidden shadow-xl min-h-[calc(100vh-180px)]">
-          <SynapsedFlow />
+        
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+          {/* Quizzes Section */}
+          <div className="lg:col-span-1">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Quizzes & Assignments</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {session?.user?.id && classId ? (
+                  <QuizList classId={classId} studentId={session.user.id} />
+                ) : (
+                  <p className="text-sm text-slate-500">Loading...</p>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+          
+          {/* Pathway Section */}
+          <div className="lg:col-span-2">
+            <div className="glass rounded-2xl overflow-hidden shadow-xl min-h-[calc(100vh-180px)]">
+              <SynapsedFlow />
+            </div>
+          </div>
         </div>
       </div>
     </main>

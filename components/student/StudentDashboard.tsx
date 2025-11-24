@@ -1,11 +1,13 @@
 "use client"
-import { Calendar, Layers3 } from "lucide-react";
+import { Calendar, Layers3, FileText } from "lucide-react";
 import CourseCard from "./CourseCard";
 import { User } from "next-auth";
 import { useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
 import useSWR from 'swr';
 import { Button } from "../ui/button";
+import { QuizCard } from "@/components/assessments";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 // This file defines the StudentDashboard component, which is a client-side component that displays the student's dashboard.
 // It fetches the student's classes and displays them in a course card format. It also displays a task list and progress section.
@@ -40,6 +42,38 @@ const StudentDashboard = ({ user }: { user?: User }) => {
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: true, // Revalidate on reconnect to get latest classes
+      dedupingInterval: 5000,
+    }
+  );
+
+  // Fetch quizzes for all classes
+  const quizzesFetcher = async () => {
+    if (!session?.user?.id) return [];
+    try {
+      const allQuizzes: any[] = [];
+      for (const cls of classes) {
+        const res = await fetch(`/api/student/quizzes/${cls.id}?studentId=${session.user.id}`);
+        if (res.ok) {
+          const data = await res.json();
+          const classQuizzes = (data.quizzes || []).map((q: any) => ({
+            ...q,
+            classId: cls.id,
+            className: cls.title,
+          }));
+          allQuizzes.push(...classQuizzes);
+        }
+      }
+      return allQuizzes.slice(0, 6); // Show up to 6 recent quizzes
+    } catch {
+      return [];
+    }
+  };
+
+  const { data: quizzes = [] } = useSWR(
+    session?.user?.id && classes.length > 0 ? 'student-quizzes' : null,
+    quizzesFetcher,
+    {
+      revalidateOnFocus: false,
       dedupingInterval: 5000,
     }
   );
@@ -112,6 +146,29 @@ const StudentDashboard = ({ user }: { user?: User }) => {
             </div>
           )}
         </div>
+
+        {/* Quizzes Section */}
+        {quizzes.length > 0 && (
+          <div className="mt-10">
+            <div className="flex items-center gap-2 mb-4">
+              <FileText className="h-5 w-5 text-emerald-600" />
+              <h2 className="text-xl font-semibold text-gray-900">Recent Quizzes</h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {quizzes.map((quiz: any) => (
+                <QuizCard
+                  key={quiz.id}
+                  id={quiz.id}
+                  title={quiz.title}
+                  description={quiz.description}
+                  totalQuestions={quiz.totalQuestions}
+                  status={quiz.status}
+                  classId={quiz.classId}
+                />
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Archived toggle */}
         <div className="mt-10 text-center">
