@@ -141,7 +141,7 @@ export function QuestionEditor({
 
       // Upload to API
       const response = await fetch(
-        `/api/professor/quizzes/${quizId}/questions/${question.id}/image`,
+        `/api/professor/quiz/${quizId}/questions/${question.id}/image`,
         {
           method: 'POST',
           body: formData,

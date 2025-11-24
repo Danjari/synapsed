@@ -49,7 +49,7 @@ export function QuizBuilder({
       
       setIsLoading(true);
       try {
-        const response = await fetch(`/api/professor/quizzes/${quizId}`);
+        const response = await fetch(`/api/professor/quiz/${quizId}`);
         if (!response.ok) {
           throw new Error('Failed to load quiz');
         }
@@ -170,7 +170,7 @@ export function QuizBuilder({
       let response;
       if (currentQuizId) {
         // Update existing quiz
-        response = await fetch(`/api/professor/quizzes/${currentQuizId}`, {
+        response = await fetch(`/api/professor/quiz/${currentQuizId}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -226,7 +226,7 @@ export function QuizBuilder({
     }
 
     try {
-      const response = await fetch(`/api/professor/quizzes/${currentQuizId}/publish`, {
+      const response = await fetch(`/api/professor/quiz/${currentQuizId}/publish`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'publish' }),

@@ -75,7 +75,7 @@ export function QuizDashboard({
 
     try {
       const response = await fetch(
-        `/api/professor/quizzes/${confirmationDialog.quizId}/publish`,
+        `/api/professor/quiz/${confirmationDialog.quizId}/publish`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

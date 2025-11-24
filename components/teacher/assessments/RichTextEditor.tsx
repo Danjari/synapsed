@@ -6,6 +6,7 @@ import { BlockNoteView } from "@blocknote/mantine";
 import "@blocknote/core/fonts/inter.css";
 import "@blocknote/mantine/style.css";
 import { PartialBlock } from "@blocknote/core";
+import { useTheme } from "next-themes";
 
 interface RichTextEditorProps {
   value: string; // Can be markdown or JSON string
@@ -16,9 +17,12 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
   const [isClient, setIsClient] = useState(false);
   const [initialContent, setInitialContent] = useState<PartialBlock[] | undefined>(undefined);
   const editorRef = useRef<any>(null);
+  const { theme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
+    setMounted(true);
   }, []);
 
   // Parse initial value - try JSON first, then markdown
@@ -82,6 +86,9 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
     }
   };
 
+  // Determine if dark mode is active
+  const isDark = mounted && (resolvedTheme === 'dark' || theme === 'dark');
+
   if (!isClient) {
     return (
       <div className="border border-slate-300 dark:border-slate-600 rounded-md p-3 min-h-[120px] bg-white dark:bg-slate-900">
@@ -91,14 +98,40 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
   }
 
   return (
-    <div className="border border-slate-300 dark:border-slate-600 rounded-md overflow-hidden">
-      <div className="bg-white dark:bg-slate-900">
-        <BlockNoteView
-          editor={editor}
-          onChange={handleChange}
-          className="min-h-[120px]"
-        />
+    <>
+      <style dangerouslySetInnerHTML={{ __html: `
+        .rich-text-editor-wrapper .bn-container {
+          background-color: white !important;
+          color: rgb(15 23 42) !important;
+          min-height: 120px !important;
+          width: 100% !important;
+          padding: 12px !important;
+        }
+        .dark .rich-text-editor-wrapper .bn-container {
+          background-color: rgb(15 23 42) !important;
+          color: rgb(241 245 249) !important;
+        }
+        .rich-text-editor-wrapper .bn-editor {
+          min-height: 120px !important;
+          width: 100% !important;
+        }
+        .rich-text-editor-wrapper .bn-block-content {
+          width: 100% !important;
+        }
+        .rich-text-editor-wrapper .bn-inline-content {
+          width: 100% !important;
+        }
+      `}} />
+      <div className="border border-slate-300 dark:border-slate-600 rounded-md overflow-hidden w-full rich-text-editor-wrapper">
+        <div className="bg-white dark:bg-slate-900 w-full">
+          <BlockNoteView
+            editor={editor}
+            onChange={handleChange}
+            theme={isDark ? "dark" : "light"}
+            className="w-full"
+          />
+        </div>
       </div>
-    </div>
+    </>
   );
 }
