@@ -6,9 +6,8 @@ import { QuizSubmitRequest, QuizSubmitResponse } from '@/lib/types/quizzes';
 interface QuizAnswerInput {
   responseId: string;
   questionId: string;
-  questionText: string;
-  answerText: string;
-  selectedOptionIds: string[];
+  answerText: string | null;
+  optionId: string | null;
   isCorrect: boolean;
 }
 
@@ -68,7 +67,6 @@ export async function POST(
       where: {
         quizId,
         studentId,
-        submittedAt: { not: null },
       },
     });
 
@@ -80,32 +78,46 @@ export async function POST(
     let correctCount = 0;
     const totalQuestions = quiz.questions.length;
 
-    const quizAnswers: QuizAnswerInput[] = answers.map((ans) => {
-      const question = quiz.questions.find(q => q.id === ans.questionId);
-      if (!question) return null;
+    // Validate that all answers correspond to valid questions
+    const invalidAnswers = answers.filter(
+      ans => !quiz.questions.some(q => q.id === ans.questionId)
+    );
+    
+    if (invalidAnswers.length > 0) {
+      return NextResponse.json(
+        { error: 'Some answers reference invalid questions' },
+        { status: 400 }
+      );
+    }
 
-      let isCorrect = false;
-      
-      if (question.type === 'MULTIPLE_CHOICE' || question.type === 'TRUE_FALSE') {
-        const selectedOption = question.options.find(opt => opt.text === ans.answerText);
-        isCorrect = selectedOption?.isCorrect || false;
-        if (isCorrect) correctCount++;
-      } else if (question.type === 'SHORT_ANSWER') {
-        // Short answers are not auto-graded, marked as null
-        isCorrect = false; // Will be manually graded
-      }
+    const quizAnswers: QuizAnswerInput[] = answers
+      .map((ans) => {
+        const question = quiz.questions.find(q => q.id === ans.questionId);
+        if (!question) {
+          return null;
+        }
 
-      return {
-        responseId: '', // Will be set after creating response
-        questionId: ans.questionId,
-        questionText: question.text,
-        answerText: ans.answerText,
-        selectedOptionIds: question.type === 'MULTIPLE_CHOICE' || question.type === 'TRUE_FALSE'
-          ? [question.options.find(opt => opt.text === ans.answerText)?.id || '']
-          : [],
-        isCorrect,
-      };
-    }).filter(Boolean);
+        let isCorrect = false;
+        let selectedOption: { id: string; isCorrect: boolean } | undefined;
+        
+        if (question.type === 'MULTIPLE_CHOICE' || question.type === 'TRUE_FALSE') {
+          selectedOption = question.options.find(opt => opt.text === ans.answerText);
+          isCorrect = selectedOption?.isCorrect || false;
+          if (isCorrect) correctCount++;
+        } else if (question.type === 'SHORT_ANSWER') {
+          // Short answers are not auto-graded, marked as false
+          isCorrect = false; // Will be manually graded
+        }
+
+        return {
+          responseId: '', // Will be set after creating response
+          questionId: ans.questionId,
+          answerText: question.type === 'SHORT_ANSWER' ? ans.answerText : null,
+          optionId: selectedOption?.id || null,
+          isCorrect,
+        };
+      })
+      .filter((ans): ans is QuizAnswerInput => ans !== null);
 
     const score = totalQuestions > 0 ? (correctCount / totalQuestions) * 100 : 0;
 
@@ -119,9 +131,8 @@ export async function POST(
         answers: {
           create: quizAnswers.map((ans) => ({
             questionId: ans.questionId,
-            questionText: ans.questionText,
             answerText: ans.answerText,
-            selectedOptionIds: ans.selectedOptionIds,
+            optionId: ans.optionId,
             isCorrect: ans.isCorrect,
           })),
         },
@@ -138,9 +149,15 @@ export async function POST(
 
     return NextResponse.json(submitResponse, { status: 200 });
   } catch (error) {
-    console.error('Error submitting quiz:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    console.error('Error submitting quiz:', {
+      message: errorMessage,
+      stack: errorStack,
+      error: error,
+    });
     return NextResponse.json(
-      { error: 'Failed to submit quiz' },
+      { error: 'Failed to submit quiz', details: errorMessage },
       { status: 500 }
     );
   }
