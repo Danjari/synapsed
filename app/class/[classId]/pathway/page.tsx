@@ -29,7 +29,7 @@ export default function SynapsedPathwayPage() {
         const data = await res.json();
         const cls = (data || []).find((c: { id: string }) => c.id === classId);
         if (cls) {
-          setTitle((prevTitle) => cls.title || prevTitle);
+          setTitle(cls.title || "Class");
           setProf(cls.professor?.name || null);
         }
       } catch {}
