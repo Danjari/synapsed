@@ -35,7 +35,6 @@ export default function QuizPreviewPage() {
     }
 
     console.log('Loading quiz with ID:', quizId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
 
     const loadQuiz = async () => {
       try {
@@ -70,8 +69,8 @@ export default function QuizPreviewPage() {
         setQuiz({
           id: quizData.id,
           title: quizData.title || 'Untitled Quiz',
-          description: quizData.description,
-          questions: transformedQuestions.sort((a, b) => a.order - b.order),
+          description: quizData.description || undefined,
+          questions: transformedQuestions.sort((a, b) => (a.order || 0) - (b.order || 0)),
         });
       } catch (error) {
         console.error('Error loading quiz:', error);

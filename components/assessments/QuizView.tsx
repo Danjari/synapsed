@@ -66,8 +66,8 @@ export function QuizView({ quizId, classId, studentId, onComplete, redirectToRes
         setQuiz({
           id: quizData.id,
           title: quizData.title || 'Untitled Quiz',
-          description: quizData.description,
-          questions: transformedQuestions.sort((a, b) => a.order - b.order),
+          description: quizData.description || undefined,
+          questions: transformedQuestions.sort((a, b) => (a.order || 0) - (b.order || 0)),
         });
       } catch (error) {
         console.error('Error loading quiz:', error);

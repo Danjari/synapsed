@@ -65,7 +65,6 @@ export function RichTextDisplay({ text, richTextContent }: RichTextDisplayProps)
             content: text || "",
           },
         ],
-    editable: false, // Read-only mode
   });
 
   // If we have BlockNote content, render it

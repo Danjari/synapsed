@@ -173,6 +173,9 @@ async function fallbackQuestionParsing(text: string): Promise<OCRQuestion[]> {
       // Option line
       const optionText = line.replace(/^[a-eA-E][\.\)]\s+/, '').trim();
       const isCorrect = line.includes('*') || line.includes('✓') || line.includes('correct');
+      if (!currentQuestion.options) {
+        currentQuestion.options = [];
+      }
       currentQuestion.options.push({
         text: optionText.replace(/[*✓]/g, '').trim(),
         isCorrect,

@@ -2,11 +2,11 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { CheckCircle2, XCircle, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { RichTextDisplay } from '@/components/richtext/RichTextDisplay';
 import Image from 'next/image';
+import { RichTextContent } from '@/lib/types/quizzes';
 
 interface QuizAnswer {
   id: string;
@@ -14,7 +14,7 @@ interface QuizAnswer {
   question: {
     id: string;
     text: string;
-    richTextContent: any;
+    richTextContent?: RichTextContent;
     type: 'multiple-choice' | 'short-answer' | 'true-false';
     imageUrl: string | null;
     order: number;

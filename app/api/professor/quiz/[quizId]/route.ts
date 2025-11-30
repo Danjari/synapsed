@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
+import { QuestionInput, QuestionOptionInput } from '@/lib/types/quizzes';
 
 // GET: Get a single quiz
 export async function GET(
@@ -131,7 +132,7 @@ export async function PUT(
         
         if (question.options && Array.isArray(question.options) && createdQuestion) {
           await prisma.professorQuizOption.createMany({
-            data: question.options.map((opt: QuestionInput['options'][0], optIndex: number) => ({
+            data: question.options.map((opt: QuestionOptionInput, optIndex: number) => ({
               questionId: createdQuestion.id,
               text: opt.text || '',
               isCorrect: opt.isCorrect || false,

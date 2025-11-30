@@ -8,6 +8,7 @@ import "@blocknote/mantine/style.css";
 import { PartialBlock } from "@blocknote/core";
 import { useTheme } from "next-themes";
 import { RichTextContent } from "@/lib/types/quizzes";
+import type { BlockNoteEditor } from "@blocknote/core";
 
 interface RichTextEditorProps {
   value: string; // Can be markdown or JSON string
@@ -17,7 +18,7 @@ interface RichTextEditorProps {
 export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
   const [isClient, setIsClient] = useState(false);
   const [initialContent, setInitialContent] = useState<PartialBlock[] | undefined>(undefined);
-  const editorRef = useRef<ReturnType<typeof useCreateBlockNote> | null>(null);
+  const editorRef = useRef<BlockNoteEditor | null>(null);
   const { theme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -66,7 +67,7 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
       try {
         const blocks = editorRef.current.document;
         // Convert blocks to markdown
-        const markdown = await editorRef.current.blocksToMarkdown(blocks);
+        const markdown = await editorRef.current.blocksToMarkdownLossy(blocks);
         // Also pass the BlockNote JSON for rich text rendering
         onChange(markdown, blocks);
       } catch (error) {
@@ -74,11 +75,11 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
         // Fallback: use plain text
         const blocks = editorRef.current.document;
         const text = blocks
-          .map(block => {
+          .map((block: PartialBlock) => {
             if (typeof block.content === 'string') return block.content;
             if (Array.isArray(block.content)) {
               return block.content
-                .map(item => typeof item === 'string' ? item : item.text || '')
+                .map((item: unknown) => typeof item === 'string' ? item : (item as { text?: string })?.text || '')
                 .join('');
             }
             return '';

@@ -6,6 +6,38 @@ import { useEffect, useState } from "react";
 import { QuizResultsView } from "@/components/student/QuizResultsView";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
+import { RichTextContent } from "@/lib/types/quizzes";
+
+interface QuizResultsData {
+  id: string;
+  quizId: string;
+  quizTitle: string;
+  quizDescription: string | null;
+  studentId: string;
+  score: number | null;
+  submittedAt: Date | string;
+  answers: Array<{
+    id: string;
+    questionId: string;
+    question: {
+      id: string;
+      text: string;
+      richTextContent?: RichTextContent;
+      type: 'multiple-choice' | 'short-answer' | 'true-false';
+      imageUrl: string | null;
+      order: number;
+      options: Array<{
+        id: string;
+        text: string;
+        isCorrect: boolean;
+        order: number;
+      }>;
+    };
+    answerText: string | null;
+    optionId: string | null;
+    isCorrect: boolean | null;
+  }>;
+}
 
 export default function QuizResultsPage() {
   const params = useParams();
@@ -14,7 +46,7 @@ export default function QuizResultsPage() {
   const quizId = params.quizId as string;
   const studentId = session?.user?.id;
 
-  const [quizResults, setQuizResults] = useState<any>(null);
+  const [quizResults, setQuizResults] = useState<QuizResultsData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

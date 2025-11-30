@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
+import { UpdateQuestionRequest, QuestionOptionInput } from '@/lib/types/quizzes';
 
 // PUT: Update a question
 export async function PUT(
