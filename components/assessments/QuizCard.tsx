@@ -85,7 +85,7 @@ export function QuizCard({
             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor()}`}>
               {status === "completed" ? "Completed" : status === "in-progress" ? "In Progress" : "Not Started"}
             </span>
-            <Link href={`/class/${classId}/quiz/${id}`}>
+            <Link href={status === "completed" ? `/class/${classId}/quiz/${id}/results` : `/class/${classId}/quiz/${id}`}>
               <Button
                 variant={status === "completed" ? "outline" : "default"}
                 className={status === "completed" ? "" : "bg-emerald-600 hover:bg-emerald-700"}

@@ -8,6 +8,8 @@ import { ArrowRight, ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import { RichTextDisplay } from "@/components/richtext/RichTextDisplay";
 import { toast } from "sonner";
+import type { Question } from "@/lib/types/quizzes";
+import type { StudentQuizResponse } from "@/lib/types/quizzes";
 
 type QuizQuestion = Question;
 
@@ -24,9 +26,10 @@ type QuizViewProps = {
   classId: string;
   studentId: string;
   onComplete?: () => void;
+  redirectToResults?: boolean;
 };
 
-export function QuizView({ quizId, classId, studentId, onComplete }: QuizViewProps) {
+export function QuizView({ quizId, classId, studentId, onComplete, redirectToResults = false }: QuizViewProps) {
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [current, setCurrent] = useState(0);
@@ -109,7 +112,13 @@ export function QuizView({ quizId, classId, studentId, onComplete }: QuizViewPro
       }
 
       toast.success('Quiz submitted successfully!');
-      onComplete?.();
+      
+      if (redirectToResults) {
+        // Redirect to results page
+        window.location.href = `/class/${classId}/quiz/${quizId}/results`;
+      } else {
+        onComplete?.();
+      }
     } catch (error) {
       console.error('Error submitting quiz:', error);
       toast.error('Failed to submit quiz');

@@ -26,8 +26,9 @@ export default function StudentQuizPage() {
       quizId={quizId}
       classId={classId}
       studentId={studentId}
+      redirectToResults={true}
       onComplete={() => {
-        router.push(`/class/${classId}/pathway`);
+        router.push(`/class/${classId}/quizzes`);
       }}
     />
   );
