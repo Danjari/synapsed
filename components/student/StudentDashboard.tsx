@@ -160,11 +160,11 @@ const StudentDashboard = ({ user }: { user?: User }) => {
                   key={quiz.id}
                   id={quiz.id}
                   title={quiz.title}
-                  description={quiz.description}
+                  description={quiz.description ?? undefined}
                   totalQuestions={quiz.totalQuestions}
                   status={quiz.status}
                   classId={quiz.classId || ''}
-                  dueDate={quiz.dueDate}
+                  dueDate={quiz.dueDate === null ? undefined : quiz.dueDate}
                   isOverdue={quiz.isOverdue}
                 />
               ))}
