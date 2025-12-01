@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { UpdateQuestionRequest, QuestionOptionInput } from '@/lib/types/quizzes';
+import { Prisma } from '@prisma/client';
 
 // PUT: Update a question
 export async function PUT(
@@ -48,7 +49,7 @@ export async function PUT(
       where: { id: questionId },
       data: {
         ...(text !== undefined && { text: text.trim() }),
-        ...(richTextContent !== undefined && { richTextContent }),
+        ...(richTextContent !== undefined && { richTextContent: richTextContent as Prisma.InputJsonValue }),
         ...(type !== undefined && { type: type.toUpperCase().replace('-', '_') as 'MULTIPLE_CHOICE' | 'SHORT_ANSWER' | 'TRUE_FALSE' }),
         ...(imageUrl !== undefined && { imageUrl }),
         ...(order !== undefined && { order }),
