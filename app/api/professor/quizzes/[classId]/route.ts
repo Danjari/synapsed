@@ -148,7 +148,7 @@ export async function POST(
         questions: questions && Array.isArray(questions) ? {
           create: questions.map((q: QuestionInput, index: number) => ({
             text: q.text || '',
-            richTextContent: (q.richTextContent || null) as Prisma.InputJsonValue,
+            richTextContent: (q.richTextContent ?? null) as Prisma.InputJsonValue | null,
             type: (typeof q.type === 'string' ? q.type.toUpperCase().replace('-', '_') : q.type) as 'MULTIPLE_CHOICE' | 'SHORT_ANSWER' | 'TRUE_FALSE',
             imageUrl: q.imageUrl || null,
             order: q.order || index + 1,
