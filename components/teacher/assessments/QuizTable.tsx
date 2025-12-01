@@ -31,12 +31,21 @@ export function QuizTable({
     }
   };
 
-  const formatDate = (date: Date) => {
+  const formatDate = (date: Date | string | undefined) => {
+    if (!date) return '—';
+    
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    
+    // Check if date is valid
+    if (isNaN(dateObj.getTime())) {
+      return '—';
+    }
+    
     return new Intl.DateTimeFormat('en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
-    }).format(date);
+    }).format(dateObj);
   };
 
   return (

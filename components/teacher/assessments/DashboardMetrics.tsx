@@ -11,9 +11,9 @@ interface DashboardMetricsProps {
 
 export function DashboardMetrics({ quizzes }: DashboardMetricsProps) {
   const publishedQuizzes = quizzes.filter((q) => q.status !== 'draft').length;
-  const totalSubmissions = quizzes.reduce((sum, q) => sum + q.submissions, 0);
+  const totalSubmissions = quizzes.reduce((sum, q) => sum + (q.submissions || 0), 0);
   const totalPossibleSubmissions = quizzes.reduce(
-    (sum, q) => (q.status !== 'draft' ? sum + q.totalStudents : sum),
+    (sum, q) => (q.status !== 'draft' ? sum + (q.totalStudents || 0) : sum),
     0,
   );
   const completionRate =

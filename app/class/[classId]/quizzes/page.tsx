@@ -1,24 +1,18 @@
 "use client";
 
-import React from 'react';
-import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import { QuizList } from '@/components/assessments';
 import { ClassTabs } from '@/components/student/ClassTabs';
 
-const SynapsedFlow = dynamic(() => import('@/components/Synapses/Pathway/PathwayDisplay'), {
-  ssr: false,
-  loading: () => null,
-});
-
-export default function SynapsedPathwayPage() {
+export default function QuizzesPage() {
   const { data: session } = useSession();
   const params = useParams();
   const classId = Array.isArray(params.classId) ? params.classId[0] : params.classId;
-  const [title, setTitle] = useState<string>("Synapsed Learning Pathways");
+  const [title, setTitle] = useState<string>("Quizzes & Assignments");
   const [prof, setProf] = useState<string | null>(null);
 
   useEffect(() => {
@@ -58,11 +52,17 @@ export default function SynapsedPathwayPage() {
           <ClassTabs classId={classId || ''} />
         </div>
         
-        {/* Pathway Section - Full Width */}
-        <div className="glass rounded-2xl overflow-hidden shadow-xl min-h-[calc(100vh-180px)]">
-          <SynapsedFlow />
+        {/* Quizzes Section */}
+        <div className="glass rounded-2xl overflow-hidden shadow-xl p-6">
+          {session?.user?.id && classId ? (
+            <QuizList classId={classId} studentId={session.user.id} />
+          ) : (
+            <p className="text-sm text-slate-500">Loading...</p>
+          )}
         </div>
       </div>
     </main>
   );
 }
+
+
