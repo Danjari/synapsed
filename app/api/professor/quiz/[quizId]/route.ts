@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { QuestionInput, QuestionOptionInput } from '@/lib/types/quizzes';
+import { Prisma } from '@prisma/client';
 
 // GET: Get a single quiz
 export async function GET(
@@ -112,7 +113,7 @@ export async function PUT(
         data: questions.map((q: QuestionInput, index: number) => ({
           quizId,
           text: q.text || '',
-          richTextContent: q.richTextContent || null,
+          richTextContent: (q.richTextContent || null) as Prisma.InputJsonValue,
           type: (typeof q.type === 'string' ? q.type.toUpperCase().replace('-', '_') : q.type) as 'MULTIPLE_CHOICE' | 'SHORT_ANSWER' | 'TRUE_FALSE',
           imageUrl: q.imageUrl || null,
           order: q.order || index + 1,

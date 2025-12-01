@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { CreateQuestionRequest, QuestionOptionInput } from '@/lib/types/quizzes';
+import { Prisma } from '@prisma/client';
 
 // POST: Create a new question for a quiz
 export async function POST(
@@ -55,7 +56,7 @@ export async function POST(
       data: {
         quizId,
         text: text.trim(),
-        richTextContent: richTextContent || null,
+        richTextContent: (richTextContent || null) as Prisma.InputJsonValue,
         type: type.toUpperCase().replace('-', '_') as 'MULTIPLE_CHOICE' | 'SHORT_ANSWER' | 'TRUE_FALSE',
         imageUrl: imageUrl || null,
         order: questionOrder,
