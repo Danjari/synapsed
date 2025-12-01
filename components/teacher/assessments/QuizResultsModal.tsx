@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -9,56 +9,66 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Quiz, Student } from './types';
-import { Download, Search } from 'lucide-react';
+import { Quiz, Student, StudentQuizResponse } from './types';
+import { Download, Search, Loader2 } from 'lucide-react';
+import { StudentQuizDetailModal } from './StudentQuizDetailModal';
 
 interface QuizResultsModalProps {
   quiz: Quiz;
   onClose: () => void;
 }
 
+interface QuizResponsesData {
+  students: Student[];
+  responses: StudentQuizResponse[];
+  quiz: {
+    id: string;
+    title: string;
+    questions: Array<{
+      id: string;
+      text: string;
+      type: string;
+      options: Array<{
+        id: string;
+        text: string;
+        isCorrect: boolean;
+      }>;
+    }>;
+  };
+}
+
 export function QuizResultsModal({ quiz, onClose }: QuizResultsModalProps) {
   const [searchQuery, setSearchQuery] = useState('');
-  
-  // Mock student data - will be replaced with API call later
-  const [students] = useState<Student[]>([
-    {
-      id: '1',
-      name: 'Alice Johnson',
-      email: 'alice.j@university.edu',
-      submittedAt: new Date('2024-01-16T10:30:00'),
-      score: 95,
-      status: 'submitted',
-    },
-    {
-      id: '2',
-      name: 'Bob Smith',
-      email: 'bob.smith@university.edu',
-      submittedAt: new Date('2024-01-16T14:20:00'),
-      score: 82,
-      status: 'submitted',
-    },
-    {
-      id: '3',
-      name: 'Carol Williams',
-      email: 'carol.w@university.edu',
-      score: 78,
-      submittedAt: new Date('2024-01-17T09:15:00'),
-      status: 'submitted',
-    },
-    {
-      id: '4',
-      name: 'David Brown',
-      email: 'david.b@university.edu',
-      status: 'in-progress',
-    },
-    {
-      id: '5',
-      name: 'Emma Davis',
-      email: 'emma.d@university.edu',
-      status: 'not-started',
-    },
-  ]);
+  const [students, setStudents] = useState<Student[]>([]);
+  const [responses, setResponses] = useState<StudentQuizResponse[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedResponse, setSelectedResponse] = useState<StudentQuizResponse | null>(null);
+
+  useEffect(() => {
+    const fetchQuizResponses = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await fetch(`/api/professor/quiz/${quiz.id}/responses`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch quiz responses');
+        }
+
+        const data: QuizResponsesData = await response.json();
+        setStudents(data.students);
+        setResponses(data.responses);
+      } catch (err) {
+        console.error('Error fetching quiz responses:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load quiz responses');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchQuizResponses();
+  }, [quiz.id]);
 
   const filteredStudents = students.filter(
     (student) =>
@@ -71,13 +81,22 @@ export function QuizResultsModal({ quiz, onClose }: QuizResultsModalProps) {
     console.log('Exporting results...');
   };
 
-  const formatDate = (date: Date) => {
+  const handleViewDetails = (studentId: string) => {
+    const response = responses.find((r) => r.studentId === studentId);
+    if (response) {
+      setSelectedResponse(response);
+    }
+  };
+
+  const formatDate = (date: Date | string | null | undefined) => {
+    if (!date) return '—';
+    const d = typeof date === 'string' ? new Date(date) : date;
     return new Intl.DateTimeFormat('en-US', {
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-    }).format(date);
+    }).format(d);
   };
 
   const getStatusColor = (status: Student['status']) => {
@@ -126,89 +145,102 @@ export function QuizResultsModal({ quiz, onClose }: QuizResultsModalProps) {
 
         {/* Student List */}
         <div className="flex-1 overflow-y-auto">
-          <table className="w-full">
-            <thead className="bg-slate-50 dark:bg-slate-800/50 sticky top-0">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
-                  Student
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
-                  Submitted
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
-                  Score
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
-              {filteredStudents.map((student) => (
-                <tr
-                  key={student.id}
-                  className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
-                >
-                  <td className="px-6 py-4">
-                    <div>
-                      <div className="font-medium text-slate-900 dark:text-slate-100">
-                        {student.name}
-                      </div>
-                      <div className="text-sm text-slate-500 dark:text-slate-400">
-                        {student.email}
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(student.status)}`}
-                    >
-                      {student.status === 'submitted'
-                        ? 'Submitted'
-                        : student.status === 'in-progress'
-                          ? 'In Progress'
-                          : 'Not Started'}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">
-                    {student.submittedAt ? formatDate(student.submittedAt) : '—'}
-                  </td>
-                  <td className="px-6 py-4">
-                    {student.score !== undefined ? (
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          student.score >= 90
-                            ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300'
-                            : student.score >= 80
-                              ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
-                              : student.score >= 70
-                                ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300'
-                                : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-                        }`}
-                      >
-                        {student.score}%
-                      </span>
-                    ) : (
-                      <span className="text-sm text-slate-400 dark:text-slate-500">
-                        —
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    {student.status === 'submitted' && (
-                      <button className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium">
-                        View Details
-                      </button>
-                    )}
-                  </td>
+          {loading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-slate-400" />
+            </div>
+          ) : error ? (
+            <div className="text-center py-12">
+              <p className="text-red-600 dark:text-red-400">{error}</p>
+            </div>
+          ) : (
+            <table className="w-full">
+              <thead className="bg-slate-50 dark:bg-slate-800/50 sticky top-0">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+                    Student
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+                    Submitted
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+                    Score
+                  </th>
+                  <th className="px-6 py-3 text-right text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-          {filteredStudents.length === 0 && (
+              </thead>
+              <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
+                {filteredStudents.map((student) => (
+                  <tr
+                    key={student.id}
+                    className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                  >
+                    <td className="px-6 py-4">
+                      <div>
+                        <div className="font-medium text-slate-900 dark:text-slate-100">
+                          {student.name}
+                        </div>
+                        <div className="text-sm text-slate-500 dark:text-slate-400">
+                          {student.email}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(student.status)}`}
+                      >
+                        {student.status === 'submitted'
+                          ? 'Submitted'
+                          : student.status === 'in-progress'
+                            ? 'In Progress'
+                            : 'Not Started'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">
+                      {formatDate(student.submittedAt)}
+                    </td>
+                    <td className="px-6 py-4">
+                      {student.score !== null && student.score !== undefined ? (
+                        <span
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            student.score >= 90
+                              ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300'
+                              : student.score >= 80
+                                ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
+                                : student.score >= 70
+                                  ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300'
+                                  : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+                          }`}
+                        >
+                          {student.score.toFixed(1)}%
+                        </span>
+                      ) : (
+                        <span className="text-sm text-slate-400 dark:text-slate-500">
+                          —
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      {student.status === 'submitted' && (
+                        <button
+                          onClick={() => handleViewDetails(student.id)}
+                          className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
+                        >
+                          View Details
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+          {!loading && !error && filteredStudents.length === 0 && (
             <div className="text-center py-12">
               <p className="text-slate-500 dark:text-slate-400">
                 No students found matching your search.
@@ -217,6 +249,15 @@ export function QuizResultsModal({ quiz, onClose }: QuizResultsModalProps) {
           )}
         </div>
       </DialogContent>
+
+      {/* Student Detail Modal */}
+      {selectedResponse && (
+        <StudentQuizDetailModal
+          studentResponse={selectedResponse}
+          quizTitle={quiz.title}
+          onClose={() => setSelectedResponse(null)}
+        />
+      )}
     </Dialog>
   );
 }

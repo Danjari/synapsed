@@ -27,10 +27,12 @@ export default function Sidebar({
   items,
   activeId,
   onSelect,
+  notificationComponent,
 }: {
   items?: SidebarItem[];
   activeId?: string;
   onSelect?: (id: string) => void;
+  notificationComponent?: React.ReactNode;
 }) {
   const pathname = usePathname();
   const menuItems = items ?? defaultMenuItems;
@@ -137,13 +139,15 @@ export default function Sidebar({
         {/* Bottom actions: notifications and account */}
         <div className="absolute bottom-2 left-0 right-0 px-2">
           <div className={collapsed ? "flex flex-col items-center gap-2" : "flex items-center justify-between gap-2"}>
-            <button
-              type="button"
-              aria-label="Notifications"
-              className="size-9 rounded-full bg-transparent hover:bg-transparent hover:ring-2 hover:ring-[rgba(40,165,125,0.28)] shadow-none flex items-center justify-center text-slate-800"
-            >
-              <Bell className="h-5 w-5" />
-            </button>
+            {notificationComponent || (
+              <button
+                type="button"
+                aria-label="Notifications"
+                className="size-9 rounded-full bg-transparent hover:bg-transparent hover:ring-2 hover:ring-[rgba(40,165,125,0.28)] shadow-none flex items-center justify-center text-slate-800"
+              >
+                <Bell className="h-5 w-5" />
+              </button>
+            )}
 
             <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>

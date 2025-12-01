@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Question } from './types';
+import { OCRResponse } from '@/lib/types/quizzes';
 import { X, Upload, FileText, AlertCircle, Check } from 'lucide-react';
 
 interface OCRImportModalProps {
@@ -69,62 +70,69 @@ export function OCRImportModal({
     }
   };
 
-  const handleProcessFile = () => {
+  const handleProcessFile = async () => {
     if (!file) return;
 
     setIsProcessing(true);
     setProcessProgress(0);
     setError(null);
 
-    // Mock processing - will be replaced with API call later
-    const interval = setInterval(() => {
-      setProcessProgress((prev) => {
-        const newProgress = prev + 10;
-        if (newProgress >= 100) {
-          clearInterval(interval);
-          setTimeout(() => {
-            const mockQuestions: Question[] = [
-              {
-                id: `ocr-${Date.now()}-1`,
-                text: 'What is the derivative of f(x) = x²?',
-                type: 'multiple-choice',
-                options: [
-                  {
-                    id: `ocr-${Date.now()}-1-1`,
-                    text: "f'(x) = 2x",
-                    isCorrect: true,
-                  },
-                  {
-                    id: `ocr-${Date.now()}-1-2`,
-                    text: "f'(x) = x²",
-                    isCorrect: false,
-                  },
-                  {
-                    id: `ocr-${Date.now()}-1-3`,
-                    text: "f'(x) = 2",
-                    isCorrect: false,
-                  },
-                  {
-                    id: `ocr-${Date.now()}-1-4`,
-                    text: "f'(x) = 0",
-                    isCorrect: false,
-                  },
-                ],
-              },
-              {
-                id: `ocr-${Date.now()}-2`,
-                text: 'Solve for x: 3x + 5 = 11',
-                type: 'short-answer',
-                options: [],
-              },
-            ];
-            setProcessedQuestions(mockQuestions);
-            setIsProcessing(false);
-          }, 500);
-        }
-        return newProgress;
+    try {
+      // Update progress: uploading
+      setProcessProgress(20);
+
+      // Create form data
+      const formData = new FormData();
+      formData.append('file', file);
+
+      // Update progress: processing OCR
+      setProcessProgress(40);
+
+      // Call OCR API
+      const response = await fetch('/api/professor/quizzes/ocr', {
+        method: 'POST',
+        body: formData,
       });
-    }, 300);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to process file');
+      }
+
+      // Update progress: parsing questions
+      setProcessProgress(80);
+
+      const data = await response.json();
+
+      if (!data.questions || !Array.isArray(data.questions)) {
+        throw new Error('Invalid response format');
+      }
+
+      // Update progress: complete
+      setProcessProgress(100);
+
+      // Transform to Question format
+      const responseData = data as OCRResponse;
+      const transformedQuestions: Question[] = responseData.questions.map((q) => ({
+        id: q.id || `ocr-${Date.now()}-${Math.random()}`,
+        text: q.text || '',
+        type: (q.type || 'multiple-choice') as 'multiple-choice' | 'short-answer' | 'true-false',
+        options: (q.options || []).map((opt, index: number) => ({
+          id: opt.id || `ocr-opt-${Date.now()}-${index}`,
+          text: opt.text || '',
+          isCorrect: opt.isCorrect || false,
+        })),
+        order: q.order || 0,
+      }));
+
+      setProcessedQuestions(transformedQuestions);
+      setIsProcessing(false);
+    } catch (err) {
+      console.error('Error processing OCR:', err);
+      setError(err instanceof Error ? err.message : 'Failed to process file');
+      setIsProcessing(false);
+      setProcessProgress(0);
+    }
   };
 
   const handleImport = () => {

@@ -49,6 +49,10 @@ model User {
   
   // In-Chat Assessment responses
   inChatAssessmentResponses InChatAssessmentResponse[]
+  
+  // Professor Quiz relations
+  professorQuizzes ProfessorQuiz[]
+  professorQuizResponses ProfessorQuizResponse[]
 }
 
 model Class {
@@ -80,6 +84,9 @@ model Class {
   
   // AI Tutor conversations in this class
   conversations Conversation[]
+  
+  // Professor quizzes in this class
+  professorQuizzes ProfessorQuiz[]
 }
 
 model Account {
@@ -533,5 +540,108 @@ model InChatAssessmentResponse {
   @@index([assessmentId])
   @@index([studentId])
   @@map("in_chat_assessment_responses")
+}
+
+// Professor Quiz Models
+model ProfessorQuiz {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String?
+  status      QuizStatus @default(DRAFT)
+  classId     String    @db.ObjectId
+  class       Class     @relation(fields: [classId], references: [id], onDelete: Cascade)
+  professorId String    @db.ObjectId
+  professor   User      @relation(fields: [professorId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  publishedAt DateTime?
+  dueDate     DateTime? // Due date and time for the quiz
+  
+  // Relations
+  questions   ProfessorQuizQuestion[]
+  responses   ProfessorQuizResponse[]
+  
+  @@index([classId])
+  @@index([professorId])
+  @@index([status])
+  @@index([dueDate])
+  @@map("professor_quizzes")
+}
+
+model ProfessorQuizQuestion {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  quizId         String    @db.ObjectId
+  quiz           ProfessorQuiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  text           String    // Rich text content (markdown or BlockNote JSON as string)
+  richTextContent Json?   // BlockNote JSON content for rich text editing
+  type           QuestionType
+  imageUrl       String?   // R2 URL for question image
+  order          Int       // Order of question in quiz
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  
+  // Relations
+  options        ProfessorQuizOption[]
+  
+  @@index([quizId])
+  @@map("professor_quiz_questions")
+}
+
+model ProfessorQuizOption {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  questionId String    @db.ObjectId
+  question   ProfessorQuizQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  text       String
+  isCorrect  Boolean   @default(false)
+  order      Int       // Order of option in question
+  createdAt  DateTime  @default(now())
+  
+  @@index([questionId])
+  @@map("professor_quiz_options")
+}
+
+model ProfessorQuizResponse {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  quizId     String    @db.ObjectId
+  quiz       ProfessorQuiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  studentId  String    @db.ObjectId
+  student    User      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  score      Float?    // Calculated score (0-100)
+  submittedAt DateTime @default(now())
+  
+  // Relations
+  answers    ProfessorQuizAnswer[]
+  
+  @@unique([quizId, studentId])
+  @@index([quizId])
+  @@index([studentId])
+  @@map("professor_quiz_responses")
+}
+
+model ProfessorQuizAnswer {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  responseId String    @db.ObjectId
+  response   ProfessorQuizResponse @relation(fields: [responseId], references: [id], onDelete: Cascade)
+  questionId String    @db.ObjectId
+  answerText String?   // For short-answer questions
+  optionId   String?   @db.ObjectId // For multiple-choice/true-false questions
+  isCorrect  Boolean?  // Whether the answer is correct
+  createdAt  DateTime  @default(now())
+  
+  @@index([responseId])
+  @@index([questionId])
+  @@map("professor_quiz_answers")
+}
+
+enum QuizStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  SHORT_ANSWER
+  TRUE_FALSE
 }
 

@@ -1,46 +1,45 @@
-// Shared types for quiz/assessment feature
+// Import Question type for use in this file
+import type { Question } from '@/lib/types/quizzes';
 
-export type QuizStatus = 'draft' | 'published' | 'archived';
+// Re-export types from lib/types/quizzes for backward compatibility
+export type {
+  QuizStatus,
+  QuestionType,
+  Question,
+  Quiz,
+  RichTextContent,
+  QuestionOption as AnswerOption,
+  QuestionOptionInput,
+} from '@/lib/types/quizzes';
 
-export type QuestionType = 'multiple-choice' | 'short-answer' | 'true-false';
-
-export type AnswerOption = {
-  id: string;
-  text: string;
-  isCorrect: boolean;
-};
-
-export type Question = {
-  id: string;
-  text: string;
-  type: QuestionType;
-  options: AnswerOption[];
-  image?: string;
-  hasError?: boolean;
-  order?: number;
-};
-
-export type Quiz = {
-  id: string;
-  title: string;
-  description?: string;
-  status: QuizStatus;
-  createdAt: Date;
-  updatedAt?: Date;
-  submissions: number;
-  totalStudents: number;
-  gradeAverage?: number;
-  questions?: Question[];
-};
+export type SaveStatus = 'unsaved' | 'saving' | 'saved';
 
 export type Student = {
   id: string;
   name: string;
   email: string;
-  submittedAt?: Date;
-  score?: number;
+  submittedAt?: Date | null;
+  score?: number | null;
   status: 'submitted' | 'in-progress' | 'not-started';
+  responseId?: string | null;
 };
 
-export type SaveStatus = 'unsaved' | 'saving' | 'saved';
+export type StudentQuizAnswer = {
+  id: string;
+  questionId: string;
+  question: Question;
+  answerText: string | null;
+  optionId: string | null;
+  isCorrect: boolean | null;
+};
+
+export type StudentQuizResponse = {
+  id: string;
+  studentId: string;
+  studentName: string;
+  studentEmail: string;
+  score: number | null;
+  submittedAt: Date | string;
+  answers: StudentQuizAnswer[];
+};
 
