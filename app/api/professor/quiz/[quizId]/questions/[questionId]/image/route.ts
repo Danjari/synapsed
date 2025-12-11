@@ -22,7 +22,11 @@ export async function POST(
     // Verify quiz exists and professor owns it
     const quiz = await prisma.professorQuiz.findUnique({
       where: { id: quizId },
-      include: { class: true },
+      select: {
+        id: true,
+        classId: true,
+        professorId: true,
+      },
     });
 
     if (!quiz) {
@@ -36,6 +40,10 @@ export async function POST(
     // Verify question belongs to quiz
     const question = await prisma.professorQuizQuestion.findUnique({
       where: { id: questionId },
+      select: {
+        id: true,
+        quizId: true,
+      },
     });
 
     if (!question || question.quizId !== quizId) {
@@ -53,6 +61,12 @@ export async function POST(
     // Validate file type
     if (!file.type.startsWith('image/')) {
       return NextResponse.json({ error: 'File must be an image' }, { status: 400 });
+    }
+
+    // Validate file size (e.g., max 10MB)
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+      return NextResponse.json({ error: 'File size exceeds 10MB limit' }, { status: 400 });
     }
 
     // Convert file to buffer and upload to R2
@@ -78,8 +92,12 @@ export async function POST(
     });
   } catch (error) {
     console.error('Error uploading question image:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Failed to upload image';
     return NextResponse.json(
-      { error: 'Failed to upload image' },
+      { 
+        error: 'Failed to upload image',
+        details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+      },
       { status: 500 }
     );
   }

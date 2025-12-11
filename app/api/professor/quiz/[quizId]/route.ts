@@ -81,7 +81,16 @@ export async function PUT(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const body = await request.json();
+    let body;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: 'Invalid JSON in request body' },
+        { status: 400 }
+      );
+    }
+
     const { title, description, questions } = body;
 
     // Update quiz
@@ -108,38 +117,41 @@ export async function PUT(
         where: { quizId },
       });
 
-      // Create new questions
-      await prisma.professorQuizQuestion.createMany({
-        data: questions.map((q: QuestionInput, index: number) => ({
-          quizId,
-          text: q.text || '',
-          richTextContent: (q.richTextContent || null) as Prisma.InputJsonValue,
-          type: (typeof q.type === 'string' ? q.type.toUpperCase().replace('-', '_') : q.type) as 'MULTIPLE_CHOICE' | 'SHORT_ANSWER' | 'TRUE_FALSE',
-          imageUrl: q.imageUrl || null,
-          order: q.order || index + 1,
-        })),
-      });
+      // Only create questions if array is not empty
+      if (questions.length > 0) {
+        // Create new questions
+        await prisma.professorQuizQuestion.createMany({
+          data: questions.map((q: QuestionInput, index: number) => ({
+            quizId,
+            text: q.text || '',
+            richTextContent: (q.richTextContent || null) as Prisma.InputJsonValue,
+            type: (typeof q.type === 'string' ? q.type.toUpperCase().replace('-', '_') : q.type) as 'MULTIPLE_CHOICE' | 'SHORT_ANSWER' | 'TRUE_FALSE',
+            imageUrl: q.imageUrl || null,
+            order: q.order || index + 1,
+          })),
+        });
 
-      // Get created questions to add options
-      const createdQuestions = await prisma.professorQuizQuestion.findMany({
-        where: { quizId },
-        orderBy: { order: 'asc' },
-      });
+        // Get created questions to add options
+        const createdQuestions = await prisma.professorQuizQuestion.findMany({
+          where: { quizId },
+          orderBy: { order: 'asc' },
+        });
 
-      // Create options for each question
-      for (let i = 0; i < questions.length; i++) {
-        const question = questions[i];
-        const createdQuestion = createdQuestions[i];
-        
-        if (question.options && Array.isArray(question.options) && createdQuestion) {
-          await prisma.professorQuizOption.createMany({
-            data: question.options.map((opt: QuestionOptionInput, optIndex: number) => ({
-              questionId: createdQuestion.id,
-              text: opt.text || '',
-              isCorrect: opt.isCorrect || false,
-              order: opt.order || optIndex + 1,
-            })),
-          });
+        // Create options for each question
+        for (let i = 0; i < questions.length; i++) {
+          const question = questions[i];
+          const createdQuestion = createdQuestions[i];
+          
+          if (question.options && Array.isArray(question.options) && createdQuestion) {
+            await prisma.professorQuizOption.createMany({
+              data: question.options.map((opt: QuestionOptionInput, optIndex: number) => ({
+                questionId: createdQuestion.id,
+                text: opt.text || '',
+                isCorrect: opt.isCorrect || false,
+                order: opt.order || optIndex + 1,
+              })),
+            });
+          }
         }
       }
 
@@ -161,9 +173,10 @@ export async function PUT(
 
     return NextResponse.json({ quiz });
   } catch (error) {
-    console.error('Error updating quiz:', error);
+    console.error('Error updating quiz:', error instanceof Error ? error.message : String(error));
+    const errorMessage = error instanceof Error ? error.message : 'Failed to update quiz';
     return NextResponse.json(
-      { error: 'Failed to update quiz' },
+      { error: errorMessage },
       { status: 500 }
     );
   }
