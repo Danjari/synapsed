@@ -15,11 +15,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
     }
 
-    // Convert to Gemini format
-    const formattedMessages = messages.map((msg: { role: string; content: string }) => ({
-      role: msg.role,
-      parts: [{ text: msg.content }],
-    }));
+    // Gemini `Content` roles must be `user` | `model` (not `assistant`).
+    const formattedMessages = messages.map((msg: { role: string; content: string }) => {
+      const role =
+        msg.role === "assistant" ? "model" : msg.role === "model" ? "model" : "user";
+      return {
+        role,
+        parts: [{ text: msg.content }],
+      };
+    });
 
    
 
