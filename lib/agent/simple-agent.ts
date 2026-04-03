@@ -8,7 +8,7 @@ import { MongoDBSaver } from "@langchain/langgraph-checkpoint-mongodb";
 import { MongoClient } from "mongodb";
 import { searchClassContent } from "./tools/searchClassContent";
 import { createInChatAssessment } from "./tools/createInChatAssessment";
-import { GEMINI_MODEL } from "@/lib/gemini-model";
+import { GEMINI_AGENT_MODEL } from "@/lib/gemini-model";
 
 // Define MessagesState with channel configuration for proper memory
 interface MessagesState {
@@ -42,7 +42,7 @@ export interface AgentResponse {
 
 // Initialize the model
 const model = new ChatGoogleGenerativeAI({
-  model: GEMINI_MODEL,
+  model: GEMINI_AGENT_MODEL,
   temperature: 0,
   apiKey: process.env.GEMINI_API_KEY,
 });
