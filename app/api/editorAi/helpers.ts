@@ -1,6 +1,7 @@
 import { ChatOpenAI } from "@langchain/openai";
 import { ChatAnthropic } from "@langchain/anthropic";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+import { GEMINI_MODEL } from "@/lib/gemini-model";
 
 export async function callOpenAI(prompt: string) {
   const model = new ChatOpenAI({
@@ -43,7 +44,7 @@ export async function callClaude(prompt: string) {
 
 export async function callGemini(prompt: string) {
   const model = new ChatGoogleGenerativeAI({
-    model: "gemini-2.0-flash",
+    model: GEMINI_MODEL,
     maxOutputTokens: 2000,
     temperature: 0.7,
     apiKey: process.env.GEMINI_API_KEY,

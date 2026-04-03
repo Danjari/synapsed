@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+import { GEMINI_MODEL } from "@/lib/gemini-model";
 
 export async function POST(request: NextRequest) {
   try {
@@ -67,7 +68,7 @@ Respond ONLY with valid JSON in this exact format (no markdown formatting, no co
 ]`;
 
     const model = new ChatGoogleGenerativeAI({
-      model: "gemini-2.0-flash",
+      model: GEMINI_MODEL,
       maxOutputTokens: 4000,
       temperature: 0.7,
       apiKey: process.env.GEMINI_API_KEY,

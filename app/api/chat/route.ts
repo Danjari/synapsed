@@ -3,6 +3,7 @@
 // using Gemini cause it is cheaper and still really good. 
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenAI } from '@google/genai';
+import { GEMINI_MODEL } from '@/lib/gemini-model';
 
 const genAI = new GoogleGenAI({apiKey:process.env.GEMINI_API_KEY!});
 
@@ -23,7 +24,7 @@ export async function POST(req: NextRequest) {
    
 
     const result = await genAI.models.generateContent({
-      model: "gemini-2.0-flash",
+      model: GEMINI_MODEL,
       contents: formattedMessages,
     });
 

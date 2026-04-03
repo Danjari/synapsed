@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { GoogleGenAI, Type } from "@google/genai";
+import { GEMINI_MODEL } from "@/lib/gemini-model";
 
 const geminiClient = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
 
@@ -178,7 +179,7 @@ Based on the course information and the student's survey responses, generate a p
 
 Create 10-14 pathway nodes that form a coherent learning journey.`;
 
-  // Generate pathway using AI
+  // Function calling schema
   const generatePathwayFunction = {
     name: 'generate_learning_pathway',
     description: 'Generate a learning pathway of structured nodes for a student',
@@ -216,7 +217,7 @@ Create 10-14 pathway nodes that form a coherent learning journey.`;
   };
 
   const aiResponse = await geminiClient.models.generateContent({
-    model: 'gemini-2.0-flash',
+    model: GEMINI_MODEL,
     contents: prompt,
     config: {
       tools: [
