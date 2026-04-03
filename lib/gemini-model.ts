@@ -1,22 +1,27 @@
 /**
- * Default Gemini model for most API routes (`@google/genai` direct calls).
- * Set `GEMINI_MODEL` in the environment to override.
+ * Central Gemini model configuration.
  *
- * @see https://ai.google.dev/gemini-api/docs/models/gemini-3-flash-preview
+ * **`GEMINI_MODEL`** — Default for:
+ * - `@google/genai` `generateContent` (including **single-request** function calling:
+ *   learning-paths, surveys, survey template, OCR quizzes, pathway, syllabus,
+ *   `createInChatAssessment` tool, `/api/chat`).
+ * - `ChatGoogleGenerativeAI` **without** bound tools (`/api/flashcard/AI`, editor Gemini).
+ *
+ * Single-shot tool calls do not re-send prior `functionCall` parts, so Gemini 3
+ * `thought_signature` rules for multi-turn tool loops do not apply here.
+ *
+ * **`GEMINI_AGENT_MODEL`** — **Only** `lib/agent/simple-agent.ts` (LangGraph +
+ * `bindTools` + MongoDB checkpoints). LangChain omits `thoughtSignature` when
+ * serializing tool rounds; use a 2.5 Flash model until that is fixed or the
+ * agent uses the SDK with full `content.parts` history.
+ *
+ * @see https://ai.google.dev/gemini-api/docs/thought-signatures
  */
 export const GEMINI_MODEL =
   process.env.GEMINI_MODEL?.trim() || "gemini-3-flash-preview";
 
 /**
- * Model for LangGraph + `@langchain/google-genai` tool calling (`simple-agent`).
- *
- * Gemini 3 models require each `functionCall` part in history to include a
- * `thoughtSignature` from the prior model response. LangChain currently rebuilds
- * tool calls without that field, which causes HTTP 400. Use a 2.5 Flash model
- * here until LangChain preserves thought signatures (or the agent is migrated
- * to the official SDK with full response parts).
- *
- * @see https://ai.google.dev/gemini-api/docs/thought-signatures
+ * @see module docstring above — LangGraph + `ChatGoogleGenerativeAI.bindTools` only.
  */
 export const GEMINI_AGENT_MODEL =
   process.env.GEMINI_AGENT_MODEL?.trim() || "gemini-2.5-flash";
