@@ -3,6 +3,7 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenAI, Type } from '@google/genai';
 import { prisma } from '@/lib/prisma';
+import { GEMINI_MODEL } from '@/lib/gemini-model';
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
 
@@ -63,7 +64,7 @@ export async function GET(req: Request) {
   
 
   const response = await ai.models.generateContent({
-    model:'gemini-2.0-flash',
+    model: GEMINI_MODEL,
      contents: `
     Generate a learning pathway for the course "${prompt}".
     Return it by calling the function \`generate_learning_pathway\` with 8 to 12 nodes in the "nodes" array.

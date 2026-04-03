@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenAI, Type } from '@google/genai';
 import { getSyllabusContext, getClassInfo } from "@/lib/survey/syllabusService";
 import { prisma } from "@/lib/prisma";
+import { GEMINI_MODEL } from "@/lib/gemini-model";
 
 const geminiClient = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
 
@@ -175,7 +176,7 @@ IMPORTANT REQUIREMENTS:
   };
 
   const response = await geminiClient.models.generateContent({
-    model: 'gemini-2.0-flash',
+    model: GEMINI_MODEL,
     contents: prompt,
     config: {
       tools: [

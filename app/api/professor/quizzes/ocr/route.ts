@@ -5,6 +5,7 @@ import { getOcrMarkdown } from '@/lib/rag/ragGetMarkdown';
 import { GoogleGenAI } from '@google/genai';
 import { Type } from '@google/genai';
 import { OCRQuestion, OCRResponse } from '@/lib/types/quizzes';
+import { GEMINI_MODEL } from '@/lib/gemini-model';
 
 const geminiClient = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
 
@@ -89,7 +90,7 @@ export async function POST(request: NextRequest) {
     };
 
     const aiResponse = await geminiClient.models.generateContent({
-      model: 'gemini-2.0-flash',
+      model: GEMINI_MODEL,
       contents: `Extract all quiz questions from this OCR text. Identify question types (multiple-choice, short-answer, true-false) and extract answer options with correct answers marked.
 
 OCR Text:

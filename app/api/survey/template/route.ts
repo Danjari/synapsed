@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenAI, Type } from '@google/genai';
 import { getSyllabusContext, getClassInfo, SyllabusContext } from "@/lib/survey/syllabusService";
+import { GEMINI_MODEL } from "@/lib/gemini-model";
 
 const geminiClient = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
 
@@ -86,7 +87,7 @@ async function generateContextualSurveyTemplate(syllabusContext: SyllabusContext
     };
 
     const response = await geminiClient.models.generateContent({
-      model: 'gemini-2.0-flash',
+      model: GEMINI_MODEL,
       contents: `You are an expert educational assessment specialist. Generate a comprehensive student survey template based on the following course information:
 
 COURSE DETAILS:

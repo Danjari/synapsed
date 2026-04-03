@@ -1,6 +1,7 @@
 import { Mistral } from '@mistralai/mistralai';
 
 import { GoogleGenAI, Type } from '@google/genai';
+import { GEMINI_MODEL } from '@/lib/gemini-model';
 
 const mistralClient = new Mistral({ apiKey: process.env.MISTRAL_API_KEY! });
 const geminiClient = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
@@ -139,7 +140,7 @@ async function parseSyllabusWithAI(text: string): Promise<SyllabusContent> {
     };
 
     const response = await geminiClient.models.generateContent({
-      model: 'gemini-2.0-flash',
+      model: GEMINI_MODEL,
       contents: `Analyze this course syllabus and extract the structured information. Focus on accuracy and completeness.
 
 Syllabus text:

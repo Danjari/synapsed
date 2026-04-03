@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { QuizNavigation } from './QuizNavigation';
 import { QuestionEditor } from './QuestionEditor';
 import { OCRImportModal } from './OCRImportModal';
@@ -34,6 +34,9 @@ export function QuizBuilder({
   const [currentQuizId, setCurrentQuizId] = useState<string | undefined>(quizId);
   const [showPublishDialog, setShowPublishDialog] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
+  const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const hasInitialSaveRef = useRef(false);
   
   // Update selected question when questions change
   useEffect(() => {
@@ -130,34 +133,49 @@ export function QuizBuilder({
     setSaveStatus('unsaved');
   };
 
-  const handleSave = async () => {
-    if (!quizName.trim()) {
-      toast.error('Please provide a quiz title');
+  const handleSave = async (isAutoSave = false) => {
+    // For auto-save, skip validation if quiz doesn't have a title yet
+    if (!isAutoSave) {
+      if (!quizName.trim()) {
+        toast.error('Please provide a quiz title');
+        return;
+      }
+
+      if (questions.length === 0) {
+        toast.error('Please add at least one question');
+        return;
+      }
+
+      // Validate questions
+      for (const q of questions) {
+        if (!q.text.trim()) {
+          toast.error('All questions must have text');
+          return;
+        }
+        if ((q.type === 'multiple-choice' || q.type === 'true-false') && q.options.length < 2) {
+          toast.error(`Question "${q.text}" needs at least 2 options`);
+          return;
+        }
+        if ((q.type === 'multiple-choice' || q.type === 'true-false') && !q.options.some((opt) => opt.isCorrect)) {
+          toast.error(`Question "${q.text}" needs at least one correct answer`);
+          return;
+        }
+      }
+    }
+
+    // For auto-save, skip if no title and no questions
+    if (isAutoSave && !quizName.trim() && questions.length === 0) {
       return;
     }
 
-    if (questions.length === 0) {
-      toast.error('Please add at least one question');
-      return;
-    }
+    // For auto-save, use a default title if empty
+    const titleToSave = quizName.trim() || 'Untitled Quiz';
 
-    // Validate questions
-    for (const q of questions) {
-      if (!q.text.trim()) {
-        toast.error('All questions must have text');
-        return;
-      }
-      if ((q.type === 'multiple-choice' || q.type === 'true-false') && q.options.length < 2) {
-        toast.error(`Question "${q.text}" needs at least 2 options`);
-        return;
-      }
-      if ((q.type === 'multiple-choice' || q.type === 'true-false') && !q.options.some((opt) => opt.isCorrect)) {
-        toast.error(`Question "${q.text}" needs at least one correct answer`);
-        return;
-      }
+    if (isAutoSave) {
+      setIsAutoSaving(true);
+    } else {
+      setSaveStatus('saving');
     }
-
-    setSaveStatus('saving');
     
     try {
       // Transform questions to API format
@@ -181,7 +199,7 @@ export function QuizBuilder({
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            title: quizName.trim(),
+            title: titleToSave,
             questions: questionsForApi,
           }),
         });
@@ -191,32 +209,103 @@ export function QuizBuilder({
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            title: quizName.trim(),
+            title: titleToSave,
             questions: questionsForApi,
           }),
         });
       }
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to save quiz');
+        let errorMessage = 'Failed to save quiz';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorMessage;
+        } catch {
+          // If response is not valid JSON, use status text
+          errorMessage = response.statusText || `Server error (${response.status})`;
+        }
+        throw new Error(errorMessage);
       }
 
-      const data = await response.json();
+      let data;
+      try {
+        data = await response.json();
+      } catch {
+        throw new Error('Invalid response from server');
+      }
       
       // If this was a new quiz, update the quizId
       if (!currentQuizId && data.quiz?.id) {
         setCurrentQuizId(data.quiz.id);
+        hasInitialSaveRef.current = true;
       }
 
       setSaveStatus('saved');
-      toast.success('Quiz saved successfully');
+      if (!isAutoSave) {
+        toast.success('Quiz saved successfully');
+      }
     } catch (error) {
       console.error('Error saving quiz:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to save quiz');
+      if (!isAutoSave) {
+        toast.error(error instanceof Error ? error.message : 'Failed to save quiz');
+      }
       setSaveStatus('unsaved');
+    } finally {
+      if (isAutoSave) {
+        setIsAutoSaving(false);
+      }
     }
   };
+
+  // Auto-save effect - triggers when quizName or questions change
+  useEffect(() => {
+    // Don't auto-save on initial load
+    if (!hasInitialSaveRef.current && !currentQuizId) {
+      // Auto-create quiz when user first makes a change
+      if (quizName.trim() || questions.length > 0) {
+        hasInitialSaveRef.current = true;
+        // Set status to unsaved
+        setSaveStatus('unsaved');
+        // Clear existing timeout
+        if (autoSaveTimeoutRef.current) {
+          clearTimeout(autoSaveTimeoutRef.current);
+        }
+        // Set new timeout for auto-save (2 seconds delay)
+        autoSaveTimeoutRef.current = setTimeout(() => {
+          handleSave(true);
+        }, 2000);
+      }
+      return;
+    }
+
+    // Skip auto-save if currently saving manually
+    if (saveStatus === 'saving') {
+      return;
+    }
+
+    // Clear existing timeout
+    if (autoSaveTimeoutRef.current) {
+      clearTimeout(autoSaveTimeoutRef.current);
+    }
+
+    // Set status to unsaved
+    if (saveStatus === 'saved') {
+      setSaveStatus('unsaved');
+    }
+
+    // Set new timeout for auto-save (2 seconds delay)
+    autoSaveTimeoutRef.current = setTimeout(() => {
+      handleSave(true);
+    }, 2000);
+
+    // Cleanup timeout on unmount or when dependencies change
+    return () => {
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [quizName, questions]);
 
   const handlePublishClick = async () => {
     // First save the quiz
@@ -315,12 +404,12 @@ export function QuizBuilder({
             placeholder="Quiz Title"
           />
           <div className="flex items-center text-sm">
-            {saveStatus === 'unsaved' && (
+            {saveStatus === 'unsaved' && !isAutoSaving && (
               <span className="text-amber-500 flex items-center">
                 <AlertCircle size={16} className="mr-1" /> Unsaved changes
               </span>
             )}
-            {saveStatus === 'saving' && (
+            {(saveStatus === 'saving' || isAutoSaving) && (
               <span className="text-blue-500 flex items-center">
                 <svg
                   className="animate-spin h-4 w-4 mr-1"
@@ -340,10 +429,10 @@ export function QuizBuilder({
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   ></path>
                 </svg>
-                Saving...
+                {isAutoSaving ? 'Auto-saving...' : 'Saving...'}
               </span>
             )}
-            {saveStatus === 'saved' && (
+            {saveStatus === 'saved' && !isAutoSaving && (
               <span className="text-emerald-500 flex items-center">
                 <Check size={16} className="mr-1" /> All changes saved
               </span>
@@ -364,7 +453,7 @@ export function QuizBuilder({
           </Button>
           <Button
             variant="secondary"
-            onClick={handleSave}
+            onClick={() => handleSave(false)}
             disabled={saveStatus === 'saved' || saveStatus === 'saving'}
           >
             <Save size={16} className="mr-2" />
