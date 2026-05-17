@@ -137,6 +137,7 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
   const [hasTriggeredIntroduction, setHasTriggeredIntroduction] = useState(false)
   const [voiceMode, setVoiceMode] = useState(false)
   const [voiceVisible, setVoiceVisible] = useState(false)
+  const [isPreparingVoice, setIsPreparingVoice] = useState(false)
   const [expandedDiagram, setExpandedDiagram] = useState<DiagramData | null>(null)
 
   // Fetcher function for SWR
@@ -176,6 +177,7 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const messagesRef = useRef<Message[]>([])
+  const contextBootstrapPromiseRef = useRef<Promise<void> | null>(null)
 
   // Keep ref in sync with messages state
   useEffect(() => {
@@ -398,35 +400,47 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
     }
   }, [threadId, classId, lessonId, userId, isTyping])
 
+  const ensureInitialLessonContext = useCallback(async () => {
+    if (isLoadingConversation) return
+    if (hasExistingConversation) return
+    if (messagesRef.current.length > 0) return
+    if (!(nodeTitle && userId && classId && lessonId)) return
+
+    if (contextBootstrapPromiseRef.current) {
+      await contextBootstrapPromiseRef.current
+      return
+    }
+
+    if (hasTriggeredIntroduction) return
+
+    setHasTriggeredIntroduction(true)
+    const introPrompt = getSocraticIntroductionPrompt(nodeTitle, studentName, classId)
+
+    contextBootstrapPromiseRef.current = (async () => {
+      try {
+        await sendSystemMessage(introPrompt)
+      } finally {
+        contextBootstrapPromiseRef.current = null
+      }
+    })()
+
+    await contextBootstrapPromiseRef.current
+  }, [
+    isLoadingConversation,
+    hasExistingConversation,
+    nodeTitle,
+    userId,
+    classId,
+    lessonId,
+    hasTriggeredIntroduction,
+    studentName,
+    sendSystemMessage,
+  ])
+
   // Auto-trigger Socratic introduction when it's truly the first time (no conversation in DB)
   useEffect(() => {
-    // Only trigger if:
-    // 1. Conversation loading is complete
-    // 2. No existing conversation was found in the DB
-    // 3. No messages in state (as a double-check)
-    // 4. Haven't triggered introduction yet
-    // 5. All required parameters are present
-    if (
-      !isLoadingConversation &&
-      !hasExistingConversation &&
-      messages.length === 0 &&
-      !hasTriggeredIntroduction &&
-      nodeTitle &&
-      userId &&
-      classId &&
-      lessonId
-    ) {
-      setHasTriggeredIntroduction(true)
-
-      // Get Socratic introduction prompt from centralized prompts file
-      // Pass classId to ensure RAG search is triggered for the first interaction
-      const introPrompt = getSocraticIntroductionPrompt(nodeTitle, studentName, classId)
-
-      // Automatically send the introduction as a system message (hidden from UI)
-      // This will trigger RAG search and load context into memory
-      sendSystemMessage(introPrompt)
-    }
-  }, [isLoadingConversation, hasExistingConversation, messages.length, hasTriggeredIntroduction, nodeTitle, userId, classId, lessonId, studentName, sendSystemMessage])
+    void ensureInitialLessonContext()
+  }, [ensureInitialLessonContext])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -460,9 +474,16 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
     textarea.style.height = Math.min(scrollHeight, maxHeight) + "px"
   }
 
-  const openVoice = () => {
-    setVoiceMode(true)
-    setTimeout(() => setVoiceVisible(true), 16)
+  const openVoice = async () => {
+    if (isPreparingVoice) return
+    setIsPreparingVoice(true)
+    try {
+      await ensureInitialLessonContext()
+      setVoiceMode(true)
+      setTimeout(() => setVoiceVisible(true), 16)
+    } finally {
+      setIsPreparingVoice(false)
+    }
   }
 
   const handleVoiceClose = () => {
@@ -806,7 +827,7 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
                       variant="ghost"
                       size="sm"
                       onClick={openVoice}
-                      disabled={isTyping}
+                      disabled={isTyping || isPreparingVoice}
                       className="h-8 w-8 p-0 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Mic className="h-5 w-5 transition-transform duration-200" />
