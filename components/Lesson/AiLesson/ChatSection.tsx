@@ -9,7 +9,7 @@ import { useSearchParams } from "next/navigation"
 import useSWR from "swr"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { Plus, ArrowUp, Settings2, Mic, X, Check, Info, ClipboardCheck } from 'lucide-react'
+import { Plus, ArrowUp, Settings2, Mic, Info, ClipboardCheck } from 'lucide-react'
 import ReactMarkdown from "react-markdown"
 import remarkMath from "remark-math"
 import rehypeKatex from "rehype-katex"
@@ -19,6 +19,7 @@ import { InChatAssessmentForm } from "./InChatAssessmentForm"
 import { z } from "zod"
 import type { FieldConfig } from "@/lib/formedible/types"
 import type { DiagramData } from "./ExcalidrawCanvas"
+import VoiceMode from "./VoiceMode"
 
 const ExcalidrawCanvas = dynamic(() => import("./ExcalidrawCanvas"), {
   ssr: false,
@@ -28,29 +29,6 @@ const ExcalidrawCanvas = dynamic(() => import("./ExcalidrawCanvas"), {
     </div>
   ),
 })
-
-declare global {
-  interface Window {
-    webkitSpeechRecognition?: SpeechRecognitionConstructor
-    SpeechRecognition?: SpeechRecognitionConstructor
-  }
-}
-
-interface BrowserSpeechRecognition extends EventTarget {
-  continuous: boolean
-  interimResults: boolean
-  lang: string
-  onstart: (() => void) | null
-  onresult: ((event: { results: ArrayLike<ArrayLike<{ transcript?: string }>> }) => void) | null
-  onerror: ((event: { error?: string }) => void) | null
-  onend: (() => void) | null
-  start: () => void
-  stop: () => void
-}
-
-interface SpeechRecognitionConstructor {
-  new (): BrowserSpeechRecognition
-}
 
 // Custom styles for math rendering
 const mathStyles = `
@@ -157,7 +135,8 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
   const [isTyping, setIsTyping] = useState(false)
   const [threadId, setThreadId] = useState<string | null>(null)
   const [hasTriggeredIntroduction, setHasTriggeredIntroduction] = useState(false)
-  const [isRecording, setIsRecording] = useState(false)
+  const [voiceMode, setVoiceMode] = useState(false)
+  const [voiceVisible, setVoiceVisible] = useState(false)
   const [expandedDiagram, setExpandedDiagram] = useState<DiagramData | null>(null)
 
   // Fetcher function for SWR
@@ -197,7 +176,6 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const messagesRef = useRef<Message[]>([])
-  const recognitionRef = useRef<BrowserSpeechRecognition | null>(null)
 
   // Keep ref in sync with messages state
   useEffect(() => {
@@ -482,78 +460,46 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
     textarea.style.height = Math.min(scrollHeight, maxHeight) + "px"
   }
 
-  useEffect(() => {
-    if (typeof window === "undefined") return
-
-    const Recognition =
-      (window.SpeechRecognition as unknown as SpeechRecognitionConstructor | undefined) ||
-      (window.webkitSpeechRecognition as unknown as SpeechRecognitionConstructor | undefined)
-
-    if (!Recognition) return
-
-    const recognition = new Recognition()
-    recognition.continuous = false
-    recognition.interimResults = true
-    recognition.lang = "en-US"
-
-    recognition.onstart = () => {
-      setIsRecording(true)
-    }
-
-    recognition.onresult = (event) => {
-      const transcript = Array.from(event.results)
-        .map((res) => res[0]?.transcript ?? "")
-        .join("")
-        .trim()
-      if (transcript) {
-        setInput(transcript)
-      }
-    }
-
-    recognition.onerror = () => {
-      setIsRecording(false)
-    }
-
-    recognition.onend = () => {
-      setIsRecording(false)
-    }
-
-    recognitionRef.current = recognition
-
-    return () => {
-      recognitionRef.current?.stop()
-      recognitionRef.current = null
-    }
-  }, [])
-
-  const handleMicClick = () => {
-    if (isTyping) return
-
-    if (!recognitionRef.current) {
-      setInput((prev) => prev || "Voice input is not supported in this browser.")
-      return
-    }
-
-    if (isRecording) {
-      recognitionRef.current.stop()
-      return
-    }
-
-    recognitionRef.current.start()
+  const openVoice = () => {
+    setVoiceMode(true)
+    setTimeout(() => setVoiceVisible(true), 16)
   }
 
-  const handleCancelRecording = () => {
-    recognitionRef.current?.stop()
-    setIsRecording(false)
+  const handleVoiceClose = () => {
+    setVoiceVisible(false)
+    setTimeout(() => {
+      setVoiceMode(false)
+    }, 250)
   }
 
-  const handleConfirmRecording = () => {
-    recognitionRef.current?.stop()
-    setIsRecording(false)
-    if (input.trim()) {
-      void sendMessage(input.trim())
-      setInput("")
+  const handleVoiceTurn = (payload: {
+    userText: string
+    assistantText: string
+    diagramData?: DiagramData | null
+    threadId?: string
+  }) => {
+    if (payload.threadId && payload.threadId !== threadId) {
+      setThreadId(payload.threadId)
     }
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: `${Date.now()}-voice-user`,
+        content: payload.userText,
+        role: "user",
+        timestamp: new Date(),
+        source: "voice",
+      },
+      {
+        id: `${Date.now()}-voice-assistant`,
+        content: convertMathToLatex(cleanAIResponse(payload.assistantText)),
+        role: "assistant",
+        timestamp: new Date(),
+        source: "voice",
+        diagramData: payload.diagramData ?? undefined,
+      },
+    ])
   }
 
   const handleManualAssessment = useCallback(async () => {
@@ -606,43 +552,26 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
     }
   }, [nodeTitle, classId, lessonId, userId, threadId, isTyping])
 
-  const WaveAnimation = () => {
-    const [animationKey, setAnimationKey] = useState(0)
-    useEffect(() => {
-      const interval = setInterval(() => {
-        setAnimationKey((prev) => prev + 1)
-      }, 100)
-      return () => clearInterval(interval)
-    }, [])
-
-    const bars = Array.from({ length: 50 }, (_, i) => {
-      const height = Math.random() * 20 + 4
-      const delay = Math.random() * 2
-      return (
-        <div
-          key={`${i}-${animationKey}`}
-          className="bg-gray-400 rounded-sm animate-pulse"
-          style={{
-            width: "2px",
-            height: `${height}px`,
-            animationDelay: `${delay}s`,
-            animationDuration: "1s",
-          }}
-        />
-      )
-    })
-
-    return (
-      <div className="flex items-center w-full gap-1">
-        <div className="flex-1 border-t-2 border-dotted border-gray-400"></div>
-        <div className="flex items-center gap-0.5 justify-center px-8">{bars}</div>
-        <div className="flex-1 border-t-2 border-dotted border-gray-400"></div>
-      </div>
-    )
-  }
-
   return (<div className="h-full bg-white flex flex-col font-system overflow-hidden">
     <style dangerouslySetInnerHTML={{ __html: mathStyles }} />
+    {voiceMode && (
+      <div
+        className="fixed inset-0 z-50 bg-white flex flex-col"
+        style={{
+          opacity: voiceVisible ? 1 : 0,
+          transition: "opacity 250ms ease",
+        }}
+      >
+        <VoiceMode
+          threadId={threadId}
+          classId={classId}
+          lessonId={lessonId}
+          userId={userId}
+          onClose={handleVoiceClose}
+          onTurn={handleVoiceTurn}
+        />
+      </div>
+    )}
     {expandedDiagram && (
       <div className="fixed inset-0 z-50 bg-white flex flex-col">
         <div className="flex items-center justify-between px-6 py-3 border-b border-gray-100">
@@ -685,6 +614,11 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
                 style={{ animationDelay: `${index * 30}ms` }}
               >
                 <div className={message.role === "user" ? "max-w-[75%] sm:max-w-md" : "w-full"}>
+                  {message.source === "voice" && (
+                    <div className="mb-1 text-xs text-gray-300">
+                      Voice
+                    </div>
+                  )}
                   <div
                     className={`px-4 py-3 transition-all duration-300 ease-out ${message.role === "user"
                         ? "bg-gray-100 text-gray-900 rounded-[20px] rounded-br-[8px]"
@@ -833,107 +767,82 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
             <div
               className="border border-gray-300 rounded-2xl p-4 relative transition-all duration-500 ease-in-out overflow-hidden bg-white/95 backdrop-blur-sm shadow-sm"
             >
-              {isRecording ? (
-                <div className="flex items-center justify-between h-12 animate-in fade-in-0 slide-in-from-top-2 duration-500 w-full">
-                  <WaveAnimation />
-                  <div className="flex items-center gap-2 ml-4">
+              <div className="animate-in fade-in-0 slide-in-from-bottom-2 duration-500">
+                <textarea
+                  ref={textareaRef}
+                  value={input}
+                  onChange={handleInputChange}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Type a message..."
+                  className="w-full bg-transparent text-gray-900 placeholder-gray-400 resize-none border-none outline-none text-base leading-relaxed min-h-[24px] max-h-32 transition-all duration-200"
+                  rows={1}
+                  disabled={isTyping}
+                  onInput={(e) => {
+                    const target = e.target as HTMLTextAreaElement
+                    target.style.height = "auto"
+                    target.style.height = target.scrollHeight + "px"
+                  }}
+                />
+                <div className="flex items-center justify-between mt-8">
+                  <div className="flex items-center gap-2">
                     <Button
                       type="button"
                       variant="ghost"
                       size="sm"
-                      onClick={handleCancelRecording}
                       className="h-8 w-8 p-0 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-110"
                     >
-                      <X className="h-5 w-5" />
+                      <Plus className="h-5 w-5" />
                     </Button>
                     <Button
                       type="button"
+                      variant="ghost"
                       size="sm"
-                      onClick={handleConfirmRecording}
-                      className="h-8 w-8 p-0 rounded-lg transition-all duration-200 hover:scale-110 bg-teal-600 hover:bg-teal-700 text-white"
+                      className="h-8 w-8 p-0 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-110"
                     >
-                      <Check className="h-5 w-5" />
+                      <Settings2 className="h-5 w-5" />
                     </Button>
-                  </div>
-                </div>
-              ) : (
-                <div className="animate-in fade-in-0 slide-in-from-bottom-2 duration-500">
-                  <textarea
-                    ref={textareaRef}
-                    value={input}
-                    onChange={handleInputChange}
-                    onKeyDown={handleKeyDown}
-                    placeholder="Type a message..."
-                    className="w-full bg-transparent text-gray-900 placeholder-gray-400 resize-none border-none outline-none text-base leading-relaxed min-h-[24px] max-h-32 transition-all duration-200"
-                    rows={1}
-                    disabled={isTyping}
-                    onInput={(e) => {
-                      const target = e.target as HTMLTextAreaElement
-                      target.style.height = "auto"
-                      target.style.height = target.scrollHeight + "px"
-                    }}
-                  />
-                  <div className="flex items-center justify-between mt-8">
-                    <div className="flex items-center gap-2">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 w-8 p-0 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-110"
-                      >
-                        <Plus className="h-5 w-5" />
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 w-8 p-0 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-110"
-                      >
-                        <Settings2 className="h-5 w-5" />
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={handleMicClick}
-                        disabled={isTyping}
-                        className="h-8 w-8 p-0 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <Mic className="h-5 w-5 transition-transform duration-200" />
-                      </Button>
-                      {nodeTitle && (
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                onClick={handleManualAssessment}
-                                disabled={isTyping}
-                                className="h-8 w-8 p-0 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-                              >
-                                <ClipboardCheck className="h-5 w-5 transition-transform duration-200" />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent side="top" className="bg-gray-900 text-white text-xs">
-                              <p>Test My Understanding</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      )}
-                    </div>
                     <Button
-                      type="submit"
+                      type="button"
+                      variant="ghost"
                       size="sm"
-                      disabled={!input.trim() || isTyping}
-                      className="h-8 w-8 p-0 bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 text-gray-700 rounded-lg transition-all duration-200 hover:scale-110 disabled:hover:scale-100"
+                      onClick={openVoice}
+                      disabled={isTyping}
+                      className="h-8 w-8 p-0 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <ArrowUp className="h-5 w-5" />
+                      <Mic className="h-5 w-5 transition-transform duration-200" />
                     </Button>
+                    {nodeTitle && (
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={handleManualAssessment}
+                              disabled={isTyping}
+                              className="h-8 w-8 p-0 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              <ClipboardCheck className="h-5 w-5 transition-transform duration-200" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" className="bg-gray-900 text-white text-xs">
+                            <p>Test My Understanding</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    )}
                   </div>
+                  <Button
+                    type="submit"
+                    size="sm"
+                    disabled={!input.trim() || isTyping}
+                    className="h-8 w-8 p-0 bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 text-gray-700 rounded-lg transition-all duration-200 hover:scale-110 disabled:hover:scale-100"
+                  >
+                    <ArrowUp className="h-5 w-5" />
+                  </Button>
                 </div>
-              )}
+              </div>
             </div>
           </form>
         </div>

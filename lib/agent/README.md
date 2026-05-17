@@ -1,81 +1,83 @@
 # Synapsed Agent
 
-A simple agent built with LangGraph Functional API for the Synapsed educational platform.
+LangGraph-based tutoring agent for Synapsed with shared memory across text, visual, and voice interactions.
 
-## Structure
+## Core Architecture
 
-- **simple-agent.ts**: Main agent implementation using LangGraph's Functional API
-  - Uses Gemini 2.0 Flash as the LLM
-  - Includes three dummy tools for testing:
-    - `getStudentProgress`: Get student progress in a class
-    - `getClassResources`: Get available resources for a class
-    - `getFlashcards`: Generate flashcards for a topic
+- **Single reasoning brain**: `lib/agent/simple-agent.ts` is the authoritative tutor logic.
+- **Shared memory**: all turns use the same `threadId` in LangGraph checkpointer state.
+- **Single persistence path**: conversation messages are stored through `ConversationService`.
+- **Multimodal outputs**:
+  - text responses
+  - optional in-chat assessments
+  - optional visual diagram payloads (`diagramData`)
 
-## How It Works
+## Current Tools
 
-The agent uses the LangGraph Functional API which allows you to write agent logic using standard control flow (loops, conditionals) instead of explicitly defining nodes and edges.
+Defined in `lib/agent/tools` and registered in `simple-agent.ts`:
 
-### Flow
+- `searchClassContent`: RAG search over class content
+- `createInChatAssessment`: generated graded forms for understanding checks
+- `createVisualLesson`: Excalidraw lesson generation (Anthropic + Excalidraw MCP)
+- `getStudentProgress` / `getClassResources`: helper tools
 
-1. **User sends a message** → The agent receives it as a `HumanMessage`
-2. **LLM is called** → The model decides whether to use tools or respond directly
-3. **Tools are executed** → If tools are called, they execute in parallel
-4. **Loop repeats** → If tools were used, the LLM is called again with the results
-5. **Final response** → When no more tools are needed, the final AI response is returned
+## Prompts
 
-## API Usage
+Prompts are centralized in `lib/agent/prompts.ts`:
 
-### Import and use directly
+- main tutoring system prompt
+- visual module prompt
+- audio module prompt
+- Excalidraw planner/teacher prompts
+
+This keeps one unified tutoring policy while allowing modality-specific instructions.
+
+## API Surface
+
+- `POST /api/agent-chat`
+  - Standard text chat path.
+  - Calls `invokeAgent(...)` and persists user/assistant messages.
+  - Returns text + optional `diagramData`.
+
+- `POST /api/session`
+  - WebRTC SDP proxy for OpenAI realtime voice.
+  - Keeps `OPENAI_API_KEY` server-side.
+
+- `POST /api/voice-turn`
+  - Turn commit endpoint for realtime voice transcripts.
+  - Calls `invokeAgent(...)` with the same `threadId`.
+  - Persists user/assistant messages.
+  - Returns `assistantText` + optional `diagramData`.
+  - Requires `turnId` for idempotency.
+
+## Voice Design (Option 2)
+
+Voice UX uses OpenAI realtime for low-latency audio transport while keeping agent reasoning in `simple-agent`:
+
+1. Browser streams audio via realtime.
+2. Finalized transcript is posted to `/api/voice-turn`.
+3. Backend invokes `simple-agent` with same `threadId`.
+4. Assistant text is sent back and spoken via realtime.
+5. Both voice user and assistant turns are appended to chat history.
+
+## Reliability Notes
+
+- `app/api/voice-turn` deduplicates retries using `turnId`.
+- Dedup cache is currently in-memory (`lib/agent/voice-turn-store.ts`) with TTL.
+- Realtime barge-in is handled by canceling in-progress assistant audio generation when user starts speaking.
+
+## Direct Usage Example
 
 ```typescript
-import { invokeAgent } from '@/lib/agent/simple-agent';
+import { invokeAgent } from "@/lib/agent/simple-agent";
 
-const response = await invokeAgent('What is the progress of student123 in class456?');
-console.log(response);
-```
-
-### Via HTTP API
-
-```bash
-curl -X POST http://localhost:3000/api/agent-chat \
-  -H "Content-Type: application/json" \
-  -d '{"message": "Hello!"}'
-```
-
-## Testing
-
-Run the test script:
-
-```bash
-node test-simple-agent.js
-```
-
-## Adding More Tools
-
-To add more tools, simply define them using the `tool()` function:
-
-```typescript
-const myNewTool = tool(
-  ({ param1 }: { param1: string }) => {
-    // Your implementation
-    return `Result for ${param1}`;
-  },
-  {
-    name: "myNewTool",
-    description: "What this tool does",
-    schema: z.object({
-      param1: z.string().describe("Parameter description"),
-    }),
-  }
+const response = await invokeAgent(
+  "Explain the chain rule visually.",
+  "thread_abc123",
+  "class_id",
+  "user_id",
+  "conversation_id"
 );
+
+console.log(response.content, response.diagramData);
 ```
-
-Then add it to the `toolsByName` map and the `tools` array.
-
-## Next Steps
-
-- Replace dummy tool implementations with real database queries
-- Add authentication/authorization to tools
-- Add conversation memory/persistence
-- Add more sophisticated routing logic
-- Add streaming responses
