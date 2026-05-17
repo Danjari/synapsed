@@ -8,7 +8,9 @@ import { MongoDBSaver } from "@langchain/langgraph-checkpoint-mongodb";
 import { MongoClient } from "mongodb";
 import { searchClassContent } from "./tools/searchClassContent";
 import { createInChatAssessment } from "./tools/createInChatAssessment";
+import { createVisualLesson } from "./tools/createVisualLesson";
 import { GEMINI_AGENT_MODEL } from "@/lib/gemini-model";
+import { getAgentSystemPrompt } from "./prompts";
 
 // Define MessagesState with channel configuration for proper memory
 interface MessagesState {
@@ -38,6 +40,12 @@ export interface AgentResponse {
   content: string;
   sources?: SourceMetadata[];
   inChatAssessmentData?: InChatAssessmentData; // Formedible in-chat assessment configuration
+  diagramData?: DiagramData;
+}
+
+interface DiagramData {
+  elements?: unknown[];
+  appState?: Record<string, unknown>;
 }
 
 // Initialize the model
@@ -79,6 +87,7 @@ const toolsByName: Record<string, DynamicStructuredTool> = {
   [getClassResources.name]: getClassResources,
   [searchClassContent.name]: searchClassContent,
   [createInChatAssessment.name]: createInChatAssessment,
+  [createVisualLesson.name]: createVisualLesson,
 };
 
 const tools = Object.values(toolsByName);
@@ -94,42 +103,7 @@ async function callLlm(state: MessagesState) {
   });
 
   const result = await modelWithTools.invoke([
-    new SystemMessage(`
-You are a highly capable educational assistant for Synapsed, designed to help students learn effectively.
-
-### YOUR CORE DIRECTIVES:
-1.  **GROUNDING & TOOL USAGE**:
-    *   **CRITICAL**: When explicitly instructed to use \`searchClassContent\` tool, you MUST call it immediately before responding. Do not skip this step.
-    *   **Class-Specific Questions**: When asked about specific concepts, definitions, or materials defined in this class, **YOU MUST** use the \`searchClassContent\` tool to ensure accuracy.
-    *   **General/Conversational**: For greetings, general study advice, or simple clarifications that don't require specific class context, you may answer directly without tools to save time.
-    *   **Uncertainty**: If you are unsure if a term has a specific meaning in this class context, err on the side of using the tool.
-    *   **Tool Responses**: Tool responses contain clean, natural text content. Use this information naturally in your responses without including citations or source references.
-    *   **IMPORTANT**: Do NOT include source citations (like "Source: ..." or "Page X") in your response. Sources are tracked automatically by the system and displayed separately to the user in a tooltip.
-
-2.  **TEACHING STYLE (SOCRATIC)**:
-    *   **DO NOT** simply give answers to homework or complex conceptual questions.
-    *   **GUIDE** the student. Ask probing questions to help them arrive at the answer themselves.
-    *   Break down complex topics into smaller, digestible steps.
-
-3.  **ADAPTABILITY**:
-    *   Tailor your explanations to the student's level.
-    *   Use analogies and examples to clarify difficult concepts.
-
-4.  **TOOL USAGE**:
-    *   Use \`getStudentProgress\` to understand where the student is in the course.
-    *   Use \`getClassResources\` to recommend materials.
-
-5.  **IN-CHAT ASSESSMENT & UNDERSTANDING EVALUATION**:
-    *   **When to Assess**: After explaining a concept or topic, assess the student's understanding by using the \`createInChatAssessment\` tool.
-    *   **Assessment Timing**: Use in-chat assessments when:
-        - You've just explained a complex concept
-        - The student seems to understand but you want to verify
-        - The student asks to test their knowledge
-        - You want to reinforce learning through practice
-    *   **How to Use**: Call \`createInChatAssessment\` with the topic, nodeTitle (if available), questionCount (2-5 questions is ideal), and appropriate difficulty level.
-    *   **After Assessment**: Once the student completes the in-chat assessment, provide constructive feedback on their answers, highlighting what they understood well and areas for improvement.
-    *   **Continue Learning**: After feedback, continue the conversation naturally, addressing any gaps in understanding.
-`),
+    new SystemMessage(getAgentSystemPrompt()),
     ...history,
   ]);
   
@@ -151,6 +125,7 @@ interface InChatAssessmentData {
   correctAnswers: Record<string, unknown>;
 }
 const toolInChatAssessmentMap = new Map<string, InChatAssessmentData>();
+const toolDiagramMap = new Map<string, DiagramData>();
 
 // Define the tool call node
 async function callTools(state: MessagesState) {
@@ -209,6 +184,13 @@ async function callTools(state: MessagesState) {
           toolInChatAssessmentMap.set(toolCallId, result.inChatAssessmentData);
         } else {
           toolInChatAssessmentMap.delete(toolCallId);
+        }
+
+        // Extract diagram data if present (from createVisualLesson tool)
+        if ('diagramData' in result && result.diagramData) {
+          toolDiagramMap.set(toolCallId, result.diagramData as DiagramData);
+        } else {
+          toolDiagramMap.delete(toolCallId);
         }
         
         // Give LLM ONLY the content string - clean, natural text without JSON structure
@@ -396,6 +378,7 @@ export async function invokeAgent(userMessage: string, threadId?: string, classI
     
     // Extract in-chat assessment data from tool messages
     let inChatAssessmentData: InChatAssessmentData | undefined = undefined;
+    let diagramData: DiagramData | undefined = undefined;
     const toolCallIdsInResult = new Set<string>();
     for (const msg of result.messages) {
       if (msg instanceof ToolMessage) {
@@ -405,6 +388,9 @@ export async function invokeAgent(userMessage: string, threadId?: string, classI
           if (toolInChatAssessmentMap.has(msg.tool_call_id)) {
             inChatAssessmentData = toolInChatAssessmentMap.get(msg.tool_call_id);
           }
+          if (toolDiagramMap.has(msg.tool_call_id)) {
+            diagramData = toolDiagramMap.get(msg.tool_call_id);
+          }
         }
       }
     }
@@ -413,6 +399,7 @@ export async function invokeAgent(userMessage: string, threadId?: string, classI
     for (const toolCallId of toolCallIdsInResult) {
       toolSourcesMap.delete(toolCallId);
       toolInChatAssessmentMap.delete(toolCallId);
+      toolDiagramMap.delete(toolCallId);
     }
 
     // Find the LAST AIMessage in the result (the most recent response)
@@ -451,6 +438,7 @@ export async function invokeAgent(userMessage: string, threadId?: string, classI
       content,
       sources: sources.length > 0 ? sources : undefined,
       inChatAssessmentData,
+      diagramData,
     };
 
     return response;

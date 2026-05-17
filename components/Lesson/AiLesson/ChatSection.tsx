@@ -3,6 +3,7 @@
 import type React from "react"
 
 import { useState, useRef, useEffect, useCallback } from "react"
+import dynamic from "next/dynamic"
 import { useSession } from "next-auth/react"
 import { useSearchParams } from "next/navigation"
 import useSWR from "swr"
@@ -17,6 +18,39 @@ import { getSocraticIntroductionPrompt, isSystemIntroductionMessage } from "@/li
 import { InChatAssessmentForm } from "./InChatAssessmentForm"
 import { z } from "zod"
 import type { FieldConfig } from "@/lib/formedible/types"
+import type { DiagramData } from "./ExcalidrawCanvas"
+
+const ExcalidrawCanvas = dynamic(() => import("./ExcalidrawCanvas"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center text-gray-300 text-sm">
+      Loading visual...
+    </div>
+  ),
+})
+
+declare global {
+  interface Window {
+    webkitSpeechRecognition?: SpeechRecognitionConstructor
+    SpeechRecognition?: SpeechRecognitionConstructor
+  }
+}
+
+interface BrowserSpeechRecognition extends EventTarget {
+  continuous: boolean
+  interimResults: boolean
+  lang: string
+  onstart: (() => void) | null
+  onresult: ((event: { results: ArrayLike<ArrayLike<{ transcript?: string }>> }) => void) | null
+  onerror: ((event: { error?: string }) => void) | null
+  onend: (() => void) | null
+  start: () => void
+  stop: () => void
+}
+
+interface SpeechRecognitionConstructor {
+  new (): BrowserSpeechRecognition
+}
 
 // Custom styles for math rendering
 const mathStyles = `
@@ -65,6 +99,8 @@ interface Message {
   timestamp: Date
   sources?: SourceMetadata[]
   inChatAssessmentData?: InChatAssessmentData
+  diagramData?: DiagramData | null
+  source?: "voice"
 }
 
 interface ChatSectionProps {
@@ -122,6 +158,7 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
   const [threadId, setThreadId] = useState<string | null>(null)
   const [hasTriggeredIntroduction, setHasTriggeredIntroduction] = useState(false)
   const [isRecording, setIsRecording] = useState(false)
+  const [expandedDiagram, setExpandedDiagram] = useState<DiagramData | null>(null)
 
   // Fetcher function for SWR
   const fetcher = async (url: string) => {
@@ -160,6 +197,7 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const messagesRef = useRef<Message[]>([])
+  const recognitionRef = useRef<BrowserSpeechRecognition | null>(null)
 
   // Keep ref in sync with messages state
   useEffect(() => {
@@ -291,6 +329,7 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
         timestamp: new Date(),
         sources: data.sources || undefined,
         inChatAssessmentData: data.inChatAssessmentData || undefined,
+        diagramData: data.diagramData || undefined,
       }
 
       setMessages((prev) => [...prev, assistantMessage])
@@ -364,6 +403,7 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
         timestamp: new Date(),
         sources: data.sources || undefined,
         inChatAssessmentData: data.inChatAssessmentData || undefined,
+        diagramData: data.diagramData || undefined,
       }
 
       setMessages((prev) => [...prev, assistantMessage])
@@ -442,21 +482,78 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
     textarea.style.height = Math.min(scrollHeight, maxHeight) + "px"
   }
 
-  const handleMicClick = () => {
-    setIsRecording(true)
-    setTimeout(() => {
+  useEffect(() => {
+    if (typeof window === "undefined") return
+
+    const Recognition =
+      (window.SpeechRecognition as unknown as SpeechRecognitionConstructor | undefined) ||
+      (window.webkitSpeechRecognition as unknown as SpeechRecognitionConstructor | undefined)
+
+    if (!Recognition) return
+
+    const recognition = new Recognition()
+    recognition.continuous = false
+    recognition.interimResults = true
+    recognition.lang = "en-US"
+
+    recognition.onstart = () => {
+      setIsRecording(true)
+    }
+
+    recognition.onresult = (event) => {
+      const transcript = Array.from(event.results)
+        .map((res) => res[0]?.transcript ?? "")
+        .join("")
+        .trim()
+      if (transcript) {
+        setInput(transcript)
+      }
+    }
+
+    recognition.onerror = () => {
       setIsRecording(false)
-      setInput("When speech to text feature ?")
-    }, 5000)
+    }
+
+    recognition.onend = () => {
+      setIsRecording(false)
+    }
+
+    recognitionRef.current = recognition
+
+    return () => {
+      recognitionRef.current?.stop()
+      recognitionRef.current = null
+    }
+  }, [])
+
+  const handleMicClick = () => {
+    if (isTyping) return
+
+    if (!recognitionRef.current) {
+      setInput((prev) => prev || "Voice input is not supported in this browser.")
+      return
+    }
+
+    if (isRecording) {
+      recognitionRef.current.stop()
+      return
+    }
+
+    recognitionRef.current.start()
   }
 
   const handleCancelRecording = () => {
+    recognitionRef.current?.stop()
     setIsRecording(false)
   }
 
   const handleConfirmRecording = () => {
+    recognitionRef.current?.stop()
     setIsRecording(false)
-    setInput("When speech to text feature ?")
+    if (input.trim()) {
+      void sendMessage(input.trim())
+      setInput("")
+    }
   }
 
   const handleManualAssessment = useCallback(async () => {
@@ -546,6 +643,22 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
 
   return (<div className="h-full bg-white flex flex-col font-system overflow-hidden">
     <style dangerouslySetInnerHTML={{ __html: mathStyles }} />
+    {expandedDiagram && (
+      <div className="fixed inset-0 z-50 bg-white flex flex-col">
+        <div className="flex items-center justify-between px-6 py-3 border-b border-gray-100">
+          <span className="text-sm font-medium text-gray-700">Visual lesson</span>
+          <button
+            onClick={() => setExpandedDiagram(null)}
+            className="text-sm text-gray-400 hover:text-gray-700 transition-colors"
+          >
+            Close
+          </button>
+        </div>
+        <div className="flex-1">
+          <ExcalidrawCanvas data={expandedDiagram} />
+        </div>
+      </div>
+    )}
     {/* Chat Messages */}
     <div className="flex-1 overflow-hidden">
       <div className="h-full overflow-y-auto px-4 py-6 relative">
@@ -614,6 +727,21 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
                       >
                         {message.content}
                       </ReactMarkdown>
+                    </div>
+                  )}
+                  {message.diagramData && (
+                    <div className="mt-4 border border-gray-200 rounded-xl overflow-hidden">
+                      <div style={{ height: 420 }}>
+                        <ExcalidrawCanvas data={message.diagramData} />
+                      </div>
+                      <div className="border-t border-gray-100 px-4 py-2 flex justify-end bg-gray-50">
+                        <button
+                          onClick={() => setExpandedDiagram(message.diagramData!)}
+                          className="text-xs text-gray-400 hover:text-gray-700 transition-colors"
+                        >
+                          Expand
+                        </button>
+                      </div>
                     </div>
                   )}
                   {message.role === "assistant" && onAddToNotes && (

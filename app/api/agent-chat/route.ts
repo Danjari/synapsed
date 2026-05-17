@@ -95,6 +95,7 @@ export async function POST(request: NextRequest) {
       response: agentResponse.content,
       sources: agentResponse.sources,
       inChatAssessmentData: agentResponse.inChatAssessmentData,
+      diagramData: agentResponse.diagramData,
       conversationId: conversation?.id,
       threadId: agentThreadId,
     };

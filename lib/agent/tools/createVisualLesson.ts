@@ -1,0 +1,146 @@
+import { DynamicStructuredTool } from "@langchain/core/tools";
+import * as z from "zod";
+import Anthropic from "@anthropic-ai/sdk";
+import {
+  getExcalidrawPlannerPrompt,
+  getExcalidrawTeacherPrompt,
+} from "@/lib/agent/prompts";
+
+interface DiagramData {
+  elements?: unknown[];
+  appState?: Record<string, unknown>;
+}
+
+interface AnthropicContentBlock {
+  type?: string;
+  text?: string;
+  input?: {
+    elements?: string;
+  };
+  name?: string;
+}
+
+function parseExcalidrawDataFromContent(content: AnthropicContentBlock[]): DiagramData | null {
+  for (const block of content) {
+    if (block.type !== "mcp_tool_use" || block.name !== "create_view") {
+      continue;
+    }
+
+    const elementsRaw = block.input?.elements;
+    if (!elementsRaw) continue;
+
+    try {
+      const parsed = JSON.parse(elementsRaw) as Array<{ type?: string; x?: number; y?: number }>;
+      const elements = parsed.filter((el) => el.type !== "cameraUpdate");
+      const camera = parsed.find((el) => el.type === "cameraUpdate");
+
+      return {
+        elements,
+        appState: camera
+          ? {
+              scrollX: camera.x ? -camera.x : 0,
+              scrollY: camera.y ? -camera.y : 0,
+            }
+          : undefined,
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  return null;
+}
+
+export const createVisualLesson = new DynamicStructuredTool({
+  name: "createVisualLesson",
+  description:
+    "Create a full visual lesson as Excalidraw diagram data for a student question. Use when the learner asks for a visual explanation, diagram, or whiteboard style walkthrough.",
+  schema: z.object({
+    question: z.string().describe("The student question to visualize"),
+    learningGoal: z
+      .string()
+      .optional()
+      .describe("Short learning objective for this visual lesson"),
+  }),
+  func: async (input) => {
+    const { question, learningGoal } = input as {
+      question: string;
+      learningGoal?: string;
+    };
+
+    if (!process.env.ANTHROPIC_API_KEY) {
+      return {
+        content:
+          "Visual mode is currently unavailable because ANTHROPIC_API_KEY is missing on the server.",
+        diagramData: null,
+      };
+    }
+
+    const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+    try {
+      const planningPrompt = learningGoal
+        ? `${question}\n\nLearning goal: ${learningGoal}`
+        : question;
+
+      const planResponse = await client.messages.create({
+        model: "claude-haiku-4-5-20251001",
+        max_tokens: 700,
+        system: getExcalidrawPlannerPrompt(),
+        messages: [{ role: "user", content: planningPrompt }],
+      });
+
+      const teachingBrief =
+        planResponse.content.find((block) => block.type === "text")?.text ?? "";
+
+      const drawResponse = await client.beta.messages.create({
+        model: "claude-opus-4-6",
+        max_tokens: 4096,
+        system: getExcalidrawTeacherPrompt(),
+        messages: [
+          {
+            role: "user",
+            content: `${question}\n\n---\nTeaching brief (use this to guide your lesson):\n${teachingBrief}`,
+          },
+        ],
+        mcp_servers: [
+          {
+            type: "url",
+            url: "https://mcp.excalidraw.com",
+            name: "excalidraw",
+          },
+        ],
+        betas: ["mcp-client-2025-04-04"],
+      });
+
+      const blocks = drawResponse.content as AnthropicContentBlock[];
+      const diagramData = parseExcalidrawDataFromContent(blocks);
+      const text =
+        blocks
+          .filter((block) => block.type === "text" && typeof block.text === "string")
+          .map((block) => block.text)
+          .join("\n")
+          .trim() || "I created a visual lesson for this topic.";
+
+      if (!diagramData?.elements?.length) {
+        return {
+          content:
+            "I prepared a visual lesson plan, but I could not generate renderable Excalidraw elements this time.",
+          diagramData: null,
+        };
+      }
+
+      return {
+        content: text,
+        diagramData,
+      };
+    } catch (error) {
+      return {
+        content: `Failed to generate visual lesson: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
+        diagramData: null,
+      };
+    }
+  },
+});
