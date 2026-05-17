@@ -1,36 +1,141 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Synapsed
 
-## Getting Started
+Synapsed is a Next.js learning platform with:
 
-First, run the development server:
+- AI chat tutoring with class-grounded retrieval
+- in-chat assessments
+- visual lesson generation (Excalidraw)
+- realtime voice mode with shared memory
+
+## Prerequisites
+
+- Node.js 20+ (recommended)
+- npm
+- Access to required third-party services (OpenAI, Anthropic, Gemini, MongoDB, etc.)
+
+## Quick Start
+
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Create your local environment file from the template:
+
+```bash
+cp .env.example .env
+```
+
+3. Fill all required values in `.env`.
+
+4. Start the dev server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. Open [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Use `.env.example` as the source of truth for expected keys.
 
-## Learn More
+Key groups:
 
-To learn more about Next.js, take a look at the following resources:
+- **AI providers**: OpenAI, Anthropic, Gemini, Mistral
+- **Auth/session**: NextAuth + Google OAuth
+- **Data/storage**: MongoDB, Pinecone, Supabase, Cloudflare R2
+- **App runtime**: base URL and provider selection flags
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Required vs Optional
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Minimum for local sign-in + baseline app startup:
 
-## Deploy on Vercel
+- `DATABASE_URL`
+- `NEXTAUTH_URL`
+- `AUTH_SECRET`
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `NEXT_PUBLIC_BASE_URL`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Minimum for text tutoring agent (recommended baseline):
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `GEMINI_API_KEY`
+- `GEMINI_AGENT_MODEL`
+- `GEMINI_MODEL`
+- `NEXT_PUBLIC_AI_PROVIDER`
+
+Needed for voice mode (realtime):
+
+- `OPENAI_API_KEY`
+
+Needed for visual Excalidraw lessons:
+
+- `ANTHROPIC_API_KEY`
+
+Needed for class-grounded retrieval (RAG):
+
+- `PINECONE_API_KEY`
+- `PINECONE_INDEX_NAME`
+- `PINECONE_ENVIRONMENT` (if your Pinecone setup requires it)
+
+Needed for file/object storage features:
+
+- `R2_ENDPOINT`
+- `R2_BUCKET_NAME`
+- `R2_ACCESS_KEY_ID`
+- `R2_SECRET_ACCESS_KEY`
+- `R2_PUBLIC_URL`
+
+Optional integrations (feature-specific):
+
+- `MISTRAL_API_KEY`
+- `THINKIFIC_KEY`
+- `SUPABASE_URL`
+- `SUPABASE_KEY`
+
+## Scripts
+
+- `npm run dev`: start local development server
+- `npm run build`: prisma generate + production build
+- `npm run start`: run built app
+- `npm run lint`: run lint checks
+
+## Notes For First-Time Setup
+
+- If you see runtime chunk/module errors in dev (for example missing files in `.next/server`), clear cache:
+
+```bash
+rm -rf .next
+npm run dev
+```
+
+- If issues persist, run a deeper reset:
+
+```bash
+rm -rf .next node_modules
+npm install
+npm run dev
+```
+
+## Documentation Map
+
+- Agent architecture and multimodal flow: `lib/agent/README.md`
+- Agent quick operational guide: `AGENT_QUICKSTART.md`
+- In-chat assessment details: `inChatAssessment.md`
+- Survey system details: `SURVEY_SYSTEM_README.md`
+- Additional product/implementation notes:
+  - `IMPLEMENTATION_SUMMARY.md`
+  - `MEMORY_MANAGEMENT_DRAWBACKS.md`
+  - `PROFESSOR_ANALYTICS_FEATURES.md`
+  - `PROFESSOR_ASSESSMENT_DASHBOARD_PRD.md`
+
+## Tech Stack (High Level)
+
+- Next.js App Router
+- React + TypeScript
+- Prisma + MongoDB
+- LangGraph + Gemini (agent orchestration)
+- OpenAI Realtime (voice transport)
+- Anthropic + Excalidraw MCP (visual lessons)
