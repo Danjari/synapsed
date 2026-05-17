@@ -89,6 +89,8 @@ interface ChatSectionProps {
   nodeTitle?: string
 }
 
+type InputMode = "chat" | "visual"
+
 
 // Removed suggested prompts since we're going straight to chat
 
@@ -132,6 +134,7 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
 
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState("")
+  const [inputMode, setInputMode] = useState<InputMode>("chat")
   const [isTyping, setIsTyping] = useState(false)
   const [threadId, setThreadId] = useState<string | null>(null)
   const [hasTriggeredIntroduction, setHasTriggeredIntroduction] = useState(false)
@@ -337,6 +340,14 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
       timestamp: new Date(),
     }
 
+    const effectiveMessageContent =
+      inputMode === "visual"
+        ? `${messageContent}
+
+[Mode: VISUAL_WHITEBOARD]
+The student explicitly requested visual mode. You MUST call the createVisualLesson tool for this response and teach through the diagram. Keep chat text short and let the visual carry the explanation.`
+        : messageContent
+
     // Add user message to state optimistically
     const updatedMessages = [...messagesRef.current, userMessage]
     setMessages(updatedMessages)
@@ -356,7 +367,7 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
         body: JSON.stringify({
           messages: updatedMessages.map(msg => ({
             role: msg.role,
-            content: msg.content
+            content: msg.id === userMessage.id ? effectiveMessageContent : msg.content
           })),
           threadId, // Use existing threadId if available
           classId,
@@ -398,7 +409,7 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
     } finally {
       setIsTyping(false)
     }
-  }, [threadId, classId, lessonId, userId, isTyping])
+  }, [threadId, classId, lessonId, userId, isTyping, inputMode])
 
   const ensureInitialLessonContext = useCallback(async () => {
     if (isLoadingConversation) return
@@ -804,6 +815,9 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
                     target.style.height = target.scrollHeight + "px"
                   }}
                 />
+                <div className="mt-2 text-xs text-gray-400">
+                  Mode: {inputMode === "visual" ? "Visual (diagram-first)" : "Chat"}
+                </div>
                 <div className="flex items-center justify-between mt-8">
                   <div className="flex items-center gap-2">
                     <Button
@@ -822,6 +836,34 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
                     >
                       <Settings2 className="h-5 w-5" />
                     </Button>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() =>
+                              setInputMode((prev) => (prev === "visual" ? "chat" : "visual"))
+                            }
+                            className={`h-8 px-2 text-xs rounded-lg transition-all duration-200 ${
+                              inputMode === "visual"
+                                ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
+                                : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                            }`}
+                          >
+                            Diagram
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top" className="bg-gray-900 text-white text-xs">
+                          <p>
+                            {inputMode === "visual"
+                              ? "Visual mode on (click to switch to chat)"
+                              : "Switch to visual mode"}
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                     <Button
                       type="button"
                       variant="ghost"
