@@ -23,9 +23,15 @@ interface ToolContext {
   classId?: string;
   lessonId?: string;
   userId?: string;
+  threadId?: string;
 }
 
 let currentToolContext: ToolContext = {};
+
+// Per-thread diagram history: stores teaching briefs from each diagram drawn in the session
+// Used to give subsequent diagram calls visual continuity within the same conversation
+const diagramHistoryByThread = new Map<string, string[]>();
+const MAX_DIAGRAM_HISTORY = 3;
 
 // Source metadata type
 export interface SourceMetadata {
@@ -145,7 +151,7 @@ async function callTools(state: MessagesState) {
         });
       }
       
-      // Inject context into tool call args for createInChatAssessment
+      // Inject context into tool call args
       let toolCallInput = toolCall.args || {};
       if (toolCall.name === 'createInChatAssessment') {
         toolCallInput = {
@@ -155,30 +161,39 @@ async function callTools(state: MessagesState) {
           lessonId: currentToolContext.lessonId,
         };
       }
-      
+      if (toolCall.name === 'createVisualLesson') {
+        // Inject diagram history so the drawer maintains visual continuity across diagrams
+        const threadId = currentToolContext.threadId || '';
+        const history = diagramHistoryByThread.get(threadId) || [];
+        if (history.length > 0) {
+          toolCallInput = {
+            ...toolCallInput,
+            previousDiagramSummaries: history,
+          };
+        }
+      }
+
       const result = await tool.invoke(toolCallInput);
-      
+
       // Handle different return types
       let content: string;
       const toolCallId = toolCall.id || '';
-      
+
       if (typeof result === 'string') {
         content = result;
-        // No sources for string results
         toolSourcesMap.delete(toolCallId);
       } else if (result && typeof result === 'object' && result !== null && 'content' in result) {
         // Extract sources if present and store them separately
         const hasSources = 'sources' in result;
         const sourcesIsArray = hasSources && Array.isArray(result.sources);
-        
+
         if (hasSources && sourcesIsArray) {
           const sourcesMetadata = result.sources as SourceMetadata[];
           toolSourcesMap.set(toolCallId, sourcesMetadata);
         } else {
-          // No sources, clear any previous entry
           toolSourcesMap.delete(toolCallId);
         }
-        
+
         // Extract in-chat assessment data if present (from createInChatAssessment tool)
         if ('inChatAssessmentData' in result && result.inChatAssessmentData) {
           toolInChatAssessmentMap.set(toolCallId, result.inChatAssessmentData);
@@ -192,7 +207,16 @@ async function callTools(state: MessagesState) {
         } else {
           toolDiagramMap.delete(toolCallId);
         }
-        
+
+        // Store diagram manifest for visual continuity in subsequent diagrams
+        if (toolCall.name === 'createVisualLesson' && 'diagramManifest' in result && result.diagramManifest) {
+          const threadId = currentToolContext.threadId || '';
+          const history = diagramHistoryByThread.get(threadId) || [];
+          history.push(result.diagramManifest as string);
+          if (history.length > MAX_DIAGRAM_HISTORY) history.shift();
+          diagramHistoryByThread.set(threadId, history);
+        }
+
         // Give LLM ONLY the content string - clean, natural text without JSON structure
         content = result.content as string;
       } else {
@@ -354,8 +378,9 @@ export async function invokeAgent(userMessage: string, threadId?: string, classI
     currentToolContext = {
       conversationId,
       classId,
-      lessonId: classId, // Using classId as lessonId fallback
+      lessonId: classId,
       userId,
+      threadId,
     };
 
     // Context Injection

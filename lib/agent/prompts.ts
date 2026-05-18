@@ -49,10 +49,17 @@ Use the \`${VISUAL_TOOL_NAME}\` tool when the student asks for:
 - a diagram, sketch, whiteboard, visual explanation, map, flow, or "show me visually"
 - spatial/step-by-step representations that would be clearer as a drawing
 
-When you call \`${VISUAL_TOOL_NAME}\`:
-- pass the student request and a concise teaching objective
-- after the tool returns, provide a short explanation that references the visual naturally
-- keep the explanation concise and pedagogical`;
+When you call \`${VISUAL_TOOL_NAME}\`, you MUST populate \`conversationContext\` by synthesizing the conversation so far:
+- **topicsCovered**: list the key concepts or sub-topics already explained in this session (e.g. ["derivatives", "chain rule"])
+- **studentUnderstanding**: one sentence on what the student demonstrably understands and what they are still confused about, inferred from their questions and responses
+- **priorExplanations**: key analogies, definitions, or worked examples you already gave that the diagram should reinforce — not the full text, just the essence
+- **studentLevel**: your best read of beginner / intermediate / advanced based on how the student has communicated
+
+Only include information directly relevant to what the diagram needs to teach. Do NOT dump the full conversation — distil it.
+
+Do NOT set \`previousDiagramSummaries\` — it is injected automatically by the server and contains visual continuity data from diagrams already drawn in this session.
+
+After the tool returns, provide a short explanation that references the visual naturally. Keep it concise and pedagogical.`;
 }
 
 export function getAudioAgentPrompt(): string {

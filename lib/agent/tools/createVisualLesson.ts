@@ -61,11 +61,47 @@ export const createVisualLesson = new DynamicStructuredTool({
       .string()
       .optional()
       .describe("Short learning objective for this visual lesson"),
+    conversationContext: z
+      .object({
+        topicsCovered: z
+          .array(z.string())
+          .optional()
+          .describe("Key topics or concepts already discussed in the conversation"),
+        studentUnderstanding: z
+          .string()
+          .optional()
+          .describe("Brief assessment of what the student seems to understand or struggle with"),
+        priorExplanations: z
+          .string()
+          .optional()
+          .describe("Key explanations or analogies already given that the diagram should reinforce"),
+        studentLevel: z
+          .enum(["beginner", "intermediate", "advanced"])
+          .optional()
+          .describe("Inferred student level based on the conversation"),
+      })
+      .optional()
+      .describe(
+        "Distilled context from the conversation to guide the diagram's pedagogical focus. Only include what is directly relevant to the visual lesson — do not dump the full conversation."
+      ),
+    previousDiagramSummaries: z
+      .array(z.string())
+      .optional()
+      .describe(
+        "System-provided. Teaching briefs from previous diagrams drawn in this conversation thread. Do not populate — injected automatically by the server to maintain visual continuity."
+      ),
   }),
   func: async (input) => {
-    const { question, learningGoal } = input as {
+    const { question, learningGoal, conversationContext, previousDiagramSummaries } = input as {
       question: string;
       learningGoal?: string;
+      conversationContext?: {
+        topicsCovered?: string[];
+        studentUnderstanding?: string;
+        priorExplanations?: string;
+        studentLevel?: "beginner" | "intermediate" | "advanced";
+      };
+      previousDiagramSummaries?: string[];
     };
 
     if (!process.env.ANTHROPIC_API_KEY) {
@@ -79,8 +115,27 @@ export const createVisualLesson = new DynamicStructuredTool({
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
     try {
-      const planningPrompt = learningGoal
-        ? `${question}\n\nLearning goal: ${learningGoal}`
+      const contextLines: string[] = [];
+      if (learningGoal) contextLines.push(`Learning goal: ${learningGoal}`);
+      if (conversationContext) {
+        if (conversationContext.studentLevel)
+          contextLines.push(`Student level: ${conversationContext.studentLevel}`);
+        if (conversationContext.topicsCovered?.length)
+          contextLines.push(`Topics already covered: ${conversationContext.topicsCovered.join(", ")}`);
+        if (conversationContext.studentUnderstanding)
+          contextLines.push(`Student understanding: ${conversationContext.studentUnderstanding}`);
+        if (conversationContext.priorExplanations)
+          contextLines.push(`Prior explanations to reinforce: ${conversationContext.priorExplanations}`);
+      }
+      if (previousDiagramSummaries?.length) {
+        contextLines.push(
+          `\nPrevious diagrams already drawn in this conversation (maintain the same visual style, color conventions, and build on these rather than repeating them):\n` +
+            previousDiagramSummaries.map((s, i) => `  Diagram ${i + 1}: ${s}`).join("\n")
+        );
+      }
+
+      const planningPrompt = contextLines.length
+        ? `${question}\n\n${contextLines.join("\n")}`
         : question;
 
       const planResponse = await client.messages.create({
@@ -110,7 +165,13 @@ export const createVisualLesson = new DynamicStructuredTool({
             name: "excalidraw",
           },
         ],
-        betas: ["mcp-client-2025-04-04"],
+        tools: [
+          {
+            type: "mcp_toolset",
+            mcp_server_name: "excalidraw",
+          },
+        ],
+        betas: ["mcp-client-2025-11-20"],
       });
 
       const blocks = drawResponse.content as AnthropicContentBlock[];
@@ -133,6 +194,7 @@ export const createVisualLesson = new DynamicStructuredTool({
       return {
         content: text,
         diagramData,
+        diagramManifest: teachingBrief,
       };
     } catch (error) {
       return {
