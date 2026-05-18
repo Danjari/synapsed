@@ -112,7 +112,14 @@ async function callLlm(state: MessagesState) {
     new SystemMessage(getAgentSystemPrompt()),
     ...history,
   ]);
-  
+
+  const toolCalls = (result as AIMessage).tool_calls ?? [];
+  if (toolCalls.length > 0) {
+    console.log("[simple-agent] Gemini requested tools:", toolCalls.map((tc) => tc.name).join(", "));
+  } else {
+    console.log("[simple-agent] Gemini responded without tool calls (direct answer)");
+  }
+
   return { messages: [result] };
 }
 
@@ -171,6 +178,11 @@ async function callTools(state: MessagesState) {
             previousDiagramSummaries: history,
           };
         }
+        console.log("[simple-agent] createVisualLesson tool call dispatched", {
+          question: toolCallInput.question,
+          hasConversationContext: !!toolCallInput.conversationContext,
+          previousDiagramCount: history.length,
+        });
       }
 
       const result = await tool.invoke(toolCallInput);

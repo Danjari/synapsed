@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
 
     // Support both old format (message) and new format (messages array)
-    const { message, messages, userId, classId, lessonId, threadId } = body;
+    const { message, messages, displayMessage, userId, classId, lessonId, threadId } = body;
 
     // If using the new format with messages array, extract the last user message
     let userMessage: string;
@@ -56,11 +56,12 @@ export async function POST(request: NextRequest) {
       // This ensures checkpointer and Prisma are in sync
       if (conversation) {
         try {
-          // Save user message AFTER successful agent invocation
+          // Save user message AFTER successful agent invocation.
+          // Use displayMessage (clean text without any injected mode prompts) when available.
           await ConversationService.saveMessage({
             conversationId: conversation.id,
             role: 'USER',
-            content: userMessage,
+            content: (displayMessage as string | undefined) || userMessage,
           });
 
           // Save assistant message

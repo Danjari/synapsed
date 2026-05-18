@@ -104,7 +104,16 @@ export const createVisualLesson = new DynamicStructuredTool({
       previousDiagramSummaries?: string[];
     };
 
+    console.log("[createVisualLesson] invoked", {
+      question,
+      learningGoal,
+      studentLevel: conversationContext?.studentLevel,
+      topicsCovered: conversationContext?.topicsCovered,
+      previousDiagramCount: previousDiagramSummaries?.length ?? 0,
+    });
+
     if (!process.env.ANTHROPIC_API_KEY) {
+      console.error("[createVisualLesson] ANTHROPIC_API_KEY is missing");
       return {
         content:
           "Visual mode is currently unavailable because ANTHROPIC_API_KEY is missing on the server.",
@@ -138,6 +147,7 @@ export const createVisualLesson = new DynamicStructuredTool({
         ? `${question}\n\n${contextLines.join("\n")}`
         : question;
 
+      console.log("[createVisualLesson] step 1 — calling Haiku planner");
       const planResponse = await client.messages.create({
         model: "claude-haiku-4-5-20251001",
         max_tokens: 700,
@@ -147,10 +157,12 @@ export const createVisualLesson = new DynamicStructuredTool({
 
       const teachingBrief =
         planResponse.content.find((block) => block.type === "text")?.text ?? "";
+      console.log("[createVisualLesson] Haiku planner done — brief length:", teachingBrief.length, "chars");
 
+      console.log("[createVisualLesson] step 2 — calling Opus drawer via Excalidraw MCP");
       const drawResponse = await client.beta.messages.create({
         model: "claude-opus-4-6",
-        max_tokens: 4096,
+        max_tokens: 16000,
         system: getExcalidrawTeacherPrompt(),
         messages: [
           {
@@ -175,7 +187,27 @@ export const createVisualLesson = new DynamicStructuredTool({
       });
 
       const blocks = drawResponse.content as AnthropicContentBlock[];
+      console.log("[createVisualLesson] Opus response — stop_reason:", drawResponse.stop_reason,
+        "| blocks:", blocks.map((b) => `${b.type}${b.name ? `(${b.name})` : ""}`).join(", "));
+
+      const allMcpToolUseBlocks = blocks.filter((b) => b.type === "mcp_tool_use");
+      console.log("[createVisualLesson] all mcp_tool_use blocks:", allMcpToolUseBlocks.map((b) => ({
+        name: b.name,
+        elementsLength: b.input?.elements?.length ?? 0,
+      })));
+
+      const mcpBlock = blocks.find((b) => b.type === "mcp_tool_use" && b.name === "create_view");
+      if (!mcpBlock) {
+        console.warn("[createVisualLesson] no mcp_tool_use/create_view block found — Excalidraw MCP was not called");
+      } else {
+        const elementsRaw = mcpBlock.input?.elements;
+        console.log("[createVisualLesson] first create_view block — raw elements length:", elementsRaw?.length ?? 0, "chars",
+          "| input keys:", Object.keys(mcpBlock.input ?? {}).join(", "));
+      }
+
       const diagramData = parseExcalidrawDataFromContent(blocks);
+      console.log("[createVisualLesson] parsed diagramData — elements:", diagramData?.elements?.length ?? 0);
+
       const text =
         blocks
           .filter((block) => block.type === "text" && typeof block.text === "string")
@@ -184,6 +216,7 @@ export const createVisualLesson = new DynamicStructuredTool({
           .trim() || "I created a visual lesson for this topic.";
 
       if (!diagramData?.elements?.length) {
+        console.warn("[createVisualLesson] no renderable elements — returning fallback content");
         return {
           content:
             "I prepared a visual lesson plan, but I could not generate renderable Excalidraw elements this time.",
@@ -191,12 +224,14 @@ export const createVisualLesson = new DynamicStructuredTool({
         };
       }
 
+      console.log("[createVisualLesson] success — returning diagramData with", diagramData.elements?.length, "elements");
       return {
         content: text,
         diagramData,
         diagramManifest: teachingBrief,
       };
     } catch (error) {
+      console.error("[createVisualLesson] caught error:", error instanceof Error ? error.message : error);
       return {
         content: `Failed to generate visual lesson: ${
           error instanceof Error ? error.message : "Unknown error"

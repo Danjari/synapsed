@@ -204,13 +204,14 @@ export default function ChatPage({ onAddToNotes, classId, lessonId, userId: prop
             sources?: SourceMetadata[]
           }) => ({
             id: msg.id,
-            content: msg.content,
+            content: msg.role === 'USER'
+              ? msg.content.replace(/\n\n\[Mode: VISUAL_WHITEBOARD\][\s\S]*$/, '').trim()
+              : msg.content,
             role: msg.role.toLowerCase() as 'user' | 'assistant',
             timestamp: new Date(msg.timestamp),
             sources: msg.sources && Array.isArray(msg.sources) ? msg.sources : undefined,
           }))
           .filter((msg: Message) => {
-            // Filter out user messages that are system introduction prompts
             if (msg.role === 'user' && isSystemIntroductionMessage(msg.content)) {
               return false
             }
@@ -369,6 +370,7 @@ The student explicitly requested visual mode. You MUST call the createVisualLess
             role: msg.role,
             content: msg.id === userMessage.id ? effectiveMessageContent : msg.content
           })),
+          displayMessage: messageContent,
           threadId, // Use existing threadId if available
           classId,
           lessonId,
