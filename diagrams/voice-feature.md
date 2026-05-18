@@ -116,47 +116,64 @@ stateDiagram-v2
 
 ---
 
-## Architecture overview
+## Full pipeline: from speech to audio response
 
 ```mermaid
 flowchart TD
-    STUDENT([Student speaks])
+    START([Student speaks])
+    START --> MIC[Browser captures audio\nvia WebRTC mic track]
+    MIC --> OAI
 
-    STUDENT -->|audio| A1[Microphone captured\nby browser]
-    A1 -->|WebRTC audio track| A2[OpenAI Realtime\ngpt-realtime-2\nVAD + transcription]
+    subgraph OAI [OpenAI Realtime — gpt-realtime-2]
+        O1[Semantic VAD\ndetects speech boundaries]
+        O2{Still speaking\nor interrupted?}
+        O3[Barge-in\nresponse.cancel sent via DataChannel\ncurrent audio stopped]
+        O4[Turn complete\ntranscript extracted]
+        O1 --> O2
+        O2 -->|Student interrupted| O3
+        O3 --> O1
+        O2 -->|Speech ended| O4
+    end
 
-    A2 -->|speech detected| B1{Barge-in?}
-    B1 -->|Yes — student interrupted| B2[DataChannel: response.cancel\nstop current audio]
-    B2 --> A2
-    B1 -->|No — turn complete| B3[DataChannel: conversation.item.done\ntranscript ready]
+    O4 --> QUEUE[VoiceMode queues the turn\nturnId = turn-timestamp-counter\nturns processed in order]
+    QUEUE -->|POST transcript + turnId + threadId| VT[POST /api/voice-turn]
 
-    B3 --> C1[VoiceMode queues turn\nturnId = turn-timestamp-counter]
-    C1 -->|POST transcript + turnId\nthreadId · classId · userId| C2[POST /api/voice-turn]
+    VT --> CHK{Already cached?\nvoice-turn-store}
+    CHK -->|Yes — duplicate request| HIT[Return cached response\nTTL: 5 minutes]
+    CHK -->|No| AG
 
-    C2 --> D1{Cached?\nvoice-turn-store}
-    D1 -->|Hit — same turnId retry| D2[Return cached payload\nTTL: 5 min]
-    D1 -->|Miss| D3[ConversationService\nget or create conversation]
+    subgraph AG [simple-agent — same agent as text chat]
+        A1[Load full conversation history\nfrom MongoDB thread memory]
+        A2[Gemini processes the transcript\nwith full context]
+        A3{Tool needed?}
+        A4[Text response ready]
+        A5[createVisualLesson\nHaiku plans · Opus draws via MCP]
+        A1 --> A2 --> A3
+        A3 -->|No| A4
+        A3 -->|Visual requested| A5
+        A5 --> A4
+    end
 
-    D3 --> E1[simple-agent — LangGraph\nGemini + full thread memory\nMongoDB checkpointer]
+    A4 --> PERSIST[Save USER + ASSISTANT messages\nto Prisma]
+    PERSIST --> CACHE[Cache response in\nvoice-turn-store]
+    CACHE --> BACK[Response back to VoiceMode\nassistantText + diagramData]
+    HIT --> BACK
 
-    E1 -->|needs visual| E2[createVisualLesson\nHaiku planner → Opus + Excalidraw MCP]
-    E1 -->|text response| E3[AgentResponse\ncontent · diagramData · sources]
-    E2 --> E3
+    BACK --> SPEAK[speakAssistantText\nresponse.create sent via DataChannel]
+    SPEAK --> SYNTH[OpenAI Realtime\nsynthesizes speech from assistantText]
+    SYNTH --> END([Student hears the response])
 
-    E3 --> F1[Save to Prisma\nUSER message + ASSISTANT message]
-    F1 --> F2[Cache response\nvoice-turn-store]
-    F2 -->|assistantText + diagramData| G1[VoiceMode receives response]
+    BACK -->|diagramData present| CANVAS[ExcalidrawCanvas rendered\nin chat UI]
 
-    G1 -->|diagramData present| G2[Render ExcalidrawCanvas\nin chat UI]
-    G1 --> G3[DataChannel: response.create\nSpeak: assistantText]
+    VT -. "get or create\nconversation thread" .-> DB[(ConversationService\nMongoDB + Prisma)]
+    DB -. "thread loaded into agent" .-> A1
 
-    G3 -->|audio synthesis| G4[OpenAI Realtime\ngenerates speech]
-    G4 -->|WebRTC audio track| STUDENT2([🎓 Student hears response])
-
-    style STUDENT fill:#d1fae5,stroke:#059669,color:#065f46
-    style STUDENT2 fill:#d1fae5,stroke:#059669,color:#065f46
-    style E2 fill:#ede9fe,stroke:#7c3aed
-    style G2 fill:#ede9fe,stroke:#7c3aed
-    style D1 fill:#fef9c3,stroke:#ca8a04
-    style F2 fill:#fef9c3,stroke:#ca8a04
+    style START fill:#d1fae5,stroke:#059669,color:#065f46
+    style END fill:#d1fae5,stroke:#059669,color:#065f46
+    style OAI fill:#fef9c3,stroke:#ca8a04
+    style AG fill:#eff6ff,stroke:#3b82f6
+    style CHK fill:#ffffff,stroke:#9ca3af
+    style CANVAS fill:#ede9fe,stroke:#7c3aed
+    style DB fill:#f3f4f6,stroke:#9ca3af
+    style HIT fill:#f3f4f6,stroke:#9ca3af
 ```

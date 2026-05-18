@@ -371,6 +371,26 @@ function extractSourcesFromMessages(messages: BaseMessage[]): SourceMetadata[] {
   return sources;
 }
 
+// Clears a corrupted checkpoint from MongoDB so the thread can start fresh.
+// Needed when old checkpoints were saved without the `pending_sends` field
+// introduced in a newer version of @langchain/langgraph.
+async function clearCorruptedCheckpoint(threadId: string): Promise<void> {
+  try {
+    const db = mongoClient.db();
+    await Promise.all([
+      db.collection('checkpoints').deleteMany({ thread_id: threadId }),
+      db.collection('checkpoint_writes').deleteMany({ thread_id: threadId }),
+    ]);
+    console.warn('[invokeAgent] Cleared corrupted checkpoint for thread:', threadId);
+  } catch (err) {
+    console.error('[invokeAgent] Failed to clear corrupted checkpoint:', err);
+  }
+}
+
+function isCheckpointFormatError(error: unknown): boolean {
+  return error instanceof Error && error.message.includes('pending_sends is not iterable');
+}
+
 // Helper function to invoke the agent with a simple message
 export async function invokeAgent(userMessage: string, threadId?: string, classId?: string, userId?: string, conversationId?: string): Promise<AgentResponse> {
   try {
@@ -480,6 +500,15 @@ export async function invokeAgent(userMessage: string, threadId?: string, classI
 
     return response;
   } catch (error) {
+    // Corrupted checkpoint: old MongoDB documents lack `pending_sends` introduced in
+    // a newer @langchain/langgraph version. Clear the bad checkpoint and retry once
+    // with the same threadId so the thread continues cleanly (history lost for that
+    // thread but the user gets a response instead of a 500).
+    if (isCheckpointFormatError(error) && threadId) {
+      console.warn('[invokeAgent] Checkpoint format error detected — clearing and retrying thread:', threadId);
+      await clearCorruptedCheckpoint(threadId);
+      return invokeAgent(userMessage, threadId, classId, userId, conversationId);
+    }
     console.error('Error in invokeAgent:', error);
     throw error;
   }

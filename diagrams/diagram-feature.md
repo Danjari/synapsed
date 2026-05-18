@@ -69,25 +69,52 @@ sequenceDiagram
 
 ---
 
-## Context orchestration layer
+## Full pipeline: from user query to Excalidraw canvas
 
 ```mermaid
 flowchart TD
-    A([Student request]) --> B[Gemini<br/>full thread memory via MongoDB]
+    START([Student asks a question])
+    START --> TRIGGER[Diagram mode active\nVisual instruction appended to message]
+    TRIGGER -->|POST /api/agent-chat| API[API route\nget or create conversation thread]
 
-    B -->|synthesizes| C[conversationContext\ntopicsCovered, studentUnderstanding,\npriorExplanations, studentLevel]
-    D[(diagramHistoryByThread\nper-thread teaching briefs)] -->|server-injected| E[previousDiagramSummaries]
+    API --> GEMINI
 
-    C --> F[createVisualLesson]
-    E --> F
+    subgraph GEMINI [Gemini — Orchestrator]
+        G1[Load full conversation history\nfrom MongoDB thread memory]
+        G2[Synthesize context\ntopics covered · student level · gaps]
+        G3[Enrich with prior diagram history\nfor visual style continuity]
+        G4[Decide: call createVisualLesson\npass question + enriched context]
+        G1 --> G2 --> G3 --> G4
+    end
 
-    F --> G[Claude Haiku — Planner\nbuilds layout-aware teaching brief]
-    G --> H[Claude Opus + Excalidraw MCP\ndraws the whiteboard]
-    H --> I([diagramData → canvas])
+    G4 --> TOOL
 
-    H -->|teachingBrief stored as manifest| D
+    subgraph TOOL [createVisualLesson — diagram pipeline]
+        P1[Haiku — Planner\nReads question + full context]
+        P2[Teaching brief\nlayout · steps · colors · canvas size]
+        P1 --> P2
 
-    style D fill:#fef9c3,stroke:#ca8a04
-    style C fill:#dbeafe,stroke:#2563eb
-    style E fill:#fef9c3,stroke:#ca8a04
+        P2 --> D1[Opus 4.6 — Drawer\nReceives question + teaching brief]
+        D1 <-->|MCP protocol| D2[Excalidraw MCP Server\ncreate_view tool call]
+        D2 --> D3{Elements\nrenderable?}
+        D3 -->|No — retry with\nadjusted instructions| D1
+        D3 -->|Yes| D4[Parse and clean elements\nextract scroll position]
+    end
+
+    D4 -->|content + diagramData| BACK[Result returned to Gemini]
+    BACK --> RESP[Gemini writes final response\nshort explanation referencing the diagram]
+
+    RESP --> CANVAS[Render ExcalidrawCanvas]
+    CANVAS --> END([Student sees the interactive whiteboard])
+
+    API -. "conversation thread loaded" .-> G1
+    D4 -. "teaching brief stored\nfor next diagram's continuity" .-> G3
+    RESP -. "USER + ASSISTANT messages\nsaved to Prisma" .-> DB[(Message history\nPrisma DB)]
+
+    style START fill:#d1fae5,stroke:#059669,color:#065f46
+    style END fill:#d1fae5,stroke:#059669,color:#065f46
+    style GEMINI fill:#fef9c3,stroke:#ca8a04
+    style TOOL fill:#eff6ff,stroke:#3b82f6
+    style D3 fill:#ffffff,stroke:#3b82f6
+    style DB fill:#f3f4f6,stroke:#9ca3af
 ```
