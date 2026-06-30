@@ -12,6 +12,7 @@ from google import genai
 from google.genai import types
 
 from lib.personalization_prompt import build_personalization_prompt, load_generation_spec
+from lib.rate_limit import call_with_rate_limit_retry
 
 STUDY_ROOT = Path(__file__).resolve().parent.parent
 
@@ -111,16 +112,19 @@ def generate_pathway_nodes(
     prompt = build_prompt(syllabus, syllabus_context, answers)
     model_name = model or get_gemini_model()
 
-    response = client.models.generate_content(
-        model=model_name,
-        contents=prompt,
-        config=types.GenerateContentConfig(
-            tools=[types.Tool(function_declarations=[_pathway_function_declaration()])],
-        ),
-    )
+    def _call() -> Any:
+        response = client.models.generate_content(
+            model=model_name,
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                tools=[types.Tool(function_declarations=[_pathway_function_declaration()])],
+            ),
+        )
+        if not response.function_calls:
+            raise RuntimeError("Gemini did not return a function call for pathway generation")
+        return response
 
-    if not response.function_calls:
-        raise RuntimeError("Gemini did not return a function call for pathway generation")
+    response = call_with_rate_limit_retry(_call, label=f"Gemini pathway ({model_name})")
 
     args = response.function_calls[0].args
     nodes = args.get("nodes") if isinstance(args, dict) else None
@@ -145,6 +149,7 @@ def generate_pathway_with_retry(
     retries: int = 2,
     delay_sec: float = 2.0,
 ) -> list[dict[str, Any]]:
+    """Outer retry for validation errors; rate limits handled inside generate_pathway_nodes."""
     last_error: Exception | None = None
     for attempt in range(retries + 1):
         try:

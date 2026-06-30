@@ -10,6 +10,7 @@ from typing import Any
 from dotenv import load_dotenv
 
 from lib.personalization_prompt import SURVEY_QUESTIONS, format_block_catalog, load_generation_spec
+from lib.rate_limit import api_delay_sec, call_with_rate_limit_retry
 from lib.research_metrics import block_multiset, block_sequence
 
 STUDY_ROOT = Path(__file__).resolve().parent.parent
@@ -130,52 +131,41 @@ Score each dimension {scale['min']}-{scale['max']} with a one-sentence justifica
 Set is_structural_not_cosmetic to true ONLY if block coverage/order reflects the profile meaningfully."""
 
     model_name = model or get_claude_judge_model()
-    last_error: Exception | None = None
 
-    for attempt in range(3):
-        try:
-            response = client.messages.create(
-                model=model_name,
-                max_tokens=2048,
-                messages=[{"role": "user", "content": prompt}],
-                tools=[JUDGE_TOOL],
-                tool_choice={"type": "tool", "name": "score_pathway_personalization"},
-            )
-        except Exception as exc:
-            last_error = exc
-            time.sleep(2.0 * (attempt + 1))
-            continue
-
+    def _call() -> Any:
+        response = client.messages.create(
+            model=model_name,
+            max_tokens=2048,
+            messages=[{"role": "user", "content": prompt}],
+            tools=[JUDGE_TOOL],
+            tool_choice={"type": "tool", "name": "score_pathway_personalization"},
+        )
         tool_block = next(
             (block for block in response.content if block.type == "tool_use"),
             None,
         )
         if tool_block is None:
-            last_error = RuntimeError(f"Claude judge returned no tool use for {profile_id}")
-            time.sleep(2.0 * (attempt + 1))
-            continue
-
+            raise RuntimeError(f"Claude judge returned no tool use for {profile_id}")
         result = tool_block.input
         if not isinstance(result, dict):
-            last_error = RuntimeError("Invalid judge response")
-            time.sleep(2.0 * (attempt + 1))
-            continue
+            raise RuntimeError("Invalid judge response")
+        return result
 
-        scores = result.get("scores", [])
-        numeric = [s["score"] for s in scores if isinstance(s.get("score"), (int, float))]
-        mean_score = sum(numeric) / len(numeric) if numeric else 0.0
+    result = call_with_rate_limit_retry(_call, label=f"Claude judge ({profile_id})")
 
-        return {
-            "profileId": profile_id,
-            "judge_model": model_name,
-            "judge_provider": "anthropic",
-            "scores": scores,
-            "mean_score": round(mean_score, 3),
-            "overall_comment": result.get("overall_comment", ""),
-            "is_structural_not_cosmetic": result.get("is_structural_not_cosmetic", False),
-        }
+    scores = result.get("scores", [])
+    numeric = [s["score"] for s in scores if isinstance(s.get("score"), (int, float))]
+    mean_score = sum(numeric) / len(numeric) if numeric else 0.0
 
-    raise last_error or RuntimeError(f"Claude judge failed for {profile_id}")
+    return {
+        "profileId": profile_id,
+        "judge_model": model_name,
+        "judge_provider": "anthropic",
+        "scores": scores,
+        "mean_score": round(mean_score, 3),
+        "overall_comment": result.get("overall_comment", ""),
+        "is_structural_not_cosmetic": result.get("is_structural_not_cosmetic", False),
+    }
 
 
 def judge_all_profiles(
@@ -185,7 +175,7 @@ def judge_all_profiles(
     syllabus: dict[str, Any],
     *,
     profile_ids: list[str] | None = None,
-    delay_sec: float = 1.0,
+    delay_sec: float | None = None,
 ) -> list[dict[str, Any]]:
     results: list[dict[str, Any]] = []
     selected = profiles
@@ -208,7 +198,7 @@ def judge_all_profiles(
                 syllabus,
             )
         )
-        time.sleep(delay_sec)
+        time.sleep(delay_sec if delay_sec is not None else api_delay_sec())
     return results
 
 
