@@ -1,5 +1,7 @@
 {
   "courseTitle": "AI Literacy — Foundations, Generative AI & Prompting",
+  "scheduleWeeks": 2,
+  "estimatedTotalMinutes": 600,
   "sources": [
     { "id": "ai4e", "title": "AI For Everyone", "hours": 6, "instructor": "Andrew Ng" },
     { "id": "genai4e", "title": "Generative AI for Everyone", "hours": 5, "instructor": "Andrew Ng" },
@@ -14,201 +16,293 @@
     "Apply AI transformation strategies at the organizational level",
     "Evaluate ethical risks including bias, hallucinations, and workforce impact"
   ],
-  "modules": [
+  "blocks": [
     {
-      "id": "mod_01",
-      "week": 1,
-      "title": "AI Foundations: ML, Data & Terminology",
+      "id": "block_01",
+      "calendarWeek": 1,
+      "title": "Classic AI Basics",
       "sourceCourse": "AI For Everyone",
       "sourceRef": "Week 1",
-      "estimatedMinutes": 60,
+      "estimatedMinutes": 55,
       "dedupeKey": "ai_foundations",
+      "pathwayNote": "Core block — low prior-knowledge profiles start here in full",
       "objectives": [
         "Define AI and machine learning",
-        "Explain role of data",
+        "Explain the role of data",
         "Distinguish what AI can and cannot do"
       ],
       "lessons": [
-        "Welcome",
-        "What is AI?",
-        "Machine Learning",
-        "What data is",
-        "The terminology of AI",
-        "What makes an AI company?",
-        "What AI can and cannot do",
-        "Non-technical explanation of Deep Learning (optional)",
-        "Quiz: What is AI?"
+        { "title": "Welcome", "source": "ai4e", "sourceRef": "Week 1" },
+        { "title": "What is AI?", "source": "ai4e", "sourceRef": "Week 1" },
+        { "title": "Machine Learning", "source": "ai4e", "sourceRef": "Week 1" },
+        { "title": "What is data?", "source": "ai4e", "sourceRef": "Week 1" },
+        { "title": "The terminology of AI", "source": "ai4e", "sourceRef": "Week 1" },
+        { "title": "What AI can and cannot do", "source": "ai4e", "sourceRef": "Week 1" },
+        { "title": "Quiz: What is AI?", "source": "ai4e", "sourceRef": "Week 1", "type": "assessment" }
+      ],
+      "skippedLessons": [
+        {
+          "title": "What makes an AI company?",
+          "source": "ai4e",
+          "sourceRef": "Week 1",
+          "reason": "Org strategy — covered in Block 5a (Business & Workplace)"
+        },
+        {
+          "title": "Non-technical explanation of Deep Learning (optional)",
+          "source": "ai4e",
+          "sourceRef": "Week 1",
+          "reason": "Overlap with Block 2 (Generative AI core)"
+        }
       ]
     },
     {
-      "id": "mod_02",
-      "week": 1,
-      "title": "Generative AI: Concepts & Real-World Impact",
+      "id": "block_02",
+      "calendarWeek": 1,
+      "title": "Generative AI Core",
       "sourceCourse": "Generative AI for Everyone",
       "sourceRef": "Module 1",
       "estimatedMinutes": 90,
       "dedupeKey": "gen_ai_intro",
+      "pathwayNote": "Profiles familiar with classic AI may compress Block 1 and start here",
       "objectives": [
         "Define generative AI and LLMs",
         "Explain capabilities and limitations",
         "Identify real-world use cases"
       ],
       "lessons": [
-        "What is generative AI?",
-        "How generative AI works",
-        "What generative AI can and cannot do",
-        "Generative AI use cases",
-        "Generative AI and the real world",
-        "Generative AI and society",
-        "Generative AI and you",
-        "Quiz"
+        { "title": "What is generative AI?", "source": "genai4e", "sourceRef": "Module 1" },
+        { "title": "How generative AI works", "source": "genai4e", "sourceRef": "Module 1" },
+        { "title": "What generative AI can and cannot do", "source": "genai4e", "sourceRef": "Module 1" },
+        { "title": "Generative AI use cases", "source": "genai4e", "sourceRef": "Module 1" },
+        { "title": "Generative AI and the real world", "source": "genai4e", "sourceRef": "Module 1" },
+        { "title": "Generative AI and you", "source": "genai4e", "sourceRef": "Module 1" },
+        { "title": "Quiz", "source": "genai4e", "sourceRef": "Module 1", "type": "assessment" }
+      ],
+      "skippedLessons": [
+        {
+          "title": "Generative AI and society",
+          "source": "genai4e",
+          "sourceRef": "Module 1",
+          "reason": "Ethics overlap — covered in Block 6 (Ethics capstone)"
+        }
       ]
     },
     {
-      "id": "mod_03",
-      "week": 2,
-      "title": "Prompting Fundamentals",
+      "id": "block_03",
+      "calendarWeek": 1,
+      "title": "Prompting Basics",
       "sourceCourse": "AI Prompting for Everyone",
       "sourceRef": "Module 1",
       "estimatedMinutes": 120,
       "dedupeKey": "prompting_basics",
+      "pathwayNote": "Hands-on LLM interaction — all profiles include some form of this block",
       "objectives": [
         "Structure effective prompts",
         "Apply clarity and specificity best practices"
       ],
       "lessons": [
-        "The Power of Prompting",
-        "What is a Prompt?",
-        "The Anatomy of a Prompt",
-        "Tips for Writing Prompts",
-        "Practice: Writing Your First Prompt",
-        "Quiz 1"
-      ]
+        { "title": "The Power of Prompting", "source": "prompt4e", "sourceRef": "Module 1" },
+        { "title": "What is a Prompt?", "source": "prompt4e", "sourceRef": "Module 1" },
+        { "title": "The Anatomy of a Prompt", "source": "prompt4e", "sourceRef": "Module 1" },
+        { "title": "Tips for Writing Prompts", "source": "prompt4e", "sourceRef": "Module 1" },
+        { "title": "Practice: Writing Your First Prompt", "source": "prompt4e", "sourceRef": "Module 1", "type": "practice" },
+        { "title": "Quiz 1", "source": "prompt4e", "sourceRef": "Module 1", "type": "assessment" }
+      ],
+      "skippedLessons": []
     },
     {
-      "id": "mod_04",
-      "week": 2,
+      "id": "block_04",
+      "calendarWeek": 2,
       "title": "Advanced Prompting Techniques",
       "sourceCourse": "AI Prompting for Everyone",
       "sourceRef": "Module 2",
       "estimatedMinutes": 120,
       "dedupeKey": "prompting_techniques",
+      "pathwayNote": "Profiles already prompting daily may compress Blocks 3–4",
       "objectives": [
         "Apply few-shot and chain-of-thought prompting",
         "Handle complex multi-step tasks"
       ],
       "lessons": [
-        "Zero-shot vs Few-shot Prompting",
-        "Chain-of-Thought Prompting",
-        "Self-Consistency",
-        "Prompting for Complex Tasks",
-        "Practice: Advanced Prompting",
-        "Quiz 2"
+        { "title": "Zero-shot vs Few-shot Prompting", "source": "prompt4e", "sourceRef": "Module 2" },
+        { "title": "Chain-of-Thought Prompting", "source": "prompt4e", "sourceRef": "Module 2" },
+        { "title": "Self-Consistency", "source": "prompt4e", "sourceRef": "Module 2" },
+        { "title": "Prompting for Complex Tasks", "source": "prompt4e", "sourceRef": "Module 2" },
+        { "title": "Practice: Advanced Prompting", "source": "prompt4e", "sourceRef": "Module 2", "type": "practice" },
+        { "title": "Quiz 2", "source": "prompt4e", "sourceRef": "Module 2", "type": "assessment" }
+      ],
+      "skippedLessons": []
+    },
+    {
+      "id": "block_05a",
+      "calendarWeek": 2,
+      "title": "Business & Workplace",
+      "sourceCourse": "AI For Everyone + Generative AI for Everyone + AI Prompting for Everyone",
+      "sourceRef": "AI4E Week 3 + GenAI Module 3 + Prompting Module 3 (partial)",
+      "estimatedMinutes": 90,
+      "dedupeKey": "business_workplace",
+      "pathwayNote": "Pathway emphasis block — business-focused profiles prioritize this over Block 5b",
+      "objectives": [
+        "Apply the AI transformation playbook in organizational contexts",
+        "Identify generative AI opportunities in business",
+        "Use prompting for business communication and creative tasks"
+      ],
+      "lessons": [
+        { "title": "Case study: Smart speaker", "source": "ai4e", "sourceRef": "Week 3" },
+        { "title": "Case study: Self-driving car", "source": "ai4e", "sourceRef": "Week 3" },
+        { "title": "AI transformation playbook (Part 1)", "source": "ai4e", "sourceRef": "Week 3" },
+        { "title": "AI transformation playbook (Part 2)", "source": "ai4e", "sourceRef": "Week 3" },
+        { "title": "AI and your company", "source": "ai4e", "sourceRef": "Week 3" },
+        { "title": "Generative AI in business", "source": "genai4e", "sourceRef": "Module 3" },
+        { "title": "Generative AI and the workplace", "source": "genai4e", "sourceRef": "Module 3" },
+        { "title": "Generative AI and the future of work", "source": "genai4e", "sourceRef": "Module 3" },
+        { "title": "Prompting for Business", "source": "prompt4e", "sourceRef": "Module 3" },
+        { "title": "Prompting for Creativity", "source": "prompt4e", "sourceRef": "Module 3" }
+      ],
+      "skippedLessons": [
+        {
+          "title": "Steps of an AI transformation (Part 1)",
+          "source": "ai4e",
+          "sourceRef": "Week 3",
+          "reason": "Covered by AI transformation playbook"
+        },
+        {
+          "title": "Steps of an AI transformation (Part 2)",
+          "source": "ai4e",
+          "sourceRef": "Week 3",
+          "reason": "Covered by AI transformation playbook"
+        },
+        {
+          "title": "AI and you",
+          "source": "ai4e",
+          "sourceRef": "Week 3",
+          "reason": "Lower priority for 2-week study"
+        },
+        {
+          "title": "Final Project: Your Prompt Library",
+          "source": "prompt4e",
+          "sourceRef": "Module 3",
+          "reason": "Replaced by Synapsed platform interaction"
+        }
       ]
     },
     {
-      "id": "mod_05",
-      "week": 3,
-      "title": "AI & GenAI Project Workflows",
+      "id": "block_05b",
+      "calendarWeek": 2,
+      "title": "Projects & Workflows",
       "sourceCourse": "AI For Everyone + Generative AI for Everyone",
       "sourceRef": "AI4E Week 2 + GenAI Module 2",
-      "estimatedMinutes": 120,
+      "estimatedMinutes": 90,
       "dedupeKey": "ai_project_lifecycle",
+      "pathwayNote": "Pathway emphasis block — research/technical profiles prioritize this over Block 5a",
       "objectives": [
         "Compare ML and data science project workflows",
         "Scope and deploy generative AI projects",
         "Understand prompt engineering, RAG, and fine-tuning at overview level"
       ],
       "lessons": [
-        "Workflow of a Machine Learning project",
-        "Workflow of a Data Science project",
-        "How to choose an AI project",
-        "Working with an AI team",
-        "Generative AI project lifecycle",
-        "Prompt engineering overview",
-        "RAG and fine-tuning overview",
-        "Evaluating generative AI projects",
-        "Quizzes"
-      ]
-    },
-    {
-      "id": "mod_06",
-      "week": 3,
-      "title": "AI Strategy & Transformation in Organizations",
-      "sourceCourse": "AI For Everyone",
-      "sourceRef": "Week 3",
-      "estimatedMinutes": 120,
-      "dedupeKey": "ai_org_strategy",
-      "objectives": [
-        "Apply the AI transformation playbook",
-        "Analyze case studies for organizational AI adoption"
+        { "title": "Workflow of a Machine Learning project", "source": "ai4e", "sourceRef": "Week 2" },
+        { "title": "Workflow of a Data Science project", "source": "ai4e", "sourceRef": "Week 2" },
+        { "title": "How to choose an AI project (Part 1)", "source": "ai4e", "sourceRef": "Week 2" },
+        { "title": "How to choose an AI project (Part 2)", "source": "ai4e", "sourceRef": "Week 2" },
+        { "title": "Working with an AI team", "source": "ai4e", "sourceRef": "Week 2" },
+        { "title": "Generative AI project lifecycle", "source": "genai4e", "sourceRef": "Module 2" },
+        { "title": "Prompt engineering", "source": "genai4e", "sourceRef": "Module 2" },
+        { "title": "RAG and fine-tuning", "source": "genai4e", "sourceRef": "Module 2" },
+        { "title": "Evaluating generative AI projects", "source": "genai4e", "sourceRef": "Module 2" }
       ],
-      "lessons": [
-        "Case study: Smart speaker",
-        "Case study: Self-driving car",
-        "Steps of an AI transformation",
-        "AI transformation playbook",
-        "AI and your company",
-        "AI and you",
-        "Quiz"
+      "skippedLessons": [
+        {
+          "title": "Every job function can use AI",
+          "source": "ai4e",
+          "sourceRef": "Week 2",
+          "reason": "Redundant with other Week 2 content"
+        },
+        {
+          "title": "Technical tools for AI teams (optional)",
+          "source": "ai4e",
+          "sourceRef": "Week 2",
+          "reason": "Too technical for literacy-focused study"
+        },
+        {
+          "title": "Defining your project",
+          "source": "genai4e",
+          "sourceRef": "Module 2",
+          "reason": "Compressed into Generative AI project lifecycle"
+        },
+        {
+          "title": "Identifying use cases",
+          "source": "genai4e",
+          "sourceRef": "Module 2",
+          "reason": "Compressed into Generative AI project lifecycle"
+        },
+        {
+          "title": "Prioritizing use cases",
+          "source": "genai4e",
+          "sourceRef": "Module 2",
+          "reason": "Compressed into Generative AI project lifecycle"
+        },
+        {
+          "title": "Metrics for generative AI",
+          "source": "genai4e",
+          "sourceRef": "Module 2",
+          "reason": "Cut for 2-week time limit"
+        },
+        {
+          "title": "Human evaluation",
+          "source": "genai4e",
+          "sourceRef": "Module 2",
+          "reason": "Cut for 2-week time limit"
+        }
       ]
     },
     {
-      "id": "mod_07",
-      "week": 4,
-      "title": "Generative AI in Business & the Workplace",
-      "sourceCourse": "Generative AI for Everyone",
-      "sourceRef": "Module 3",
-      "estimatedMinutes": 120,
-      "dedupeKey": "gen_ai_business",
-      "objectives": [
-        "Identify gen AI opportunities in business",
-        "Assess impact on the future of work"
-      ],
-      "lessons": [
-        "Generative AI in business",
-        "Generative AI and the workplace",
-        "Generative AI and the future of work",
-        "Quiz"
-      ]
-    },
-    {
-      "id": "mod_08",
-      "week": 4,
-      "title": "Prompting for Business & Creativity",
-      "sourceCourse": "AI Prompting for Everyone",
-      "sourceRef": "Module 3 (partial)",
-      "estimatedMinutes": 60,
-      "dedupeKey": "prompting_applications",
-      "objectives": [
-        "Apply prompting to business communication and creative tasks"
-      ],
-      "lessons": [
-        "Prompting for Business",
-        "Prompting for Creativity",
-        "Final Project: Your Prompt Library"
-      ]
-    },
-    {
-      "id": "mod_09",
-      "week": 4,
-      "title": "AI Ethics, Bias & Responsible Use",
-      "sourceCourse": "All three (merged)",
-      "sourceRef": "AI4E Week 4 + GenAI M3 ethics + Prompting M3 ethics",
-      "estimatedMinutes": 90,
+      "id": "block_06",
+      "calendarWeek": 2,
+      "title": "Ethics & Responsible Use",
+      "sourceCourse": "AI For Everyone + Generative AI for Everyone + AI Prompting for Everyone",
+      "sourceRef": "AI4E Week 4 + GenAI Module 3 + Prompting Module 3",
+      "estimatedMinutes": 75,
       "dedupeKey": "ai_ethics_society",
+      "pathwayNote": "Capstone block — all profiles include ethics content",
       "objectives": [
         "Recognize bias, hallucinations, and adversarial risks",
         "Apply responsible AI practices"
       ],
       "lessons": [
-        "A realistic view of AI",
-        "Discrimination and bias",
-        "Adversarial attacks",
-        "AI and jobs",
-        "Hallucinations and bias in LLMs",
-        "Responsible AI",
-        "Quiz"
+        { "title": "A realistic view of AI", "source": "ai4e", "sourceRef": "Week 4" },
+        { "title": "Discrimination / Bias", "source": "ai4e", "sourceRef": "Week 4" },
+        { "title": "Adversarial attacks on AI", "source": "ai4e", "sourceRef": "Week 4" },
+        { "title": "AI and jobs", "source": "ai4e", "sourceRef": "Week 4" },
+        { "title": "Hallucinations and Bias", "source": "prompt4e", "sourceRef": "Module 3" },
+        { "title": "Responsible AI", "source": "prompt4e", "sourceRef": "Module 3" },
+        { "title": "Quiz: AI and Society", "source": "ai4e", "sourceRef": "Week 4", "type": "assessment" }
+      ],
+      "skippedLessons": [
+        {
+          "title": "AI and developing economies",
+          "source": "ai4e",
+          "sourceRef": "Week 4",
+          "reason": "Cut for 2-week time limit"
+        },
+        {
+          "title": "Conclusion",
+          "source": "ai4e",
+          "sourceRef": "Week 4",
+          "reason": "Optional wrap-up — not needed for content extraction"
+        },
+        {
+          "title": "Generative AI and society (ethics)",
+          "source": "genai4e",
+          "sourceRef": "Module 3",
+          "reason": "Overlap with lessons above"
+        },
+        {
+          "title": "Final Exam",
+          "source": "prompt4e",
+          "sourceRef": "Module 3",
+          "reason": "Replaced by platform assessment"
+        }
       ]
     }
   ]
