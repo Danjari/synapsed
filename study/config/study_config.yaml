@@ -1,7 +1,21 @@
 # Phase 0 synthetic validation settings
+
 diversity:
   mean_jaccard_threshold: 0.85
-  min_profiles: 8
+  min_profiles: 45
+
+research:
+  max_mean_multiset_jaccard: 0.92
+  min_contrast_pass_rate: 0.8
+  min_mean_judge_score: 3.5
+  judge_sample_size: 15
+  min_within_cluster_multiset_jaccard: 0.65
+  max_contrast_cluster_multiset_jaccard: 0.70
+  min_style_control_pass_rate: 0.8
+  contrasting_cluster_pairs:
+    - [foundation_low, research_technical]
+    - [foundation_low, business_track]
+    - [business_track, research_technical]
 
 survey_question_ids:
   - goals_1

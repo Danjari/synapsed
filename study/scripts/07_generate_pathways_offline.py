@@ -30,7 +30,9 @@ def main() -> int:
     for profile in profiles:
         profile_id = profile["id"]
         print(f"Generating pathway for {profile_id}...")
-        nodes = generate_pathway_with_retry(client, syllabus_context, profile["answers"])
+        nodes = generate_pathway_with_retry(
+            client, syllabus, syllabus_context, profile["answers"]
+        )
         payload = {
             "profileId": profile_id,
             "description": profile.get("description", ""),
@@ -45,10 +47,12 @@ def main() -> int:
 
     save_json(
         STUDY_ROOT / "data" / "results" / "pathways_index.json",
-        {"source": "offline", "profiles": generated},
+        {"source": "offline", "profiles": generated, "count": len(generated)},
     )
     print(f"Saved {len(generated)} pathways to {results_dir}")
-    print("Next: python scripts/08_analyze_pathway_diversity.py")
+    if len(generated) < len(profiles):
+        print(f"WARNING: expected {len(profiles)} profiles, generated {len(generated)}")
+    print("Next: python scripts/09_research_evaluation.py")
     return 0
 
 

@@ -11,55 +11,65 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 
+from lib.personalization_prompt import build_personalization_prompt, load_generation_spec
+
 STUDY_ROOT = Path(__file__).resolve().parent.parent
 
-# Mirrors app/api/study/seed/route.ts STANDARD_SURVEY_QUESTIONS
-SURVEY_QUESTIONS: list[dict[str, Any]] = [
-    {"id": "goals_1", "text": "What are your primary learning goals for this course?"},
-    {"id": "goals_2", "text": "What motivated you to enroll in this course?"},
-    {"id": "prereq_1", "text": "Rate your current understanding of prerequisite topics for this course"},
-    {"id": "learning_1", "text": "What is your preferred learning style?"},
-    {"id": "bloom_remember", "text": "List key concepts you remember from previous related courses"},
-    {"id": "bloom_understand", "text": "What do you expect to learn in this course?"},
-    {"id": "bloom_apply", "text": "How do you plan to apply what you learn in this course?"},
-    {"id": "bloom_analyze", "text": "What challenges do you anticipate in this course?"},
-]
 
-GENERATE_PATHWAY_FUNCTION = types.FunctionDeclaration(
-    name="generate_learning_pathway",
-    description="Generate a learning pathway of structured nodes for a student",
-    parameters=types.Schema(
-        type=types.Type.OBJECT,
-        properties={
-            "nodes": types.Schema(
-                type=types.Type.ARRAY,
-                items=types.Schema(
-                    type=types.Type.OBJECT,
-                    properties={
-                        "id": types.Schema(type=types.Type.STRING),
-                        "title": types.Schema(type=types.Type.STRING),
-                        "description": types.Schema(type=types.Type.STRING),
-                        "type": types.Schema(
-                            type=types.Type.STRING,
-                            enum=["topic", "subtopic", "resource", "assessment"],
-                        ),
-                        "difficulty": types.Schema(
-                            type=types.Type.STRING,
-                            enum=["beginner", "intermediate", "advanced"],
-                        ),
-                        "duration": types.Schema(type=types.Type.STRING),
-                        "dependsOn": types.Schema(
-                            type=types.Type.ARRAY,
-                            items=types.Schema(type=types.Type.STRING),
-                        ),
-                    },
-                    required=["id", "title", "description", "type", "difficulty", "duration", "dependsOn"],
+def _block_id_enum() -> list[str]:
+    return load_generation_spec().get("blockIds", [])
+
+
+def _pathway_function_declaration() -> types.FunctionDeclaration:
+    block_ids = _block_id_enum()
+    return types.FunctionDeclaration(
+        name="generate_learning_pathway",
+        description="Generate a structurally personalized learning pathway with syllabus block tags",
+        parameters=types.Schema(
+            type=types.Type.OBJECT,
+            properties={
+                "nodes": types.Schema(
+                    type=types.Type.ARRAY,
+                    items=types.Schema(
+                        type=types.Type.OBJECT,
+                        properties={
+                            "id": types.Schema(type=types.Type.STRING),
+                            "title": types.Schema(type=types.Type.STRING),
+                            "description": types.Schema(type=types.Type.STRING),
+                            "syllabusBlockId": types.Schema(
+                                type=types.Type.STRING,
+                                enum=block_ids if block_ids else None,
+                            ),
+                            "type": types.Schema(
+                                type=types.Type.STRING,
+                                enum=["topic", "subtopic", "resource", "assessment"],
+                            ),
+                            "difficulty": types.Schema(
+                                type=types.Type.STRING,
+                                enum=["beginner", "intermediate", "advanced"],
+                            ),
+                            "duration": types.Schema(type=types.Type.STRING),
+                            "dependsOn": types.Schema(
+                                type=types.Type.ARRAY,
+                                items=types.Schema(type=types.Type.STRING),
+                            ),
+                        },
+                        required=[
+                            "id",
+                            "title",
+                            "description",
+                            "syllabusBlockId",
+                            "type",
+                            "difficulty",
+                            "duration",
+                            "dependsOn",
+                        ],
+                    ),
                 ),
-            ),
-        },
-        required=["nodes"],
-    ),
-)
+            },
+            required=["nodes"],
+        ),
+    )
 
 
 def _load_env() -> None:
@@ -82,49 +92,35 @@ def get_gemini_model() -> str:
     return os.getenv("GEMINI_MODEL", "gemini-3-flash-preview").strip()
 
 
-def build_prompt(syllabus_context: dict[str, str], answers: dict[str, str]) -> str:
-    qa_lines: list[str] = []
-    for q in SURVEY_QUESTIONS:
-        qid = q["id"]
-        answer = answers.get(qid, "")
-        qa_lines.append(f"Q: {q['text']}\nA: {answer}")
+def get_judge_model() -> str:
+    _load_env()
+    return os.getenv("GEMINI_JUDGE_MODEL", os.getenv("GEMINI_MODEL", "gemini-3-flash-preview")).strip()
 
-    ctx = syllabus_context
-    return f"""Course Information:
-Description: {ctx.get('courseDescription', '')}
-Prerequisites: {ctx.get('prerequisites', '')}
-Learning Objectives: {ctx.get('learningObjectives', '')}
-Course Schedule: {ctx.get('courseSchedule', '')}
-Assessment Methods: {ctx.get('assessmentMethods', '')}
 
-Student Survey Responses:
-{chr(10).join(qa_lines)}
-
-Based on the course information and the student's survey responses, generate a personalized learning pathway that:
-1. Aligns with the course learning objectives and schedule
-2. Considers the student's learning preferences, prior knowledge, and interests
-3. Takes into account any prerequisites or background knowledge gaps
-4. Incorporates the assessment methods and grading structure
-5. Provides a structured progression through the course material with clear dependencies
-
-Create 10-14 pathway nodes that form a coherent learning journey."""
+def build_prompt(
+    syllabus: dict[str, Any],
+    syllabus_context: dict[str, str],
+    answers: dict[str, str],
+) -> str:
+    return build_personalization_prompt(syllabus, syllabus_context, answers)
 
 
 def generate_pathway_nodes(
     client: genai.Client,
+    syllabus: dict[str, Any],
     syllabus_context: dict[str, str],
     answers: dict[str, str],
     *,
     model: str | None = None,
 ) -> list[dict[str, Any]]:
-    prompt = build_prompt(syllabus_context, answers)
+    prompt = build_prompt(syllabus, syllabus_context, answers)
     model_name = model or get_gemini_model()
 
     response = client.models.generate_content(
         model=model_name,
         contents=prompt,
         config=types.GenerateContentConfig(
-            tools=[types.Tool(function_declarations=[GENERATE_PATHWAY_FUNCTION])],
+            tools=[types.Tool(function_declarations=[_pathway_function_declaration()])],
         ),
     )
 
@@ -136,11 +132,18 @@ def generate_pathway_nodes(
     if not nodes or not isinstance(nodes, list):
         raise RuntimeError("Failed to parse pathway nodes from Gemini response")
 
+    valid_blocks = set(_block_id_enum())
+    for node in nodes:
+        block_id = node.get("syllabusBlockId")
+        if block_id not in valid_blocks:
+            raise RuntimeError(f"Node '{node.get('title')}' has invalid syllabusBlockId: {block_id}")
+
     return nodes
 
 
 def generate_pathway_with_retry(
     client: genai.Client,
+    syllabus: dict[str, Any],
     syllabus_context: dict[str, str],
     answers: dict[str, str],
     *,
@@ -150,7 +153,7 @@ def generate_pathway_with_retry(
     last_error: Exception | None = None
     for attempt in range(retries + 1):
         try:
-            return generate_pathway_nodes(client, syllabus_context, answers)
+            return generate_pathway_nodes(client, syllabus, syllabus_context, answers)
         except Exception as exc:
             last_error = exc
             if attempt < retries:
