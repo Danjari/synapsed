@@ -1,0 +1,215 @@
+{
+  "courseTitle": "AI Literacy — Foundations, Generative AI & Prompting",
+  "sources": [
+    { "id": "ai4e", "title": "AI For Everyone", "hours": 6, "instructor": "Andrew Ng" },
+    { "id": "genai4e", "title": "Generative AI for Everyone", "hours": 5, "instructor": "Andrew Ng" },
+    { "id": "prompt4e", "title": "AI Prompting for Everyone", "hours": 6, "instructor": "Andrew Ng" }
+  ],
+  "prerequisites": "None — beginner level, no coding required",
+  "learningObjectives": [
+    "Define AI, machine learning, and generative AI terminology",
+    "Explain what AI and generative AI can and cannot do",
+    "Write effective prompts using few-shot and chain-of-thought techniques",
+    "Describe AI and generative AI project workflows from scoping to deployment",
+    "Apply AI transformation strategies at the organizational level",
+    "Evaluate ethical risks including bias, hallucinations, and workforce impact"
+  ],
+  "modules": [
+    {
+      "id": "mod_01",
+      "week": 1,
+      "title": "AI Foundations: ML, Data & Terminology",
+      "sourceCourse": "AI For Everyone",
+      "sourceRef": "Week 1",
+      "estimatedMinutes": 60,
+      "dedupeKey": "ai_foundations",
+      "objectives": [
+        "Define AI and machine learning",
+        "Explain role of data",
+        "Distinguish what AI can and cannot do"
+      ],
+      "lessons": [
+        "Welcome",
+        "What is AI?",
+        "Machine Learning",
+        "What data is",
+        "The terminology of AI",
+        "What makes an AI company?",
+        "What AI can and cannot do",
+        "Non-technical explanation of Deep Learning (optional)",
+        "Quiz: What is AI?"
+      ]
+    },
+    {
+      "id": "mod_02",
+      "week": 1,
+      "title": "Generative AI: Concepts & Real-World Impact",
+      "sourceCourse": "Generative AI for Everyone",
+      "sourceRef": "Module 1",
+      "estimatedMinutes": 90,
+      "dedupeKey": "gen_ai_intro",
+      "objectives": [
+        "Define generative AI and LLMs",
+        "Explain capabilities and limitations",
+        "Identify real-world use cases"
+      ],
+      "lessons": [
+        "What is generative AI?",
+        "How generative AI works",
+        "What generative AI can and cannot do",
+        "Generative AI use cases",
+        "Generative AI and the real world",
+        "Generative AI and society",
+        "Generative AI and you",
+        "Quiz"
+      ]
+    },
+    {
+      "id": "mod_03",
+      "week": 2,
+      "title": "Prompting Fundamentals",
+      "sourceCourse": "AI Prompting for Everyone",
+      "sourceRef": "Module 1",
+      "estimatedMinutes": 120,
+      "dedupeKey": "prompting_basics",
+      "objectives": [
+        "Structure effective prompts",
+        "Apply clarity and specificity best practices"
+      ],
+      "lessons": [
+        "The Power of Prompting",
+        "What is a Prompt?",
+        "The Anatomy of a Prompt",
+        "Tips for Writing Prompts",
+        "Practice: Writing Your First Prompt",
+        "Quiz 1"
+      ]
+    },
+    {
+      "id": "mod_04",
+      "week": 2,
+      "title": "Advanced Prompting Techniques",
+      "sourceCourse": "AI Prompting for Everyone",
+      "sourceRef": "Module 2",
+      "estimatedMinutes": 120,
+      "dedupeKey": "prompting_techniques",
+      "objectives": [
+        "Apply few-shot and chain-of-thought prompting",
+        "Handle complex multi-step tasks"
+      ],
+      "lessons": [
+        "Zero-shot vs Few-shot Prompting",
+        "Chain-of-Thought Prompting",
+        "Self-Consistency",
+        "Prompting for Complex Tasks",
+        "Practice: Advanced Prompting",
+        "Quiz 2"
+      ]
+    },
+    {
+      "id": "mod_05",
+      "week": 3,
+      "title": "AI & GenAI Project Workflows",
+      "sourceCourse": "AI For Everyone + Generative AI for Everyone",
+      "sourceRef": "AI4E Week 2 + GenAI Module 2",
+      "estimatedMinutes": 120,
+      "dedupeKey": "ai_project_lifecycle",
+      "objectives": [
+        "Compare ML and data science project workflows",
+        "Scope and deploy generative AI projects",
+        "Understand prompt engineering, RAG, and fine-tuning at overview level"
+      ],
+      "lessons": [
+        "Workflow of a Machine Learning project",
+        "Workflow of a Data Science project",
+        "How to choose an AI project",
+        "Working with an AI team",
+        "Generative AI project lifecycle",
+        "Prompt engineering overview",
+        "RAG and fine-tuning overview",
+        "Evaluating generative AI projects",
+        "Quizzes"
+      ]
+    },
+    {
+      "id": "mod_06",
+      "week": 3,
+      "title": "AI Strategy & Transformation in Organizations",
+      "sourceCourse": "AI For Everyone",
+      "sourceRef": "Week 3",
+      "estimatedMinutes": 120,
+      "dedupeKey": "ai_org_strategy",
+      "objectives": [
+        "Apply the AI transformation playbook",
+        "Analyze case studies for organizational AI adoption"
+      ],
+      "lessons": [
+        "Case study: Smart speaker",
+        "Case study: Self-driving car",
+        "Steps of an AI transformation",
+        "AI transformation playbook",
+        "AI and your company",
+        "AI and you",
+        "Quiz"
+      ]
+    },
+    {
+      "id": "mod_07",
+      "week": 4,
+      "title": "Generative AI in Business & the Workplace",
+      "sourceCourse": "Generative AI for Everyone",
+      "sourceRef": "Module 3",
+      "estimatedMinutes": 120,
+      "dedupeKey": "gen_ai_business",
+      "objectives": [
+        "Identify gen AI opportunities in business",
+        "Assess impact on the future of work"
+      ],
+      "lessons": [
+        "Generative AI in business",
+        "Generative AI and the workplace",
+        "Generative AI and the future of work",
+        "Quiz"
+      ]
+    },
+    {
+      "id": "mod_08",
+      "week": 4,
+      "title": "Prompting for Business & Creativity",
+      "sourceCourse": "AI Prompting for Everyone",
+      "sourceRef": "Module 3 (partial)",
+      "estimatedMinutes": 60,
+      "dedupeKey": "prompting_applications",
+      "objectives": [
+        "Apply prompting to business communication and creative tasks"
+      ],
+      "lessons": [
+        "Prompting for Business",
+        "Prompting for Creativity",
+        "Final Project: Your Prompt Library"
+      ]
+    },
+    {
+      "id": "mod_09",
+      "week": 4,
+      "title": "AI Ethics, Bias & Responsible Use",
+      "sourceCourse": "All three (merged)",
+      "sourceRef": "AI4E Week 4 + GenAI M3 ethics + Prompting M3 ethics",
+      "estimatedMinutes": 90,
+      "dedupeKey": "ai_ethics_society",
+      "objectives": [
+        "Recognize bias, hallucinations, and adversarial risks",
+        "Apply responsible AI practices"
+      ],
+      "lessons": [
+        "A realistic view of AI",
+        "Discrimination and bias",
+        "Adversarial attacks",
+        "AI and jobs",
+        "Hallucinations and bias in LLMs",
+        "Responsible AI",
+        "Quiz"
+      ]
+    }
+  ]
+}
