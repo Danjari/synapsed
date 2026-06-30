@@ -1,0 +1,144 @@
+{
+  "profiles": [
+    {
+      "id": "low_knowledge_general",
+      "description": "Very low prior knowledge, general literacy goal",
+      "answers": {
+        "goals_1": "Understand what AI is and how it affects daily life",
+        "goals_2": "Personal interest in the subject",
+        "prereq_1": "Very uncertain",
+        "learning_1": "Visual (diagrams, charts, videos)",
+        "bloom_remember": "I have not taken any AI courses before",
+        "bloom_understand": "I want to learn basic AI vocabulary and concepts",
+        "bloom_apply": "Use AI tools responsibly in everyday tasks",
+        "bloom_analyze": "I worry about keeping up with technical jargon"
+      }
+    },
+    {
+      "id": "high_knowledge_research",
+      "description": "Strong ML background, research-oriented goals",
+      "answers": {
+        "goals_1": "Deepen understanding of generative AI for academic research",
+        "goals_2": "Career advancement",
+        "prereq_1": "Very confident",
+        "learning_1": "Reading/Writing (texts, notes)",
+        "bloom_remember": "Supervised learning, neural networks, gradient descent",
+        "bloom_understand": "How LLMs differ from traditional ML pipelines",
+        "bloom_apply": "Design research workflows using generative AI tools",
+        "bloom_analyze": "Evaluating model limitations and hallucination risks"
+      }
+    },
+    {
+      "id": "low_knowledge_business",
+      "description": "Low confidence, business application focus",
+      "answers": {
+        "goals_1": "Apply AI and prompting in a business context",
+        "goals_2": "Career advancement",
+        "prereq_1": "Somewhat uncertain",
+        "learning_1": "Mixed approach",
+        "bloom_remember": "Basic spreadsheet and email tools",
+        "bloom_understand": "How generative AI can support business decisions",
+        "bloom_apply": "Draft reports and customer communications with AI",
+        "bloom_analyze": "Choosing appropriate AI tools for business tasks"
+      }
+    },
+    {
+      "id": "high_knowledge_business",
+      "description": "Knows classic AI, wants gen AI for business",
+      "answers": {
+        "goals_1": "Lead AI transformation initiatives in my organization",
+        "goals_2": "Career advancement",
+        "prereq_1": "Very confident",
+        "learning_1": "Auditory (lectures, discussions)",
+        "bloom_remember": "ML project workflow, data science basics, AI strategy terms",
+        "bloom_understand": "Generative AI opportunities in business units",
+        "bloom_apply": "Scope and prioritize gen AI pilot projects",
+        "bloom_analyze": "ROI and risk tradeoffs for gen AI adoption"
+      }
+    },
+    {
+      "id": "medium_knowledge_mixed",
+      "description": "Neutral confidence, mixed goals",
+      "answers": {
+        "goals_1": "Build a well-rounded understanding of AI literacy topics",
+        "goals_2": "Personal interest in the subject",
+        "prereq_1": "Neutral",
+        "learning_1": "Mixed approach",
+        "bloom_remember": "Heard of machine learning and ChatGPT",
+        "bloom_understand": "Both traditional AI and generative AI concepts",
+        "bloom_apply": "Experiment with prompts and AI tools at work",
+        "bloom_analyze": "Balancing hype with realistic AI capabilities"
+      }
+    },
+    {
+      "id": "gen_ai_familiar_prompting_new",
+      "description": "Comfortable with gen AI concepts, new to structured prompting",
+      "answers": {
+        "goals_1": "Master structured prompting techniques",
+        "goals_2": "Personal interest in the subject",
+        "prereq_1": "Somewhat confident",
+        "learning_1": "Kinesthetic (hands-on activities)",
+        "bloom_remember": "LLMs, transformers, generative AI use cases",
+        "bloom_understand": "Few-shot and chain-of-thought prompting",
+        "bloom_apply": "Build reusable prompt templates for work",
+        "bloom_analyze": "When advanced prompting techniques are worth the effort"
+      }
+    },
+    {
+      "id": "prompting_expert_ai_novice",
+      "description": "Uses prompts daily but weak on AI foundations",
+      "answers": {
+        "goals_1": "Fill gaps in AI and ML fundamentals",
+        "goals_2": "Prerequisite for other courses",
+        "prereq_1": "Somewhat uncertain",
+        "learning_1": "Reading/Writing (texts, notes)",
+        "bloom_remember": "ChatGPT, prompt templates, few-shot examples",
+        "bloom_understand": "What machine learning and data mean in AI systems",
+        "bloom_apply": "Connect prompting skills to underlying AI concepts",
+        "bloom_analyze": "Why models fail and how data affects outcomes"
+      }
+    },
+    {
+      "id": "business_leader",
+      "description": "Executive focus on org strategy and gen AI business impact",
+      "answers": {
+        "goals_1": "Develop an AI strategy for my team or company",
+        "goals_2": "Career advancement",
+        "prereq_1": "Somewhat confident",
+        "learning_1": "Auditory (lectures, discussions)",
+        "bloom_remember": "Digital transformation, product management basics",
+        "bloom_understand": "AI transformation playbook and organizational change",
+        "bloom_apply": "Identify high-value gen AI use cases in the workplace",
+        "bloom_analyze": "Workforce impact and change management for AI adoption"
+      }
+    },
+    {
+      "id": "ethics_focused",
+      "description": "Motivated by responsible AI and societal impact",
+      "answers": {
+        "goals_1": "Understand ethical risks and responsible AI practices",
+        "goals_2": "Personal interest in the subject",
+        "prereq_1": "Neutral",
+        "learning_1": "Reading/Writing (texts, notes)",
+        "bloom_remember": "Bias, fairness, privacy as general concepts",
+        "bloom_understand": "How hallucinations and adversarial attacks affect AI systems",
+        "bloom_apply": "Evaluate AI tools for ethical use in my context",
+        "bloom_analyze": "Tradeoffs between AI benefits and societal harms"
+      }
+    },
+    {
+      "id": "learning_style_control",
+      "description": "Same as medium profile but kinesthetic — interaction-only control",
+      "answers": {
+        "goals_1": "Build a well-rounded understanding of AI literacy topics",
+        "goals_2": "Personal interest in the subject",
+        "prereq_1": "Neutral",
+        "learning_1": "Kinesthetic (hands-on activities)",
+        "bloom_remember": "Heard of machine learning and ChatGPT",
+        "bloom_understand": "Both traditional AI and generative AI concepts",
+        "bloom_apply": "Experiment with prompts and AI tools at work",
+        "bloom_analyze": "Balancing hype with realistic AI capabilities"
+      }
+    }
+  ]
+}
