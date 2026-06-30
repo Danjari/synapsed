@@ -35,6 +35,8 @@ def main() -> int:
         )
         payload = {
             "profileId": profile_id,
+            "cluster": profile.get("cluster"),
+            "field": profile.get("field"),
             "description": profile.get("description", ""),
             "studentId": f"offline-{profile_id}",
             "source": "offline-gemini",

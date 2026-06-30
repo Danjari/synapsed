@@ -92,11 +92,6 @@ def get_gemini_model() -> str:
     return os.getenv("GEMINI_MODEL", "gemini-3-flash-preview").strip()
 
 
-def get_judge_model() -> str:
-    _load_env()
-    return os.getenv("GEMINI_JUDGE_MODEL", os.getenv("GEMINI_MODEL", "gemini-3-flash-preview")).strip()
-
-
 def build_prompt(
     syllabus: dict[str, Any],
     syllabus_context: dict[str, str],

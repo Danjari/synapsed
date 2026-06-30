@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
-"""Generate ~50 synthetic profiles with intentional cluster structure.
-
-Similar profiles share a cluster (expect similar pathways).
-Contrasting clusters (e.g. foundation_low vs research_technical) expect divergence.
-Canonical 10 anchor profiles are preserved for pre-registered hypotheses H1–H5.
-"""
+"""Generate 50 synthetic profiles: cross-field students in a shared AI literacy course."""
 
 from __future__ import annotations
 
@@ -24,324 +19,345 @@ LEARNING_STYLES = [
     "Mixed approach",
 ]
 
-CANONICAL = [
+CANONICAL: list[dict] = [
     {
         "id": "low_knowledge_general",
-        "cluster": "foundation_low",
-        "description": "Very low prior knowledge, general literacy goal",
+        "cluster": "humanities_social",
+        "field": "History",
+        "description": "History BA sophomore — no STEM background, first AI course",
         "answers": {
-            "goals_1": "Understand what AI is and how it affects daily life",
-            "goals_2": "Personal interest in the subject",
+            "goals_1": "Understand what AI is and how it affects society and historical research",
+            "goals_2": "Required elective for my degree",
             "prereq_1": "Very uncertain",
             "learning_1": "Visual (diagrams, charts, videos)",
-            "bloom_remember": "I have not taken any AI courses before",
-            "bloom_understand": "I want to learn basic AI vocabulary and concepts",
-            "bloom_apply": "Use AI tools responsibly in everyday tasks",
-            "bloom_analyze": "I worry about keeping up with technical jargon",
+            "bloom_remember": "I have not taken any AI or programming courses",
+            "bloom_understand": "Basic AI vocabulary and how historians might use AI tools",
+            "bloom_apply": "Use AI responsibly when reviewing sources and drafting essays",
+            "bloom_analyze": "I worry about technical jargon and misinformation in AI outputs",
         },
     },
     {
         "id": "high_knowledge_research",
-        "cluster": "research_technical",
-        "description": "Strong ML background, research-oriented goals",
+        "cluster": "cs_technical",
+        "field": "Computer Science",
+        "description": "CS MS student — strong ML background, research-oriented",
         "answers": {
-            "goals_1": "Deepen understanding of generative AI for academic research",
+            "goals_1": "Deepen generative AI knowledge for academic research and technical workflows",
             "goals_2": "Career advancement",
             "prereq_1": "Very confident",
             "learning_1": "Reading/Writing (texts, notes)",
-            "bloom_remember": "Supervised learning, neural networks, gradient descent",
-            "bloom_understand": "How LLMs differ from traditional ML pipelines",
-            "bloom_apply": "Design research workflows using generative AI tools",
-            "bloom_analyze": "Evaluating model limitations and hallucination risks",
+            "bloom_remember": "Supervised learning, neural networks, gradient descent, PyTorch",
+            "bloom_understand": "How LLMs differ from traditional ML pipelines and RAG architectures",
+            "bloom_apply": "Design research workflows using fine-tuning and retrieval-augmented generation",
+            "bloom_analyze": "Evaluating hallucination, benchmark design, and model limitations",
         },
     },
     {
         "id": "low_knowledge_business",
-        "cluster": "business_track",
-        "description": "Low confidence, business application focus",
+        "cluster": "business_mba",
+        "field": "Business",
+        "description": "Marketing undergrad — limited technical background, workplace AI focus",
         "answers": {
-            "goals_1": "Apply AI and prompting in a business context",
+            "goals_1": "Apply AI and prompting in marketing and business communications",
             "goals_2": "Career advancement",
             "prereq_1": "Somewhat uncertain",
             "learning_1": "Mixed approach",
-            "bloom_remember": "Basic spreadsheet and email tools",
-            "bloom_understand": "How generative AI can support business decisions",
-            "bloom_apply": "Draft reports and customer communications with AI",
-            "bloom_analyze": "Choosing appropriate AI tools for business tasks",
+            "bloom_remember": "Excel, CRM tools, basic analytics dashboards",
+            "bloom_understand": "How generative AI supports campaign planning and customer engagement",
+            "bloom_apply": "Draft marketing copy and reports with AI in a business context",
+            "bloom_analyze": "Choosing appropriate AI tools for brand and customer data",
         },
     },
     {
         "id": "high_knowledge_business",
-        "cluster": "business_track",
-        "description": "Knows classic AI, wants gen AI for business",
+        "cluster": "business_mba",
+        "field": "Business",
+        "description": "MBA student with analytics exposure — org-level gen AI strategy",
         "answers": {
-            "goals_1": "Lead AI transformation initiatives in my organization",
+            "goals_1": "Lead AI transformation and gen AI strategy in my organization",
             "goals_2": "Career advancement",
             "prereq_1": "Very confident",
             "learning_1": "Auditory (lectures, discussions)",
-            "bloom_remember": "ML project workflow, data science basics, AI strategy terms",
-            "bloom_understand": "Generative AI opportunities in business units",
-            "bloom_apply": "Scope and prioritize gen AI pilot projects",
-            "bloom_analyze": "ROI and risk tradeoffs for gen AI adoption",
+            "bloom_remember": "ML project lifecycle, KPI dashboards, digital transformation frameworks",
+            "bloom_understand": "Generative AI opportunities across business units and workplace adoption",
+            "bloom_apply": "Scope gen AI pilot projects and measure ROI for leadership",
+            "bloom_analyze": "Risk, compliance, and workforce impact of AI transformation",
         },
     },
     {
         "id": "medium_knowledge_mixed",
-        "cluster": "balanced_general",
-        "description": "Neutral confidence, mixed goals",
+        "cluster": "economics",
+        "field": "Economics",
+        "description": "Economics junior — moderate quant background, balanced AI literacy goals",
         "answers": {
-            "goals_1": "Build a well-rounded understanding of AI literacy topics",
+            "goals_1": "Build well-rounded AI literacy for policy and data-driven economics",
             "goals_2": "Personal interest in the subject",
             "prereq_1": "Neutral",
             "learning_1": "Mixed approach",
-            "bloom_remember": "Heard of machine learning and ChatGPT",
-            "bloom_understand": "Both traditional AI and generative AI concepts",
-            "bloom_apply": "Experiment with prompts and AI tools at work",
-            "bloom_analyze": "Balancing hype with realistic AI capabilities",
+            "bloom_remember": "Regression, statistics coursework, heard of ChatGPT and machine learning",
+            "bloom_understand": "Both traditional AI and generative AI in economic analysis",
+            "bloom_apply": "Experiment with prompts for data summaries and policy briefs",
+            "bloom_analyze": "Separating AI hype from realistic capabilities in economic forecasting",
         },
     },
     {
         "id": "gen_ai_familiar_prompting_new",
-        "cluster": "prompting_first",
-        "description": "Comfortable with gen AI concepts, new to structured prompting",
+        "cluster": "math_stats",
+        "field": "Mathematics",
+        "description": "Applied math senior — strong quant, new to structured prompting",
         "answers": {
-            "goals_1": "Master structured prompting techniques",
+            "goals_1": "Master structured prompting for technical and proof-writing tasks",
             "goals_2": "Personal interest in the subject",
             "prereq_1": "Somewhat confident",
             "learning_1": "Kinesthetic (hands-on activities)",
-            "bloom_remember": "LLMs, transformers, generative AI use cases",
-            "bloom_understand": "Few-shot and chain-of-thought prompting",
-            "bloom_apply": "Build reusable prompt templates for work",
-            "bloom_analyze": "When advanced prompting techniques are worth the effort",
+            "bloom_remember": "Linear algebra, probability, basic Python, LLM demos",
+            "bloom_understand": "Few-shot and chain-of-thought prompting for quantitative work",
+            "bloom_apply": "Build prompt templates for homework and research write-ups",
+            "bloom_analyze": "When advanced prompting is worth the effort vs direct computation",
         },
     },
     {
         "id": "prompting_expert_ai_novice",
-        "cluster": "prompting_first",
-        "description": "Uses prompts daily but weak on AI foundations",
+        "cluster": "humanities_social",
+        "field": "English",
+        "description": "English major — daily ChatGPT user, weak ML foundations",
         "answers": {
-            "goals_1": "Fill gaps in AI and ML fundamentals",
-            "goals_2": "Prerequisite for other courses",
+            "goals_1": "Fill gaps in AI and ML fundamentals while keeping strong writing skills",
+            "goals_2": "Required elective",
             "prereq_1": "Somewhat uncertain",
             "learning_1": "Reading/Writing (texts, notes)",
-            "bloom_remember": "ChatGPT, prompt templates, few-shot examples",
-            "bloom_understand": "What machine learning and data mean in AI systems",
-            "bloom_apply": "Connect prompting skills to underlying AI concepts",
-            "bloom_analyze": "Why models fail and how data affects outcomes",
+            "bloom_remember": "ChatGPT, prompt templates, daily writing assistance — no ML courses",
+            "bloom_understand": "What machine learning and training data mean beneath the interface",
+            "bloom_apply": "Connect my prompting habits to responsible academic writing",
+            "bloom_analyze": "Why models hallucinate and how that affects literary analysis",
         },
     },
     {
         "id": "business_leader",
-        "cluster": "business_track",
-        "description": "Executive focus on org strategy and gen AI business impact",
+        "cluster": "business_mba",
+        "field": "Business",
+        "description": "Executive MBA — organizational strategy and workplace gen AI",
         "answers": {
-            "goals_1": "Develop an AI strategy for my team or company",
+            "goals_1": "Develop an AI strategy and transformation playbook for my organization",
             "goals_2": "Career advancement",
             "prereq_1": "Somewhat confident",
             "learning_1": "Auditory (lectures, discussions)",
-            "bloom_remember": "Digital transformation, product management basics",
-            "bloom_understand": "AI transformation playbook and organizational change",
-            "bloom_apply": "Identify high-value gen AI use cases in the workplace",
-            "bloom_analyze": "Workforce impact and change management for AI adoption",
+            "bloom_remember": "Product management, change management, digital transformation",
+            "bloom_understand": "AI transformation playbook and gen AI in business operations",
+            "bloom_apply": "Identify high-value gen AI use cases and workplace pilot programs",
+            "bloom_analyze": "Workforce impact, vendor selection, and responsible adoption",
         },
     },
     {
         "id": "ethics_focused",
-        "cluster": "ethics_society",
-        "description": "Motivated by responsible AI and societal impact",
+        "cluster": "health_medicine",
+        "field": "Public Health",
+        "description": "MPH student — ethics, bias, and responsible AI in healthcare",
         "answers": {
-            "goals_1": "Understand ethical risks and responsible AI practices",
+            "goals_1": "Understand ethical risks, bias, and responsible AI in health systems",
             "goals_2": "Personal interest in the subject",
             "prereq_1": "Neutral",
             "learning_1": "Reading/Writing (texts, notes)",
-            "bloom_remember": "Bias, fairness, privacy as general concepts",
-            "bloom_understand": "How hallucinations and adversarial attacks affect AI systems",
-            "bloom_apply": "Evaluate AI tools for ethical use in my context",
-            "bloom_analyze": "Tradeoffs between AI benefits and societal harms",
+            "bloom_remember": "Health equity, epidemiology basics, privacy and consent concepts",
+            "bloom_understand": "How bias, hallucinations, and adversarial errors affect clinical AI",
+            "bloom_apply": "Evaluate AI tools for ethical use in public health programs",
+            "bloom_analyze": "Tradeoffs between AI efficiency and patient safety or equity",
         },
     },
     {
         "id": "learning_style_control",
         "cluster": "style_control",
+        "field": "Economics",
         "paired_with": "medium_knowledge_mixed",
-        "description": "Same as medium profile but kinesthetic — interaction-only control",
+        "description": "Economics junior — identical to medium_knowledge_mixed except learning style",
         "answers": {
-            "goals_1": "Build a well-rounded understanding of AI literacy topics",
+            "goals_1": "Build well-rounded AI literacy for policy and data-driven economics",
             "goals_2": "Personal interest in the subject",
             "prereq_1": "Neutral",
             "learning_1": "Kinesthetic (hands-on activities)",
-            "bloom_remember": "Heard of machine learning and ChatGPT",
-            "bloom_understand": "Both traditional AI and generative AI concepts",
-            "bloom_apply": "Experiment with prompts and AI tools at work",
-            "bloom_analyze": "Balancing hype with realistic AI capabilities",
+            "bloom_remember": "Regression, statistics coursework, heard of ChatGPT and machine learning",
+            "bloom_understand": "Both traditional AI and generative AI in economic analysis",
+            "bloom_apply": "Experiment with prompts for data summaries and policy briefs",
+            "bloom_analyze": "Separating AI hype from realistic capabilities in economic forecasting",
         },
     },
 ]
 
 
-def _clone(base: dict, profile_id: str, cluster: str, description: str, **answer_overrides) -> dict:
-    answers = deepcopy(base)
-    answers.update(answer_overrides)
-    return {
+def _p(
+    profile_id: str,
+    cluster: str,
+    field: str,
+    description: str,
+    answers: dict[str, str],
+    *,
+    paired_with: str | None = None,
+) -> dict:
+    out: dict = {
         "id": profile_id,
         "cluster": cluster,
+        "field": field,
         "description": description,
         "answers": answers,
     }
+    if paired_with:
+        out["paired_with"] = paired_with
+    return out
+
+
+def _extend(base: dict, profile_id: str, cluster: str, field: str, desc: str, **kw: str) -> dict:
+    answers = deepcopy(base)
+    answers.update(kw)
+    return _p(profile_id, cluster, field, desc, answers)
 
 
 def generate_extensions() -> list[dict]:
-    profiles: list[dict] = []
+    out: list[dict] = []
 
-    foundation_base = {
-        "goals_1": "Understand what AI is and how it affects daily life",
-        "goals_2": "Personal interest in the subject",
-        "prereq_1": "Very uncertain",
-        "learning_1": "Visual (diagrams, charts, videos)",
-        "bloom_remember": "I have not taken any AI courses before",
-        "bloom_understand": "I want to learn basic AI vocabulary and concepts",
-        "bloom_apply": "Use AI tools responsibly in everyday tasks",
-        "bloom_analyze": "I worry about keeping up with technical jargon",
-    }
-    foundation_tweaks = [
-        ("foundation_low_02", "First-year student with no STEM background", {"learning_1": LEARNING_STYLES[3], "bloom_analyze": "Math and technical terms feel intimidating"}),
-        ("foundation_low_03", "Career switcher starting from zero AI knowledge", {"goals_2": "Career advancement", "learning_1": LEARNING_STYLES[2], "bloom_apply": "Use AI assistants in a new job search"}),
-        ("foundation_low_04", "Community college learner, very uncertain prerequisites", {"prereq_1": "Somewhat uncertain", "bloom_remember": "Only heard the word artificial intelligence on the news"}),
-        ("foundation_low_05", "Senior adult learner exploring AI literacy", {"goals_2": "Personal interest in the subject", "learning_1": LEARNING_STYLES[0], "bloom_analyze": "Keeping pace with younger classmates"}),
-        ("foundation_low_06", "Humanities major with no prior AI coursework", {"bloom_remember": "No formal AI or programming courses", "bloom_understand": "How AI relates to society and media"}),
-        ("foundation_low_07", "International student, uncertain about English technical terms", {"bloom_analyze": "Understanding jargon in a second language"}),
-        ("foundation_low_08", "Part-time worker seeking basic AI literacy", {"goals_2": "Career advancement", "learning_1": LEARNING_STYLES[4]}),
-    ]
-    for pid, desc, overrides in foundation_tweaks:
-        profiles.append(_clone(foundation_base, pid, "foundation_low", desc, **overrides))
-
-    business_base = {
-        "goals_1": "Apply AI and prompting in a business context",
-        "goals_2": "Career advancement",
-        "prereq_1": "Somewhat confident",
-        "learning_1": "Mixed approach",
-        "bloom_remember": "Basic spreadsheet and email tools",
-        "bloom_understand": "How generative AI can support business decisions",
-        "bloom_apply": "Draft reports and customer communications with AI",
-        "bloom_analyze": "Choosing appropriate AI tools for business tasks",
-    }
-    business_tweaks = [
-        ("business_track_04", "Marketing manager exploring gen AI for campaigns", {"goals_1": "Use generative AI for marketing and customer engagement in my organization"}),
-        ("business_track_05", "Operations lead focused on workplace productivity", {"goals_1": "Improve workplace productivity with AI transformation initiatives", "bloom_apply": "Automate routine operational reports"}),
-        ("business_track_06", "Startup founder scoping gen AI pilots", {"prereq_1": "Neutral", "goals_1": "Scope gen AI pilot projects for a small business"}),
-        ("business_track_07", "HR professional evaluating AI for hiring workflows", {"goals_1": "Evaluate responsible AI use in HR and workplace policies"}),
-        ("business_track_08", "Consultant building client AI strategy decks", {"prereq_1": "Very confident", "goals_1": "Lead AI strategy workshops for client organizations"}),
-        ("business_track_09", "Retail manager adopting AI for customer service", {"learning_1": LEARNING_STYLES[1], "bloom_apply": "Deploy chatbots for customer support"}),
-    ]
-    for pid, desc, overrides in business_tweaks:
-        profiles.append(_clone(business_base, pid, "business_track", desc, **overrides))
-
-    research_base = {
-        "goals_1": "Deepen understanding of generative AI for academic research",
+    cs = {
+        "goals_1": "Build technical gen AI workflows for software and research projects",
         "goals_2": "Career advancement",
         "prereq_1": "Very confident",
-        "learning_1": "Reading/Writing (texts, notes)",
-        "bloom_remember": "Supervised learning, neural networks, gradient descent",
-        "bloom_understand": "How LLMs differ from traditional ML pipelines",
-        "bloom_apply": "Design research workflows using generative AI tools",
-        "bloom_analyze": "Evaluating model limitations and hallucination risks",
-    }
-    research_tweaks = [
-        ("research_technical_02", "PhD student focused on RAG pipelines", {"goals_1": "Build RAG and fine-tuning workflows for academic research", "bloom_apply": "Implement retrieval-augmented generation for literature review"}),
-        ("research_technical_03", "ML engineer deepening LLM project lifecycle skills", {"goals_1": "Master ML/DS project workflows with generative AI", "bloom_apply": "Ship fine-tuned models in production research tools"}),
-        ("research_technical_04", "Data scientist comparing traditional ML vs LLMs", {"bloom_understand": "Technical tradeoffs between classical ML and LLM pipelines"}),
-        ("research_technical_05", "Graduate researcher studying hallucination mitigation", {"bloom_analyze": "Systematic evaluation of hallucination in research assistants"}),
-        ("research_technical_06", "Lab technician learning gen AI experiment design", {"learning_1": LEARNING_STYLES[2], "bloom_apply": "Automate repetitive lab documentation with LLMs"}),
-        ("research_technical_07", "Computer science undergrad with strong ML background", {"goals_2": "Prerequisite for other courses", "bloom_remember": "Backpropagation, CNNs, scikit-learn, PyTorch basics"}),
-        ("research_technical_08", "Postdoc exploring agentic research workflows", {"goals_1": "Design technical agent workflows for research automation", "bloom_apply": "Chain multi-step research tools with LLM agents"}),
-        ("research_technical_09", "Bioinformatics researcher applying gen AI", {"goals_1": "Apply academic research methods with generative AI in bioinformatics"}),
-    ]
-    for pid, desc, overrides in research_tweaks:
-        profiles.append(_clone(research_base, pid, "research_technical", desc, **overrides))
-
-    ethics_base = {
-        "goals_1": "Understand ethical risks and responsible AI practices",
-        "goals_2": "Personal interest in the subject",
-        "prereq_1": "Neutral",
-        "learning_1": "Reading/Writing (texts, notes)",
-        "bloom_remember": "Bias, fairness, privacy as general concepts",
-        "bloom_understand": "How hallucinations and adversarial attacks affect AI systems",
-        "bloom_apply": "Evaluate AI tools for ethical use in my context",
-        "bloom_analyze": "Tradeoffs between AI benefits and societal harms",
-    }
-    ethics_tweaks = [
-        ("ethics_society_02", "Policy student focused on AI governance", {"goals_1": "Understand societal impact and responsible AI governance"}),
-        ("ethics_society_03", "Journalist investigating AI bias stories", {"bloom_analyze": "How bias and fairness issues appear in real-world AI systems"}),
-        ("ethics_society_04", "Teacher concerned about AI in classrooms", {"bloom_apply": "Develop responsible AI guidelines for students"}),
-        ("ethics_society_05", "Nonprofit worker evaluating AI for social good", {"goals_1": "Evaluate ethical risks of AI in nonprofit programs"}),
-        ("ethics_society_06", "Law student studying AI regulation", {"bloom_understand": "Legal and ethical frameworks for responsible AI deployment"}),
-    ]
-    for pid, desc, overrides in ethics_tweaks:
-        profiles.append(_clone(ethics_base, pid, "ethics_society", desc, **overrides))
-
-    prompting_base = {
-        "goals_1": "Master structured prompting techniques",
-        "goals_2": "Personal interest in the subject",
-        "prereq_1": "Somewhat confident",
         "learning_1": "Kinesthetic (hands-on activities)",
-        "bloom_remember": "LLMs, transformers, generative AI use cases",
-        "bloom_understand": "Few-shot and chain-of-thought prompting",
-        "bloom_apply": "Build reusable prompt templates for work",
-        "bloom_analyze": "When advanced prompting techniques are worth the effort",
+        "bloom_remember": "Data structures, algorithms, introductory ML, Git",
+        "bloom_understand": "LLM APIs, RAG pipelines, and fine-tuning basics",
+        "bloom_apply": "Integrate generative AI into coding and research tooling",
+        "bloom_analyze": "Debugging model outputs and evaluating technical tradeoffs",
     }
-    prompting_tweaks = [
-        ("prompting_first_03", "Content creator using ChatGPT daily", {"bloom_remember": "ChatGPT, prompt templates, daily prompting habits", "prereq_1": "Somewhat uncertain", "goals_1": "Improve daily prompting skills without deep ML theory"}),
-        ("prompting_first_04", "Support agent relying on copilot prompts", {"bloom_remember": "Copilot prompts and few-shot examples at work", "goals_1": "Fill gaps in AI fundamentals while keeping prompt skills"}),
-        ("prompting_first_05", "Designer using gen AI for mockups", {"learning_1": LEARNING_STYLES[0], "bloom_apply": "Create design mockups with structured prompts"}),
-        ("prompting_first_06", "Teacher experimenting with classroom prompts", {"bloom_remember": "ChatGPT for lesson planning, basic prompt templates", "goals_1": "Master prompting techniques for education"}),
-    ]
-    for pid, desc, overrides in prompting_tweaks:
-        profiles.append(_clone(prompting_base, pid, "prompting_first", desc, **overrides))
+    for pid, desc, kw in [
+        ("cs_undergrad_software", "CS undergrad — software engineering focus", {"goals_1": "Use gen AI in software development workflows and code review"}),
+        ("cs_undergrad_ai_elective", "CS undergrad — first dedicated AI course", {"prereq_1": "Somewhat confident", "bloom_remember": "Python, intro algorithms, one ML lecture series"}),
+        ("cs_phd_nlp", "CS PhD — NLP and LLM research", {"goals_1": "Advance academic research on LLMs, RAG, and fine-tuning", "bloom_apply": "Run ablation studies and benchmark RAG retrieval quality"}),
+        ("cs_industry_returning", "CS professional returning for AI literacy credential", {"bloom_remember": "Production systems, MLOps exposure, transformer basics"}),
+        ("cs_security_focus", "CS senior — security and adversarial ML interest", {"bloom_analyze": "Adversarial attacks, prompt injection, and model robustness"}),
+        ("cs_data_engineering", "CS junior — data engineering and LLM pipelines", {"goals_1": "Design ML/DS project workflows with generative AI components"}),
+        ("cs_game_dev", "CS undergrad — interactive media, lighter ML background", {"prereq_1": "Somewhat confident", "bloom_remember": "Game engines, basic Python, online LLM tutorials"}),
+    ]:
+        out.append(_extend(cs, pid, "cs_technical", "Computer Science", desc, **kw))
 
-    balanced_base = {
-        "goals_1": "Build a well-rounded understanding of AI literacy topics",
+    biz = {
+        "goals_1": "Apply generative AI in business operations and strategy",
+        "goals_2": "Career advancement",
+        "prereq_1": "Somewhat confident",
+        "learning_1": "Mixed approach",
+        "bloom_remember": "Finance basics, presentations, CRM and spreadsheet tools",
+        "bloom_understand": "Gen AI in business units, workplace productivity, and transformation",
+        "bloom_apply": "Draft business cases and stakeholder communications with AI",
+        "bloom_analyze": "Vendor evaluation and change management for AI adoption",
+    }
+    for pid, field, desc, kw in [
+        ("biz_finance_analyst", "Finance", "Finance undergrad — AI for modeling and reporting", {"goals_1": "Use AI for financial analysis, reporting, and executive summaries"}),
+        ("biz_entrepreneur", "Business", "Entrepreneurship student — startup gen AI use cases", {"goals_1": "Identify gen AI opportunities for a startup business model"}),
+        ("biz_hr_track", "Business", "HR major — responsible AI in people operations", {"goals_1": "Evaluate workplace AI for hiring, training, and employee communications"}),
+        ("biz_intl_student", "Business", "International business — AI for global teams", {"prereq_1": "Neutral", "bloom_remember": "Cross-cultural management coursework, email and slide tools"}),
+        ("biz_consulting", "Business", "Management student targeting consulting", {"goals_1": "Lead client AI strategy assessments and transformation roadmaps"}),
+    ]:
+        out.append(_extend(biz, pid, "business_mba", field, desc, **kw))
+
+    econ = {
+        "goals_1": "Apply AI literacy to economic policy and empirical research",
         "goals_2": "Personal interest in the subject",
         "prereq_1": "Neutral",
         "learning_1": "Mixed approach",
-        "bloom_remember": "Heard of machine learning and ChatGPT",
-        "bloom_understand": "Both traditional AI and generative AI concepts",
-        "bloom_apply": "Experiment with prompts and AI tools at work",
-        "bloom_analyze": "Balancing hype with realistic AI capabilities",
+        "bloom_remember": "Micro/macro, econometrics, Stata or R at introductory level",
+        "bloom_understand": "AI implications for labor markets, forecasting, and policy",
+        "bloom_apply": "Summarize datasets and literature with AI-assisted workflows",
+        "bloom_analyze": "Causal claims and hype in AI-driven economic predictions",
     }
-    balanced_tweaks = [
-        ("balanced_general_02", "Working professional seeking balanced AI literacy", {"goals_2": "Career advancement"}),
-        ("balanced_general_03", "Undergraduate exploring AI as a general elective", {"bloom_remember": "Intro programming and heard of ChatGPT"}),
-        ("balanced_general_04", "Entrepreneur wanting broad AI overview", {"goals_2": "Career advancement", "bloom_apply": "Explore AI tools for a side business"}),
-        ("balanced_general_05", "Retiree curious about AI news and tools", {"learning_1": LEARNING_STYLES[1]}),
-        ("balanced_general_06", "Freelancer seeking well-rounded AI skills", {"bloom_apply": "Use AI across writing, design, and admin tasks"}),
-        ("balanced_general_07", "Team lead wanting neutral baseline literacy", {"prereq_1": "Somewhat confident", "goals_1": "Build organizational AI literacy across mixed skill levels"}),
-    ]
-    for pid, desc, overrides in balanced_tweaks:
-        profiles.append(_clone(balanced_base, pid, "balanced_general", desc, **overrides))
+    for pid, desc, kw in [
+        ("econ_undergrad_labor", "Econ BA — labor economics and automation", {"goals_1": "Understand AI impact on labor markets and workforce policy"}),
+        ("econ_phd_empirical", "Econ PhD — empirical methods and ML overlap", {"prereq_1": "Somewhat confident", "bloom_remember": "Econometrics, causal inference, basic Python for data"}),
+        ("econ_policy_masters", "Public policy master's — econ track", {"goals_2": "Career advancement", "bloom_apply": "Draft policy memos using AI with proper citations"}),
+        ("econ_behavioral", "Behavioral econ senior — human-AI decision making", {"bloom_understand": "How generative AI influences consumer and firm behavior"}),
+        ("econ_international", "International econ — trade and AI regulation", {"bloom_analyze": "Cross-country AI regulation and trade implications"}),
+        ("econ_minor_cs", "Econ major with CS minor — mixed quant background", {"prereq_1": "Somewhat confident", "bloom_remember": "Statistics, intro programming, macro theory"}),
+    ]:
+        out.append(_extend(econ, pid, "economics", "Economics", desc, **kw))
 
-    # Style controls: same survey core as balanced peers, only learning_1 changes
+    math = {
+        "goals_1": "Connect rigorous mathematics to modern AI and prompting methods",
+        "goals_2": "Personal interest in the subject",
+        "prereq_1": "Somewhat confident",
+        "learning_1": "Reading/Writing (texts, notes)",
+        "bloom_remember": "Calculus, linear algebra, probability, proof-based coursework",
+        "bloom_understand": "Mathematical intuition behind ML and generative models",
+        "bloom_apply": "Use structured prompts for proofs, derivations, and lab write-ups",
+        "bloom_analyze": "Limits of LLM reasoning on formal mathematical tasks",
+    }
+    for pid, field, desc, kw in [
+        ("math_pure_undergrad", "Mathematics", "Pure math junior — theory-heavy, new to ML", {"bloom_remember": "Real analysis, abstract algebra, minimal programming"}),
+        ("stats_masters_applied", "Statistics", "Statistics MS — applied data science focus", {"goals_1": "Bridge statistical modeling with generative AI workflows", "bloom_apply": "Build RAG-assisted analysis pipelines for datasets"}),
+        ("math_cs_double_major", "Mathematics", "Math/CS double major — strong in both", {"prereq_1": "Very confident", "bloom_remember": "Linear algebra, optimization, algorithms, intro deep learning"}),
+        ("stats_undergrad_biostats", "Statistics", "Biostatistics undergrad — health data angle", {"bloom_apply": "Apply prompting to biostatistics reports and visualizations"}),
+        ("math_education", "Mathematics", "Math education major — teaching AI literacy", {"goals_1": "Learn AI concepts I can explain to high school students"}),
+        ("stats_econ_bridge", "Statistics", "Stats major minoring in economics", {"bloom_understand": "AI forecasting methods used in policy and finance"}),
+    ]:
+        out.append(_extend(math, pid, "math_stats", field, desc, **kw))
+
+    health = {
+        "goals_1": "Use AI responsibly in clinical, public health, or biomedical contexts",
+        "goals_2": "Career advancement",
+        "prereq_1": "Neutral",
+        "learning_1": "Mixed approach",
+        "bloom_remember": "Anatomy basics, epidemiology, patient privacy (HIPAA) awareness",
+        "bloom_understand": "How AI supports diagnosis, documentation, and population health",
+        "bloom_apply": "Evaluate clinical AI tools and draft patient-facing materials safely",
+        "bloom_analyze": "Bias in medical datasets and ethical risks of AI in care",
+    }
+    for pid, field, desc, kw in [
+        ("nursing_bsn", "Nursing", "BSN student — bedside tech and documentation AI", {"goals_1": "Apply AI literacy to nursing documentation and patient education"}),
+        ("pre_med_undergrad", "Pre-Medicine", "Pre-med junior — AI in diagnostics and research", {"bloom_remember": "Biology, chemistry, introductory biostatistics"}),
+        ("health_informatics", "Health Informatics", "Health informatics MS — EHR and AI systems", {"goals_1": "Understand technical workflows for health data and responsible AI"}),
+        ("pharmacy_student", "Pharmacy", "Pharmacy student — drug interaction and literature tools", {"bloom_apply": "Use AI to summarize pharmacology literature with verification"}),
+        ("social_work_msw", "Social Work", "MSW student — AI ethics in vulnerable populations", {"goals_1": "Understand societal impact and responsible AI in social services"}),
+        ("biomed_engineering", "Biomedical Engineering", "BME senior — ML for medical devices", {"prereq_1": "Somewhat confident", "bloom_remember": "Signals, MATLAB, introductory ML for biosignals"}),
+    ]:
+        out.append(_extend(health, pid, "health_medicine", field, desc, **kw))
+
+    hum = {
+        "goals_1": "Build AI literacy without assuming a technical background",
+        "goals_2": "Required elective for my degree",
+        "prereq_1": "Very uncertain",
+        "learning_1": "Visual (diagrams, charts, videos)",
+        "bloom_remember": "Essay writing, qualitative research methods, no programming",
+        "bloom_understand": "How AI affects media, culture, and social institutions",
+        "bloom_apply": "Use AI tools responsibly in papers and creative projects",
+        "bloom_analyze": "Misinformation, authorship, and bias in AI-generated content",
+    }
+    for pid, field, desc, kw in [
+        ("polisci_junior", "Political Science", "Political science junior — AI and governance", {"goals_1": "Understand AI policy, regulation, and civic implications"}),
+        ("sociology_masters", "Sociology", "Sociology MA — AI and social inequality", {"prereq_1": "Somewhat uncertain", "bloom_analyze": "How AI reproduces or amplifies social bias"}),
+        ("education_undergrad", "Education", "Education major — AI in K-12 classrooms", {"goals_1": "Learn AI literacy to teach students responsibly"}),
+        ("philosophy_ethics", "Philosophy", "Philosophy major — ethics of AI and consciousness debates", {"goals_1": "Understand ethical risks and responsible AI from a humanities lens"}),
+        ("journalism_student", "Journalism", "Journalism student — verification and AI-generated news", {"bloom_apply": "Fact-check AI outputs in investigative reporting"}),
+    ]:
+        out.append(_extend(hum, pid, "humanities_social", field, desc, **kw))
+
+    # Style controls paired with non-canonical balanced peers
     style_pairs = [
-        ("style_control_02", "balanced_general_02", LEARNING_STYLES[0]),
-        ("style_control_03", "balanced_general_03", LEARNING_STYLES[1]),
-        ("style_control_04", "balanced_general_04", LEARNING_STYLES[3]),
-        ("style_control_05", "balanced_general_05", LEARNING_STYLES[2]),
+        ("style_control_econ_labor", "econ_undergrad_labor", LEARNING_STYLES[0]),
+        ("style_control_polisci", "polisci_junior", LEARNING_STYLES[2]),
+        ("style_control_nursing", "nursing_bsn", LEARNING_STYLES[3]),
+        ("style_control_math_pure", "math_pure_undergrad", LEARNING_STYLES[1]),
+        ("style_control_biz_finance", "biz_finance_analyst", LEARNING_STYLES[4]),
     ]
-    balanced_by_id = {p["id"]: p for p in profiles if p["cluster"] == "balanced_general"}
-    balanced_by_id["medium_knowledge_mixed"] = next(c for c in CANONICAL if c["id"] == "medium_knowledge_mixed")
+    peers = {x["id"]: x for x in out}
+    peers["medium_knowledge_mixed"] = next(c for c in CANONICAL if c["id"] == "medium_knowledge_mixed")
 
     for sc_id, paired_id, style in style_pairs:
-        peer = balanced_by_id[paired_id]
+        peer = peers[paired_id]
         answers = deepcopy(peer["answers"])
         answers["learning_1"] = style
-        profiles.append({
-            "id": sc_id,
-            "cluster": "style_control",
-            "paired_with": paired_id,
-            "description": f"Learning-style control for {paired_id} — only learning_1 differs",
-            "answers": answers,
-        })
+        out.append(_p(
+            sc_id,
+            "style_control",
+            peer["field"],
+            f"Learning-style control for {paired_id} ({peer['field']}) — only learning_1 differs",
+            answers,
+            paired_with=paired_id,
+        ))
 
-    return profiles
+    return out
 
 
 def main() -> int:
@@ -353,18 +369,23 @@ def main() -> int:
         return 1
 
     clusters: dict[str, int] = {}
+    fields: dict[str, int] = {}
     for p in all_profiles:
         clusters[p["cluster"]] = clusters.get(p["cluster"], 0) + 1
+        fields[p["field"]] = fields.get(p["field"], 0) + 1
 
     payload = {
-        "version": "2.0",
+        "version": "3.0",
         "profile_count": len(all_profiles),
+        "design": "Cross-field students (CS, Business, Econ, Math/Stats, Health, Humanities) in one AI literacy course",
         "clusters": clusters,
+        "fields": fields,
         "profiles": all_profiles,
     }
     OUT_PATH.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(f"Wrote {len(all_profiles)} profiles to {OUT_PATH}")
     print("Clusters:", json.dumps(clusters, indent=2))
+    print("Fields:", json.dumps(fields, indent=2))
     return 0
 
 

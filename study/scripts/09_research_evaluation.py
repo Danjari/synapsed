@@ -14,8 +14,7 @@ STUDY_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(STUDY_ROOT))
 
 from lib.api_client import load_json, save_json  # noqa: E402
-from lib.llm_judge import judge_all_profiles, stratified_judge_sample  # noqa: E402
-from lib.pathway_generator import get_gemini_client  # noqa: E402
+from lib.llm_judge import get_anthropic_client, judge_all_profiles, stratified_judge_sample  # noqa: E402
 from lib.pathway_metrics import evaluate_gate, pairwise_similarities  # noqa: E402
 from lib.research_metrics import (  # noqa: E402
     cluster_gate_verdict,
@@ -189,8 +188,8 @@ def main() -> int:
             if args.judge_all or len(profiles) <= sample_size
             else stratified_judge_sample(profiles, sample_size)
         )
-        print(f"Running LLM-as-judge on {len(judge_sample_ids)} profiles...")
-        client = get_gemini_client()
+        print(f"Running Claude judge on {len(judge_sample_ids)} profiles...")
+        client = get_anthropic_client()
         judge_results = judge_all_profiles(
             client, profiles, pathways, syllabus, profile_ids=judge_sample_ids
         )

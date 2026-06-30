@@ -13,9 +13,9 @@ research:
   max_contrast_cluster_multiset_jaccard: 0.70
   min_style_control_pass_rate: 0.8
   contrasting_cluster_pairs:
-    - [foundation_low, research_technical]
-    - [foundation_low, business_track]
-    - [business_track, research_technical]
+    - [humanities_social, cs_technical]
+    - [humanities_social, business_mba]
+    - [business_mba, cs_technical]
 
 survey_question_ids:
   - goals_1

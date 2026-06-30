@@ -12,8 +12,7 @@ pip install -r requirements.txt
 cp env.example .env
 ```
 
-Ensure `GEMINI_API_KEY` is set in `study/.env` or the repo root `.env`.  
-Optional: set `GEMINI_JUDGE_MODEL` to a different model than the generator for LLM-as-judge.
+Ensure `GEMINI_API_KEY` (pathway generation) and `ANTHROPIC_API_KEY` (Claude judge) are set in `study/.env` or repo root `.env`.
 
 ## Recommended pipeline (offline — no database)
 
@@ -33,7 +32,7 @@ python scripts/08_analyze_pathway_diversity.py      # secondary title-Jaccard re
 | **Primary** | Multiset Jaccard on `syllabusBlockId` | 09 | Block *coverage* similarity (lower = more diverse) |
 | **Primary** | Pre-registered contrast hypotheses H1–H5 | 09 | Structural personalization checks |
 | **Primary** | Within/between cluster multiset Jaccard | 09 | Similar profiles → similar paths; contrasting clusters diverge |
-| **Primary** | LLM-as-judge (5-dimension rubric, 1–5) | 09 | Profile–pathway alignment (default: 15-profile sample) |
+| **Primary** | LLM-as-judge via **Anthropic Claude** (5-dimension rubric) | 09 | Independent from Gemini generator |
 | Secondary | Title Jaccard | 08 | Can miss shared structural spine |
 | Secondary | Sequence Jaccard (position-aware blocks) | 09 | Diagnostic only |
 
@@ -43,11 +42,10 @@ Prompt spec and rubric: `data/prompts/pathway_generation_spec.json`
 
 - Mean pairwise **multiset Jaccard** on block ids **< 0.92**
 - **≥ 80%** of contrast hypotheses pass (see spec for H1–H5)
-- Mean LLM judge score **≥ 3.5** (unless `--skip-judge`)
+- Mean Claude judge score **≥ 3.5** (unless `--skip-judge`)
+- Within-cluster similarity **≥ 0.65**; contrasting-cluster divergence **≤ 0.70**
 
-Reports: `data/results/reports/research_evaluation.json` and `.html`
-
-Exit code `2` = gate failed → refine prompt or profiles before human studies.
+Exit code `2` = gate failed → **fix the prompt or generator**; thresholds are not tuned to force a pass.
 
 ## Optional pipeline (platform / DB-backed)
 

@@ -1,770 +1,844 @@
 {
-  "version": "2.0",
+  "version": "3.0",
   "profile_count": 50,
+  "design": "Cross-field students (CS, Business, Econ, Math/Stats, Health, Humanities) in one AI literacy course",
   "clusters": {
-    "foundation_low": 8,
-    "research_technical": 9,
-    "business_track": 9,
-    "balanced_general": 7,
-    "prompting_first": 6,
-    "ethics_society": 6,
-    "style_control": 5
+    "humanities_social": 7,
+    "cs_technical": 8,
+    "business_mba": 8,
+    "economics": 7,
+    "math_stats": 7,
+    "health_medicine": 7,
+    "style_control": 6
+  },
+  "fields": {
+    "History": 1,
+    "Computer Science": 8,
+    "Business": 7,
+    "Economics": 9,
+    "Mathematics": 5,
+    "English": 1,
+    "Public Health": 1,
+    "Finance": 2,
+    "Statistics": 3,
+    "Nursing": 2,
+    "Pre-Medicine": 1,
+    "Health Informatics": 1,
+    "Pharmacy": 1,
+    "Social Work": 1,
+    "Biomedical Engineering": 1,
+    "Political Science": 2,
+    "Sociology": 1,
+    "Education": 1,
+    "Philosophy": 1,
+    "Journalism": 1
   },
   "profiles": [
     {
       "id": "low_knowledge_general",
-      "cluster": "foundation_low",
-      "description": "Very low prior knowledge, general literacy goal",
+      "cluster": "humanities_social",
+      "field": "History",
+      "description": "History BA sophomore — no STEM background, first AI course",
       "answers": {
-        "goals_1": "Understand what AI is and how it affects daily life",
-        "goals_2": "Personal interest in the subject",
+        "goals_1": "Understand what AI is and how it affects society and historical research",
+        "goals_2": "Required elective for my degree",
         "prereq_1": "Very uncertain",
         "learning_1": "Visual (diagrams, charts, videos)",
-        "bloom_remember": "I have not taken any AI courses before",
-        "bloom_understand": "I want to learn basic AI vocabulary and concepts",
-        "bloom_apply": "Use AI tools responsibly in everyday tasks",
-        "bloom_analyze": "I worry about keeping up with technical jargon"
+        "bloom_remember": "I have not taken any AI or programming courses",
+        "bloom_understand": "Basic AI vocabulary and how historians might use AI tools",
+        "bloom_apply": "Use AI responsibly when reviewing sources and drafting essays",
+        "bloom_analyze": "I worry about technical jargon and misinformation in AI outputs"
       }
     },
     {
       "id": "high_knowledge_research",
-      "cluster": "research_technical",
-      "description": "Strong ML background, research-oriented goals",
+      "cluster": "cs_technical",
+      "field": "Computer Science",
+      "description": "CS MS student — strong ML background, research-oriented",
       "answers": {
-        "goals_1": "Deepen understanding of generative AI for academic research",
+        "goals_1": "Deepen generative AI knowledge for academic research and technical workflows",
         "goals_2": "Career advancement",
         "prereq_1": "Very confident",
         "learning_1": "Reading/Writing (texts, notes)",
-        "bloom_remember": "Supervised learning, neural networks, gradient descent",
-        "bloom_understand": "How LLMs differ from traditional ML pipelines",
-        "bloom_apply": "Design research workflows using generative AI tools",
-        "bloom_analyze": "Evaluating model limitations and hallucination risks"
+        "bloom_remember": "Supervised learning, neural networks, gradient descent, PyTorch",
+        "bloom_understand": "How LLMs differ from traditional ML pipelines and RAG architectures",
+        "bloom_apply": "Design research workflows using fine-tuning and retrieval-augmented generation",
+        "bloom_analyze": "Evaluating hallucination, benchmark design, and model limitations"
       }
     },
     {
       "id": "low_knowledge_business",
-      "cluster": "business_track",
-      "description": "Low confidence, business application focus",
+      "cluster": "business_mba",
+      "field": "Business",
+      "description": "Marketing undergrad — limited technical background, workplace AI focus",
       "answers": {
-        "goals_1": "Apply AI and prompting in a business context",
+        "goals_1": "Apply AI and prompting in marketing and business communications",
         "goals_2": "Career advancement",
         "prereq_1": "Somewhat uncertain",
         "learning_1": "Mixed approach",
-        "bloom_remember": "Basic spreadsheet and email tools",
-        "bloom_understand": "How generative AI can support business decisions",
-        "bloom_apply": "Draft reports and customer communications with AI",
-        "bloom_analyze": "Choosing appropriate AI tools for business tasks"
+        "bloom_remember": "Excel, CRM tools, basic analytics dashboards",
+        "bloom_understand": "How generative AI supports campaign planning and customer engagement",
+        "bloom_apply": "Draft marketing copy and reports with AI in a business context",
+        "bloom_analyze": "Choosing appropriate AI tools for brand and customer data"
       }
     },
     {
       "id": "high_knowledge_business",
-      "cluster": "business_track",
-      "description": "Knows classic AI, wants gen AI for business",
+      "cluster": "business_mba",
+      "field": "Business",
+      "description": "MBA student with analytics exposure — org-level gen AI strategy",
       "answers": {
-        "goals_1": "Lead AI transformation initiatives in my organization",
+        "goals_1": "Lead AI transformation and gen AI strategy in my organization",
         "goals_2": "Career advancement",
         "prereq_1": "Very confident",
         "learning_1": "Auditory (lectures, discussions)",
-        "bloom_remember": "ML project workflow, data science basics, AI strategy terms",
-        "bloom_understand": "Generative AI opportunities in business units",
-        "bloom_apply": "Scope and prioritize gen AI pilot projects",
-        "bloom_analyze": "ROI and risk tradeoffs for gen AI adoption"
+        "bloom_remember": "ML project lifecycle, KPI dashboards, digital transformation frameworks",
+        "bloom_understand": "Generative AI opportunities across business units and workplace adoption",
+        "bloom_apply": "Scope gen AI pilot projects and measure ROI for leadership",
+        "bloom_analyze": "Risk, compliance, and workforce impact of AI transformation"
       }
     },
     {
       "id": "medium_knowledge_mixed",
-      "cluster": "balanced_general",
-      "description": "Neutral confidence, mixed goals",
+      "cluster": "economics",
+      "field": "Economics",
+      "description": "Economics junior — moderate quant background, balanced AI literacy goals",
       "answers": {
-        "goals_1": "Build a well-rounded understanding of AI literacy topics",
+        "goals_1": "Build well-rounded AI literacy for policy and data-driven economics",
         "goals_2": "Personal interest in the subject",
         "prereq_1": "Neutral",
         "learning_1": "Mixed approach",
-        "bloom_remember": "Heard of machine learning and ChatGPT",
-        "bloom_understand": "Both traditional AI and generative AI concepts",
-        "bloom_apply": "Experiment with prompts and AI tools at work",
-        "bloom_analyze": "Balancing hype with realistic AI capabilities"
+        "bloom_remember": "Regression, statistics coursework, heard of ChatGPT and machine learning",
+        "bloom_understand": "Both traditional AI and generative AI in economic analysis",
+        "bloom_apply": "Experiment with prompts for data summaries and policy briefs",
+        "bloom_analyze": "Separating AI hype from realistic capabilities in economic forecasting"
       }
     },
     {
       "id": "gen_ai_familiar_prompting_new",
-      "cluster": "prompting_first",
-      "description": "Comfortable with gen AI concepts, new to structured prompting",
+      "cluster": "math_stats",
+      "field": "Mathematics",
+      "description": "Applied math senior — strong quant, new to structured prompting",
       "answers": {
-        "goals_1": "Master structured prompting techniques",
+        "goals_1": "Master structured prompting for technical and proof-writing tasks",
         "goals_2": "Personal interest in the subject",
         "prereq_1": "Somewhat confident",
         "learning_1": "Kinesthetic (hands-on activities)",
-        "bloom_remember": "LLMs, transformers, generative AI use cases",
-        "bloom_understand": "Few-shot and chain-of-thought prompting",
-        "bloom_apply": "Build reusable prompt templates for work",
-        "bloom_analyze": "When advanced prompting techniques are worth the effort"
+        "bloom_remember": "Linear algebra, probability, basic Python, LLM demos",
+        "bloom_understand": "Few-shot and chain-of-thought prompting for quantitative work",
+        "bloom_apply": "Build prompt templates for homework and research write-ups",
+        "bloom_analyze": "When advanced prompting is worth the effort vs direct computation"
       }
     },
     {
       "id": "prompting_expert_ai_novice",
-      "cluster": "prompting_first",
-      "description": "Uses prompts daily but weak on AI foundations",
+      "cluster": "humanities_social",
+      "field": "English",
+      "description": "English major — daily ChatGPT user, weak ML foundations",
       "answers": {
-        "goals_1": "Fill gaps in AI and ML fundamentals",
-        "goals_2": "Prerequisite for other courses",
+        "goals_1": "Fill gaps in AI and ML fundamentals while keeping strong writing skills",
+        "goals_2": "Required elective",
         "prereq_1": "Somewhat uncertain",
         "learning_1": "Reading/Writing (texts, notes)",
-        "bloom_remember": "ChatGPT, prompt templates, few-shot examples",
-        "bloom_understand": "What machine learning and data mean in AI systems",
-        "bloom_apply": "Connect prompting skills to underlying AI concepts",
-        "bloom_analyze": "Why models fail and how data affects outcomes"
+        "bloom_remember": "ChatGPT, prompt templates, daily writing assistance — no ML courses",
+        "bloom_understand": "What machine learning and training data mean beneath the interface",
+        "bloom_apply": "Connect my prompting habits to responsible academic writing",
+        "bloom_analyze": "Why models hallucinate and how that affects literary analysis"
       }
     },
     {
       "id": "business_leader",
-      "cluster": "business_track",
-      "description": "Executive focus on org strategy and gen AI business impact",
+      "cluster": "business_mba",
+      "field": "Business",
+      "description": "Executive MBA — organizational strategy and workplace gen AI",
       "answers": {
-        "goals_1": "Develop an AI strategy for my team or company",
+        "goals_1": "Develop an AI strategy and transformation playbook for my organization",
         "goals_2": "Career advancement",
         "prereq_1": "Somewhat confident",
         "learning_1": "Auditory (lectures, discussions)",
-        "bloom_remember": "Digital transformation, product management basics",
-        "bloom_understand": "AI transformation playbook and organizational change",
-        "bloom_apply": "Identify high-value gen AI use cases in the workplace",
-        "bloom_analyze": "Workforce impact and change management for AI adoption"
+        "bloom_remember": "Product management, change management, digital transformation",
+        "bloom_understand": "AI transformation playbook and gen AI in business operations",
+        "bloom_apply": "Identify high-value gen AI use cases and workplace pilot programs",
+        "bloom_analyze": "Workforce impact, vendor selection, and responsible adoption"
       }
     },
     {
       "id": "ethics_focused",
-      "cluster": "ethics_society",
-      "description": "Motivated by responsible AI and societal impact",
+      "cluster": "health_medicine",
+      "field": "Public Health",
+      "description": "MPH student — ethics, bias, and responsible AI in healthcare",
       "answers": {
-        "goals_1": "Understand ethical risks and responsible AI practices",
+        "goals_1": "Understand ethical risks, bias, and responsible AI in health systems",
         "goals_2": "Personal interest in the subject",
         "prereq_1": "Neutral",
         "learning_1": "Reading/Writing (texts, notes)",
-        "bloom_remember": "Bias, fairness, privacy as general concepts",
-        "bloom_understand": "How hallucinations and adversarial attacks affect AI systems",
-        "bloom_apply": "Evaluate AI tools for ethical use in my context",
-        "bloom_analyze": "Tradeoffs between AI benefits and societal harms"
+        "bloom_remember": "Health equity, epidemiology basics, privacy and consent concepts",
+        "bloom_understand": "How bias, hallucinations, and adversarial errors affect clinical AI",
+        "bloom_apply": "Evaluate AI tools for ethical use in public health programs",
+        "bloom_analyze": "Tradeoffs between AI efficiency and patient safety or equity"
       }
     },
     {
       "id": "learning_style_control",
       "cluster": "style_control",
+      "field": "Economics",
       "paired_with": "medium_knowledge_mixed",
-      "description": "Same as medium profile but kinesthetic — interaction-only control",
+      "description": "Economics junior — identical to medium_knowledge_mixed except learning style",
       "answers": {
-        "goals_1": "Build a well-rounded understanding of AI literacy topics",
+        "goals_1": "Build well-rounded AI literacy for policy and data-driven economics",
         "goals_2": "Personal interest in the subject",
         "prereq_1": "Neutral",
         "learning_1": "Kinesthetic (hands-on activities)",
-        "bloom_remember": "Heard of machine learning and ChatGPT",
-        "bloom_understand": "Both traditional AI and generative AI concepts",
-        "bloom_apply": "Experiment with prompts and AI tools at work",
-        "bloom_analyze": "Balancing hype with realistic AI capabilities"
+        "bloom_remember": "Regression, statistics coursework, heard of ChatGPT and machine learning",
+        "bloom_understand": "Both traditional AI and generative AI in economic analysis",
+        "bloom_apply": "Experiment with prompts for data summaries and policy briefs",
+        "bloom_analyze": "Separating AI hype from realistic capabilities in economic forecasting"
       }
     },
     {
-      "id": "foundation_low_02",
-      "cluster": "foundation_low",
-      "description": "First-year student with no STEM background",
+      "id": "cs_undergrad_software",
+      "cluster": "cs_technical",
+      "field": "Computer Science",
+      "description": "CS undergrad — software engineering focus",
       "answers": {
-        "goals_1": "Understand what AI is and how it affects daily life",
-        "goals_2": "Personal interest in the subject",
-        "prereq_1": "Very uncertain",
-        "learning_1": "Reading/Writing (texts, notes)",
-        "bloom_remember": "I have not taken any AI courses before",
-        "bloom_understand": "I want to learn basic AI vocabulary and concepts",
-        "bloom_apply": "Use AI tools responsibly in everyday tasks",
-        "bloom_analyze": "Math and technical terms feel intimidating"
-      }
-    },
-    {
-      "id": "foundation_low_03",
-      "cluster": "foundation_low",
-      "description": "Career switcher starting from zero AI knowledge",
-      "answers": {
-        "goals_1": "Understand what AI is and how it affects daily life",
+        "goals_1": "Use gen AI in software development workflows and code review",
         "goals_2": "Career advancement",
-        "prereq_1": "Very uncertain",
+        "prereq_1": "Very confident",
         "learning_1": "Kinesthetic (hands-on activities)",
-        "bloom_remember": "I have not taken any AI courses before",
-        "bloom_understand": "I want to learn basic AI vocabulary and concepts",
-        "bloom_apply": "Use AI assistants in a new job search",
-        "bloom_analyze": "I worry about keeping up with technical jargon"
+        "bloom_remember": "Data structures, algorithms, introductory ML, Git",
+        "bloom_understand": "LLM APIs, RAG pipelines, and fine-tuning basics",
+        "bloom_apply": "Integrate generative AI into coding and research tooling",
+        "bloom_analyze": "Debugging model outputs and evaluating technical tradeoffs"
       }
     },
     {
-      "id": "foundation_low_04",
-      "cluster": "foundation_low",
-      "description": "Community college learner, very uncertain prerequisites",
+      "id": "cs_undergrad_ai_elective",
+      "cluster": "cs_technical",
+      "field": "Computer Science",
+      "description": "CS undergrad — first dedicated AI course",
       "answers": {
-        "goals_1": "Understand what AI is and how it affects daily life",
+        "goals_1": "Build technical gen AI workflows for software and research projects",
+        "goals_2": "Career advancement",
+        "prereq_1": "Somewhat confident",
+        "learning_1": "Kinesthetic (hands-on activities)",
+        "bloom_remember": "Python, intro algorithms, one ML lecture series",
+        "bloom_understand": "LLM APIs, RAG pipelines, and fine-tuning basics",
+        "bloom_apply": "Integrate generative AI into coding and research tooling",
+        "bloom_analyze": "Debugging model outputs and evaluating technical tradeoffs"
+      }
+    },
+    {
+      "id": "cs_phd_nlp",
+      "cluster": "cs_technical",
+      "field": "Computer Science",
+      "description": "CS PhD — NLP and LLM research",
+      "answers": {
+        "goals_1": "Advance academic research on LLMs, RAG, and fine-tuning",
+        "goals_2": "Career advancement",
+        "prereq_1": "Very confident",
+        "learning_1": "Kinesthetic (hands-on activities)",
+        "bloom_remember": "Data structures, algorithms, introductory ML, Git",
+        "bloom_understand": "LLM APIs, RAG pipelines, and fine-tuning basics",
+        "bloom_apply": "Run ablation studies and benchmark RAG retrieval quality",
+        "bloom_analyze": "Debugging model outputs and evaluating technical tradeoffs"
+      }
+    },
+    {
+      "id": "cs_industry_returning",
+      "cluster": "cs_technical",
+      "field": "Computer Science",
+      "description": "CS professional returning for AI literacy credential",
+      "answers": {
+        "goals_1": "Build technical gen AI workflows for software and research projects",
+        "goals_2": "Career advancement",
+        "prereq_1": "Very confident",
+        "learning_1": "Kinesthetic (hands-on activities)",
+        "bloom_remember": "Production systems, MLOps exposure, transformer basics",
+        "bloom_understand": "LLM APIs, RAG pipelines, and fine-tuning basics",
+        "bloom_apply": "Integrate generative AI into coding and research tooling",
+        "bloom_analyze": "Debugging model outputs and evaluating technical tradeoffs"
+      }
+    },
+    {
+      "id": "cs_security_focus",
+      "cluster": "cs_technical",
+      "field": "Computer Science",
+      "description": "CS senior — security and adversarial ML interest",
+      "answers": {
+        "goals_1": "Build technical gen AI workflows for software and research projects",
+        "goals_2": "Career advancement",
+        "prereq_1": "Very confident",
+        "learning_1": "Kinesthetic (hands-on activities)",
+        "bloom_remember": "Data structures, algorithms, introductory ML, Git",
+        "bloom_understand": "LLM APIs, RAG pipelines, and fine-tuning basics",
+        "bloom_apply": "Integrate generative AI into coding and research tooling",
+        "bloom_analyze": "Adversarial attacks, prompt injection, and model robustness"
+      }
+    },
+    {
+      "id": "cs_data_engineering",
+      "cluster": "cs_technical",
+      "field": "Computer Science",
+      "description": "CS junior — data engineering and LLM pipelines",
+      "answers": {
+        "goals_1": "Design ML/DS project workflows with generative AI components",
+        "goals_2": "Career advancement",
+        "prereq_1": "Very confident",
+        "learning_1": "Kinesthetic (hands-on activities)",
+        "bloom_remember": "Data structures, algorithms, introductory ML, Git",
+        "bloom_understand": "LLM APIs, RAG pipelines, and fine-tuning basics",
+        "bloom_apply": "Integrate generative AI into coding and research tooling",
+        "bloom_analyze": "Debugging model outputs and evaluating technical tradeoffs"
+      }
+    },
+    {
+      "id": "cs_game_dev",
+      "cluster": "cs_technical",
+      "field": "Computer Science",
+      "description": "CS undergrad — interactive media, lighter ML background",
+      "answers": {
+        "goals_1": "Build technical gen AI workflows for software and research projects",
+        "goals_2": "Career advancement",
+        "prereq_1": "Somewhat confident",
+        "learning_1": "Kinesthetic (hands-on activities)",
+        "bloom_remember": "Game engines, basic Python, online LLM tutorials",
+        "bloom_understand": "LLM APIs, RAG pipelines, and fine-tuning basics",
+        "bloom_apply": "Integrate generative AI into coding and research tooling",
+        "bloom_analyze": "Debugging model outputs and evaluating technical tradeoffs"
+      }
+    },
+    {
+      "id": "biz_finance_analyst",
+      "cluster": "business_mba",
+      "field": "Finance",
+      "description": "Finance undergrad — AI for modeling and reporting",
+      "answers": {
+        "goals_1": "Use AI for financial analysis, reporting, and executive summaries",
+        "goals_2": "Career advancement",
+        "prereq_1": "Somewhat confident",
+        "learning_1": "Mixed approach",
+        "bloom_remember": "Finance basics, presentations, CRM and spreadsheet tools",
+        "bloom_understand": "Gen AI in business units, workplace productivity, and transformation",
+        "bloom_apply": "Draft business cases and stakeholder communications with AI",
+        "bloom_analyze": "Vendor evaluation and change management for AI adoption"
+      }
+    },
+    {
+      "id": "biz_entrepreneur",
+      "cluster": "business_mba",
+      "field": "Business",
+      "description": "Entrepreneurship student — startup gen AI use cases",
+      "answers": {
+        "goals_1": "Identify gen AI opportunities for a startup business model",
+        "goals_2": "Career advancement",
+        "prereq_1": "Somewhat confident",
+        "learning_1": "Mixed approach",
+        "bloom_remember": "Finance basics, presentations, CRM and spreadsheet tools",
+        "bloom_understand": "Gen AI in business units, workplace productivity, and transformation",
+        "bloom_apply": "Draft business cases and stakeholder communications with AI",
+        "bloom_analyze": "Vendor evaluation and change management for AI adoption"
+      }
+    },
+    {
+      "id": "biz_hr_track",
+      "cluster": "business_mba",
+      "field": "Business",
+      "description": "HR major — responsible AI in people operations",
+      "answers": {
+        "goals_1": "Evaluate workplace AI for hiring, training, and employee communications",
+        "goals_2": "Career advancement",
+        "prereq_1": "Somewhat confident",
+        "learning_1": "Mixed approach",
+        "bloom_remember": "Finance basics, presentations, CRM and spreadsheet tools",
+        "bloom_understand": "Gen AI in business units, workplace productivity, and transformation",
+        "bloom_apply": "Draft business cases and stakeholder communications with AI",
+        "bloom_analyze": "Vendor evaluation and change management for AI adoption"
+      }
+    },
+    {
+      "id": "biz_intl_student",
+      "cluster": "business_mba",
+      "field": "Business",
+      "description": "International business — AI for global teams",
+      "answers": {
+        "goals_1": "Apply generative AI in business operations and strategy",
+        "goals_2": "Career advancement",
+        "prereq_1": "Neutral",
+        "learning_1": "Mixed approach",
+        "bloom_remember": "Cross-cultural management coursework, email and slide tools",
+        "bloom_understand": "Gen AI in business units, workplace productivity, and transformation",
+        "bloom_apply": "Draft business cases and stakeholder communications with AI",
+        "bloom_analyze": "Vendor evaluation and change management for AI adoption"
+      }
+    },
+    {
+      "id": "biz_consulting",
+      "cluster": "business_mba",
+      "field": "Business",
+      "description": "Management student targeting consulting",
+      "answers": {
+        "goals_1": "Lead client AI strategy assessments and transformation roadmaps",
+        "goals_2": "Career advancement",
+        "prereq_1": "Somewhat confident",
+        "learning_1": "Mixed approach",
+        "bloom_remember": "Finance basics, presentations, CRM and spreadsheet tools",
+        "bloom_understand": "Gen AI in business units, workplace productivity, and transformation",
+        "bloom_apply": "Draft business cases and stakeholder communications with AI",
+        "bloom_analyze": "Vendor evaluation and change management for AI adoption"
+      }
+    },
+    {
+      "id": "econ_undergrad_labor",
+      "cluster": "economics",
+      "field": "Economics",
+      "description": "Econ BA — labor economics and automation",
+      "answers": {
+        "goals_1": "Understand AI impact on labor markets and workforce policy",
         "goals_2": "Personal interest in the subject",
+        "prereq_1": "Neutral",
+        "learning_1": "Mixed approach",
+        "bloom_remember": "Micro/macro, econometrics, Stata or R at introductory level",
+        "bloom_understand": "AI implications for labor markets, forecasting, and policy",
+        "bloom_apply": "Summarize datasets and literature with AI-assisted workflows",
+        "bloom_analyze": "Causal claims and hype in AI-driven economic predictions"
+      }
+    },
+    {
+      "id": "econ_phd_empirical",
+      "cluster": "economics",
+      "field": "Economics",
+      "description": "Econ PhD — empirical methods and ML overlap",
+      "answers": {
+        "goals_1": "Apply AI literacy to economic policy and empirical research",
+        "goals_2": "Personal interest in the subject",
+        "prereq_1": "Somewhat confident",
+        "learning_1": "Mixed approach",
+        "bloom_remember": "Econometrics, causal inference, basic Python for data",
+        "bloom_understand": "AI implications for labor markets, forecasting, and policy",
+        "bloom_apply": "Summarize datasets and literature with AI-assisted workflows",
+        "bloom_analyze": "Causal claims and hype in AI-driven economic predictions"
+      }
+    },
+    {
+      "id": "econ_policy_masters",
+      "cluster": "economics",
+      "field": "Economics",
+      "description": "Public policy master's — econ track",
+      "answers": {
+        "goals_1": "Apply AI literacy to economic policy and empirical research",
+        "goals_2": "Career advancement",
+        "prereq_1": "Neutral",
+        "learning_1": "Mixed approach",
+        "bloom_remember": "Micro/macro, econometrics, Stata or R at introductory level",
+        "bloom_understand": "AI implications for labor markets, forecasting, and policy",
+        "bloom_apply": "Draft policy memos using AI with proper citations",
+        "bloom_analyze": "Causal claims and hype in AI-driven economic predictions"
+      }
+    },
+    {
+      "id": "econ_behavioral",
+      "cluster": "economics",
+      "field": "Economics",
+      "description": "Behavioral econ senior — human-AI decision making",
+      "answers": {
+        "goals_1": "Apply AI literacy to economic policy and empirical research",
+        "goals_2": "Personal interest in the subject",
+        "prereq_1": "Neutral",
+        "learning_1": "Mixed approach",
+        "bloom_remember": "Micro/macro, econometrics, Stata or R at introductory level",
+        "bloom_understand": "How generative AI influences consumer and firm behavior",
+        "bloom_apply": "Summarize datasets and literature with AI-assisted workflows",
+        "bloom_analyze": "Causal claims and hype in AI-driven economic predictions"
+      }
+    },
+    {
+      "id": "econ_international",
+      "cluster": "economics",
+      "field": "Economics",
+      "description": "International econ — trade and AI regulation",
+      "answers": {
+        "goals_1": "Apply AI literacy to economic policy and empirical research",
+        "goals_2": "Personal interest in the subject",
+        "prereq_1": "Neutral",
+        "learning_1": "Mixed approach",
+        "bloom_remember": "Micro/macro, econometrics, Stata or R at introductory level",
+        "bloom_understand": "AI implications for labor markets, forecasting, and policy",
+        "bloom_apply": "Summarize datasets and literature with AI-assisted workflows",
+        "bloom_analyze": "Cross-country AI regulation and trade implications"
+      }
+    },
+    {
+      "id": "econ_minor_cs",
+      "cluster": "economics",
+      "field": "Economics",
+      "description": "Econ major with CS minor — mixed quant background",
+      "answers": {
+        "goals_1": "Apply AI literacy to economic policy and empirical research",
+        "goals_2": "Personal interest in the subject",
+        "prereq_1": "Somewhat confident",
+        "learning_1": "Mixed approach",
+        "bloom_remember": "Statistics, intro programming, macro theory",
+        "bloom_understand": "AI implications for labor markets, forecasting, and policy",
+        "bloom_apply": "Summarize datasets and literature with AI-assisted workflows",
+        "bloom_analyze": "Causal claims and hype in AI-driven economic predictions"
+      }
+    },
+    {
+      "id": "math_pure_undergrad",
+      "cluster": "math_stats",
+      "field": "Mathematics",
+      "description": "Pure math junior — theory-heavy, new to ML",
+      "answers": {
+        "goals_1": "Connect rigorous mathematics to modern AI and prompting methods",
+        "goals_2": "Personal interest in the subject",
+        "prereq_1": "Somewhat confident",
+        "learning_1": "Reading/Writing (texts, notes)",
+        "bloom_remember": "Real analysis, abstract algebra, minimal programming",
+        "bloom_understand": "Mathematical intuition behind ML and generative models",
+        "bloom_apply": "Use structured prompts for proofs, derivations, and lab write-ups",
+        "bloom_analyze": "Limits of LLM reasoning on formal mathematical tasks"
+      }
+    },
+    {
+      "id": "stats_masters_applied",
+      "cluster": "math_stats",
+      "field": "Statistics",
+      "description": "Statistics MS — applied data science focus",
+      "answers": {
+        "goals_1": "Bridge statistical modeling with generative AI workflows",
+        "goals_2": "Personal interest in the subject",
+        "prereq_1": "Somewhat confident",
+        "learning_1": "Reading/Writing (texts, notes)",
+        "bloom_remember": "Calculus, linear algebra, probability, proof-based coursework",
+        "bloom_understand": "Mathematical intuition behind ML and generative models",
+        "bloom_apply": "Build RAG-assisted analysis pipelines for datasets",
+        "bloom_analyze": "Limits of LLM reasoning on formal mathematical tasks"
+      }
+    },
+    {
+      "id": "math_cs_double_major",
+      "cluster": "math_stats",
+      "field": "Mathematics",
+      "description": "Math/CS double major — strong in both",
+      "answers": {
+        "goals_1": "Connect rigorous mathematics to modern AI and prompting methods",
+        "goals_2": "Personal interest in the subject",
+        "prereq_1": "Very confident",
+        "learning_1": "Reading/Writing (texts, notes)",
+        "bloom_remember": "Linear algebra, optimization, algorithms, intro deep learning",
+        "bloom_understand": "Mathematical intuition behind ML and generative models",
+        "bloom_apply": "Use structured prompts for proofs, derivations, and lab write-ups",
+        "bloom_analyze": "Limits of LLM reasoning on formal mathematical tasks"
+      }
+    },
+    {
+      "id": "stats_undergrad_biostats",
+      "cluster": "math_stats",
+      "field": "Statistics",
+      "description": "Biostatistics undergrad — health data angle",
+      "answers": {
+        "goals_1": "Connect rigorous mathematics to modern AI and prompting methods",
+        "goals_2": "Personal interest in the subject",
+        "prereq_1": "Somewhat confident",
+        "learning_1": "Reading/Writing (texts, notes)",
+        "bloom_remember": "Calculus, linear algebra, probability, proof-based coursework",
+        "bloom_understand": "Mathematical intuition behind ML and generative models",
+        "bloom_apply": "Apply prompting to biostatistics reports and visualizations",
+        "bloom_analyze": "Limits of LLM reasoning on formal mathematical tasks"
+      }
+    },
+    {
+      "id": "math_education",
+      "cluster": "math_stats",
+      "field": "Mathematics",
+      "description": "Math education major — teaching AI literacy",
+      "answers": {
+        "goals_1": "Learn AI concepts I can explain to high school students",
+        "goals_2": "Personal interest in the subject",
+        "prereq_1": "Somewhat confident",
+        "learning_1": "Reading/Writing (texts, notes)",
+        "bloom_remember": "Calculus, linear algebra, probability, proof-based coursework",
+        "bloom_understand": "Mathematical intuition behind ML and generative models",
+        "bloom_apply": "Use structured prompts for proofs, derivations, and lab write-ups",
+        "bloom_analyze": "Limits of LLM reasoning on formal mathematical tasks"
+      }
+    },
+    {
+      "id": "stats_econ_bridge",
+      "cluster": "math_stats",
+      "field": "Statistics",
+      "description": "Stats major minoring in economics",
+      "answers": {
+        "goals_1": "Connect rigorous mathematics to modern AI and prompting methods",
+        "goals_2": "Personal interest in the subject",
+        "prereq_1": "Somewhat confident",
+        "learning_1": "Reading/Writing (texts, notes)",
+        "bloom_remember": "Calculus, linear algebra, probability, proof-based coursework",
+        "bloom_understand": "AI forecasting methods used in policy and finance",
+        "bloom_apply": "Use structured prompts for proofs, derivations, and lab write-ups",
+        "bloom_analyze": "Limits of LLM reasoning on formal mathematical tasks"
+      }
+    },
+    {
+      "id": "nursing_bsn",
+      "cluster": "health_medicine",
+      "field": "Nursing",
+      "description": "BSN student — bedside tech and documentation AI",
+      "answers": {
+        "goals_1": "Apply AI literacy to nursing documentation and patient education",
+        "goals_2": "Career advancement",
+        "prereq_1": "Neutral",
+        "learning_1": "Mixed approach",
+        "bloom_remember": "Anatomy basics, epidemiology, patient privacy (HIPAA) awareness",
+        "bloom_understand": "How AI supports diagnosis, documentation, and population health",
+        "bloom_apply": "Evaluate clinical AI tools and draft patient-facing materials safely",
+        "bloom_analyze": "Bias in medical datasets and ethical risks of AI in care"
+      }
+    },
+    {
+      "id": "pre_med_undergrad",
+      "cluster": "health_medicine",
+      "field": "Pre-Medicine",
+      "description": "Pre-med junior — AI in diagnostics and research",
+      "answers": {
+        "goals_1": "Use AI responsibly in clinical, public health, or biomedical contexts",
+        "goals_2": "Career advancement",
+        "prereq_1": "Neutral",
+        "learning_1": "Mixed approach",
+        "bloom_remember": "Biology, chemistry, introductory biostatistics",
+        "bloom_understand": "How AI supports diagnosis, documentation, and population health",
+        "bloom_apply": "Evaluate clinical AI tools and draft patient-facing materials safely",
+        "bloom_analyze": "Bias in medical datasets and ethical risks of AI in care"
+      }
+    },
+    {
+      "id": "health_informatics",
+      "cluster": "health_medicine",
+      "field": "Health Informatics",
+      "description": "Health informatics MS — EHR and AI systems",
+      "answers": {
+        "goals_1": "Understand technical workflows for health data and responsible AI",
+        "goals_2": "Career advancement",
+        "prereq_1": "Neutral",
+        "learning_1": "Mixed approach",
+        "bloom_remember": "Anatomy basics, epidemiology, patient privacy (HIPAA) awareness",
+        "bloom_understand": "How AI supports diagnosis, documentation, and population health",
+        "bloom_apply": "Evaluate clinical AI tools and draft patient-facing materials safely",
+        "bloom_analyze": "Bias in medical datasets and ethical risks of AI in care"
+      }
+    },
+    {
+      "id": "pharmacy_student",
+      "cluster": "health_medicine",
+      "field": "Pharmacy",
+      "description": "Pharmacy student — drug interaction and literature tools",
+      "answers": {
+        "goals_1": "Use AI responsibly in clinical, public health, or biomedical contexts",
+        "goals_2": "Career advancement",
+        "prereq_1": "Neutral",
+        "learning_1": "Mixed approach",
+        "bloom_remember": "Anatomy basics, epidemiology, patient privacy (HIPAA) awareness",
+        "bloom_understand": "How AI supports diagnosis, documentation, and population health",
+        "bloom_apply": "Use AI to summarize pharmacology literature with verification",
+        "bloom_analyze": "Bias in medical datasets and ethical risks of AI in care"
+      }
+    },
+    {
+      "id": "social_work_msw",
+      "cluster": "health_medicine",
+      "field": "Social Work",
+      "description": "MSW student — AI ethics in vulnerable populations",
+      "answers": {
+        "goals_1": "Understand societal impact and responsible AI in social services",
+        "goals_2": "Career advancement",
+        "prereq_1": "Neutral",
+        "learning_1": "Mixed approach",
+        "bloom_remember": "Anatomy basics, epidemiology, patient privacy (HIPAA) awareness",
+        "bloom_understand": "How AI supports diagnosis, documentation, and population health",
+        "bloom_apply": "Evaluate clinical AI tools and draft patient-facing materials safely",
+        "bloom_analyze": "Bias in medical datasets and ethical risks of AI in care"
+      }
+    },
+    {
+      "id": "biomed_engineering",
+      "cluster": "health_medicine",
+      "field": "Biomedical Engineering",
+      "description": "BME senior — ML for medical devices",
+      "answers": {
+        "goals_1": "Use AI responsibly in clinical, public health, or biomedical contexts",
+        "goals_2": "Career advancement",
+        "prereq_1": "Somewhat confident",
+        "learning_1": "Mixed approach",
+        "bloom_remember": "Signals, MATLAB, introductory ML for biosignals",
+        "bloom_understand": "How AI supports diagnosis, documentation, and population health",
+        "bloom_apply": "Evaluate clinical AI tools and draft patient-facing materials safely",
+        "bloom_analyze": "Bias in medical datasets and ethical risks of AI in care"
+      }
+    },
+    {
+      "id": "polisci_junior",
+      "cluster": "humanities_social",
+      "field": "Political Science",
+      "description": "Political science junior — AI and governance",
+      "answers": {
+        "goals_1": "Understand AI policy, regulation, and civic implications",
+        "goals_2": "Required elective for my degree",
+        "prereq_1": "Very uncertain",
+        "learning_1": "Visual (diagrams, charts, videos)",
+        "bloom_remember": "Essay writing, qualitative research methods, no programming",
+        "bloom_understand": "How AI affects media, culture, and social institutions",
+        "bloom_apply": "Use AI tools responsibly in papers and creative projects",
+        "bloom_analyze": "Misinformation, authorship, and bias in AI-generated content"
+      }
+    },
+    {
+      "id": "sociology_masters",
+      "cluster": "humanities_social",
+      "field": "Sociology",
+      "description": "Sociology MA — AI and social inequality",
+      "answers": {
+        "goals_1": "Build AI literacy without assuming a technical background",
+        "goals_2": "Required elective for my degree",
         "prereq_1": "Somewhat uncertain",
         "learning_1": "Visual (diagrams, charts, videos)",
-        "bloom_remember": "Only heard the word artificial intelligence on the news",
-        "bloom_understand": "I want to learn basic AI vocabulary and concepts",
-        "bloom_apply": "Use AI tools responsibly in everyday tasks",
-        "bloom_analyze": "I worry about keeping up with technical jargon"
+        "bloom_remember": "Essay writing, qualitative research methods, no programming",
+        "bloom_understand": "How AI affects media, culture, and social institutions",
+        "bloom_apply": "Use AI tools responsibly in papers and creative projects",
+        "bloom_analyze": "How AI reproduces or amplifies social bias"
       }
     },
     {
-      "id": "foundation_low_05",
-      "cluster": "foundation_low",
-      "description": "Senior adult learner exploring AI literacy",
+      "id": "education_undergrad",
+      "cluster": "humanities_social",
+      "field": "Education",
+      "description": "Education major — AI in K-12 classrooms",
       "answers": {
-        "goals_1": "Understand what AI is and how it affects daily life",
-        "goals_2": "Personal interest in the subject",
+        "goals_1": "Learn AI literacy to teach students responsibly",
+        "goals_2": "Required elective for my degree",
         "prereq_1": "Very uncertain",
         "learning_1": "Visual (diagrams, charts, videos)",
-        "bloom_remember": "I have not taken any AI courses before",
-        "bloom_understand": "I want to learn basic AI vocabulary and concepts",
-        "bloom_apply": "Use AI tools responsibly in everyday tasks",
-        "bloom_analyze": "Keeping pace with younger classmates"
+        "bloom_remember": "Essay writing, qualitative research methods, no programming",
+        "bloom_understand": "How AI affects media, culture, and social institutions",
+        "bloom_apply": "Use AI tools responsibly in papers and creative projects",
+        "bloom_analyze": "Misinformation, authorship, and bias in AI-generated content"
       }
     },
     {
-      "id": "foundation_low_06",
-      "cluster": "foundation_low",
-      "description": "Humanities major with no prior AI coursework",
+      "id": "philosophy_ethics",
+      "cluster": "humanities_social",
+      "field": "Philosophy",
+      "description": "Philosophy major — ethics of AI and consciousness debates",
       "answers": {
-        "goals_1": "Understand what AI is and how it affects daily life",
-        "goals_2": "Personal interest in the subject",
+        "goals_1": "Understand ethical risks and responsible AI from a humanities lens",
+        "goals_2": "Required elective for my degree",
         "prereq_1": "Very uncertain",
         "learning_1": "Visual (diagrams, charts, videos)",
-        "bloom_remember": "No formal AI or programming courses",
-        "bloom_understand": "How AI relates to society and media",
-        "bloom_apply": "Use AI tools responsibly in everyday tasks",
-        "bloom_analyze": "I worry about keeping up with technical jargon"
+        "bloom_remember": "Essay writing, qualitative research methods, no programming",
+        "bloom_understand": "How AI affects media, culture, and social institutions",
+        "bloom_apply": "Use AI tools responsibly in papers and creative projects",
+        "bloom_analyze": "Misinformation, authorship, and bias in AI-generated content"
       }
     },
     {
-      "id": "foundation_low_07",
-      "cluster": "foundation_low",
-      "description": "International student, uncertain about English technical terms",
+      "id": "journalism_student",
+      "cluster": "humanities_social",
+      "field": "Journalism",
+      "description": "Journalism student — verification and AI-generated news",
       "answers": {
-        "goals_1": "Understand what AI is and how it affects daily life",
-        "goals_2": "Personal interest in the subject",
+        "goals_1": "Build AI literacy without assuming a technical background",
+        "goals_2": "Required elective for my degree",
         "prereq_1": "Very uncertain",
         "learning_1": "Visual (diagrams, charts, videos)",
-        "bloom_remember": "I have not taken any AI courses before",
-        "bloom_understand": "I want to learn basic AI vocabulary and concepts",
-        "bloom_apply": "Use AI tools responsibly in everyday tasks",
-        "bloom_analyze": "Understanding jargon in a second language"
+        "bloom_remember": "Essay writing, qualitative research methods, no programming",
+        "bloom_understand": "How AI affects media, culture, and social institutions",
+        "bloom_apply": "Fact-check AI outputs in investigative reporting",
+        "bloom_analyze": "Misinformation, authorship, and bias in AI-generated content"
       }
     },
     {
-      "id": "foundation_low_08",
-      "cluster": "foundation_low",
-      "description": "Part-time worker seeking basic AI literacy",
+      "id": "style_control_econ_labor",
+      "cluster": "style_control",
+      "field": "Economics",
+      "description": "Learning-style control for econ_undergrad_labor (Economics) — only learning_1 differs",
       "answers": {
-        "goals_1": "Understand what AI is and how it affects daily life",
-        "goals_2": "Career advancement",
+        "goals_1": "Understand AI impact on labor markets and workforce policy",
+        "goals_2": "Personal interest in the subject",
+        "prereq_1": "Neutral",
+        "learning_1": "Visual (diagrams, charts, videos)",
+        "bloom_remember": "Micro/macro, econometrics, Stata or R at introductory level",
+        "bloom_understand": "AI implications for labor markets, forecasting, and policy",
+        "bloom_apply": "Summarize datasets and literature with AI-assisted workflows",
+        "bloom_analyze": "Causal claims and hype in AI-driven economic predictions"
+      },
+      "paired_with": "econ_undergrad_labor"
+    },
+    {
+      "id": "style_control_polisci",
+      "cluster": "style_control",
+      "field": "Political Science",
+      "description": "Learning-style control for polisci_junior (Political Science) — only learning_1 differs",
+      "answers": {
+        "goals_1": "Understand AI policy, regulation, and civic implications",
+        "goals_2": "Required elective for my degree",
         "prereq_1": "Very uncertain",
-        "learning_1": "Mixed approach",
-        "bloom_remember": "I have not taken any AI courses before",
-        "bloom_understand": "I want to learn basic AI vocabulary and concepts",
-        "bloom_apply": "Use AI tools responsibly in everyday tasks",
-        "bloom_analyze": "I worry about keeping up with technical jargon"
-      }
+        "learning_1": "Kinesthetic (hands-on activities)",
+        "bloom_remember": "Essay writing, qualitative research methods, no programming",
+        "bloom_understand": "How AI affects media, culture, and social institutions",
+        "bloom_apply": "Use AI tools responsibly in papers and creative projects",
+        "bloom_analyze": "Misinformation, authorship, and bias in AI-generated content"
+      },
+      "paired_with": "polisci_junior"
     },
     {
-      "id": "business_track_04",
-      "cluster": "business_track",
-      "description": "Marketing manager exploring gen AI for campaigns",
+      "id": "style_control_nursing",
+      "cluster": "style_control",
+      "field": "Nursing",
+      "description": "Learning-style control for nursing_bsn (Nursing) — only learning_1 differs",
       "answers": {
-        "goals_1": "Use generative AI for marketing and customer engagement in my organization",
-        "goals_2": "Career advancement",
-        "prereq_1": "Somewhat confident",
-        "learning_1": "Mixed approach",
-        "bloom_remember": "Basic spreadsheet and email tools",
-        "bloom_understand": "How generative AI can support business decisions",
-        "bloom_apply": "Draft reports and customer communications with AI",
-        "bloom_analyze": "Choosing appropriate AI tools for business tasks"
-      }
-    },
-    {
-      "id": "business_track_05",
-      "cluster": "business_track",
-      "description": "Operations lead focused on workplace productivity",
-      "answers": {
-        "goals_1": "Improve workplace productivity with AI transformation initiatives",
-        "goals_2": "Career advancement",
-        "prereq_1": "Somewhat confident",
-        "learning_1": "Mixed approach",
-        "bloom_remember": "Basic spreadsheet and email tools",
-        "bloom_understand": "How generative AI can support business decisions",
-        "bloom_apply": "Automate routine operational reports",
-        "bloom_analyze": "Choosing appropriate AI tools for business tasks"
-      }
-    },
-    {
-      "id": "business_track_06",
-      "cluster": "business_track",
-      "description": "Startup founder scoping gen AI pilots",
-      "answers": {
-        "goals_1": "Scope gen AI pilot projects for a small business",
+        "goals_1": "Apply AI literacy to nursing documentation and patient education",
         "goals_2": "Career advancement",
         "prereq_1": "Neutral",
-        "learning_1": "Mixed approach",
-        "bloom_remember": "Basic spreadsheet and email tools",
-        "bloom_understand": "How generative AI can support business decisions",
-        "bloom_apply": "Draft reports and customer communications with AI",
-        "bloom_analyze": "Choosing appropriate AI tools for business tasks"
-      }
+        "learning_1": "Reading/Writing (texts, notes)",
+        "bloom_remember": "Anatomy basics, epidemiology, patient privacy (HIPAA) awareness",
+        "bloom_understand": "How AI supports diagnosis, documentation, and population health",
+        "bloom_apply": "Evaluate clinical AI tools and draft patient-facing materials safely",
+        "bloom_analyze": "Bias in medical datasets and ethical risks of AI in care"
+      },
+      "paired_with": "nursing_bsn"
     },
     {
-      "id": "business_track_07",
-      "cluster": "business_track",
-      "description": "HR professional evaluating AI for hiring workflows",
+      "id": "style_control_math_pure",
+      "cluster": "style_control",
+      "field": "Mathematics",
+      "description": "Learning-style control for math_pure_undergrad (Mathematics) — only learning_1 differs",
       "answers": {
-        "goals_1": "Evaluate responsible AI use in HR and workplace policies",
-        "goals_2": "Career advancement",
-        "prereq_1": "Somewhat confident",
-        "learning_1": "Mixed approach",
-        "bloom_remember": "Basic spreadsheet and email tools",
-        "bloom_understand": "How generative AI can support business decisions",
-        "bloom_apply": "Draft reports and customer communications with AI",
-        "bloom_analyze": "Choosing appropriate AI tools for business tasks"
-      }
-    },
-    {
-      "id": "business_track_08",
-      "cluster": "business_track",
-      "description": "Consultant building client AI strategy decks",
-      "answers": {
-        "goals_1": "Lead AI strategy workshops for client organizations",
-        "goals_2": "Career advancement",
-        "prereq_1": "Very confident",
-        "learning_1": "Mixed approach",
-        "bloom_remember": "Basic spreadsheet and email tools",
-        "bloom_understand": "How generative AI can support business decisions",
-        "bloom_apply": "Draft reports and customer communications with AI",
-        "bloom_analyze": "Choosing appropriate AI tools for business tasks"
-      }
-    },
-    {
-      "id": "business_track_09",
-      "cluster": "business_track",
-      "description": "Retail manager adopting AI for customer service",
-      "answers": {
-        "goals_1": "Apply AI and prompting in a business context",
-        "goals_2": "Career advancement",
+        "goals_1": "Connect rigorous mathematics to modern AI and prompting methods",
+        "goals_2": "Personal interest in the subject",
         "prereq_1": "Somewhat confident",
         "learning_1": "Auditory (lectures, discussions)",
-        "bloom_remember": "Basic spreadsheet and email tools",
-        "bloom_understand": "How generative AI can support business decisions",
-        "bloom_apply": "Deploy chatbots for customer support",
-        "bloom_analyze": "Choosing appropriate AI tools for business tasks"
-      }
+        "bloom_remember": "Real analysis, abstract algebra, minimal programming",
+        "bloom_understand": "Mathematical intuition behind ML and generative models",
+        "bloom_apply": "Use structured prompts for proofs, derivations, and lab write-ups",
+        "bloom_analyze": "Limits of LLM reasoning on formal mathematical tasks"
+      },
+      "paired_with": "math_pure_undergrad"
     },
     {
-      "id": "research_technical_02",
-      "cluster": "research_technical",
-      "description": "PhD student focused on RAG pipelines",
+      "id": "style_control_biz_finance",
+      "cluster": "style_control",
+      "field": "Finance",
+      "description": "Learning-style control for biz_finance_analyst (Finance) — only learning_1 differs",
       "answers": {
-        "goals_1": "Build RAG and fine-tuning workflows for academic research",
+        "goals_1": "Use AI for financial analysis, reporting, and executive summaries",
         "goals_2": "Career advancement",
-        "prereq_1": "Very confident",
-        "learning_1": "Reading/Writing (texts, notes)",
-        "bloom_remember": "Supervised learning, neural networks, gradient descent",
-        "bloom_understand": "How LLMs differ from traditional ML pipelines",
-        "bloom_apply": "Implement retrieval-augmented generation for literature review",
-        "bloom_analyze": "Evaluating model limitations and hallucination risks"
-      }
-    },
-    {
-      "id": "research_technical_03",
-      "cluster": "research_technical",
-      "description": "ML engineer deepening LLM project lifecycle skills",
-      "answers": {
-        "goals_1": "Master ML/DS project workflows with generative AI",
-        "goals_2": "Career advancement",
-        "prereq_1": "Very confident",
-        "learning_1": "Reading/Writing (texts, notes)",
-        "bloom_remember": "Supervised learning, neural networks, gradient descent",
-        "bloom_understand": "How LLMs differ from traditional ML pipelines",
-        "bloom_apply": "Ship fine-tuned models in production research tools",
-        "bloom_analyze": "Evaluating model limitations and hallucination risks"
-      }
-    },
-    {
-      "id": "research_technical_04",
-      "cluster": "research_technical",
-      "description": "Data scientist comparing traditional ML vs LLMs",
-      "answers": {
-        "goals_1": "Deepen understanding of generative AI for academic research",
-        "goals_2": "Career advancement",
-        "prereq_1": "Very confident",
-        "learning_1": "Reading/Writing (texts, notes)",
-        "bloom_remember": "Supervised learning, neural networks, gradient descent",
-        "bloom_understand": "Technical tradeoffs between classical ML and LLM pipelines",
-        "bloom_apply": "Design research workflows using generative AI tools",
-        "bloom_analyze": "Evaluating model limitations and hallucination risks"
-      }
-    },
-    {
-      "id": "research_technical_05",
-      "cluster": "research_technical",
-      "description": "Graduate researcher studying hallucination mitigation",
-      "answers": {
-        "goals_1": "Deepen understanding of generative AI for academic research",
-        "goals_2": "Career advancement",
-        "prereq_1": "Very confident",
-        "learning_1": "Reading/Writing (texts, notes)",
-        "bloom_remember": "Supervised learning, neural networks, gradient descent",
-        "bloom_understand": "How LLMs differ from traditional ML pipelines",
-        "bloom_apply": "Design research workflows using generative AI tools",
-        "bloom_analyze": "Systematic evaluation of hallucination in research assistants"
-      }
-    },
-    {
-      "id": "research_technical_06",
-      "cluster": "research_technical",
-      "description": "Lab technician learning gen AI experiment design",
-      "answers": {
-        "goals_1": "Deepen understanding of generative AI for academic research",
-        "goals_2": "Career advancement",
-        "prereq_1": "Very confident",
-        "learning_1": "Kinesthetic (hands-on activities)",
-        "bloom_remember": "Supervised learning, neural networks, gradient descent",
-        "bloom_understand": "How LLMs differ from traditional ML pipelines",
-        "bloom_apply": "Automate repetitive lab documentation with LLMs",
-        "bloom_analyze": "Evaluating model limitations and hallucination risks"
-      }
-    },
-    {
-      "id": "research_technical_07",
-      "cluster": "research_technical",
-      "description": "Computer science undergrad with strong ML background",
-      "answers": {
-        "goals_1": "Deepen understanding of generative AI for academic research",
-        "goals_2": "Prerequisite for other courses",
-        "prereq_1": "Very confident",
-        "learning_1": "Reading/Writing (texts, notes)",
-        "bloom_remember": "Backpropagation, CNNs, scikit-learn, PyTorch basics",
-        "bloom_understand": "How LLMs differ from traditional ML pipelines",
-        "bloom_apply": "Design research workflows using generative AI tools",
-        "bloom_analyze": "Evaluating model limitations and hallucination risks"
-      }
-    },
-    {
-      "id": "research_technical_08",
-      "cluster": "research_technical",
-      "description": "Postdoc exploring agentic research workflows",
-      "answers": {
-        "goals_1": "Design technical agent workflows for research automation",
-        "goals_2": "Career advancement",
-        "prereq_1": "Very confident",
-        "learning_1": "Reading/Writing (texts, notes)",
-        "bloom_remember": "Supervised learning, neural networks, gradient descent",
-        "bloom_understand": "How LLMs differ from traditional ML pipelines",
-        "bloom_apply": "Chain multi-step research tools with LLM agents",
-        "bloom_analyze": "Evaluating model limitations and hallucination risks"
-      }
-    },
-    {
-      "id": "research_technical_09",
-      "cluster": "research_technical",
-      "description": "Bioinformatics researcher applying gen AI",
-      "answers": {
-        "goals_1": "Apply academic research methods with generative AI in bioinformatics",
-        "goals_2": "Career advancement",
-        "prereq_1": "Very confident",
-        "learning_1": "Reading/Writing (texts, notes)",
-        "bloom_remember": "Supervised learning, neural networks, gradient descent",
-        "bloom_understand": "How LLMs differ from traditional ML pipelines",
-        "bloom_apply": "Design research workflows using generative AI tools",
-        "bloom_analyze": "Evaluating model limitations and hallucination risks"
-      }
-    },
-    {
-      "id": "ethics_society_02",
-      "cluster": "ethics_society",
-      "description": "Policy student focused on AI governance",
-      "answers": {
-        "goals_1": "Understand societal impact and responsible AI governance",
-        "goals_2": "Personal interest in the subject",
-        "prereq_1": "Neutral",
-        "learning_1": "Reading/Writing (texts, notes)",
-        "bloom_remember": "Bias, fairness, privacy as general concepts",
-        "bloom_understand": "How hallucinations and adversarial attacks affect AI systems",
-        "bloom_apply": "Evaluate AI tools for ethical use in my context",
-        "bloom_analyze": "Tradeoffs between AI benefits and societal harms"
-      }
-    },
-    {
-      "id": "ethics_society_03",
-      "cluster": "ethics_society",
-      "description": "Journalist investigating AI bias stories",
-      "answers": {
-        "goals_1": "Understand ethical risks and responsible AI practices",
-        "goals_2": "Personal interest in the subject",
-        "prereq_1": "Neutral",
-        "learning_1": "Reading/Writing (texts, notes)",
-        "bloom_remember": "Bias, fairness, privacy as general concepts",
-        "bloom_understand": "How hallucinations and adversarial attacks affect AI systems",
-        "bloom_apply": "Evaluate AI tools for ethical use in my context",
-        "bloom_analyze": "How bias and fairness issues appear in real-world AI systems"
-      }
-    },
-    {
-      "id": "ethics_society_04",
-      "cluster": "ethics_society",
-      "description": "Teacher concerned about AI in classrooms",
-      "answers": {
-        "goals_1": "Understand ethical risks and responsible AI practices",
-        "goals_2": "Personal interest in the subject",
-        "prereq_1": "Neutral",
-        "learning_1": "Reading/Writing (texts, notes)",
-        "bloom_remember": "Bias, fairness, privacy as general concepts",
-        "bloom_understand": "How hallucinations and adversarial attacks affect AI systems",
-        "bloom_apply": "Develop responsible AI guidelines for students",
-        "bloom_analyze": "Tradeoffs between AI benefits and societal harms"
-      }
-    },
-    {
-      "id": "ethics_society_05",
-      "cluster": "ethics_society",
-      "description": "Nonprofit worker evaluating AI for social good",
-      "answers": {
-        "goals_1": "Evaluate ethical risks of AI in nonprofit programs",
-        "goals_2": "Personal interest in the subject",
-        "prereq_1": "Neutral",
-        "learning_1": "Reading/Writing (texts, notes)",
-        "bloom_remember": "Bias, fairness, privacy as general concepts",
-        "bloom_understand": "How hallucinations and adversarial attacks affect AI systems",
-        "bloom_apply": "Evaluate AI tools for ethical use in my context",
-        "bloom_analyze": "Tradeoffs between AI benefits and societal harms"
-      }
-    },
-    {
-      "id": "ethics_society_06",
-      "cluster": "ethics_society",
-      "description": "Law student studying AI regulation",
-      "answers": {
-        "goals_1": "Understand ethical risks and responsible AI practices",
-        "goals_2": "Personal interest in the subject",
-        "prereq_1": "Neutral",
-        "learning_1": "Reading/Writing (texts, notes)",
-        "bloom_remember": "Bias, fairness, privacy as general concepts",
-        "bloom_understand": "Legal and ethical frameworks for responsible AI deployment",
-        "bloom_apply": "Evaluate AI tools for ethical use in my context",
-        "bloom_analyze": "Tradeoffs between AI benefits and societal harms"
-      }
-    },
-    {
-      "id": "prompting_first_03",
-      "cluster": "prompting_first",
-      "description": "Content creator using ChatGPT daily",
-      "answers": {
-        "goals_1": "Improve daily prompting skills without deep ML theory",
-        "goals_2": "Personal interest in the subject",
-        "prereq_1": "Somewhat uncertain",
-        "learning_1": "Kinesthetic (hands-on activities)",
-        "bloom_remember": "ChatGPT, prompt templates, daily prompting habits",
-        "bloom_understand": "Few-shot and chain-of-thought prompting",
-        "bloom_apply": "Build reusable prompt templates for work",
-        "bloom_analyze": "When advanced prompting techniques are worth the effort"
-      }
-    },
-    {
-      "id": "prompting_first_04",
-      "cluster": "prompting_first",
-      "description": "Support agent relying on copilot prompts",
-      "answers": {
-        "goals_1": "Fill gaps in AI fundamentals while keeping prompt skills",
-        "goals_2": "Personal interest in the subject",
-        "prereq_1": "Somewhat confident",
-        "learning_1": "Kinesthetic (hands-on activities)",
-        "bloom_remember": "Copilot prompts and few-shot examples at work",
-        "bloom_understand": "Few-shot and chain-of-thought prompting",
-        "bloom_apply": "Build reusable prompt templates for work",
-        "bloom_analyze": "When advanced prompting techniques are worth the effort"
-      }
-    },
-    {
-      "id": "prompting_first_05",
-      "cluster": "prompting_first",
-      "description": "Designer using gen AI for mockups",
-      "answers": {
-        "goals_1": "Master structured prompting techniques",
-        "goals_2": "Personal interest in the subject",
-        "prereq_1": "Somewhat confident",
-        "learning_1": "Visual (diagrams, charts, videos)",
-        "bloom_remember": "LLMs, transformers, generative AI use cases",
-        "bloom_understand": "Few-shot and chain-of-thought prompting",
-        "bloom_apply": "Create design mockups with structured prompts",
-        "bloom_analyze": "When advanced prompting techniques are worth the effort"
-      }
-    },
-    {
-      "id": "prompting_first_06",
-      "cluster": "prompting_first",
-      "description": "Teacher experimenting with classroom prompts",
-      "answers": {
-        "goals_1": "Master prompting techniques for education",
-        "goals_2": "Personal interest in the subject",
-        "prereq_1": "Somewhat confident",
-        "learning_1": "Kinesthetic (hands-on activities)",
-        "bloom_remember": "ChatGPT for lesson planning, basic prompt templates",
-        "bloom_understand": "Few-shot and chain-of-thought prompting",
-        "bloom_apply": "Build reusable prompt templates for work",
-        "bloom_analyze": "When advanced prompting techniques are worth the effort"
-      }
-    },
-    {
-      "id": "balanced_general_02",
-      "cluster": "balanced_general",
-      "description": "Working professional seeking balanced AI literacy",
-      "answers": {
-        "goals_1": "Build a well-rounded understanding of AI literacy topics",
-        "goals_2": "Career advancement",
-        "prereq_1": "Neutral",
-        "learning_1": "Mixed approach",
-        "bloom_remember": "Heard of machine learning and ChatGPT",
-        "bloom_understand": "Both traditional AI and generative AI concepts",
-        "bloom_apply": "Experiment with prompts and AI tools at work",
-        "bloom_analyze": "Balancing hype with realistic AI capabilities"
-      }
-    },
-    {
-      "id": "balanced_general_03",
-      "cluster": "balanced_general",
-      "description": "Undergraduate exploring AI as a general elective",
-      "answers": {
-        "goals_1": "Build a well-rounded understanding of AI literacy topics",
-        "goals_2": "Personal interest in the subject",
-        "prereq_1": "Neutral",
-        "learning_1": "Mixed approach",
-        "bloom_remember": "Intro programming and heard of ChatGPT",
-        "bloom_understand": "Both traditional AI and generative AI concepts",
-        "bloom_apply": "Experiment with prompts and AI tools at work",
-        "bloom_analyze": "Balancing hype with realistic AI capabilities"
-      }
-    },
-    {
-      "id": "balanced_general_04",
-      "cluster": "balanced_general",
-      "description": "Entrepreneur wanting broad AI overview",
-      "answers": {
-        "goals_1": "Build a well-rounded understanding of AI literacy topics",
-        "goals_2": "Career advancement",
-        "prereq_1": "Neutral",
-        "learning_1": "Mixed approach",
-        "bloom_remember": "Heard of machine learning and ChatGPT",
-        "bloom_understand": "Both traditional AI and generative AI concepts",
-        "bloom_apply": "Explore AI tools for a side business",
-        "bloom_analyze": "Balancing hype with realistic AI capabilities"
-      }
-    },
-    {
-      "id": "balanced_general_05",
-      "cluster": "balanced_general",
-      "description": "Retiree curious about AI news and tools",
-      "answers": {
-        "goals_1": "Build a well-rounded understanding of AI literacy topics",
-        "goals_2": "Personal interest in the subject",
-        "prereq_1": "Neutral",
-        "learning_1": "Auditory (lectures, discussions)",
-        "bloom_remember": "Heard of machine learning and ChatGPT",
-        "bloom_understand": "Both traditional AI and generative AI concepts",
-        "bloom_apply": "Experiment with prompts and AI tools at work",
-        "bloom_analyze": "Balancing hype with realistic AI capabilities"
-      }
-    },
-    {
-      "id": "balanced_general_06",
-      "cluster": "balanced_general",
-      "description": "Freelancer seeking well-rounded AI skills",
-      "answers": {
-        "goals_1": "Build a well-rounded understanding of AI literacy topics",
-        "goals_2": "Personal interest in the subject",
-        "prereq_1": "Neutral",
-        "learning_1": "Mixed approach",
-        "bloom_remember": "Heard of machine learning and ChatGPT",
-        "bloom_understand": "Both traditional AI and generative AI concepts",
-        "bloom_apply": "Use AI across writing, design, and admin tasks",
-        "bloom_analyze": "Balancing hype with realistic AI capabilities"
-      }
-    },
-    {
-      "id": "balanced_general_07",
-      "cluster": "balanced_general",
-      "description": "Team lead wanting neutral baseline literacy",
-      "answers": {
-        "goals_1": "Build organizational AI literacy across mixed skill levels",
-        "goals_2": "Personal interest in the subject",
         "prereq_1": "Somewhat confident",
         "learning_1": "Mixed approach",
-        "bloom_remember": "Heard of machine learning and ChatGPT",
-        "bloom_understand": "Both traditional AI and generative AI concepts",
-        "bloom_apply": "Experiment with prompts and AI tools at work",
-        "bloom_analyze": "Balancing hype with realistic AI capabilities"
-      }
-    },
-    {
-      "id": "style_control_02",
-      "cluster": "style_control",
-      "paired_with": "balanced_general_02",
-      "description": "Learning-style control for balanced_general_02 — only learning_1 differs",
-      "answers": {
-        "goals_1": "Build a well-rounded understanding of AI literacy topics",
-        "goals_2": "Career advancement",
-        "prereq_1": "Neutral",
-        "learning_1": "Visual (diagrams, charts, videos)",
-        "bloom_remember": "Heard of machine learning and ChatGPT",
-        "bloom_understand": "Both traditional AI and generative AI concepts",
-        "bloom_apply": "Experiment with prompts and AI tools at work",
-        "bloom_analyze": "Balancing hype with realistic AI capabilities"
-      }
-    },
-    {
-      "id": "style_control_03",
-      "cluster": "style_control",
-      "paired_with": "balanced_general_03",
-      "description": "Learning-style control for balanced_general_03 — only learning_1 differs",
-      "answers": {
-        "goals_1": "Build a well-rounded understanding of AI literacy topics",
-        "goals_2": "Personal interest in the subject",
-        "prereq_1": "Neutral",
-        "learning_1": "Auditory (lectures, discussions)",
-        "bloom_remember": "Intro programming and heard of ChatGPT",
-        "bloom_understand": "Both traditional AI and generative AI concepts",
-        "bloom_apply": "Experiment with prompts and AI tools at work",
-        "bloom_analyze": "Balancing hype with realistic AI capabilities"
-      }
-    },
-    {
-      "id": "style_control_04",
-      "cluster": "style_control",
-      "paired_with": "balanced_general_04",
-      "description": "Learning-style control for balanced_general_04 — only learning_1 differs",
-      "answers": {
-        "goals_1": "Build a well-rounded understanding of AI literacy topics",
-        "goals_2": "Career advancement",
-        "prereq_1": "Neutral",
-        "learning_1": "Reading/Writing (texts, notes)",
-        "bloom_remember": "Heard of machine learning and ChatGPT",
-        "bloom_understand": "Both traditional AI and generative AI concepts",
-        "bloom_apply": "Explore AI tools for a side business",
-        "bloom_analyze": "Balancing hype with realistic AI capabilities"
-      }
-    },
-    {
-      "id": "style_control_05",
-      "cluster": "style_control",
-      "paired_with": "balanced_general_05",
-      "description": "Learning-style control for balanced_general_05 — only learning_1 differs",
-      "answers": {
-        "goals_1": "Build a well-rounded understanding of AI literacy topics",
-        "goals_2": "Personal interest in the subject",
-        "prereq_1": "Neutral",
-        "learning_1": "Kinesthetic (hands-on activities)",
-        "bloom_remember": "Heard of machine learning and ChatGPT",
-        "bloom_understand": "Both traditional AI and generative AI concepts",
-        "bloom_apply": "Experiment with prompts and AI tools at work",
-        "bloom_analyze": "Balancing hype with realistic AI capabilities"
-      }
+        "bloom_remember": "Finance basics, presentations, CRM and spreadsheet tools",
+        "bloom_understand": "Gen AI in business units, workplace productivity, and transformation",
+        "bloom_apply": "Draft business cases and stakeholder communications with AI",
+        "bloom_analyze": "Vendor evaluation and change management for AI adoption"
+      },
+      "paired_with": "biz_finance_analyst"
     }
   ]
 }
