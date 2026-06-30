@@ -43,7 +43,7 @@ def main() -> int:
 
     pathways_dir = STUDY_ROOT / "data" / "results" / "pathways"
     if not pathways_dir.exists() or not any(pathways_dir.glob("*.json")):
-        print("Run 07_generate_pathways.py first")
+        print("Run 07_generate_pathways_offline.py (or 07_generate_pathways.py) first")
         return 1
 
     pathways: dict = {}
