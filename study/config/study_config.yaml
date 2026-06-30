@@ -1,0 +1,14 @@
+# Phase 0 synthetic validation settings
+diversity:
+  mean_jaccard_threshold: 0.85
+  min_profiles: 8
+
+survey_question_ids:
+  - goals_1
+  - goals_2
+  - prereq_1
+  - learning_1
+  - bloom_remember
+  - bloom_understand
+  - bloom_apply
+  - bloom_analyze
