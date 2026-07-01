@@ -121,8 +121,19 @@ def call_with_rate_limit_retry(
                 time.sleep(wait)
                 continue
 
-            # Short retry for other transient API failures
-            transient_markers = ("timeout", "timed out", "connection", "503", "502", "500", "unavailable")
+            # Gemini sometimes replies with text instead of a tool call — retry
+            transient_markers = (
+                "timeout",
+                "timed out",
+                "connection",
+                "503",
+                "502",
+                "500",
+                "unavailable",
+                "function call",
+                "tool use",
+                "did not return",
+            )
             if any(m in str(exc).lower() for m in transient_markers):
                 wait = min(10.0, 2.0 * (attempt + 1))
                 print(f"  [transient] {label}: retry in {wait:.1f}s...")

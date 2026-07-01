@@ -118,6 +118,12 @@ def generate_pathway_nodes(
             contents=prompt,
             config=types.GenerateContentConfig(
                 tools=[types.Tool(function_declarations=[_pathway_function_declaration()])],
+                tool_config=types.ToolConfig(
+                    function_calling_config=types.FunctionCallingConfig(
+                        mode=types.FunctionCallingConfigMode.ANY,
+                        allowed_function_names=["generate_learning_pathway"],
+                    )
+                ),
             ),
         )
         if not response.function_calls:

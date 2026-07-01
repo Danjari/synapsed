@@ -39,6 +39,7 @@ def main() -> int:
     delay = api_delay_sec()
     generated: list[str] = []
     skipped = 0
+    failed: list[dict[str, str]] = []
 
     for profile in profiles:
         profile_id = profile["id"]
@@ -57,8 +58,9 @@ def main() -> int:
             )
         except Exception as exc:
             print(f"FAILED {profile_id}: {exc}", file=sys.stderr)
-            print("Stopping. Re-run to resume — completed profiles are kept on disk.", file=sys.stderr)
-            return 1
+            failed.append({"profileId": profile_id, "error": str(exc)})
+            time.sleep(delay)
+            continue
 
         payload = {
             "profileId": profile_id,
@@ -76,9 +78,21 @@ def main() -> int:
 
     save_json(
         STUDY_ROOT / "data" / "results" / "pathways_index.json",
-        {"source": "offline", "profiles": generated, "count": len(generated), "skipped_existing": skipped},
+        {
+            "source": "offline",
+            "profiles": generated,
+            "count": len(generated),
+            "skipped_existing": skipped,
+            "failed": failed,
+        },
     )
-    print(f"Saved {len(generated)} pathway entries ({len(generated) - skipped} new, {skipped} skipped)")
+    print(f"Done: {len(generated)} on disk ({len(generated) - skipped} new, {skipped} skipped)")
+    if failed:
+        print(f"FAILED {len(failed)} profiles:", file=sys.stderr)
+        for f in failed:
+            print(f"  - {f['profileId']}: {f['error']}", file=sys.stderr)
+        print("Re-run to retry failures only.", file=sys.stderr)
+        return 1
     if len(generated) < len(profiles):
         print(f"WARNING: expected {len(profiles)} profiles, have {len(generated)}")
     print("Next: python scripts/09_research_evaluation.py")
