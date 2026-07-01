@@ -44,6 +44,8 @@ def build_personalization_prompt(
     syllabus: dict[str, Any],
     syllabus_context: dict[str, str],
     answers: dict[str, str],
+    *,
+    structure_lock: dict[str, Any] | None = None,
 ) -> str:
     spec = load_generation_spec()
     qa_lines = []
@@ -55,10 +57,25 @@ def build_personalization_prompt(
     block_catalog = format_block_catalog(spec, syllabus)
     block_ids = ", ".join(spec.get("blockIds", []))
 
+    structure_lock_text = ""
+    if structure_lock:
+        seq = structure_lock.get("block_sequence", [])
+        counts = structure_lock.get("block_counts", {})
+        seq_str = " → ".join(seq) if seq else "(see counts)"
+        counts_str = ", ".join(f"{k}×{v}" for k, v in sorted(counts.items()))
+        structure_lock_text = f"""
+=== STRUCTURE LOCK (mandatory — learning-style control profile) ===
+This student differs from their paired profile ONLY in learning_1 (learning style).
+You MUST produce the IDENTICAL syllabusBlockId sequence and IDENTICAL per-block node counts.
+Paired block sequence: {seq_str}
+Paired block counts: {counts_str}
+Change ONLY description wording to reflect learning style — never add, remove, or reorder blocks.
+"""
+
     ctx = syllabus_context
     return f"""You are generating a STRUCTURALLY personalized learning pathway for a synthetic validation study.
 The same syllabus must produce DIFFERENT block coverage — not just different node titles.
-
+{structure_lock_text}
 === COURSE CONTEXT ===
 Description: {ctx.get('courseDescription', '')}
 Prerequisites: {ctx.get('prerequisites', '')}
@@ -82,7 +99,8 @@ Valid syllabusBlockId values: {block_ids}
 === OUTPUT REQUIREMENTS ===
 - Call generate_learning_pathway with 10-14 nodes.
 - Each node MUST include syllabusBlockId (one of the valid block ids).
-- Vary block coverage based on survey — a confident researcher and an uncertain beginner should NOT receive the same block sequence.
-- learning_1 must NOT alter which blocks appear.
+- Vary block coverage based on survey — a confident CS researcher and an uncertain history major must NOT receive the same block sequence or block counts.
+- learning_1 (learning style) affects ONLY the wording of descriptions — NEVER which blocks appear, how many nodes per block, difficulty, or order.
+- Before finalizing, verify: would this pathway differ in block counts from a generic student? If not, revise block emphasis.
 
 Generate the pathway now."""

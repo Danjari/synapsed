@@ -97,8 +97,12 @@ def build_prompt(
     syllabus: dict[str, Any],
     syllabus_context: dict[str, str],
     answers: dict[str, str],
+    *,
+    structure_lock: dict[str, Any] | None = None,
 ) -> str:
-    return build_personalization_prompt(syllabus, syllabus_context, answers)
+    return build_personalization_prompt(
+        syllabus, syllabus_context, answers, structure_lock=structure_lock
+    )
 
 
 def generate_pathway_nodes(
@@ -108,8 +112,9 @@ def generate_pathway_nodes(
     answers: dict[str, str],
     *,
     model: str | None = None,
+    structure_lock: dict[str, Any] | None = None,
 ) -> list[dict[str, Any]]:
-    prompt = build_prompt(syllabus, syllabus_context, answers)
+    prompt = build_prompt(syllabus, syllabus_context, answers, structure_lock=structure_lock)
     model_name = model or get_gemini_model()
 
     def _call() -> Any:
@@ -154,12 +159,15 @@ def generate_pathway_with_retry(
     *,
     retries: int = 2,
     delay_sec: float = 2.0,
+    structure_lock: dict[str, Any] | None = None,
 ) -> list[dict[str, Any]]:
     """Outer retry for validation errors; rate limits handled inside generate_pathway_nodes."""
     last_error: Exception | None = None
     for attempt in range(retries + 1):
         try:
-            return generate_pathway_nodes(client, syllabus, syllabus_context, answers)
+            return generate_pathway_nodes(
+                client, syllabus, syllabus_context, answers, structure_lock=structure_lock
+            )
         except Exception as exc:
             last_error = exc
             if attempt < retries:

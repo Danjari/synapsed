@@ -14,7 +14,15 @@ sys.path.insert(0, str(STUDY_ROOT))
 from lib.api_client import load_json, save_json  # noqa: E402
 from lib.pathway_generator import generate_pathway_with_retry, get_gemini_client  # noqa: E402
 from lib.rate_limit import api_delay_sec  # noqa: E402
+from lib.research_metrics import block_multiset, block_sequence  # noqa: E402
 from lib.syllabus_context import syllabus_to_context  # noqa: E402
+
+
+def structure_lock_from_pathway(nodes: list[dict]) -> dict:
+    return {
+        "block_sequence": block_sequence(nodes),
+        "block_counts": dict(block_multiset(nodes)),
+    }
 
 
 def main() -> int:
@@ -40,6 +48,7 @@ def main() -> int:
     generated: list[str] = []
     skipped = 0
     failed: list[dict[str, str]] = []
+    profiles_by_id = {p["id"]: p for p in profiles}
 
     for profile in profiles:
         profile_id = profile["id"]
@@ -51,10 +60,33 @@ def main() -> int:
             skipped += 1
             continue
 
-        print(f"Generating pathway for {profile_id}...")
+        structure_lock = None
+        paired_id = profile.get("paired_with")
+        if paired_id:
+            paired_path = results_dir / f"{paired_id}.json"
+            if paired_path.exists():
+                paired_nodes = load_json(paired_path).get("nodes", [])
+                if paired_nodes:
+                    structure_lock = structure_lock_from_pathway(paired_nodes)
+                    print(f"Generating pathway for {profile_id} (structure locked to {paired_id})...")
+                else:
+                    print(f"Generating pathway for {profile_id}...")
+            else:
+                print(
+                    f"WARNING: paired profile {paired_id} missing — generate it first",
+                    file=sys.stderr,
+                )
+                print(f"Generating pathway for {profile_id}...")
+        else:
+            print(f"Generating pathway for {profile_id}...")
+
         try:
             nodes = generate_pathway_with_retry(
-                client, syllabus, syllabus_context, profile["answers"]
+                client,
+                syllabus,
+                syllabus_context,
+                profile["answers"],
+                structure_lock=structure_lock,
             )
         except Exception as exc:
             print(f"FAILED {profile_id}: {exc}", file=sys.stderr)

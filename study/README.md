@@ -22,6 +22,7 @@ python scripts/02_generate_syllabus_pdf.py          # optional
 python scripts/05_generate_synthetic_profiles.py  # 50 clustered profiles
 python scripts/07_generate_pathways_offline.py      # Gemini → local JSON (~1 min/profile)
 python scripts/09_research_evaluation.py            # primary gate
+python scripts/10_generate_team_report.py           # team HTML → Print to PDF
 python scripts/08_analyze_pathway_diversity.py      # secondary title-Jaccard report
 ```
 

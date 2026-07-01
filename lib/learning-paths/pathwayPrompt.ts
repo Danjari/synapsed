@@ -59,8 +59,9 @@ ${rulesText}
 === OUTPUT REQUIREMENTS ===
 - Call generate_learning_pathway with 10-14 nodes.
 - Each node MUST include syllabusBlockId (one of the valid block ids).
-- Vary block coverage based on survey — a confident researcher and an uncertain beginner should NOT receive the same block sequence.
-- learning_1 must NOT alter which blocks appear.
+- Vary block coverage based on survey — a confident CS researcher and an uncertain history major must NOT receive the same block sequence or block counts.
+- learning_1 (learning style) affects ONLY the wording of descriptions — NEVER which blocks appear, how many nodes per block, difficulty, or order.
+- Before finalizing, verify: would this pathway differ in block counts from a generic student? If not, revise block emphasis.
 
 Generate the pathway now.`;
 }
