@@ -101,7 +101,7 @@ This separation reduces same-model bias. Disclose both model IDs in the paper.
 ```bash
 GEMINI_API_KEY=...          # generation
 ANTHROPIC_API_KEY=...       # judge
-CLAUDE_JUDGE_MODEL=claude-sonnet-4-20250514
+CLAUDE_JUDGE_MODEL=claude-sonnet-4-6
 ```
 
 ---

@@ -62,7 +62,7 @@ def get_anthropic_client() -> Any:
 
 def get_claude_judge_model() -> str:
     _load_env()
-    return os.getenv("CLAUDE_JUDGE_MODEL", "claude-sonnet-4-20250514").strip()
+    return os.getenv("CLAUDE_JUDGE_MODEL", "claude-sonnet-4-6").strip()
 
 
 def _format_profile(answers: dict[str, str]) -> str:
