@@ -1,71 +1,114 @@
 # Phase 0 Synthetic Validation Report
 
-**Course:** AI literacy (~10 contact hours, 7 syllabus blocks)  
-**Status:** PASS (Run 3, 50 profiles)  
+**Course:** AI literacy (about 10 hours of content, split into 7 blocks)
+**Status:** PASS (Run 3, 50 profiles)
 **Date:** July 2026
 
-This document is self-contained. It explains everything built under `study/`: why, how, formulas, prompts, examples, and results. No other files are required to review it.
+This report explains everything the team built and tested under the `study/` folder. It assumes no prior knowledge of the project. Every term gets defined the first time it shows up. You don't need to open any other file to follow along.
 
 ---
 
-## 1. Objective
+## 1. What is this report about?
 
-Phase 0 asks whether SynapsEd **structurally personalizes** pathways before any human study. Two students with different backgrounds should receive different syllabus block coverage, not the same route with reworded titles.
+SynapsEd builds learning paths for students automatically. A student fills out a short survey about their background and goals, and SynapsEd's AI reads that survey and builds a custom sequence of lessons for that student. We call this sequence a **pathway**. Each lesson inside a pathway is called a **node**.
 
-Pedagogical quality (does the path make sense?) is validated later by professors and students in Phase 1. Phase 0 only checks that personalization is real and systematic.
+Think of it like a music app that builds you a playlist based on your listening history. Two people with different tastes should get different playlists, not the same 20 songs with the track names changed. That is the exact question this report answers, but for lessons instead of songs.
+
+**The question we are testing:** does SynapsEd actually build a different pathway for a different student, or does it just relabel the same generic pathway with different words?
+
+We test this **before** running any study with real students or professors, because if the personalization is fake, there is no point putting real people through it yet. This early, cheap check is called **Phase 0**.
+
+Phase 0 does **not** check whether the pathways are pedagogically good (whether they teach well, whether the lesson order makes sense to a human expert). That is a separate, later check called **Phase 1**, done by real professors and students. Phase 0 only checks one thing: is the personalization real and consistent, or is it random or cosmetic?
+
+**How we tested it:** we invented 50 fake students (we call them **synthetic profiles**, explained in Section 3), ran all 50 through SynapsEd's pathway generator, and then compared the resulting pathways to each other using math and an independent AI reviewer. We used one syllabus (course outline) for this first test. Section 9 covers what we plan to test next, including a second syllabus.
+
+### Personalization happens on two levels
+
+This matters enough that we call it out early, because most of this report only measures one of the two.
+
+1. **Block level:** which of the 7 topic groups (defined in Section 2) show up in a student's pathway, how many lessons come from each group, and in what order. **This is what Phase 0 measures.** It is the structural skeleton of the pathway.
+2. **Node level:** inside a single topic group, which exact lesson titles and descriptions the AI picks or writes for that student. For example, two students might both get 3 lessons from the "AI Basics" group, but one student's lessons are titled with visual, beginner-friendly language and the other's use technical, research-oriented language. Phase 0 does not score this level with math. Instead, an independent AI reviewer spot-checks it (Section 5.6), and the team is actively testing additional ways to measure it (see Section 9).
+
+Keep this distinction in mind: when this report says "personalization," it mainly means block-level personalization, unless a section says otherwise.
 
 ---
 
-## 2. Syllabus
+## 2. The syllabus
 
-Source courses were merged and deduplicated (same topic taught once). Lessons were grouped into **7 tagged blocks**. Every generated node carries a `syllabusBlockId`.
+A **syllabus** is the master course outline: every lesson SynapsEd is allowed to draw from when building a pathway. Our syllabus was built from three existing short courses, all taught by Andrew Ng on DeepLearning.AI:
+
+- *AI For Everyone*
+- *Generative AI for Everyone*
+- *AI Prompting for Everyone*
+
+We combined these three courses into one syllabus and removed duplicate topics (if two source courses both taught "what is machine learning," we kept it once). The result covers about 10 hours of content with no coding required and no prerequisites.
+
+We then grouped the lessons into **7 blocks**. A block is just a labeled bucket of related lessons, similar to a chapter in a textbook. Every block has a short id we use in code and in this report:
 
 | Block | Content |
 |-------|---------|
-| block_01 | AI Basics (ML, data, terminology) |
-| block_02 | Generative AI Core |
-| block_03 | Prompting Basics |
-| block_04 | Advanced Prompting |
-| block_05a | Business and workplace track |
-| block_05b | Technical workflows (RAG, projects) |
-| block_06 | Ethics capstone (required for all) |
+| block_01 | AI Basics (what machine learning is, key terms, how data trains a model) |
+| block_02 | Generative AI Core (how tools like ChatGPT actually generate text) |
+| block_03 | Prompting Basics (how to write a clear instruction for an AI) |
+| block_04 | Advanced Prompting (more advanced techniques like chain-of-thought) |
+| block_05a | Business and workplace track (using AI at work, strategy, adoption) |
+| block_05b | Technical workflows track (building things with AI: retrieval, projects) |
+| block_06 | Ethics capstone (bias, misinformation, job impact; required for everyone) |
 
-**Why tags:** Title-only comparison failed. Gemini renamed "Introduction to AI" to "Introduction to artificial intelligence" and looked different while the structure was identical.
+Every lesson (node) that SynapsEd generates for a student carries a tag called `syllabusBlockId`, which just records which of the 7 blocks that lesson belongs to.
+
+**Why we need this tag at all:** our first attempt at comparing pathways just compared lesson titles as plain text. That failed immediately. In one test, Gemini (the AI model that generates pathways, introduced in Section 4) renamed a lesson from "Introduction to AI" to "Introduction to artificial intelligence." As plain text, those two titles look almost totally different to a similarity checker, even though the lesson content and structure were identical. A title-only comparison would have told us the pathways were very different when they were not. Tagging every lesson with its block id lets us compare pathways by their actual structure (which blocks, how many lessons per block) instead of by wording that an AI can freely paraphrase.
+
+We use these block tags to compare pathways at the block level (Section 5.1) and to check specific rules (Section 5.5). We separately check what happens inside a block, meaning which specific lesson titles get picked, using the independent AI reviewer described in Section 5.6.
 
 ---
 
-## 3. Synthetic profiles
+## 3. Synthetic profiles (our 50 fake students)
 
-### 3.1 Method
+### 3.1 What is a profile, and where did it come from?
 
-Profiles are **hand-authored survey responses**, not LLM-generated. A Python script (`05_generate_synthetic_profiles.py`) assembles 50 profiles into one JSON file.
+A **profile** is one simulated student's answers to an onboarding survey, the kind of questionnaire a real student would fill out before starting the course. It is not a real person. We made these up so we could test the system quickly, cheaply, and repeatably, without waiting on real students.
 
-| Step | What |
-|------|------|
-| 10 anchors | Fixed personas for pre-registered tests H1-H5 (e.g. `low_knowledge_general`, `high_knowledge_research`) |
-| 40 extensions | Same answer *patterns* with field-specific text (CS, Business, Economics, Math/Stats, Health, Humanities) |
-| 6 preference controls | Copy a partner profile except `learning_1` (learning preference) |
+**"Hand-authored" means a person on the team wrote them, not an AI.** Here is exactly how the 50 profiles were built, in three layers:
 
-**Survey questions (8 fields per profile):**
+1. **10 anchor profiles.** A team member personally wrote 10 fixed personas from scratch: their field of study, background knowledge, goals, and preferences. Each anchor was designed on purpose to test one specific comparison. For example, `low_knowledge_general` is a beginner with no AI background, and `high_knowledge_research` is an advanced student with a strong machine learning background. These two exist specifically so we can check that SynapsEd treats them differently.
+2. **40 extension profiles.** A script (`05_generate_synthetic_profiles.py`) takes the answer *patterns* from the 10 anchors and copies them with different field-specific details swapped in. For example, the same "no background, first AI course" pattern gets reused for a Computer Science student, a Business student, and a History student, each with wording that fits their major. This gives us breadth across 6 fields of study without hand-writing 40 profiles one by one.
+3. **6 preference-control profiles (twins).** Each of these copies an existing profile exactly, word for word, except for a single answer: their preferred learning style. We call this pair a **partner** (the original) and a **twin** (the copy with one changed answer). Twins exist to test one specific thing: that changing how someone likes to learn changes the wording of their lessons, but not which lessons they get. More on this in Section 3.4.
 
-| ID | Question |
+All 50 profiles get saved into a single JSON file (a structured data file), `synthetic_profiles.json`. We do this so a script can feed all 50 through the pathway generator in one batch run, and then automatically compare every profile's pathway against every other profile's pathway. With 50 profiles, there are 1,225 possible pairs (a well-known math fact: for 50 items, the number of pairs is 50 × 49 ÷ 2 = 1,225). Doing that many comparisons by hand would be impossible, so everything has to live in one machine-readable file.
+
+**Profile mix (n=50):** Computer Science 8, Business 8, Economics 7, Math/Stats 7, Health 7, Humanities 7, preference-control twins 6.
+
+### 3.2 The survey: what questions does a profile answer?
+
+Every profile answers the same 8 questions. Some of these questions map to a teaching idea called **Bloom's taxonomy**, a common framework for describing levels of understanding (remembering facts, understanding concepts, applying skills, analyzing problems). We use it here just to get a fuller picture of what a student already knows and expects.
+
+| Question ID | Question |
 |----|----------|
 | goals_1 | What are your primary learning goals for this course? |
 | goals_2 | What motivated you to enroll in this course? |
 | prereq_1 | Rate your current understanding of prerequisite topics |
-| learning_1 | What is your preferred learning style? (We call this **learning preference** in analysis; it affects tutor wording, not pathway structure.) |
+| learning_1 | What is your preferred learning style? |
 | bloom_remember | List key concepts you remember from previous related courses |
 | bloom_understand | What do you expect to learn in this course? |
 | bloom_apply | How do you plan to apply what you learn? |
 | bloom_analyze | What challenges do you anticipate? |
 
-**Distribution (n=50):** CS 8, Business 8, Economics 7, Math/Stats 7, Health 7, Humanities 7, preference controls 6.
+`learning_1` gets a special name in the rest of this report: **learning preference**. It is meant to affect *how a lesson is worded* (for example, more visual language versus more text-based language), never *which lessons a student gets*. Section 4.1 explains why, and Section 5.4 shows how we check it.
 
-### 3.2 Example: anchor profile (History beginner)
+The 5 possible answers to `learning_1` are:
 
-**ID:** `low_knowledge_general` | **Cluster:** humanities_social | **Field:** History
+- Visual (diagrams, charts, videos)
+- Auditory (lectures, discussions)
+- Kinesthetic (hands-on activities)
+- Reading/Writing (texts, notes)
+- Mixed approach
 
-**Description:** History BA sophomore, no STEM background, first AI course
+### 3.3 Example profile: a History beginner
+
+**ID:** `low_knowledge_general` | **Field:** History
+
+**Description:** History undergraduate, no STEM background, first AI course.
 
 | Question | Answer |
 |----------|--------|
@@ -78,11 +121,11 @@ Profiles are **hand-authored survey responses**, not LLM-generated. A Python scr
 | bloom_apply | Use AI responsibly when reviewing sources and drafting essays |
 | bloom_analyze | I worry about technical jargon and misinformation in AI outputs |
 
-### 3.3 Example: anchor profile (CS researcher)
+### 3.4 Example profile: a Computer Science researcher
 
-**ID:** `high_knowledge_research` | **Cluster:** cs_technical | **Field:** Computer Science
+**ID:** `high_knowledge_research` | **Field:** Computer Science
 
-**Description:** CS MS student, strong ML background, research-oriented
+**Description:** Computer Science graduate student, strong machine learning background, research-oriented.
 
 | Question | Answer |
 |----------|--------|
@@ -91,14 +134,18 @@ Profiles are **hand-authored survey responses**, not LLM-generated. A Python scr
 | prereq_1 | Very confident |
 | learning_1 | Reading/Writing (texts, notes) |
 | bloom_remember | Supervised learning, neural networks, gradient descent, PyTorch |
-| bloom_understand | How LLMs differ from traditional ML pipelines and RAG architectures |
+| bloom_understand | How large language models differ from traditional machine learning and retrieval-augmented generation |
 | bloom_apply | Design research workflows using fine-tuning and retrieval-augmented generation |
 | bloom_analyze | Evaluating hallucination, benchmark design, and model limitations |
 
-### 3.4 Example: learning preference control twin
+These two profiles above are deliberately opposite in background. We use them throughout this report to show that SynapsEd treats different students differently.
 
-**Partner:** `medium_knowledge_mixed` (Economics junior, neutral background)  
-**Twin:** `learning_style_control` (identical survey except `learning_1`)
+### 3.5 Example: a learning-preference twin pair
+
+This example shows the third layer from Section 3.1: a partner profile and its twin.
+
+**Partner:** `medium_knowledge_mixed` (Economics student, average background)
+**Twin:** `learning_style_control` (identical survey, except one answer)
 
 | Field | Partner | Twin |
 |-------|---------|------|
@@ -111,38 +158,42 @@ Profiles are **hand-authored survey responses**, not LLM-generated. A Python scr
 | bloom_apply | Experiment with prompts for data summaries and policy briefs | *(same)* |
 | bloom_analyze | Separating AI hype from realistic capabilities in economic forecasting | *(same)* |
 
-**Purpose:** Test that learning preference changes description wording only, not which syllabus blocks appear.
+**What this pair tests:** since every other answer is identical, any difference between their two pathways can only come from the learning-preference answer. Our rule (Section 4.1) says learning preference should only change wording, never which blocks or how many lessons per block a student gets. So a correct system should give this partner and twin the same block structure, just described differently. Section 5.4 shows the result.
 
 ---
 
-## 4. Pathway generation
+## 4. How SynapsEd builds a pathway
+
+SynapsEd sends the syllabus (Section 2) and a student's survey answers (Section 3) to an AI model called **Google Gemini**, along with a set of written rules (below). Gemini reads all of this and generates a pathway: a list of 10 to 14 nodes (lessons), where each node comes with a title, its block id, a difficulty level, a lesson type, and a short description.
 
 | Item | Detail |
 |------|--------|
-| Model | Google Gemini (`GEMINI_MODEL` env var) |
-| Input | Syllabus JSON + survey answers + personalization rules (spec v2.0) |
-| Output | 10-14 nodes, each with `title`, `syllabusBlockId`, `difficulty`, `type`, `description` |
-| Format | Forced function-call JSON (same schema every run) |
-| Run 3 fix | For `paired_with` profiles: copy exact block counts from partner before generation (**structure lock**) |
+| Model | Google Gemini |
+| Input | Syllabus + survey answers + the 12 personalization rules below |
+| Output | 10 to 14 nodes, each with a title, block id, difficulty, type, and description |
+| Format | A fixed, structured output format, so every run returns data in the exact same shape |
+| Run 3 fix | For twin profiles (Section 3.5), we copy the exact block counts from their partner before generation. We call this **structure lock**. It guarantees twins cannot drift apart by accident. |
 
-### 4.1 Personalization rules (sent to Gemini)
+### 4.1 The 12 personalization rules we give Gemini
 
-These 12 rules are appended to every generation prompt:
+We do not just ask Gemini to "personalize" the pathway and hope for the best. We learned from Run 1 and Run 2 (Section 6) that a vague instruction leads to cosmetic changes only, like reworded titles with the same underlying structure. So we wrote 12 explicit rules and include them in every request to Gemini:
 
-1. Every node MUST include `syllabusBlockId` from the block catalog.
-2. Personalization is **structural**: vary blocks, node counts, difficulty, and order. NOT title paraphrase only.
-3. block_05a and block_05b are alternative tracks. Prioritize ONE (3+ nodes) unless profile wants breadth.
-4. `prereq_1` Very uncertain OR no prior AI courses: assign **3+ block_01** nodes at beginner level.
-5. `prereq_1` Very confident OR bloom mentions ML/neural networks/PyTorch: **at most 1 block_01** node; emphasize block_02 and block_05b.
-6. Business/strategy/workplace goals: prioritize **block_05a** (3+ nodes) over block_05b.
-7. Research/RAG/fine-tuning/workflow goals: prioritize **block_05b** (3+ nodes) over block_05a.
-8. Ethics/bias/health equity goals: assign **4+ block_06** nodes.
-9. Structured prompting/few-shot/chain-of-thought goals: **3+ nodes** across block_03 + block_04.
-10. ChatGPT user without ML background: still 1-2 block_01 nodes; compress prompting only if goals do not emphasize prompting.
-11. **CRITICAL:** `learning_1` has **zero effect on structure**. Only description wording changes. Twins differing only in learning_1 must have identical block sequences.
-12. Total 10-14 nodes; at least one assessment; block_06 in every pathway (2+ nodes for neutral profiles).
+1. Every lesson must include its block id from the block catalog (Section 2).
+2. Personalization must be structural: vary which blocks appear, how many lessons per block, difficulty, and order. Renaming titles alone does not count.
+3. block_05a (business track) and block_05b (technical track) are alternatives. Pick one to emphasize with at least 3 lessons, unless the student's profile clearly wants both.
+4. If a student says they are very uncertain about prerequisites, or has no prior AI courses, give them at least 3 beginner-level lessons from block_01 (AI Basics).
+5. If a student says they are very confident, or their answers mention machine learning, neural networks, or PyTorch, give them at most 1 lesson from block_01, and emphasize block_02 and block_05b instead.
+6. If a student's goals mention business, strategy, or workplace use, prioritize block_05a with at least 3 lessons over block_05b.
+7. If a student's goals mention research, retrieval-augmented generation, fine-tuning, or technical workflows, prioritize block_05b with at least 3 lessons over block_05a.
+8. If a student's goals mention ethics, bias, or health equity, give them at least 4 lessons from block_06 (Ethics).
+9. If a student's goals mention structured prompting, few-shot examples, or chain-of-thought reasoning, give them at least 3 lessons combined across block_03 and block_04.
+10. A student who already uses ChatGPT but has no machine learning background should still get 1 to 2 beginner lessons from block_01. Only shorten the prompting section if the student's goals do not emphasize prompting.
+11. **Critical rule:** learning preference (the `learning_1` answer) must never affect the structure. It can only change the wording of a description. Two profiles that differ only in learning preference must end up with identical block sequences.
+12. Every pathway must total 10 to 14 lessons, include at least one assessment, and always include block_06 (Ethics), with at least 2 lessons from it for a student with no strong preference either way.
 
-### 4.2 Generation prompt template
+### 4.2 The generation prompt (what we actually send Gemini)
+
+A **prompt** is the block of instructions we send to an AI model. Below is a shortened version of ours, showing its structure:
 
 ```
 You are generating a STRUCTURALLY personalized learning pathway for a synthetic validation study.
@@ -172,155 +223,148 @@ A: [student answer]
 Generate the pathway now.
 ```
 
-For structure-lock twins, an extra block is inserted requiring identical block sequence and counts as the paired profile.
+For twin profiles, we add one more instruction requiring the exact same block sequence and counts as their partner (the structure lock from Section 4).
 
 ---
 
-## 5. Metrics and gates
+## 5. How we measured the results (metrics and pass/fail gates)
 
-Primary evaluation is **deterministic Python**. Claude judge is **supplementary** (optional, `--with-judge` flag).
+A **gate** is a pass or fail threshold we set in advance. We do not adjust gates after seeing results. If a gate fails, the fix is to change the prompt or the generator, not to lower the bar.
 
-### 5.1 Block multiset Jaccard (path diversity)
+Reading 50 pathways side by side and eyeballing whether they look different does not scale, and it is easy to fool a human the same way it fooled our first title-only check (Section 2). So most of our checks are math run automatically in Python (a programming language), on the block tags from Section 2. One extra check uses a second AI model as an independent reviewer, and is treated as a bonus, not a requirement.
 
-Count nodes per block for each pathway pair:
+### 5.1 Block overlap score (multiset Jaccard)
+
+This is our main measurement of how different two pathways are from each other.
+
+Imagine two shopping carts. To compare them, you count how many items they have in common versus how many different items exist between both carts combined. If the carts are identical, that ratio is 1. If they share nothing, it is 0.
+
+We do the same thing with pathways, using block ids as the "items" (a lesson from block_01 counts as one item of type block_01). For every pair of pathways, we count how many lessons come from each block, then compute:
 
 ```
-J(A, B) = Σ_k min(c_A(k), c_B(k)) / Σ_k max(c_A(k), c_B(k))
+overlap(A, B) = (shared lessons per block, summed) / (total lessons per block across both, summed)
 ```
 
-Mean over all 1,225 pairs = **0.585** (Run 3). **Gate:** mean < 0.92 (paths are not clones).
+We compute this for every one of the 1,225 possible pairs among our 50 profiles, then average all 1,225 scores.
 
-### 5.2 Pre-registered hypotheses H1-H5
+**Result (Run 3): average overlap = 0.585.** **Gate: average must be below 0.92** (meaning pathways are not near-identical clones of each other). We passed with room to spare.
 
-| ID | Claim | Profile A | Profile B | Metric | Run 3 values | Pass? |
+### 5.2 Five pre-registered predictions (H1 to H5)
+
+"Pre-registered" means we wrote these 5 predictions down, along with exactly how we would measure them, before we ran the real test. We did this on purpose so we could not quietly change our claims after seeing which way the results leaned. Each prediction picks two of our anchor profiles (Section 3.1) that should clearly differ on one specific trait, and states which one should get more lessons from which block.
+
+| ID | Prediction (plain language) | Profile A | Profile B | What we measured | Run 3 result | Passed? |
 |----|-------|-----------|-----------|--------|--------------|-------|
-| H1 | Low-knowledge gets more AI Basics | low_knowledge_general | high_knowledge_research | block_01 count | **3** vs **1** | Yes |
-| H2 | Business leader gets more Business track | business_leader | high_knowledge_research | block_05a count | **4** vs **1** | Yes |
-| H3 | Researcher gets more Technical track | high_knowledge_research | business_leader | block_05b count | **4** vs **0** | Yes |
-| H4 | Ethics profile gets more Ethics block | ethics_focused | medium_knowledge_mixed | block_06 count | **5** vs **3** | Yes |
-| H5 | Preference twin matches partner structure | learning_style_control | medium_knowledge_mixed | sequence Jaccard | **1.00** (threshold 0.85) | Yes |
+| H1 | A beginner should get more AI Basics lessons than an advanced researcher | low_knowledge_general | high_knowledge_research | block_01 lesson count | 3 vs 1 | Yes |
+| H2 | A business-focused student should get more Business-track lessons than a researcher | business_leader | high_knowledge_research | block_05a lesson count | 4 vs 1 | Yes |
+| H3 | A researcher should get more Technical-track lessons than a business-focused student | high_knowledge_research | business_leader | block_05b lesson count | 4 vs 0 | Yes |
+| H4 | A student focused on ethics should get more Ethics lessons than a neutral student | ethics_focused | medium_knowledge_mixed | block_06 lesson count | 5 vs 3 | Yes |
+| H5 | A learning-preference twin should get the same block structure as its partner | learning_style_control | medium_knowledge_mixed | block sequence similarity | 1.00 (needed at least 0.85) | Yes |
 
-**Gate:** ≥ 80% pass (4/5 minimum). Run 3: **5/5**.
+**Gate:** at least 4 of these 5 predictions must hold true (80%). **Run 3 result: 5 out of 5.**
 
-### 5.3 Cluster analysis
+### 5.3 Cluster analysis (do similar students get similar pathways?)
 
-| Metric | Run 3 | Gate |
+We grouped our profiles into clusters by field of study (for example, all Computer Science and Math profiles form a "technical" cluster, all History and Humanities profiles form a "humanities" cluster). Then we checked two things:
+
+- Profiles **within** the same cluster (similar backgrounds) should get **fairly similar** pathways to each other.
+- Profiles from clusters that are **very different** from each other (for example, Humanities versus Computer Science) should get pathways that **diverge noticeably**.
+
+| Metric | Run 3 result | Gate |
 |--------|-------|------|
-| Mean within-cluster multiset Jaccard | 0.745 | ≥ 0.65 |
-| Mean contrasting-cluster Jaccard (Humanities vs CS, etc.) | 0.440 | ≤ 0.70 |
+| Average similarity within the same cluster | 0.745 | must be at least 0.65 |
+| Average similarity between contrasting clusters (Humanities vs Computer Science, and similar pairs) | 0.440 | must be at most 0.70 |
 
-### 5.4 Learning preference invariance
+Both passed. Similar students end up with reasonably similar pathways, and very different students end up with pathways that are clearly less alike.
 
-6 twin pairs differ only in `learning_1`. Each pair must have block sequence Jaccard ≥ 0.85 vs partner. Run 3: **100%** (6/6). **Gate:** ≥ 80%.
+### 5.4 Learning preference invariance (does the twin trick work?)
 
-### 5.5 Rule compliance (automated checker)
+Recall the 6 twin pairs from Section 3.1 and the example in Section 3.5: each twin is identical to its partner except for its learning-preference answer. Rule 11 (Section 4.1) says this answer must not change block structure at all.
 
-Rules below are checked in Python by keyword matching on survey text. No LLM involved.
+We checked all 6 pairs. Every pair needed a block-sequence similarity of at least 0.85 against its partner to count as a pass.
 
-| Rule | Check | Applies when |
+**Result: 100% (6 out of 6 pairs passed).** **Gate: at least 80%.**
+
+### 5.5 Rule compliance checker (a second, independent check with plain code)
+
+Separately from the AI comparisons above, we wrote a Python script that checks specific rules directly by reading the survey text and counting blocks. No AI model is involved in this check at all, it is plain code doing arithmetic and keyword matching.
+
+| Rule | What it checks | When it applies |
 |------|-------|--------------|
-| node_count | 10-14 nodes | all |
-| ethics_capstone | block_06 ≥ 2 | all |
-| foundation_depth | block_01 ≥ 3 | uncertain prereq or no AI background |
-| foundation_compress | block_01 ≤ 1 | very confident or ML keywords in bloom |
-| business_track | block_05a ≥ 3 and > block_05b | business keywords in goals |
-| research_track | block_05b ≥ 3 and ≥ block_05a | research/RAG/workflow keywords |
-| ethics_emphasis | block_06 ≥ 4 | ethics/health equity keywords |
-| prompting_emphasis | block_03 + block_04 ≥ 3 | prompting mastery keywords |
-| style_control_exact | block counts = partner | `paired_with` profiles |
-| valid_block_ids | all ids in catalog | all |
+| node_count | Pathway has 10 to 14 lessons | Every profile |
+| ethics_capstone | At least 2 lessons from block_06 | Every profile |
+| foundation_depth | At least 3 lessons from block_01 | Uncertain prerequisites or no AI background |
+| foundation_compress | At most 1 lesson from block_01 | Very confident, or machine learning keywords present |
+| business_track | At least 3 lessons from block_05a, and more than block_05b | Business keywords in goals |
+| research_track | At least 3 lessons from block_05b, at least as many as block_05a | Research, RAG, or workflow keywords |
+| ethics_emphasis | At least 4 lessons from block_06 | Ethics or health-equity keywords |
+| prompting_emphasis | At least 3 lessons combined across block_03 and block_04 | Prompting-mastery keywords |
+| style_control_exact | Block counts match the partner exactly | Twin profiles only |
+| valid_block_ids | Every lesson's block id exists in the catalog | Every profile |
 
-Run 3: **96%** rule pass rate, **82%** profiles fully clean. **Gate:** ≥ 85% aggregate, ≥ 80% profiles clean.
+**Result: 96% of applicable rules passed, and 82% of profiles passed every single rule that applied to them.** **Gate: at least 85% of rules overall, and at least 80% of profiles fully clean.** The remaining roughly 4% were borderline misses, for example one applicable rule missed on a handful of profiles, not systematic failures.
 
-The remaining ~4% are borderline cases (e.g. one applicable rule missed on a few profiles).
+### 5.6 Independent AI reviewer (supplementary, not required to pass)
 
-### 5.6 LLM judge (supplementary)
+Sections 5.1 to 5.5 only measure the block level of personalization (Section 1). This check is the one place we look inside a block, at the actual lesson titles and descriptions Gemini chose, and ask whether they genuinely fit the student, not just whether the block counts are right.
+
+We used a different AI model, **Anthropic's Claude**, as the reviewer. Using a different model than the one that generated the pathways (Gemini) matters, because it means the same model is not grading its own work.
 
 | Item | Detail |
 |------|--------|
-| Generator | Google Gemini |
-| Judge | Anthropic Claude (`claude-sonnet-4-6`) |
-| Sample | 15 profiles, stratified across clusters |
-| Scale | 1-5 per dimension; mean = average of 5 dimensions |
-| Run 2 result | Mean **4.01** (n=15) |
-| Final gate | Not required for PASS |
+| Generator being reviewed | Google Gemini |
+| Reviewer | Anthropic Claude |
+| Sample reviewed | 15 profiles, spread across all clusters |
+| Scoring | 1 to 5 on each of 5 dimensions below, averaged |
+| Run 2 result | Average score 4.01 out of 5 (n=15) |
+| Required to pass? | No, this check is informational, not a required gate |
 
-**Rubric dimensions:**
+**What Claude scores:**
 
-1. **prior_knowledge_alignment** - block_01 vs block_02 depth matches prereq and bloom answers
-2. **goal_track_alignment** - block_05a vs block_05b matches stated goals
-3. **structural_personalization** - block coverage differs meaningfully, not title paraphrase only
-4. **syllabus_fidelity** - valid block ids, on-syllabus content
-5. **internal_coherence** - logical progression and capstone ethics
+1. **prior_knowledge_alignment** - does the depth of block_01 versus block_02 content match what the student said they already know?
+2. **goal_track_alignment** - does the choice between block_05a and block_05b match the student's stated goals?
+3. **structural_personalization** - does block coverage genuinely differ, rather than just reusing the same structure with reworded titles?
+4. **syllabus_fidelity** - are all block ids valid, and is the content actually drawn from the syllabus?
+5. **internal_coherence** - does the lesson order make logical sense, and does it end with the required ethics content?
 
-**Judge prompt (verbatim):**
+We explicitly instruct Claude not to be agreeable: to use the full 1-5 scale honestly, and to penalize any pathway that looks personalized on the surface but is not.
 
-```
-You are an independent expert reviewer for an adaptive learning systems research paper.
-The pathway was generated by a different model (Google Gemini). Your job is to evaluate
-structural personalization objectively.
+### 5.7 Title overlap score (an earlier method we dropped)
 
-IMPORTANT:
-- Use the full 1-5 scale honestly. Score 5 only for excellent alignment. Score 1 for clear mismatch.
-- Penalize cosmetic-only personalization (same block coverage with reworded titles).
-- Do not inflate scores to be agreeable.
-
-=== LEARNER PROFILE ===
-[profile description + all 8 survey Q&A pairs]
-
-=== SYLLABUS BLOCK CATALOG ===
-[all 7 blocks with descriptions]
-
-=== GENERATED PATHWAY ===
-Block sequence: [derived sequence]
-Block node counts: [counts per block]
-Nodes: [numbered list with block id, title, difficulty, type, description]
-
-=== RUBRIC DIMENSIONS ===
-[list of 5 dimensions above]
-
-Score each dimension 1-5 with a one-sentence justification.
-Set is_structural_not_cosmetic to true ONLY if block coverage/order reflects the profile meaningfully.
-```
-
-Claude returns scores via a structured tool call (`score_pathway_personalization`).
-
-### 5.7 Title Jaccard (secondary, diagnostic only)
-
-`J = |titles_A ∩ titles_B| / |titles_A ∪ titles_B|` on lesson title strings. Used in Run 1; replaced by block tags for primary evaluation.
+Our very first attempt (Run 1) compared pathways by comparing lesson title text directly, without block tags. We dropped this method after finding the renaming problem described in Section 2: Gemini can reword a title without changing the underlying lesson, which makes title-only comparison unreliable. We keep it around only as a secondary, diagnostic number, not as a pass/fail gate.
 
 ---
 
-## 6. Results (Run 3)
+## 6. Results (Run 3, the version that passed)
 
-| Gate | Result | Threshold |
+| Gate | Result | Required threshold |
 |------|--------|-----------|
-| Mean multiset Jaccard | 0.585 | < 0.92 |
-| Hypotheses H1-H5 | 5/5 | ≥ 80% |
-| Within-cluster similarity | 0.745 | ≥ 0.65 |
-| Contrast-cluster divergence | 0.440 | ≤ 0.70 |
-| Learning preference match | 100% | ≥ 80% |
-| Rule compliance | 96% | ≥ 85% |
+| Average block overlap score | 0.585 | below 0.92 |
+| Predictions H1 to H5 | 5 out of 5 | at least 80% |
+| Within-cluster similarity | 0.745 | at least 0.65 |
+| Between-cluster divergence | 0.440 | at most 0.70 |
+| Learning preference match | 100% | at least 80% |
+| Rule compliance | 96% | at least 85% |
 
-**Verdict: PASS.** Thresholds were not relaxed across three development runs.
+**Verdict: PASS.** Every gate above was set before we saw results, and none were loosened across our three attempts.
 
-### Brief iteration history
+### How we got here (3 attempts)
 
-| Run | Setup | Result | Main issue / fix |
+| Run | What we changed | Result | What went wrong or got fixed |
 |-----|-------|--------|------------------|
-| 1 | 10 profiles, title Jaccard | FAIL | Misleading metric; judge 3.46; style match 67% |
-| 2 | 50 profiles, block tags, prompt v2, Claude judge | FAIL | Style match 50%; judge 4.01 |
-| 3 | Structure lock + rule checker | **PASS** | Style match 100%; rules 96% |
+| 1 | 10 profiles, compared by lesson title only | FAIL | Title comparison was misleading (Section 2). Twin structure only matched 67% of the time. |
+| 2 | Scaled to 50 profiles, added block tags, rewrote the prompt, added Claude as reviewer | FAIL | Twin structure only matched 50% of the time, meaning learning preference was still leaking into structure. |
+| 3 | Added structure lock for twins (Section 4) and the rule checker (Section 5.5) | **PASS** | Twin structure matched 100%, rule compliance reached 96%. |
 
 ---
 
-## 7. Example pathways (Run 3, Gemini output)
+## 7. Example pathways (real output from Run 3)
 
-Below are actual generated paths. Compare block emphasis and description tone.
+The examples below are real, unedited pathways generated by Gemini. Compare which blocks each student gets, in what proportion, and how the wording of each lesson changes to fit the student.
 
 ### 7.1 History beginner (`low_knowledge_general`)
 
-**Structure:** block_01×3, block_02×1, block_03×1, block_04×1, block_05b×3, block_06×4 (13 nodes)
+**Structure:** 3 AI Basics, 1 Generative AI Core, 1 Prompting Basics, 1 Advanced Prompting, 3 Technical workflows, 4 Ethics (13 lessons total)
 
 | # | Block | Title | Description (excerpt) |
 |---|-------|-------|------------------------|
@@ -338,9 +382,9 @@ Below are actual generated paths. Compare block emphasis and description tone.
 | 12 | block_06 | Responsible AI in Practice | Flowchart for ethical AI use in writing and research |
 | 13 | block_06 | Ethics and Research Foundations Quiz | Assessment on terminology, workflows, and ethical pitfalls |
 
-### 7.2 CS researcher (`high_knowledge_research`)
+### 7.2 Computer Science researcher (`high_knowledge_research`)
 
-**Structure:** block_01×1, block_02×2, block_03×1, block_04×1, block_05b×4, block_05a×1, block_06×3 (13 nodes)
+**Structure:** 1 AI Basics, 2 Generative AI Core, 1 Prompting Basics, 1 Advanced Prompting, 4 Technical workflows, 1 Business track, 3 Ethics (13 lessons total)
 
 | # | Block | Title | Description (excerpt) |
 |---|-------|-------|------------------------|
@@ -358,11 +402,11 @@ Below are actual generated paths. Compare block emphasis and description tone.
 | 12 | block_06 | Responsible AI in Academic Research | Ethics of AI in publishing and research integrity |
 | 13 | block_06 | Capstone: Technical AI & Ethics Assessment | Assessment on RAG vs fine-tuning and ethical benchmark design |
 
-**Contrast with 7.1:** History student gets 3× AI Basics and visual/humanities framing. Researcher gets 1× Basics, 4× Technical track, advanced reading-heavy descriptions.
+**Compare 7.1 and 7.2 directly:** the History beginner gets 3 AI Basics lessons written with visual, non-technical language. The Computer Science researcher gets 1 AI Basics lesson and 4 Technical-track lessons, written with dense, research-level language. Same syllabus, same 7 blocks, clearly different pathways.
 
-### 7.3 Executive MBA (`business_leader`)
+### 7.3 Executive MBA student (`business_leader`)
 
-**Structure:** block_01×1, block_02×2, block_03×1, block_04×1, block_05a×4, block_06×2 (11 nodes)
+**Structure:** 1 AI Basics, 2 Generative AI Core, 1 Prompting Basics, 1 Advanced Prompting, 4 Business track, 2 Ethics (11 lessons total)
 
 | # | Block | Title | Description (excerpt) |
 |---|-------|-------|------------------------|
@@ -378,73 +422,75 @@ Below are actual generated paths. Compare block emphasis and description tone.
 | 10 | block_06 | Responsible AI & Workforce Impact | Podcast-style discussion on bias, hallucinations, jobs |
 | 11 | block_06 | Ethics and Strategy Evaluation | Scenario quiz on responsible AI in transformation |
 
-**Contrast:** 4× Business track (block_05a), 0× Technical track (block_05b). Descriptions use auditory/executive framing (matches `learning_1`: Auditory).
+This student gets 4 Business-track lessons and 0 Technical-track lessons, the opposite emphasis from the researcher in 7.2. Descriptions also lean auditory ("audio lecture," "podcast-style"), matching this student's stated learning preference.
 
-### 7.4 Learning preference twin (first 3 nodes)
+### 7.4 Learning-preference twins, side by side (first 3 lessons)
 
-Same block ids and counts; descriptions differ by modality only.
+Same block ids, same counts. Only the wording changes.
 
-| Block | Partner (`medium_knowledge_mixed`, Mixed) | Twin (`learning_style_control`, Kinesthetic) |
+| Block | Partner (`medium_knowledge_mixed`, prefers Mixed approach) | Twin (`learning_style_control`, prefers Kinesthetic) |
 |-------|-------------------------------------------|-----------------------------------------------|
 | block_01 | From Statistics to Machine Learning: conceptual diagrams bridging regression to ML | Interactive AI Foundations: hands-on terminology sort mapping stats to ML |
 | block_01 | AI Realities: Capabilities and Constraints: analysis of forecasting limits | Machine Learning & Data Sandbox: data-labeling simulation for economic forecasting |
 | block_02 | The Mechanics of Generative AI: visual and text-based deep dive | Exploring Generative AI Mechanics: live model experiment observing pattern transformation |
 
-Sequence Jaccard between twins: **1.00**.
+**Block sequence similarity between this pair: 1.00**, a perfect match. This is the clearest evidence in the whole report that learning preference changes tone, not structure.
 
 ---
 
-## 8. Pipeline overview
+## 8. How the whole pipeline fits together
 
 ```mermaid
 flowchart TD
-    A[Syllabus JSON] --> B[50 synthetic profiles]
-    B --> C[Gemini pathway generation]
-    C --> D[Block Jaccard + H1-H5]
+    A[Syllabus] --> B[50 synthetic profiles]
+    B --> C[Gemini generates a pathway per profile]
+    C --> D[Block overlap score + H1-H5 predictions]
     C --> E[Cluster analysis]
-    C --> F[Rule checker]
-    D --> G{PASS?}
+    C --> F[Rule compliance checker]
+    D --> G{All gates pass?}
     E --> G
     F --> G
-    G -->|yes| H[Phase 1: professor / human validation]
-    G -->|no| I[Fix prompt or generator]
-    C -. optional .-> J[Claude judge, n=15]
+    G -->|yes| H[Phase 1: professors and real students review it]
+    G -->|no| I[Fix the prompt or the generator, then retest]
+    C -. optional .-> J[Claude reviews 15 profiles]
 ```
 
-**Reproduce locally (optional):**
+**To reproduce this locally:**
 
 ```bash
 cd study && source .venv/bin/activate
 python scripts/05_generate_synthetic_profiles.py
 python scripts/07_generate_pathways_offline.py
 python scripts/09_research_evaluation.py
-python scripts/09_research_evaluation.py --with-judge   # supplementary only
+python scripts/09_research_evaluation.py --with-judge   # adds the Claude review, optional
 ```
 
 ---
 
-## 9. Limitations and next steps
+## 9. Limitations and what comes next
 
-1. **Single syllabus.** Team agreed to rerun on a second syllabus (e.g. discrete math) with new profiles.
-2. **Sample size.** Power analysis planned before scaling (~200 profiles discussed).
-3. **No human validation yet.** Phase 0 checks structural personalization only.
-4. **Alternative similarity metrics.** Team suggested exploring beyond Jaccard; not yet implemented.
-5. **Clustering analysis** on generated paths may be added later.
+1. **We only tested one syllabus.** The team agreed to rerun this whole process on a second, different syllabus (a discrete math course has been proposed) with a fresh set of profiles, to make sure the result isn't specific to this one AI-literacy course.
+2. **50 profiles is a starting point, not a final sample size.** The team plans a proper power analysis (a statistical method for deciding how many samples are actually needed) before scaling up, with roughly 200 profiles discussed as a target.
+3. **No real students or professors have reviewed anything yet.** Phase 0 only checks that personalization is real and structured. Whether the pathways are actually good teaching sequences is Phase 1's job, done by humans.
+4. **We are exploring better ways to measure node-level personalization.** Section 5.6's Claude review is one way to check whether the specific lessons inside a block truly fit the student, but the team is actively testing at least one alternative approach to this same question, to reduce how much we rely on an AI model as the judge.
+5. **We may add pathway clustering.** Beyond comparing profiles to each other, the team may later cluster the generated pathways themselves to look for unexpected patterns.
 
 ---
 
-## 10. What each `study/` component does
+## 10. What each file in `study/` does
+
+If you open the `study/` folder in the codebase, here is what each part is responsible for.
 
 | Component | Purpose |
 |-----------|---------|
-| `data/syllabus/syllabus.json` | 7 tagged blocks; source of truth for content |
-| `data/profiles/synthetic_profiles.json` | 50 hand-authored survey profiles |
-| `data/prompts/pathway_generation_spec.json` | Rules, rubric, H1-H5 definitions |
-| `lib/personalization_prompt.py` | Builds Gemini prompt from syllabus + survey |
-| `lib/pathway_generator.py` | Calls Gemini with forced JSON output |
-| `lib/research_metrics.py` | Jaccard, contrasts, cluster analysis |
-| `lib/rule_validator.py` | Automated rule compliance checks |
-| `lib/llm_judge.py` | Optional Claude scoring |
-| `scripts/07_generate_pathways_offline.py` | Batch generation with resume |
-| `scripts/09_research_evaluation.py` | Runs all gates, outputs PASS/FAIL |
-| `config/study_config.yaml` | Fixed thresholds (not tuned to force pass) |
+| `data/syllabus/syllabus.json` | The 7 tagged blocks; the source of truth for all lesson content |
+| `data/profiles/synthetic_profiles.json` | The 50 hand-authored survey profiles |
+| `data/prompts/pathway_generation_spec.json` | The 12 rules, the Claude rubric, and the H1-H5 definitions |
+| `lib/personalization_prompt.py` | Builds the Gemini prompt from the syllabus and a survey |
+| `lib/pathway_generator.py` | Calls Gemini and returns a structured pathway |
+| `lib/research_metrics.py` | Computes the overlap score, cluster comparisons, and H1-H5 |
+| `lib/rule_validator.py` | Runs the 10 rule-compliance checks in plain Python |
+| `lib/llm_judge.py` | Runs the optional Claude review |
+| `scripts/07_generate_pathways_offline.py` | Generates all 50 pathways in a batch, and can resume if interrupted |
+| `scripts/09_research_evaluation.py` | Runs every gate and prints PASS or FAIL |
+| `config/study_config.yaml` | The fixed pass/fail thresholds, set before testing, not tuned afterward |
