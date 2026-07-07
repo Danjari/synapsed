@@ -1,0 +1,219 @@
+{
+  "profileId": "os_strong_prior_exposure_1",
+  "cluster": null,
+  "field": null,
+  "description": "A junior computer science student with a strong background in low-level development from a previous cybersecurity internship, seeking to deepen their understanding of kernel-level security.",
+  "studentId": "offline-os_strong_prior_exposure_1",
+  "source": "offline-gemini",
+  "nodeCount": 15,
+  "nodes": [
+    {
+      "difficulty": "intermediate",
+      "duration": "75 min",
+      "description": "Analyze the fundamental structures of operating systems, focusing on the distinction between kernel and user modes and the architecture of system calls.",
+      "syllabusBlockId": "block_01",
+      "nodeRole": "core_required",
+      "dependsOn": [],
+      "personalizationRationale": "Because the student has strong prior exposure, we proceed directly to core architectural concepts without introductory scaffolding.",
+      "title": "OS Structures & Dual-Mode Operation",
+      "type": "topic",
+      "id": "os_foundations_core"
+    },
+    {
+      "syllabusBlockId": "block_01",
+      "description": "Explore the performance implications of system calls and context switching, including overhead analysis in high-performance environments.",
+      "duration": "75 min",
+      "difficulty": "advanced",
+      "id": "os_perf_enrichment",
+      "type": "topic",
+      "title": "Advanced Performance Analysis of Kernel Transitions",
+      "personalizationRationale": "This enrichment node leverages the student's strong prior exposure to systems programming to analyze low-level architectural performance costs.",
+      "nodeRole": "enrichment_advanced",
+      "dependsOn": [
+        "os_foundations_core"
+      ]
+    },
+    {
+      "syllabusBlockId": "block_02",
+      "duration": "110 min",
+      "difficulty": "intermediate",
+      "description": "Master the process abstraction, including lifecycle states, process control blocks, and the mechanics of context switching.",
+      "title": "Process Lifecycle & Management",
+      "id": "process_mgmt_core",
+      "type": "topic",
+      "personalizationRationale": "Core process management theory is required for all students to ensure success on exam-tested material.",
+      "nodeRole": "core_required",
+      "dependsOn": [
+        "os_perf_enrichment"
+      ]
+    },
+    {
+      "syllabusBlockId": "block_02",
+      "description": "Deep dive into IPC implementation details, comparing the throughput and latency of shared memory versus message-passing in modern kernels.",
+      "difficulty": "advanced",
+      "duration": "115 min",
+      "type": "topic",
+      "id": "ipc_adv_mechanisms",
+      "title": "High-Performance Inter-Process Communication",
+      "nodeRole": "enrichment_advanced",
+      "dependsOn": [
+        "process_mgmt_core"
+      ],
+      "personalizationRationale": "Given the student's strong prior exposure, this node explores the trade-offs of IPC mechanisms used in high-concurrency systems."
+    },
+    {
+      "syllabusBlockId": "block_03",
+      "description": "Examine threading models and the implementation of threading libraries (Pthreads) for concurrent application development.",
+      "duration": "100 min",
+      "difficulty": "intermediate",
+      "id": "threading_models_core",
+      "type": "topic",
+      "title": "Threading Models & Libraries",
+      "personalizationRationale": "Thread management is a core requirement; student's strong prior exposure allows for a faster pace through standard library usage.",
+      "dependsOn": [
+        "ipc_adv_mechanisms"
+      ],
+      "nodeRole": "core_required"
+    },
+    {
+      "syllabusBlockId": "block_03",
+      "duration": "100 min",
+      "difficulty": "intermediate",
+      "description": "Evaluate CPU scheduling criteria and algorithms, such as Round Robin, Priority, and Multi-Level Feedback Queues.",
+      "title": "CPU Scheduling Algorithms & Evaluation",
+      "id": "cpu_scheduling_core",
+      "type": "topic",
+      "personalizationRationale": "As scheduling is heavily tested on the midterm, this core node ensures theoretical mastery of all required algorithms.",
+      "nodeRole": "core_required",
+      "dependsOn": [
+        "threading_models_core"
+      ]
+    },
+    {
+      "description": "A comprehensive review and assessment of Chapters 1-5 material to prepare for the week-8 midterm exam.",
+      "duration": "100 min",
+      "difficulty": "intermediate",
+      "syllabusBlockId": "block_03",
+      "personalizationRationale": "This required assessment node ensures the student's strong prior exposure translates into mastery of course-specific exam criteria.",
+      "nodeRole": "assessment",
+      "dependsOn": [
+        "cpu_scheduling_core"
+      ],
+      "id": "midterm_review_checkpoint",
+      "type": "assessment",
+      "title": "Midterm Assessment: OS Basics & Scheduling"
+    },
+    {
+      "syllabusBlockId": "block_04",
+      "description": "Implement synchronization primitives including mutexes, semaphores, and monitors to solve the critical section problem.",
+      "duration": "150 min",
+      "difficulty": "intermediate",
+      "id": "sync_primitives_core",
+      "type": "topic",
+      "title": "Synchronization Primitives & Mutexes",
+      "personalizationRationale": "Core synchronization concepts are essential for the required programming projects and final exam.",
+      "nodeRole": "core_required",
+      "dependsOn": [
+        "midterm_review_checkpoint"
+      ]
+    },
+    {
+      "description": "Analyze lock-free synchronization techniques and atomic operations as alternatives to traditional locking mechanisms in modern systems.",
+      "duration": "150 min",
+      "difficulty": "advanced",
+      "syllabusBlockId": "block_04",
+      "personalizationRationale": "The student's strong prior exposure allows for enrichment into lock-free programming, a more complex synchronization paradigm.",
+      "nodeRole": "enrichment_advanced",
+      "dependsOn": [
+        "sync_primitives_core"
+      ],
+      "id": "lock_free_enrichment_adv_sync",
+      "type": "topic",
+      "title": "Advanced Concurrency: Lock-Free Programming"
+    },
+    {
+      "syllabusBlockId": "block_05",
+      "difficulty": "intermediate",
+      "duration": "150 min",
+      "description": "Model deadlock characterization and apply avoidance strategies like the Banker's Algorithm to systems problems.",
+      "title": "Deadlock Prevention & Avoidance",
+      "type": "topic",
+      "id": "deadlock_mgmt_core_block_05",
+      "dependsOn": [
+        "lock_free_enrichment_adv_sync"
+      ],
+      "nodeRole": "core_required",
+      "personalizationRationale": "Despite the student's strong prior exposure, deadlock characterization is a mandatory theoretical component of the course."
+    },
+    {
+      "syllabusBlockId": "block_06",
+      "difficulty": "intermediate",
+      "duration": "150 min",
+      "description": "Study memory addressing, contiguous allocation, and the transition to paging and segmentation.",
+      "title": "Main Memory & Paging Structures",
+      "type": "topic",
+      "id": "memory_paging_core_block_06",
+      "nodeRole": "core_required",
+      "dependsOn": [
+        "deadlock_mgmt_core_block_05"
+      ],
+      "personalizationRationale": "Required for the memory management project; covers foundational physical memory concepts."
+    },
+    {
+      "syllabusBlockId": "block_06",
+      "duration": "150 min",
+      "difficulty": "advanced",
+      "description": "Analyze demand paging and virtual memory performance, including advanced page replacement policies and thrashing analysis.",
+      "title": "Virtual Memory Performance & Policies",
+      "id": "virtual_mem_adv_perf_block_06",
+      "type": "topic",
+      "personalizationRationale": "Enrichment node focusing on performance modeling of virtual memory, appropriate for students with strong prior systems exposure.",
+      "dependsOn": [
+        "memory_paging_core_block_06"
+      ],
+      "nodeRole": "enrichment_advanced"
+    },
+    {
+      "duration": "100 min",
+      "difficulty": "intermediate",
+      "description": "Examine I/O subsystems, device drivers, and the implementation of file systems including inodes and directory structures.",
+      "syllabusBlockId": "block_07",
+      "personalizationRationale": "Essential capstone material covering the final pillars of operating systems required for the final exam.",
+      "nodeRole": "core_required",
+      "dependsOn": [
+        "virtual_mem_adv_perf_block_06"
+      ],
+      "title": "I/O Subsystems & File Storage Structure",
+      "id": "io_files_core_block_07_capstone",
+      "type": "topic"
+    },
+    {
+      "syllabusBlockId": "block_07",
+      "description": "Compare modern file system designs, such as Log-Structured File Systems (LFS) and Journaling, for reliability and performance.",
+      "duration": "100 min",
+      "difficulty": "advanced",
+      "id": "filesystem_adv_design_enrichment_block_07",
+      "type": "topic",
+      "title": "Advanced File System Design & Reliability",
+      "personalizationRationale": "Leverages the student's strong prior exposure to explore modern storage optimizations and consistency models.",
+      "nodeRole": "enrichment_advanced",
+      "dependsOn": [
+        "io_files_core_block_07_capstone"
+      ]
+    },
+    {
+      "type": "assessment",
+      "id": "final_cumulative_assessment_block_07",
+      "title": "Final Cumulative Review & Synthesis",
+      "dependsOn": [
+        "filesystem_adv_design_enrichment_block_07"
+      ],
+      "nodeRole": "assessment",
+      "personalizationRationale": "Mandatory final review assessment to ensure readiness for the cumulative final exam, tailored with advanced synthesis questions for this student's strong prior exposure.",
+      "syllabusBlockId": "block_07",
+      "description": "Final review of the cumulative syllabus, including all blocks from foundations through file systems.",
+      "difficulty": "advanced",
+      "duration": "100 min"
+    }
+  ]
+}

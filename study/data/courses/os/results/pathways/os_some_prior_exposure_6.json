@@ -1,0 +1,233 @@
+{
+  "profileId": "os_some_prior_exposure_6",
+  "cluster": null,
+  "field": null,
+  "description": "A junior Computer Science major focusing on cybersecurity who is confident in high-level data structures but feels anxious about low-level memory management and debugging in C.",
+  "studentId": "offline-os_some_prior_exposure_6",
+  "source": "offline-gemini",
+  "nodeCount": 16,
+  "nodes": [
+    {
+      "duration": "120 min",
+      "title": "Foundations: C Programming for Systems",
+      "difficulty": "beginner",
+      "description": "Review of C-language pointers, memory addressing, and data structures necessary for kernel-level programming.",
+      "id": "n1_scaffold_c",
+      "personalizationRationale": "As the student has some_prior_exposure, this scaffolding node ensures their C programming skills are bridgeable to OS-specific abstractions in block_01.",
+      "dependsOn": [],
+      "type": "resource",
+      "nodeRole": "scaffolding_catchup",
+      "syllabusBlockId": "block_01"
+    },
+    {
+      "syllabusBlockId": "block_01",
+      "nodeRole": "core_required",
+      "type": "topic",
+      "dependsOn": [
+        "n1_scaffold_c"
+      ],
+      "personalizationRationale": "This core content is required for all students; some_prior_exposure allows the student to grasp the distinction between user and kernel mode more rapidly.",
+      "description": "Introduction to OS services, dual-mode operation (user vs. kernel), and system call interfaces.",
+      "id": "n2_core_foundations",
+      "difficulty": "intermediate",
+      "title": "OS Structures and Kernel Modes",
+      "duration": "180 min"
+    },
+    {
+      "type": "subtopic",
+      "nodeRole": "scaffolding_catchup",
+      "syllabusBlockId": "block_02",
+      "dependsOn": [
+        "n2_core_foundations"
+      ],
+      "difficulty": "beginner",
+      "id": "n3_scaffold_proc",
+      "description": "A targeted review of the memory layout of a process (stack, heap, text) and the PCB (Process Control Block).",
+      "personalizationRationale": "For a student with some_prior_exposure, a quick catch-up on process state transitions provides the necessary foundation for block_02 topics.",
+      "title": "Process Abstraction & Life Cycle",
+      "duration": "75 min"
+    },
+    {
+      "nodeRole": "core_required",
+      "type": "topic",
+      "syllabusBlockId": "block_02",
+      "dependsOn": [
+        "n3_scaffold_proc"
+      ],
+      "difficulty": "intermediate",
+      "personalizationRationale": "IPC is a foundational requirement in block_02 that builds on the student's existing some_prior_exposure to basic programming.",
+      "id": "n4_core_ipc",
+      "description": "Implementation of Inter-Process Communication using shared memory and message passing (sockets/pipes).",
+      "title": "Inter-Process Communication Mechanisms",
+      "duration": "150 min"
+    },
+    {
+      "type": "topic",
+      "nodeRole": "core_required",
+      "syllabusBlockId": "block_03",
+      "dependsOn": [
+        "n4_core_ipc"
+      ],
+      "difficulty": "intermediate",
+      "id": "n5_core_threads",
+      "description": "Overview of multithreading models (Many-to-One, One-to-One) and the Pthreads library.",
+      "personalizationRationale": "Multithreading is a core requirement; students with some_prior_exposure likely know basic threads but need the OS-level model details provided here.",
+      "duration": "100 min",
+      "title": "Threading Models and Libraries"
+    },
+    {
+      "title": "CPU Scheduling Algorithms",
+      "duration": "100 min",
+      "description": "Analysis of scheduling criteria (throughput, turnaround) and algorithms like SRTF and Round Robin.",
+      "id": "n6_core_sched",
+      "personalizationRationale": "CPU scheduling is a core requirement of block_03 that requires analytical modeling, building on the student's some_prior_exposure to algorithms.",
+      "difficulty": "intermediate",
+      "dependsOn": [
+        "n5_core_threads"
+      ],
+      "syllabusBlockId": "block_03",
+      "type": "topic",
+      "nodeRole": "core_required"
+    },
+    {
+      "difficulty": "intermediate",
+      "description": "A review and practice assessment covering Chapters 1-5 to prepare for the week-8 midterm exam.",
+      "id": "n7_midterm_review",
+      "personalizationRationale": "This assessment is required for all students to validate mastery of blocks 01-03 before the midterm, consistent with the some_prior_exposure profile.",
+      "duration": "100 min",
+      "title": "Midterm Review: Blocks 1-3",
+      "type": "assessment",
+      "nodeRole": "assessment",
+      "syllabusBlockId": "block_03",
+      "dependsOn": [
+        "n6_core_sched"
+      ]
+    },
+    {
+      "dependsOn": [
+        "n7_midterm_review"
+      ],
+      "type": "topic",
+      "nodeRole": "core_required",
+      "syllabusBlockId": "block_04",
+      "title": "Synchronization Primitives",
+      "duration": "150 min",
+      "difficulty": "intermediate",
+      "id": "n8_core_sync_base",
+      "description": "The critical-section problem and software/hardware solutions including Mutexes and Semaphores.",
+      "personalizationRationale": "Process synchronization is a core requirement for block_04; students with some_prior_exposure will focus on formal primitives like semaphores."
+    },
+    {
+      "dependsOn": [
+        "n8_core_sync_base"
+      ],
+      "syllabusBlockId": "block_04",
+      "nodeRole": "core_required",
+      "type": "subtopic",
+      "title": "Classic Synchronization Problems",
+      "duration": "150 min",
+      "personalizationRationale": "Solving classic sync problems is a core block_04 requirement essential for the programming project, regardless of the student's some_prior_exposure.",
+      "description": "Exploring classic synchronization problems such as the Bounded-Buffer and Dining Philosophers.",
+      "id": "n9_core_sync_problems",
+      "difficulty": "intermediate"
+    },
+    {
+      "duration": "150 min",
+      "title": "Deadlock Characterization and Avoidance",
+      "id": "n10_core_deadlock",
+      "description": "Conditions for deadlock and the Banker's Algorithm for deadlock avoidance.",
+      "personalizationRationale": "Deadlock characterization is a mandatory component of block_05 that fits well with the student's some_prior_exposure to logical modeling.",
+      "difficulty": "intermediate",
+      "dependsOn": [
+        "n9_core_sync_problems"
+      ],
+      "syllabusBlockId": "block_05",
+      "type": "topic",
+      "nodeRole": "core_required"
+    },
+    {
+      "difficulty": "intermediate",
+      "description": "Memory management techniques including fragmentation, paging, and page table structures.",
+      "id": "n11_core_memory_phys",
+      "personalizationRationale": "Physical memory management is a core requirement in block_06; students with some_prior_exposure will study the hardware-software interface.",
+      "duration": "150 min",
+      "title": "Physical Memory and Paging",
+      "type": "topic",
+      "nodeRole": "core_required",
+      "syllabusBlockId": "block_06",
+      "dependsOn": [
+        "n10_core_deadlock"
+      ]
+    },
+    {
+      "dependsOn": [
+        "n11_core_memory_phys"
+      ],
+      "nodeRole": "core_required",
+      "type": "topic",
+      "syllabusBlockId": "block_06",
+      "duration": "150 min",
+      "title": "Virtual Memory & Page Replacement",
+      "difficulty": "intermediate",
+      "personalizationRationale": "Virtual memory is a mandatory block_06 topic that is heavily tested on the final and used in projects, tailored here for the some_prior_exposure tier.",
+      "id": "n12_core_memory_virt",
+      "description": "Demand paging, page replacement algorithms (LRU, FIFO), and the concept of thrashing."
+    },
+    {
+      "title": "I/O Systems and Interfaces",
+      "duration": "100 min",
+      "difficulty": "intermediate",
+      "description": "I/O hardware interfaces, interrupt-driven I/O, and Direct Memory Access (DMA).",
+      "id": "n13_core_io",
+      "personalizationRationale": "I/O systems are a core requirement of block_07; some_prior_exposure helps the student understand the hardware-driver interaction.",
+      "dependsOn": [
+        "n12_core_memory_virt"
+      ],
+      "type": "topic",
+      "nodeRole": "core_required",
+      "syllabusBlockId": "block_07"
+    },
+    {
+      "title": "File System Implementation",
+      "duration": "100 min",
+      "personalizationRationale": "File system implementation is a mandatory core component of block_07 for all students, building on the some_prior_exposure tier.",
+      "id": "n14_core_filesystem",
+      "description": "File system structures, allocation methods (indexed, linked), and directory implementation.",
+      "difficulty": "intermediate",
+      "dependsOn": [
+        "n13_core_io"
+      ],
+      "syllabusBlockId": "block_07",
+      "nodeRole": "core_required",
+      "type": "topic"
+    },
+    {
+      "title": "Advanced Topics: SSD and Flash Memory",
+      "duration": "50 min",
+      "description": "Exploring modern flash-based storage (SSDs) and the challenges of write-amplification and wear-leveling.",
+      "id": "n15_enrich_ssd",
+      "personalizationRationale": "Given the student's some_prior_exposure, this enrichment node provides a modern industry perspective on storage that exceeds the floor requirements.",
+      "difficulty": "advanced",
+      "dependsOn": [
+        "n14_core_filesystem"
+      ],
+      "syllabusBlockId": "block_07",
+      "type": "resource",
+      "nodeRole": "enrichment_advanced"
+    },
+    {
+      "title": "Cumulative Final Review",
+      "duration": "50 min",
+      "difficulty": "advanced",
+      "description": "Cumulative review of all course materials (Blocks 1-7) to prepare for the final examination.",
+      "id": "n16_final_review",
+      "personalizationRationale": "A mandatory final assessment review for all students to ensure comprehensive mastery after progressing through the some_prior_exposure pathway.",
+      "dependsOn": [
+        "n15_enrich_ssd"
+      ],
+      "type": "assessment",
+      "nodeRole": "assessment",
+      "syllabusBlockId": "block_07"
+    }
+  ]
+}

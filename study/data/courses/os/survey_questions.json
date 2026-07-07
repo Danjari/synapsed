@@ -1,0 +1,141 @@
+{
+  "course_id": "os",
+  "questions": [
+    {
+      "text": "Which of the following best describes your prior exposure to C programming and systems-level development?",
+      "id": "prereq_c_experience",
+      "required": true,
+      "options": [
+        "No prior exposure: I have never programmed in C or worked with systems-level code.",
+        "Some prior exposure: I have written basic programs in C or used a command-line interface.",
+        "Strong prior exposure: I am comfortable with pointers, manual memory management, and systems programming."
+      ],
+      "type": "multiple_choice",
+      "order": 1
+    },
+    {
+      "text": "From your prerequisite courses (CS-UH 1052 and 2010), which of the following areas do you feel most confident in? (Select all that apply)",
+      "id": "prereq_knowledge_check",
+      "required": true,
+      "options": [
+        "Memory Addressing and Pointers",
+        "Data Structures (linked lists, queues)",
+        "CPU Architecture/Instruction Sets",
+        "Command-line (Unix/Linux) proficiency"
+      ],
+      "type": "multiple_choice",
+      "order": 2
+    },
+    {
+      "id": "prereq_confidence_rating",
+      "text": "On a scale of 1-5, how confident are you in your ability to debug memory-related errors (e.g., segmentation faults) without significant assistance?",
+      "required": true,
+      "order": 3,
+      "type": "rating"
+    },
+    {
+      "required": true,
+      "id": "lo_process_thread_readiness",
+      "text": "What is your current level of familiarity with the concepts of Processes, Threads, and Inter-Process Communication (IPC)?",
+      "order": 4,
+      "type": "multiple_choice",
+      "options": [
+        "I have never worked with these concepts.",
+        "I understand the theory but have never implemented them.",
+        "I have experience creating or managing processes/threads in code."
+      ]
+    },
+    {
+      "order": 5,
+      "type": "text",
+      "required": true,
+      "id": "lo_sync_challenge",
+      "text": "When considering the 'Critical Section Problem' and synchronization primitives (Mutexes, Semaphores), what is your biggest concern?"
+    },
+    {
+      "required": true,
+      "text": "Rate your comfort level with analytically modeling systems concepts (e.g., calculating CPU scheduling turnaround times or page replacement ratios).",
+      "id": "lo_analytic_modeling",
+      "type": "rating",
+      "order": 6
+    },
+    {
+      "id": "assessment_pair_programming",
+      "text": "The 4 programming projects (35% of grade) are done in pairs. How comfortable are you with pair programming on systems-level projects?",
+      "required": true,
+      "options": [
+        "Very comfortable; I enjoy collaborative coding.",
+        "Neutral; I am willing to work in pairs for projects.",
+        "Uncomfortable; I prefer working alone but will follow the course requirement."
+      ],
+      "order": 7,
+      "type": "multiple_choice"
+    },
+    {
+      "type": "multiple_choice",
+      "order": 8,
+      "options": [
+        "Focusing on homework and project implementation.",
+        "Re-reading the Silberschatz textbook chapters.",
+        "Practicing analytical problems and theory-based questions.",
+        "Group study and peer review."
+      ],
+      "required": true,
+      "text": "Since 60% of your grade is exam-based, which study strategy do you find most effective for cumulative technical exams?",
+      "id": "assessment_exam_prep"
+    },
+    {
+      "id": "goal_interest_area",
+      "text": "Which core OS module are you most interested in mastering for your future career or academic goals?",
+      "required": true,
+      "options": [
+        "Process and Thread Management",
+        "Memory Management and Virtual Memory",
+        "File Systems and I/O Storage",
+        "Synchronization and Concurrency"
+      ],
+      "order": 9,
+      "type": "multiple_choice"
+    },
+    {
+      "type": "text",
+      "order": 10,
+      "required": true,
+      "text": "How does mastering Operating Systems design align with your long-term goals in Computer Science (e.g., Kernel development, Software Engineering, Cybersecurity)?",
+      "id": "goal_career_alignment"
+    },
+    {
+      "order": 11,
+      "type": "multiple_choice",
+      "options": [
+        "I prefer deep-dive theoretical explanations.",
+        "I need extra scaffolding/step-by-step guides for C programming and APIs.",
+        "I prefer hands-on experimental evaluation of design tradeoffs.",
+        "I want more focus on exam-style problem-solving."
+      ],
+      "required": true,
+      "id": "challenge_pacing_scaffolding",
+      "text": "To succeed in this required course, what type of learning support would be most beneficial for your personalized path?"
+    },
+    {
+      "required": true,
+      "text": "The programming projects in weeks 6, 9, 12, and 15 are intensive. Do you have any specific scheduling constraints or workload concerns during those weeks?",
+      "id": "challenge_time_commitment",
+      "type": "text",
+      "order": 12
+    },
+    {
+      "options": [
+        "Reading the textbook (Silberschatz) and taking notes.",
+        "Attending lectures and participating in discussions.",
+        "Implementing code in programming projects.",
+        "Solving practice problems for the midterm/final."
+      ],
+      "order": 13,
+      "type": "ranking",
+      "id": "learning_style_preference_ranking",
+      "text": "Rank the following learning activities in order of how much they help you retain complex systems information (1 = Most Helpful).",
+      "required": true
+    }
+  ]
+}

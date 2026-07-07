@@ -1,0 +1,89 @@
+{
+  "version": "1.0-required-course",
+  "courseArchetype": "required_cumulative",
+  "personalizationModel": "fixed_floor_catchup",
+  "blockIds": [
+    "block_01",
+    "block_02",
+    "block_03",
+    "block_04",
+    "block_05",
+    "block_06",
+    "block_07"
+  ],
+  "blockDescriptions": {
+    "block_01": "OS Foundations & System Structure — OS services, structures, kernel vs user mode",
+    "block_02": "Processes & Inter-Process Communication — process lifecycle, shared memory, message passing",
+    "block_03": "Threads & CPU Scheduling — threading models, scheduling criteria and algorithms",
+    "block_04": "Process Synchronization — critical section, mutex/semaphores/monitors, classic sync problems",
+    "block_05": "Deadlocks — characterization, prevention, avoidance, detection",
+    "block_06": "Memory Management — contiguous allocation, paging, virtual memory, page replacement",
+    "block_07": "I/O Systems & File Storage — I/O interfaces, subsystem performance, file system implementation"
+  },
+  "nodeMetadataFields": ["nodeRole", "personalizationRationale"],
+  "requiredCourseModel": {
+    "targetNodeBand": [14, 18],
+    "floorMinPathwayNodes": 14,
+    "foundationalBlockIds": ["block_01"],
+    "tierOrder": ["no_prior_exposure", "some_prior_exposure", "strong_prior_exposure"],
+    "tierQuestionFocus": "Prior exposure to systems/C programming and OS concepts before this course",
+    "tierScaffoldTargets": {
+      "no_prior_exposure": 3,
+      "some_prior_exposure": 1,
+      "strong_prior_exposure": 0
+    }
+  },
+  "personalizationRules": [
+    "This is a REQUIRED, cumulative course — every enrolled student is examined on the entire syllabus. Every block MUST appear in every pathway. NEVER omit a block, and never drop a block's node count to zero, regardless of the student's background.",
+    "Every node MUST include syllabusBlockId set to exactly one block id from the catalog, and MUST include nodeRole (one of: core_required, scaffolding_catchup, enrichment_advanced, assessment) and a one-sentence personalizationRationale.",
+    "Personalization here means a FIXED DESTINATION with a PERSONALIZED ROUTE: the goal is to help a student with less prior exposure to systems/C programming catch up to their classmates FASTER, not to teach them less or teach them longer overall.",
+    "If the student reports little or no prior exposure to systems programming, C, or OS concepts (no_prior_exposure tier): add extra nodes tagged scaffolding_catchup concentrated in block_01 (OS Foundations) and block_02 (Processes & IPC), the two blocks that everything else depends on.",
+    "If the student reports some prior exposure (some_prior_exposure tier): include a moderate number of scaffolding_catchup nodes in block_01/block_02 — fewer than the no-prior-exposure case, more than the strong-exposure case.",
+    "If the student reports strong prior exposure (strong_prior_exposure tier, e.g. has already written multi-threaded C or systems code): keep block_01/block_02 to their floor-level core_required nodes only, and instead add enrichment_advanced nodes (harder edge cases, performance/design-tradeoff framing, connections to later blocks) — reinvest the freed-up capacity, do not shorten the pathway.",
+    "The TOTAL number of nodes must stay within the target node band (see requiredCourseModel.targetNodeBand) for every profile regardless of tier. Personalization must show up as a shift in the MIX of scaffolding_catchup vs. enrichment_advanced nodes, not as a longer or shorter pathway.",
+    "Every node's wording (description) may reflect the student's stated interests or goals (e.g., framing memory management with a database-systems analogy vs. a low-level hardware analogy), but this must NEVER change which blocks appear, how many nodes per block, or the presence of required content.",
+    "Every pathway must include at least one assessment-type node tied to the midterm-review material (in or after block_03) and one tied to the cumulative final-review material (in block_07)."
+  ],
+  "judgeRubric": {
+    "dimensions": [
+      {
+        "id": "coverage_completeness",
+        "description": "Every required block is present with enough nodes to plausibly meet its learning objective — nothing is silently dropped"
+      },
+      {
+        "id": "catchup_alignment",
+        "description": "scaffolding_catchup node volume in block_01/block_02 tracks the student's stated prior-exposure level appropriately"
+      },
+      {
+        "id": "fixed_budget_personalization",
+        "description": "Personalization shows up as a role mix shift within a stable total node count, not as a longer/shorter course"
+      },
+      {
+        "id": "syllabus_fidelity",
+        "description": "All syllabusBlockId values valid; content aligns with the block catalog; no off-syllabus topics"
+      },
+      {
+        "id": "internal_coherence",
+        "description": "Node order and difficulty progression make logical sense given dependsOn"
+      }
+    ],
+    "scale": { "min": 1, "max": 5 }
+  },
+  "contrastHypotheses": [
+    {
+      "id": "OS-C1_coverage_floor",
+      "description": "Every block appears at least its computed floor count in every pathway — no block is ever fully omitted, unlike AI-literacy's alternative-track model.",
+      "check": "coverage_floor"
+    },
+    {
+      "id": "OS-C2_catchup_scaffolding",
+      "description": "Profiles with no prior systems/C exposure get more scaffolding_catchup nodes in block_01 than profiles with some prior exposure, who in turn get more than profiles with strong prior exposure.",
+      "check": "role_mix_monotonic"
+    },
+    {
+      "id": "OS-C3_fixed_budget",
+      "description": "Total pathway length stays within the target node band across all familiarity tiers — personalization is a scaffolding/enrichment mix shift, not a longer or shorter course.",
+      "check": "length_invariance"
+    }
+  ]
+}

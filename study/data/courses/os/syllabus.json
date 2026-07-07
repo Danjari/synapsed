@@ -1,0 +1,166 @@
+{
+  "courseTitle": "Operating Systems (CS-UH 3010)",
+  "scheduleWeeks": 17,
+  "estimatedTotalMinutes": 2595,
+  "sources": [
+    { "id": "os3010", "title": "Operating Systems (CS-UH 3010, Section 1)", "hours": 43.25, "instructor": "Eliseo Ferrante" }
+  ],
+  "prerequisites": "CS-UH 1052 and CS-UH 2010 (no corequisites) — required, exam-tested prior coursework, not optional background",
+  "courseDescription": "A required, cumulative 3-credit systems course covering operating system design from process/thread management through memory and file systems, textbook Silberschatz/Galvin/Gagne 'Operating System Concepts' (10th ed.). Every enrolled student is examined on the full syllabus; there is no elective/alternative-track content.",
+  "assessmentMethods": "Homework assignments 5% (ongoing), 4 programming projects 35% (weeks 6, 9, 12, 15, done in pairs), midterm exam 20% (week 8, covers Ch.1-5), final exam 40% (week 17, cumulative). 60% of the grade is exam-based on material every student must know.",
+  "learningObjectives": [
+    "Produce OS-development solutions using systems programming techniques",
+    "Apply systems APIs to build OS modules (processes, threads, synchronization primitives)",
+    "Model core OS concepts (scheduling, memory management, deadlocks) analytically",
+    "Apply theory-taught tools to practical systems problems",
+    "Experimentally evaluate OS design tradeoffs (scheduling policies, page replacement, I/O performance)"
+  ],
+  "blocks": [
+    {
+      "id": "block_01",
+      "calendarWeek": 1,
+      "title": "OS Foundations & System Structure",
+      "sourceCourse": "Operating Systems (CS-UH 3010)",
+      "sourceRef": "Weeks 1-2, Ch.1-2",
+      "estimatedMinutes": 300,
+      "dedupeKey": "os_foundations",
+      "pathwayNote": "Required floor block — every pathway must cover this regardless of prior systems-programming background; students with no prior OS/C exposure get extra scaffolding nodes here.",
+      "objectives": [
+        "Define the role and services of an operating system",
+        "Describe classic OS structures (monolithic, layered, microkernel)",
+        "Distinguish user mode from kernel mode operation"
+      ],
+      "lessons": [
+        { "title": "Introduction to the course", "source": "os3010", "sourceRef": "Week 1" },
+        { "title": "Classic Concepts in Operating Systems", "source": "os3010", "sourceRef": "Week 1" },
+        { "title": "Operating System Services", "source": "os3010", "sourceRef": "Week 2" },
+        { "title": "Operating System Structures", "source": "os3010", "sourceRef": "Week 2" }
+      ],
+      "skippedLessons": []
+    },
+    {
+      "id": "block_02",
+      "calendarWeek": 3,
+      "title": "Processes & Inter-Process Communication",
+      "sourceCourse": "Operating Systems (CS-UH 3010)",
+      "sourceRef": "Weeks 3-4, Ch.3",
+      "estimatedMinutes": 225,
+      "dedupeKey": "process_management",
+      "pathwayNote": "Required floor block — process abstraction is foundational to every later block.",
+      "objectives": [
+        "Describe the process lifecycle and process control block",
+        "Compare shared-memory and message-passing IPC mechanisms"
+      ],
+      "lessons": [
+        { "title": "Processes and Operations on Processes", "source": "os3010", "sourceRef": "Week 3" },
+        { "title": "Inter-Process Communication: Shared Memory", "source": "os3010", "sourceRef": "Week 3" },
+        { "title": "Inter-Process Communication: Message Passing & Sockets", "source": "os3010", "sourceRef": "Week 4" }
+      ],
+      "skippedLessons": []
+    },
+    {
+      "id": "block_03",
+      "calendarWeek": 4,
+      "title": "Threads & CPU Scheduling",
+      "sourceCourse": "Operating Systems (CS-UH 3010)",
+      "sourceRef": "Weeks 4-6, Ch.4-5",
+      "estimatedMinutes": 300,
+      "dedupeKey": "threads_scheduling",
+      "pathwayNote": "Required floor block; includes a midterm-review assessment checkpoint (material through this block is on the week-8 midterm).",
+      "objectives": [
+        "Compare threading models and threading libraries",
+        "Apply CPU scheduling criteria and evaluate scheduling algorithms"
+      ],
+      "lessons": [
+        { "title": "Threads and Threading Models", "source": "os3010", "sourceRef": "Week 4" },
+        { "title": "Threading Libraries & Implicit Threading", "source": "os3010", "sourceRef": "Week 5" },
+        { "title": "CPU Scheduling Criteria", "source": "os3010", "sourceRef": "Week 5" },
+        { "title": "CPU Schedulers & Evaluation of Schedulers", "source": "os3010", "sourceRef": "Week 6" },
+        { "title": "Midterm Review: Ch.1-5", "source": "os3010", "sourceRef": "Week 7", "type": "assessment" }
+      ],
+      "skippedLessons": []
+    },
+    {
+      "id": "block_04",
+      "calendarWeek": 8,
+      "title": "Process Synchronization",
+      "sourceCourse": "Operating Systems (CS-UH 3010)",
+      "sourceRef": "Weeks 8-9, Ch.6-7",
+      "estimatedMinutes": 300,
+      "dedupeKey": "synchronization",
+      "pathwayNote": "Required floor block — synchronization primitives are tested on the final and used in Project deliveries.",
+      "objectives": [
+        "Apply mutexes, semaphores, and monitors to the critical-section problem",
+        "Analyze classic synchronization examples (producer-consumer, dining philosophers)"
+      ],
+      "lessons": [
+        { "title": "Process Synchronization: The Critical Section Problem", "source": "os3010", "sourceRef": "Week 8" },
+        { "title": "Mutex Locks, Semaphores & Monitors", "source": "os3010", "sourceRef": "Week 8" },
+        { "title": "Classic Problems of Synchronization", "source": "os3010", "sourceRef": "Week 9" },
+        { "title": "The Dining Philosophers Problem", "source": "os3010", "sourceRef": "Week 9" }
+      ],
+      "skippedLessons": []
+    },
+    {
+      "id": "block_05",
+      "calendarWeek": 12,
+      "title": "Deadlocks",
+      "sourceCourse": "Operating Systems (CS-UH 3010)",
+      "sourceRef": "Week 12, Ch.8",
+      "estimatedMinutes": 150,
+      "dedupeKey": "deadlocks",
+      "pathwayNote": "Required floor block — smaller than others by lesson count, floor should scale down proportionally, not disappear.",
+      "objectives": [
+        "Characterize the conditions for deadlock",
+        "Apply deadlock prevention, avoidance, and detection strategies"
+      ],
+      "lessons": [
+        { "title": "Deadlock Characterization & Prevention", "source": "os3010", "sourceRef": "Week 12" },
+        { "title": "Deadlock Avoidance & Detection", "source": "os3010", "sourceRef": "Week 12" }
+      ],
+      "skippedLessons": []
+    },
+    {
+      "id": "block_06",
+      "calendarWeek": 13,
+      "title": "Memory Management (Physical & Virtual)",
+      "sourceCourse": "Operating Systems (CS-UH 3010)",
+      "sourceRef": "Weeks 13-14, Ch.9-10",
+      "estimatedMinutes": 300,
+      "dedupeKey": "memory_management",
+      "pathwayNote": "Required floor block, heavily project-relevant (memory management project deliveries).",
+      "objectives": [
+        "Compare contiguous allocation, paging, and segmentation",
+        "Apply virtual memory concepts: demand paging, page replacement, thrashing"
+      ],
+      "lessons": [
+        { "title": "Main Memory: Addressing & Contiguous Allocation", "source": "os3010", "sourceRef": "Week 13" },
+        { "title": "Fragmentation, Paging & Page Table Structures", "source": "os3010", "sourceRef": "Week 13" },
+        { "title": "Virtual Memory: Demand Paging", "source": "os3010", "sourceRef": "Week 14" },
+        { "title": "Page Replacement, Frame Allocation & Thrashing", "source": "os3010", "sourceRef": "Week 14" }
+      ],
+      "skippedLessons": []
+    },
+    {
+      "id": "block_07",
+      "calendarWeek": 15,
+      "title": "I/O Systems & File Storage",
+      "sourceCourse": "Operating Systems (CS-UH 3010)",
+      "sourceRef": "Weeks 15-17, Ch.12/14",
+      "estimatedMinutes": 300,
+      "dedupeKey": "io_and_storage",
+      "pathwayNote": "Required capstone block — final exam is cumulative, includes a final-review assessment checkpoint.",
+      "objectives": [
+        "Describe I/O interfaces and subsystem performance",
+        "Explain file system implementation"
+      ],
+      "lessons": [
+        { "title": "I/O Systems: Types & Interfaces", "source": "os3010", "sourceRef": "Week 15" },
+        { "title": "I/O Subsystems & Performance", "source": "os3010", "sourceRef": "Week 16" },
+        { "title": "File System Implementation", "source": "os3010", "sourceRef": "Week 16" },
+        { "title": "Final Review (Cumulative)", "source": "os3010", "sourceRef": "Week 17", "type": "assessment" }
+      ],
+      "skippedLessons": []
+    }
+  ]
+}

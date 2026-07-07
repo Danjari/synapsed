@@ -34,17 +34,20 @@ def syllabus_to_context(syllabus: dict[str, Any]) -> dict[str, str]:
     total = syllabus.get("estimatedTotalMinutes", 0)
     weeks = syllabus.get("scheduleWeeks", 2)
 
+    default_description = (
+        f"{syllabus['courseTitle']}. "
+        f"{weeks}-week asynchronous micro-course (~{total} minutes total)."
+    )
+    default_assessment = (
+        "Module quizzes and platform-based interaction across 2 calendar weeks. "
+        "Blocks 5a (Business) and 5b (Projects) are pathway emphasis areas — "
+        "personalized paths typically prioritize one over the other."
+    )
+
     return {
-        "courseDescription": (
-            f"{syllabus['courseTitle']}. "
-            f"{weeks}-week asynchronous micro-course (~{total} minutes total)."
-        ),
+        "courseDescription": syllabus.get("courseDescription") or default_description,
         "prerequisites": syllabus.get("prerequisites", ""),
         "learningObjectives": "\n".join(f"- {obj}" for obj in syllabus.get("learningObjectives", [])),
         "courseSchedule": "\n".join(schedule_lines),
-        "assessmentMethods": (
-            "Module quizzes and platform-based interaction across 2 calendar weeks. "
-            "Blocks 5a (Business) and 5b (Projects) are pathway emphasis areas — "
-            "personalized paths typically prioritize one over the other."
-        ),
+        "assessmentMethods": syllabus.get("assessmentMethods") or default_assessment,
     }

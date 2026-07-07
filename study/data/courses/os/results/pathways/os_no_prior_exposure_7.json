@@ -1,0 +1,245 @@
+{
+  "profileId": "os_no_prior_exposure_7",
+  "cluster": null,
+  "field": null,
+  "description": "A third-year student with a strong background in high-level Python development and theoretical computer science who is apprehensive about the transition to low-level C programming.",
+  "studentId": "offline-os_no_prior_exposure_7",
+  "source": "offline-gemini",
+  "nodeCount": 17,
+  "nodes": [
+    {
+      "personalizationRationale": "This node provides critical programming foundations for a student in the no_prior_exposure tier to ensure they can follow later implementation examples.",
+      "type": "subtopic",
+      "title": "Systems Programming Bridge: Intro to C",
+      "syllabusBlockId": "block_01",
+      "description": "A foundational introduction to C syntax, pointers, and memory management specifically tailored for systems programming tasks.",
+      "dependsOn": [],
+      "difficulty": "beginner",
+      "nodeRole": "scaffolding_catchup",
+      "duration": "90 min",
+      "id": "node_01"
+    },
+    {
+      "title": "Hardware Foundations for OS",
+      "type": "subtopic",
+      "personalizationRationale": "For a student with no_prior_exposure, bridging the gap between hardware and software is necessary before discussing kernel operations.",
+      "dependsOn": [],
+      "description": "Visualizing how hardware interacts with software, including interrupts, registers, and the fetch-execute cycle.",
+      "syllabusBlockId": "block_01",
+      "difficulty": "beginner",
+      "nodeRole": "scaffolding_catchup",
+      "duration": "60 min",
+      "id": "node_02"
+    },
+    {
+      "duration": "75 min",
+      "nodeRole": "scaffolding_catchup",
+      "id": "node_03",
+      "description": "Clarifying the distinction between privileged and non-privileged instructions and how the CPU switches between them.",
+      "dependsOn": [],
+      "syllabusBlockId": "block_01",
+      "title": "The Kernel vs. User Mode Divide",
+      "personalizationRationale": "Establishing the concept of protection early is vital for students in the no_prior_exposure tier to understand why OS kernels exist.",
+      "type": "subtopic",
+      "difficulty": "beginner"
+    },
+    {
+      "difficulty": "intermediate",
+      "dependsOn": [
+        "node_01",
+        "node_02",
+        "node_03"
+      ],
+      "description": "Overview of OS services, system calls, and the various organizational structures (monolithic vs microkernel).",
+      "syllabusBlockId": "block_01",
+      "title": "Operating System Structures & Services",
+      "type": "topic",
+      "personalizationRationale": "Standard core content covering the fundamental architecture of modern operating systems.",
+      "id": "node_04",
+      "nodeRole": "core_required",
+      "duration": "75 min"
+    },
+    {
+      "difficulty": "intermediate",
+      "personalizationRationale": "Given the student's no_prior_exposure status, this node builds the process abstraction necessary for all subsequent learning.",
+      "type": "topic",
+      "title": "Process Lifecycle and Operations",
+      "syllabusBlockId": "block_02",
+      "description": "Understanding the Process Control Block (PCB), states (Running, Waiting, Ready), and the fork/exec model.",
+      "dependsOn": [
+        "node_04"
+      ],
+      "id": "node_05",
+      "nodeRole": "core_required",
+      "duration": "100 min"
+    },
+    {
+      "difficulty": "intermediate",
+      "dependsOn": [
+        "node_05"
+      ],
+      "description": "Comparative study of shared memory versus message passing and an introduction to sockets for communication.",
+      "syllabusBlockId": "block_02",
+      "title": "Inter-Process Communication (IPC) Fundamentals",
+      "type": "topic",
+      "personalizationRationale": "Essential core concepts for understanding how independent processes coordinate in a single system.",
+      "id": "node_06",
+      "nodeRole": "core_required",
+      "duration": "125 min"
+    },
+    {
+      "title": "Threads and Multithreading Models",
+      "personalizationRationale": "Transitioning from processes to threads is a core requirement for modern systems development.",
+      "type": "topic",
+      "description": "Exploring multithreading libraries, thread-local storage, and the relationship between user and kernel threads.",
+      "dependsOn": [
+        "node_06"
+      ],
+      "syllabusBlockId": "block_03",
+      "difficulty": "intermediate",
+      "duration": "100 min",
+      "nodeRole": "core_required",
+      "id": "node_07"
+    },
+    {
+      "duration": "100 min",
+      "nodeRole": "core_required",
+      "id": "node_08",
+      "syllabusBlockId": "block_03",
+      "dependsOn": [
+        "node_07"
+      ],
+      "description": "Analyzing FCFS, SJF, Priority, and Round Robin scheduling algorithms and their performance metrics.",
+      "type": "topic",
+      "personalizationRationale": "Core analytical component required for modeling OS behavior and resource management.",
+      "title": "CPU Scheduling Algorithms and Criteria",
+      "difficulty": "intermediate"
+    },
+    {
+      "dependsOn": [
+        "node_08"
+      ],
+      "description": "A comprehensive review of Chapters 1-5 content including process management, threads, and basic scheduling in preparation for the midterm.",
+      "syllabusBlockId": "block_03",
+      "title": "Midterm Review: Foundations and Scheduling",
+      "type": "assessment",
+      "personalizationRationale": "Mandatory midterm checkpoint to ensure a student with no_prior_exposure has mastered the foundational half of the course.",
+      "difficulty": "intermediate",
+      "nodeRole": "assessment",
+      "duration": "100 min",
+      "id": "node_09"
+    },
+    {
+      "nodeRole": "core_required",
+      "duration": "150 min",
+      "id": "node_10",
+      "description": "Defining race conditions, critical sections, and the implementation of Mutex locks and Semaphores.",
+      "dependsOn": [
+        "node_09"
+      ],
+      "syllabusBlockId": "block_04",
+      "title": "Process Synchronization and Mutexes",
+      "personalizationRationale": "Synchronization is a difficult but mandatory core topic that requires careful build-up for students with no prior systems exposure.",
+      "type": "topic",
+      "difficulty": "advanced"
+    },
+    {
+      "duration": "150 min",
+      "nodeRole": "core_required",
+      "id": "node_11",
+      "type": "subtopic",
+      "personalizationRationale": "Standard classic problems that every student must master for the final exam and project deliveries.",
+      "title": "Classic Synchronization Problems",
+      "syllabusBlockId": "block_04",
+      "dependsOn": [
+        "node_10"
+      ],
+      "description": "Exploring the Producer-Consumer, Readers-Writers, and Dining Philosophers problems using monitors and semaphores.",
+      "difficulty": "advanced"
+    },
+    {
+      "nodeRole": "core_required",
+      "duration": "150 min",
+      "id": "node_12",
+      "description": "Techniques for deadlock characterization, prevention via resource ordering, and avoidance via the Banker's Algorithm.",
+      "dependsOn": [
+        "node_11"
+      ],
+      "syllabusBlockId": "block_05",
+      "title": "Deadlock Detection and Avoidance",
+      "personalizationRationale": "Core material on system stability and resource safety, scaled appropriately to the block's smaller lesson count.",
+      "type": "topic",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "node_13",
+      "duration": "150 min",
+      "nodeRole": "core_required",
+      "difficulty": "intermediate",
+      "syllabusBlockId": "block_06",
+      "description": "Physical memory allocation, contiguous versus non-contiguous allocation, and the basics of hardware paging.",
+      "dependsOn": [
+        "node_12"
+      ],
+      "personalizationRationale": "Crucial core knowledge for understanding how the OS manages limited physical hardware resources.",
+      "type": "topic",
+      "title": "Main Memory and Paging Structures"
+    },
+    {
+      "nodeRole": "core_required",
+      "duration": "150 min",
+      "id": "node_14",
+      "title": "Virtual Memory and Page Replacement",
+      "personalizationRationale": "Complex core material that is heavily tested and required for the final project on memory management.",
+      "type": "topic",
+      "description": "Demand paging, page replacement algorithms (LRU, FIFO, Optimal), and the mechanics of thrashing.",
+      "dependsOn": [
+        "node_13"
+      ],
+      "syllabusBlockId": "block_06",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "node_15",
+      "nodeRole": "core_required",
+      "duration": "125 min",
+      "difficulty": "intermediate",
+      "syllabusBlockId": "block_07",
+      "dependsOn": [
+        "node_14"
+      ],
+      "description": "The I/O hardware-software interface, device drivers, and techniques for improving I/O performance.",
+      "type": "topic",
+      "personalizationRationale": "Core requirement for understanding the communication between the CPU and external peripherals.",
+      "title": "I/O Systems and Performance"
+    },
+    {
+      "difficulty": "intermediate",
+      "syllabusBlockId": "block_07",
+      "dependsOn": [
+        "node_15"
+      ],
+      "description": "Directory structures, file allocation methods (indexed, linked), and free-space management.",
+      "type": "topic",
+      "personalizationRationale": "Foundational storage concepts required for the final exam and understanding persistent data.",
+      "title": "File System Implementation",
+      "id": "node_16",
+      "duration": "125 min",
+      "nodeRole": "core_required"
+    },
+    {
+      "duration": "50 min",
+      "nodeRole": "assessment",
+      "id": "node_17",
+      "syllabusBlockId": "block_07",
+      "description": "Cumulative review of all blocks from OS foundations through file systems to prepare for the 40% final exam.",
+      "dependsOn": [
+        "node_16"
+      ],
+      "personalizationRationale": "Mandatory cumulative assessment checkpoint to ensure the student with no_prior_exposure has achieved full course objectives.",
+      "type": "assessment",
+      "title": "Cumulative Final Exam Review",
+      "difficulty": "advanced"
+    }
+  ]
+}

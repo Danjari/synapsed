@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections import Counter
 from itertools import combinations
+from pathlib import Path
 from typing import Any
 
 from lib.personalization_prompt import load_generation_spec
@@ -81,8 +82,9 @@ def pairwise_block_metrics(pathways: dict[str, list[dict[str, Any]]]) -> dict[st
 
 def evaluate_contrast_hypotheses(
     pathways: dict[str, list[dict[str, Any]]],
+    spec_path: Path | None = None,
 ) -> list[dict[str, Any]]:
-    spec = load_generation_spec()
+    spec = load_generation_spec(spec_path)
     results: list[dict[str, Any]] = []
 
     for hyp in spec.get("contrastHypotheses", []):
@@ -261,6 +263,193 @@ def cluster_similarity_analysis(
         "style_control_pass_rate": round(style_rate, 4) if style_rate is not None else None,
         "sample_within_pairs": sorted(within_pairs, key=lambda x: -x["multiset_jaccard"])[:10],
         "sample_between_pairs": sorted(between_pairs, key=lambda x: x["multiset_jaccard"])[:10],
+    }
+
+
+def compute_block_floors(syllabus: dict[str, Any], *, min_pathway_nodes: int = 14) -> dict[str, int]:
+    """Per-block floor for required courses: proportional to each block's share
+    of total syllabus lessons, never zero. Unlike AI-literacy's alternative
+    tracks, no required-course block may ever be fully absent from a pathway.
+
+    floor = max(1, round(min_pathway_nodes * block_lesson_count / total_lesson_count))
+    """
+    blocks = syllabus.get("blocks", [])
+    lesson_counts = {b["id"]: len(b.get("lessons", [])) for b in blocks}
+    total = sum(lesson_counts.values()) or 1
+    return {
+        bid: max(1, round(min_pathway_nodes * count / total))
+        for bid, count in lesson_counts.items()
+    }
+
+
+def block_floor_gate(
+    pathways: dict[str, list[dict[str, Any]]],
+    floors: dict[str, int],
+) -> dict[str, Any]:
+    """Hard coverage-floor check for required courses: every block must appear
+    at least `floors[block_id]` times in every pathway. This is a correctness
+    constraint, not a personalization signal — no required block is ever
+    fully skippable."""
+    violations: list[dict[str, Any]] = []
+    for pid, nodes in pathways.items():
+        counts = block_multiset(nodes)
+        for block_id, floor in floors.items():
+            actual = counts.get(block_id, 0)
+            if actual < floor:
+                violations.append(
+                    {"profile_id": pid, "block_id": block_id, "floor": floor, "actual": actual}
+                )
+    return {
+        "passed": len(violations) == 0,
+        "floors": floors,
+        "violations": violations,
+        "profiles_checked": len(pathways),
+    }
+
+
+def role_count(
+    nodes: list[dict[str, Any]], role: str, block_ids: list[str] | None = None
+) -> int:
+    """Count nodes tagged with a given nodeRole (optionally restricted to specific blocks)."""
+    return sum(
+        1
+        for n in nodes
+        if n.get("nodeRole") == role and (block_ids is None or n.get("syllabusBlockId") in block_ids)
+    )
+
+
+def role_mix_monotonic_check(
+    pathways: dict[str, list[dict[str, Any]]],
+    profiles: list[dict[str, Any]],
+    *,
+    foundational_block_ids: list[str],
+    tier_order: list[str],
+) -> dict[str, Any]:
+    """For required courses: checks that scaffolding_catchup node counts in the
+    foundational block(s) are non-increasing as familiarity tier increases
+    (less prior exposure -> more scaffolding, not fewer blocks). Uses per-tier
+    means and a monotonic-ordering check rather than a power-based test, since
+    the pilot design is a small, discrete grid (few tiers x few profiles) and
+    not a continuous distribution."""
+    tier_to_counts: dict[str, list[int]] = {t: [] for t in tier_order}
+    per_profile: list[dict[str, Any]] = []
+
+    for profile in profiles:
+        pid = profile["id"]
+        tier = profile.get("tier")
+        if tier not in tier_to_counts or pid not in pathways:
+            continue
+        count = role_count(pathways[pid], "scaffolding_catchup", foundational_block_ids)
+        tier_to_counts[tier].append(count)
+        per_profile.append({"profile_id": pid, "tier": tier, "scaffolding_catchup_count": count})
+
+    tier_means = {
+        t: (sum(counts) / len(counts) if counts else None) for t, counts in tier_to_counts.items()
+    }
+    ordered_means = [tier_means[t] for t in tier_order if tier_means[t] is not None]
+    monotonic = (
+        all(ordered_means[i] >= ordered_means[i + 1] for i in range(len(ordered_means) - 1))
+        if len(ordered_means) >= 2
+        else False
+    )
+
+    return {
+        "passed": monotonic,
+        "tier_order": tier_order,
+        "tier_means": tier_means,
+        "per_profile": per_profile,
+        "foundational_block_ids": foundational_block_ids,
+    }
+
+
+def length_invariance_check(
+    pathways: dict[str, list[dict[str, Any]]],
+    *,
+    band: tuple[int, int],
+) -> dict[str, Any]:
+    """Total pathway length must stay within a fixed band for every profile.
+    For required courses, personalization should show up as a mix shift
+    (more scaffolding vs. more enrichment nodes), not a longer or shorter
+    course — this catches a generator that "personalizes" by just padding
+    length instead of reallocating within a fixed budget."""
+    low, high = band
+    violations: list[dict[str, Any]] = []
+    lengths: dict[str, int] = {}
+    for pid, nodes in pathways.items():
+        n = len(nodes)
+        lengths[pid] = n
+        if not (low <= n <= high):
+            violations.append({"profile_id": pid, "node_count": n})
+    return {
+        "passed": len(violations) == 0,
+        "band": band,
+        "lengths": lengths,
+        "violations": violations,
+    }
+
+
+def jonckheere_terpstra_test(groups_in_expected_order: list[list[float]]) -> dict[str, Any]:
+    """Jonckheere-Terpstra test for a monotonic trend across ordered groups.
+
+    H0: no trend across the groups. H1: values tend to increase across the
+    groups as passed in (pass groups in the order you expect values to rise —
+    for role_mix_monotonic_check's "decreases as tier increases" expectation,
+    pass tiers in REVERSE order, e.g. [strong, some, no], so "increasing"
+    here means "increasing as prior exposure drops").
+
+    Unlike a simple monotonic-means check (used elsewhere in this module for
+    very small pilots), this gives an actual p-value, appropriate once each
+    tier has enough profiles (roughly 8+) for a real distribution rather than
+    just 2-3 points."""
+    k = len(groups_in_expected_order)
+    n_i = [len(g) for g in groups_in_expected_order]
+    n_total = sum(n_i)
+
+    jt = 0.0
+    for i in range(k):
+        for j in range(i + 1, k):
+            for x in groups_in_expected_order[i]:
+                for y in groups_in_expected_order[j]:
+                    if x < y:
+                        jt += 1
+                    elif x == y:
+                        jt += 0.5
+
+    mean_jt = (n_total**2 - sum(n**2 for n in n_i)) / 4
+    var_jt = (n_total**2 * (2 * n_total + 3) - sum(n**2 * (2 * n + 3) for n in n_i)) / 72
+
+    if var_jt <= 0:
+        return {"JT_statistic": jt, "z": None, "p_value": None, "n_per_group": n_i, "note": "degenerate group sizes"}
+
+    z = (jt - mean_jt) / (var_jt**0.5)
+    # one-sided normal approximation; standard for JT at these sample sizes
+    from scipy.stats import norm
+
+    p_value = float(1 - norm.cdf(z))
+    return {
+        "JT_statistic": jt,
+        "z": round(float(z), 4),
+        "p_value": round(p_value, 6),
+        "n_per_group": n_i,
+        "significant_at_0.05": p_value < 0.05,
+    }
+
+
+def required_course_gate_verdict(
+    floor_result: dict[str, Any],
+    role_mix_result: dict[str, Any],
+    length_result: dict[str, Any],
+) -> dict[str, Any]:
+    """Combined pass/fail for a required-course pilot (floor + catch-up model),
+    separate from AI-literacy's research_gate_verdict/cluster_gate_verdict."""
+    passed = floor_result["passed"] and role_mix_result["passed"] and length_result["passed"]
+    return {
+        "passed": passed,
+        "checks": {
+            "coverage_floor": floor_result["passed"],
+            "role_mix_monotonic": role_mix_result["passed"],
+            "length_invariance": length_result["passed"],
+        },
     }
 
 

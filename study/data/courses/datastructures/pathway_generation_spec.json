@@ -1,0 +1,92 @@
+{
+  "version": "1.0-required-course",
+  "courseArchetype": "required_cumulative",
+  "personalizationModel": "fixed_floor_catchup",
+  "blockIds": [
+    "block_01",
+    "block_02",
+    "block_03",
+    "block_04",
+    "block_05",
+    "block_06",
+    "block_07",
+    "block_08"
+  ],
+  "blockDescriptions": {
+    "block_01": "C++ Foundations & Object-Oriented Design — references, arrays, classes, inheritance, templates, exceptions",
+    "block_02": "Arrays, Linked Lists & Recursion — linked list implementation, recursion, asymptotic (Big-O) analysis",
+    "block_03": "Stacks, Queues & Sequence-Based Structures — stacks, queues/deques, vectors, iterators, bubble sort",
+    "block_04": "Trees & Tree Traversal — general trees, traversal algorithms, binary trees",
+    "block_05": "Priority Queues & Heaps",
+    "block_06": "Maps, Hash Tables & Dictionaries — hash functions, skip lists, ordered maps",
+    "block_07": "Balanced & Search Trees — BST, AVL, multi-way search, (2,4)/red-black trees",
+    "block_08": "Sorting Algorithms & Course Capstone — merge sort, selection sort, cumulative review"
+  },
+  "nodeMetadataFields": ["nodeRole", "personalizationRationale"],
+  "requiredCourseModel": {
+    "targetNodeBand": [16, 20],
+    "floorMinPathwayNodes": 16,
+    "foundationalBlockIds": ["block_01"],
+    "tierOrder": ["no_prior_exposure", "some_prior_exposure", "strong_prior_exposure"],
+    "tierQuestionFocus": "Prior exposure to C++ specifically (not just general programming from CS-UH 1001)",
+    "tierScaffoldTargets": {
+      "no_prior_exposure": 3,
+      "some_prior_exposure": 1,
+      "strong_prior_exposure": 0
+    }
+  },
+  "personalizationRules": [
+    "This is a REQUIRED, cumulative course — every enrolled student is examined on the entire syllabus. Every block MUST appear in every pathway. NEVER omit a block, and never drop a block's node count to zero, regardless of the student's background.",
+    "Every node MUST include syllabusBlockId set to exactly one block id from the catalog, and MUST include nodeRole (one of: core_required, scaffolding_catchup, enrichment_advanced, assessment) and a one-sentence personalizationRationale.",
+    "Personalization here means a FIXED DESTINATION with a PERSONALIZED ROUTE: the goal is to help a student with less prior exposure to C++ specifically (even if they know general programming from CS-UH 1001) catch up to their classmates FASTER, not to teach them less or teach them longer overall.",
+    "If the student reports little or no prior C++ exposure (no_prior_exposure tier — e.g. only Python/Java before this course): add extra nodes tagged scaffolding_catchup concentrated in block_01 (C++ Foundations & OOD), since pointers, references, and manual memory semantics are the main friction point for the rest of the course.",
+    "If the student reports some prior C++ exposure (some_prior_exposure tier): include a moderate number of scaffolding_catchup nodes in block_01 — fewer than the no-prior-exposure case, more than the strong-exposure case.",
+    "If the student reports strong prior C++ exposure (strong_prior_exposure tier, e.g. has already written non-trivial C++ programs): keep block_01 to its floor-level core_required nodes only, and instead add enrichment_advanced nodes (move semantics, template metaprogramming, RAII idioms) — reinvest the freed-up capacity, do not shorten the pathway.",
+    "block_07 (Balanced & Search Trees) is the most proof/theory-heavy block. Students who report low comfort with discrete-math/proof-style reasoning may also get 1-2 extra scaffolding_catchup nodes there, in addition to whatever their C++ tier assigns in block_01 — this is a secondary, smaller signal, not the primary axis.",
+    "The TOTAL number of nodes must stay within the target node band (see requiredCourseModel.targetNodeBand) for every profile regardless of tier. Personalization must show up as a shift in the MIX of scaffolding_catchup vs. enrichment_advanced nodes, not as a longer or shorter pathway.",
+    "Every node's wording (description) may reflect the student's stated interests or goals (e.g., framing hash tables with a 'how Python dicts work' analogy vs. a 'how database indexes work' analogy), but this must NEVER change which blocks appear, how many nodes per block, or the presence of required content.",
+    "Every pathway must include at least one assessment-type node tied to the midterm-review material (in or after block_03) and one tied to the cumulative final-review material (in block_08)."
+  ],
+  "judgeRubric": {
+    "dimensions": [
+      {
+        "id": "coverage_completeness",
+        "description": "Every required block is present with enough nodes to plausibly meet its learning objective — nothing is silently dropped"
+      },
+      {
+        "id": "catchup_alignment",
+        "description": "scaffolding_catchup node volume in block_01 tracks the student's stated prior C++ exposure level appropriately"
+      },
+      {
+        "id": "fixed_budget_personalization",
+        "description": "Personalization shows up as a role mix shift within a stable total node count, not as a longer/shorter course"
+      },
+      {
+        "id": "syllabus_fidelity",
+        "description": "All syllabusBlockId values valid; content aligns with the block catalog; no off-syllabus topics"
+      },
+      {
+        "id": "internal_coherence",
+        "description": "Node order and difficulty progression make logical sense given dependsOn"
+      }
+    ],
+    "scale": { "min": 1, "max": 5 }
+  },
+  "contrastHypotheses": [
+    {
+      "id": "DS-C1_coverage_floor",
+      "description": "Every block appears at least its computed floor count in every pathway — no block is ever fully omitted, unlike AI-literacy's alternative-track model.",
+      "check": "coverage_floor"
+    },
+    {
+      "id": "DS-C2_catchup_scaffolding",
+      "description": "Profiles with no prior C++ exposure get more scaffolding_catchup nodes in block_01 than profiles with some prior exposure, who in turn get more than profiles with strong prior exposure.",
+      "check": "role_mix_monotonic"
+    },
+    {
+      "id": "DS-C3_fixed_budget",
+      "description": "Total pathway length stays within the target node band across all familiarity tiers — personalization is a scaffolding/enrichment mix shift, not a longer or shorter course.",
+      "check": "length_invariance"
+    }
+  ]
+}

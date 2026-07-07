@@ -12,9 +12,10 @@ STUDY_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(STUDY_ROOT))
 
 from lib.api_client import load_json, save_json  # noqa: E402
+from lib.course_paths import resolve  # noqa: E402
 from lib.pathway_generator import generate_pathway_with_retry, get_gemini_client  # noqa: E402
 from lib.rate_limit import api_delay_sec  # noqa: E402
-from lib.research_metrics import block_multiset, block_sequence  # noqa: E402
+from lib.research_metrics import block_multiset, block_sequence, compute_block_floors  # noqa: E402
 from lib.syllabus_context import syllabus_to_context  # noqa: E402
 
 
@@ -32,17 +33,31 @@ def main() -> int:
         action="store_true",
         help="Regenerate even if pathway JSON already exists",
     )
+    parser.add_argument(
+        "--course",
+        default=None,
+        help="Course id under data/courses/<id>/ (omit for the default AI-literacy course)",
+    )
     args = parser.parse_args()
 
-    syllabus = load_json(STUDY_ROOT / "data" / "syllabus" / "syllabus.json")
-    profiles_data = load_json(STUDY_ROOT / "data" / "profiles" / "synthetic_profiles.json")
+    paths = resolve(args.course)
+    syllabus = load_json(paths.syllabus)
+    profiles_data = load_json(paths.profiles)
     profiles = profiles_data["profiles"]
 
     syllabus_context = syllabus_to_context(syllabus)
     client = get_gemini_client()
 
-    results_dir = STUDY_ROOT / "data" / "results" / "pathways"
+    results_dir = paths.pathways_dir
     results_dir.mkdir(parents=True, exist_ok=True)
+    spec_path = paths.spec if args.course else None
+
+    block_floors = None
+    if args.course:
+        spec = load_json(paths.spec)
+        rc = spec.get("requiredCourseModel")
+        if rc:
+            block_floors = compute_block_floors(syllabus, min_pathway_nodes=rc.get("floorMinPathwayNodes", 14))
 
     delay = api_delay_sec()
     generated: list[str] = []
@@ -87,6 +102,9 @@ def main() -> int:
                 syllabus_context,
                 profile["answers"],
                 structure_lock=structure_lock,
+                spec_path=spec_path,
+                tier=profile.get("tier"),
+                block_floors=block_floors,
             )
         except Exception as exc:
             print(f"FAILED {profile_id}: {exc}", file=sys.stderr)
@@ -109,7 +127,7 @@ def main() -> int:
         time.sleep(delay)
 
     save_json(
-        STUDY_ROOT / "data" / "results" / "pathways_index.json",
+        paths.results_dir / "pathways_index.json",
         {
             "source": "offline",
             "profiles": generated,

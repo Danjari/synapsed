@@ -17,12 +17,61 @@ from lib.rate_limit import call_with_rate_limit_retry
 STUDY_ROOT = Path(__file__).resolve().parent.parent
 
 
-def _block_id_enum() -> list[str]:
-    return load_generation_spec().get("blockIds", [])
+def _block_id_enum(spec_path: Path | None = None) -> list[str]:
+    return load_generation_spec(spec_path).get("blockIds", [])
 
 
-def _pathway_function_declaration() -> types.FunctionDeclaration:
-    block_ids = _block_id_enum()
+# Default enum values for optional node-metadata fields (used only when a
+# course's spec opts into them via "nodeMetadataFields" — AI-literacy's spec
+# doesn't set this, so its schema/output is unaffected).
+_NODE_ROLE_VALUES = ["core_required", "scaffolding_catchup", "enrichment_advanced", "assessment"]
+
+
+def _pathway_function_declaration(spec_path: Path | None = None) -> types.FunctionDeclaration:
+    spec = load_generation_spec(spec_path)
+    block_ids = spec.get("blockIds", [])
+    metadata_fields = set(spec.get("nodeMetadataFields", []))
+
+    properties = {
+        "id": types.Schema(type=types.Type.STRING),
+        "title": types.Schema(type=types.Type.STRING),
+        "description": types.Schema(type=types.Type.STRING),
+        "syllabusBlockId": types.Schema(
+            type=types.Type.STRING,
+            enum=block_ids if block_ids else None,
+        ),
+        "type": types.Schema(
+            type=types.Type.STRING,
+            enum=["topic", "subtopic", "resource", "assessment"],
+        ),
+        "difficulty": types.Schema(
+            type=types.Type.STRING,
+            enum=["beginner", "intermediate", "advanced"],
+        ),
+        "duration": types.Schema(type=types.Type.STRING),
+        "dependsOn": types.Schema(
+            type=types.Type.ARRAY,
+            items=types.Schema(type=types.Type.STRING),
+        ),
+    }
+    required = [
+        "id",
+        "title",
+        "description",
+        "syllabusBlockId",
+        "type",
+        "difficulty",
+        "duration",
+        "dependsOn",
+    ]
+
+    if "nodeRole" in metadata_fields:
+        properties["nodeRole"] = types.Schema(type=types.Type.STRING, enum=_NODE_ROLE_VALUES)
+        required.append("nodeRole")
+    if "personalizationRationale" in metadata_fields:
+        properties["personalizationRationale"] = types.Schema(type=types.Type.STRING)
+        required.append("personalizationRationale")
+
     return types.FunctionDeclaration(
         name="generate_learning_pathway",
         description="Generate a structurally personalized learning pathway with syllabus block tags",
@@ -33,38 +82,8 @@ def _pathway_function_declaration() -> types.FunctionDeclaration:
                     type=types.Type.ARRAY,
                     items=types.Schema(
                         type=types.Type.OBJECT,
-                        properties={
-                            "id": types.Schema(type=types.Type.STRING),
-                            "title": types.Schema(type=types.Type.STRING),
-                            "description": types.Schema(type=types.Type.STRING),
-                            "syllabusBlockId": types.Schema(
-                                type=types.Type.STRING,
-                                enum=block_ids if block_ids else None,
-                            ),
-                            "type": types.Schema(
-                                type=types.Type.STRING,
-                                enum=["topic", "subtopic", "resource", "assessment"],
-                            ),
-                            "difficulty": types.Schema(
-                                type=types.Type.STRING,
-                                enum=["beginner", "intermediate", "advanced"],
-                            ),
-                            "duration": types.Schema(type=types.Type.STRING),
-                            "dependsOn": types.Schema(
-                                type=types.Type.ARRAY,
-                                items=types.Schema(type=types.Type.STRING),
-                            ),
-                        },
-                        required=[
-                            "id",
-                            "title",
-                            "description",
-                            "syllabusBlockId",
-                            "type",
-                            "difficulty",
-                            "duration",
-                            "dependsOn",
-                        ],
+                        properties=properties,
+                        required=required,
                     ),
                 ),
             },
@@ -99,9 +118,18 @@ def build_prompt(
     answers: dict[str, str],
     *,
     structure_lock: dict[str, Any] | None = None,
+    spec_path: Path | None = None,
+    tier: str | None = None,
+    block_floors: dict[str, int] | None = None,
 ) -> str:
     return build_personalization_prompt(
-        syllabus, syllabus_context, answers, structure_lock=structure_lock
+        syllabus,
+        syllabus_context,
+        answers,
+        structure_lock=structure_lock,
+        spec_path=spec_path,
+        tier=tier,
+        block_floors=block_floors,
     )
 
 
@@ -113,8 +141,19 @@ def generate_pathway_nodes(
     *,
     model: str | None = None,
     structure_lock: dict[str, Any] | None = None,
+    spec_path: Path | None = None,
+    tier: str | None = None,
+    block_floors: dict[str, int] | None = None,
 ) -> list[dict[str, Any]]:
-    prompt = build_prompt(syllabus, syllabus_context, answers, structure_lock=structure_lock)
+    prompt = build_prompt(
+        syllabus,
+        syllabus_context,
+        answers,
+        structure_lock=structure_lock,
+        spec_path=spec_path,
+        tier=tier,
+        block_floors=block_floors,
+    )
     model_name = model or get_gemini_model()
 
     def _call() -> Any:
@@ -122,7 +161,7 @@ def generate_pathway_nodes(
             model=model_name,
             contents=prompt,
             config=types.GenerateContentConfig(
-                tools=[types.Tool(function_declarations=[_pathway_function_declaration()])],
+                tools=[types.Tool(function_declarations=[_pathway_function_declaration(spec_path)])],
                 tool_config=types.ToolConfig(
                     function_calling_config=types.FunctionCallingConfig(
                         mode=types.FunctionCallingConfigMode.ANY,
@@ -142,7 +181,7 @@ def generate_pathway_nodes(
     if not nodes or not isinstance(nodes, list):
         raise RuntimeError("Failed to parse pathway nodes from Gemini response")
 
-    valid_blocks = set(_block_id_enum())
+    valid_blocks = set(_block_id_enum(spec_path))
     for node in nodes:
         block_id = node.get("syllabusBlockId")
         if block_id not in valid_blocks:
@@ -160,13 +199,23 @@ def generate_pathway_with_retry(
     retries: int = 2,
     delay_sec: float = 2.0,
     structure_lock: dict[str, Any] | None = None,
+    spec_path: Path | None = None,
+    tier: str | None = None,
+    block_floors: dict[str, int] | None = None,
 ) -> list[dict[str, Any]]:
     """Outer retry for validation errors; rate limits handled inside generate_pathway_nodes."""
     last_error: Exception | None = None
     for attempt in range(retries + 1):
         try:
             return generate_pathway_nodes(
-                client, syllabus, syllabus_context, answers, structure_lock=structure_lock
+                client,
+                syllabus,
+                syllabus_context,
+                answers,
+                structure_lock=structure_lock,
+                spec_path=spec_path,
+                tier=tier,
+                block_floors=block_floors,
             )
         except Exception as exc:
             last_error = exc

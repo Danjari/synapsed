@@ -14,14 +14,20 @@ STUDY_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(STUDY_ROOT))
 
 from lib.api_client import load_json, save_json  # noqa: E402
+from lib.course_paths import resolve  # noqa: E402
 from lib.llm_judge import get_anthropic_client, judge_all_profiles, stratified_judge_sample  # noqa: E402
 from lib.pathway_metrics import evaluate_gate, pairwise_similarities  # noqa: E402
 from lib.research_metrics import (  # noqa: E402
+    block_floor_gate,
     cluster_gate_verdict,
     cluster_similarity_analysis,
+    compute_block_floors,
     evaluate_contrast_hypotheses,
+    length_invariance_check,
     pairwise_block_metrics,
+    required_course_gate_verdict,
     research_gate_verdict,
+    role_mix_monotonic_check,
 )
 from lib.rule_validator import evaluate_all_rules, rule_gate_verdict  # noqa: E402
 
@@ -120,6 +126,88 @@ def build_html_report(report: dict) -> str:
 </body></html>"""
 
 
+def run_required_course_evaluation(paths, args) -> int:
+    """Evaluation path for required, cumulative courses (OS, Data Structures):
+    fixed-floor + catch-up personalization model, distinct from AI-literacy's
+    alternative-track model. See study/report_required_courses.md."""
+    if not paths.profiles.exists():
+        print(f"No profiles.json yet at {paths.profiles} — waiting on the external profile handoff.")
+        return 1
+
+    if not paths.pathways_dir.exists() or not any(paths.pathways_dir.glob("*.json")):
+        print(f"Run: python scripts/07_generate_pathways_offline.py --course {args.course}")
+        return 1
+
+    pathways = load_pathways(paths.pathways_dir)
+    missing = missing_block_ids(pathways)
+    if missing:
+        print("WARNING: pathways lack syllabusBlockId — regenerate with script 07:")
+        for pid in missing[:5]:
+            print(f"  - {pid}")
+        return 1
+
+    profiles = load_json(paths.profiles)["profiles"]
+    syllabus = load_json(paths.syllabus)
+    spec = load_json(paths.spec)
+    rc = spec.get("requiredCourseModel", {})
+
+    floors = compute_block_floors(syllabus, min_pathway_nodes=rc.get("floorMinPathwayNodes", 14))
+    floor_result = block_floor_gate(pathways, floors)
+    role_mix_result = role_mix_monotonic_check(
+        pathways,
+        profiles,
+        foundational_block_ids=rc.get("foundationalBlockIds", []),
+        tier_order=rc.get("tierOrder", []),
+    )
+    band = tuple(rc.get("targetNodeBand", [10, 20]))
+    length_result = length_invariance_check(pathways, band=band)
+    verdict = required_course_gate_verdict(floor_result, role_mix_result, length_result)
+
+    block_metrics = pairwise_block_metrics(pathways)
+
+    judge_results = None
+    judge_sample_ids = None
+    if args.with_judge:
+        sample_size = 15
+        judge_sample_ids = (
+            [p["id"] for p in profiles]
+            if len(profiles) <= sample_size
+            else stratified_judge_sample(profiles, sample_size, canonical_ids=set())
+        )
+        print(f"Running Claude judge on {len(judge_sample_ids)} profiles...")
+        client = get_anthropic_client()
+        judge_results = judge_all_profiles(
+            client, profiles, pathways, syllabus, profile_ids=judge_sample_ids, spec_path=paths.spec
+        )
+
+    report = {
+        "course_id": args.course,
+        "personalization_model": spec.get("personalizationModel"),
+        "verdict": verdict,
+        "profile_count": len(profiles),
+        "pathway_count": len(pathways),
+        "block_floors": floor_result,
+        "role_mix": role_mix_result,
+        "length_invariance": length_result,
+        "block_metrics_diagnostic": block_metrics,
+        "llm_judge": judge_results,
+        "judge_sample_ids": judge_sample_ids,
+    }
+
+    paths.reports_dir.mkdir(parents=True, exist_ok=True)
+    save_json(paths.reports_dir / "research_evaluation.json", report)
+
+    label = "PASS" if verdict["passed"] else "FAIL"
+    floor_status = "OK" if floor_result["passed"] else f"{len(floor_result['violations'])} violations"
+    print(f"Required-course gate ({args.course}): {label}")
+    print(f"  profiles/pathways: {len(profiles)}/{len(pathways)}")
+    print(f"  coverage floor: {floor_status}")
+    print(f"  role-mix monotonic: {role_mix_result['passed']} (tier means: {role_mix_result['tier_means']})")
+    print(f"  length invariance (band {band}): {length_result['passed']}")
+    print(f"Report: {paths.reports_dir}/research_evaluation.json")
+    return 0 if verdict["passed"] else 2
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Research-grade pathway evaluation")
     parser.add_argument(
@@ -127,7 +215,16 @@ def main() -> int:
         action="store_true",
         help="Include Claude LLM judge (supplementary; not required for primary pass)",
     )
+    parser.add_argument(
+        "--course",
+        default=None,
+        help="Course id under data/courses/<id>/ — uses the fixed-floor/catch-up evaluation model "
+        "(omit for the default AI-literacy alternative-track evaluation)",
+    )
     args = parser.parse_args()
+
+    if args.course:
+        return run_required_course_evaluation(resolve(args.course), args)
 
     config = yaml.safe_load((STUDY_ROOT / "config" / "study_config.yaml").read_text())
     research_cfg = config.get("research", {})

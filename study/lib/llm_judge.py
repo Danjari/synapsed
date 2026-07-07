@@ -89,8 +89,9 @@ def judge_pathway(
     syllabus: dict[str, Any],
     *,
     model: str | None = None,
+    spec_path: Path | None = None,
 ) -> dict[str, Any]:
-    spec = load_generation_spec()
+    spec = load_generation_spec(spec_path)
     rubric = spec.get("judgeRubric", {})
     dimensions = rubric.get("dimensions", [])
     dim_text = "\n".join(f"- {d['id']}: {d['description']}" for d in dimensions)
@@ -176,6 +177,7 @@ def judge_all_profiles(
     *,
     profile_ids: list[str] | None = None,
     delay_sec: float | None = None,
+    spec_path: Path | None = None,
 ) -> list[dict[str, Any]]:
     results: list[dict[str, Any]] = []
     selected = profiles
@@ -196,22 +198,34 @@ def judge_all_profiles(
                 profile["answers"],
                 pathways_dir_data[pid],
                 syllabus,
+                spec_path=spec_path,
             )
         )
         time.sleep(delay_sec if delay_sec is not None else api_delay_sec())
     return results
 
 
-def stratified_judge_sample(profiles: list[dict[str, Any]], sample_size: int) -> list[str]:
-    """Pick up to sample_size profiles: canonical anchors + at least one per cluster."""
-    canonical = {
-        "low_knowledge_general",
-        "high_knowledge_research",
-        "business_leader",
-        "ethics_focused",
-        "medium_knowledge_mixed",
-        "learning_style_control",
-    }
+DEFAULT_CANONICAL_IDS = {
+    "low_knowledge_general",
+    "high_knowledge_research",
+    "business_leader",
+    "ethics_focused",
+    "medium_knowledge_mixed",
+    "learning_style_control",
+}
+
+
+def stratified_judge_sample(
+    profiles: list[dict[str, Any]],
+    sample_size: int,
+    *,
+    canonical_ids: set[str] | None = None,
+) -> list[str]:
+    """Pick up to sample_size profiles: canonical anchors + at least one per cluster.
+
+    `canonical_ids` defaults to the AI-literacy anchor set; pass a course-specific
+    set for other courses (their anchor ids won't exist in the default set)."""
+    canonical = canonical_ids if canonical_ids is not None else DEFAULT_CANONICAL_IDS
     chosen: list[str] = []
     seen_clusters: set[str] = set()
 

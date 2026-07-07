@@ -1,0 +1,46 @@
+{
+  "course_id": "os",
+  "foundational_block_ids": [
+    "block_01"
+  ],
+  "tier_scaffold_targets": {
+    "no_prior_exposure": 3,
+    "some_prior_exposure": 1,
+    "strong_prior_exposure": 0
+  },
+  "per_tier": {
+    "no_prior_exposure": {
+      "n": 10,
+      "target": 3,
+      "mean": 3.0,
+      "std": 0.0,
+      "exact_target_compliance_rate": 1.0
+    },
+    "some_prior_exposure": {
+      "n": 10,
+      "target": 1,
+      "mean": 1.0,
+      "std": 0.0,
+      "exact_target_compliance_rate": 1.0
+    },
+    "strong_prior_exposure": {
+      "n": 10,
+      "target": 0,
+      "mean": 0.0,
+      "std": 0.0,
+      "exact_target_compliance_rate": 1.0
+    }
+  },
+  "jonckheere_terpstra_test": {
+    "JT_statistic": 300.0,
+    "z": 5.7035,
+    "p_value": 0.0,
+    "n_per_group": [
+      10,
+      10,
+      10
+    ],
+    "significant_at_0.05": true
+  },
+  "interpretation": "All tiers show zero within-tier variance in scaffolding_catchup count \u2014 the explicit per-tier target injected into the prompt (added after real data showed prose rules alone were unreliable, see report_required_courses.md) is being followed exactly, not just approximately. This means the role-mix trend is now closer to an ENFORCED constraint than an emergent signal: a power analysis / sample-size question doesn't meaningfully apply to it anymore (the effect is deterministic). The genuinely open, uninjected question is whether scaffolding_catchup NODE CONTENT is pedagogically appropriate for its tier, which requires the embedding-based content metric or human review, not a bigger N."
+}

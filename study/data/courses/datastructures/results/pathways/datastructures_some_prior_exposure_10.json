@@ -1,0 +1,247 @@
+{
+  "profileId": "datastructures_some_prior_exposure_10",
+  "cluster": null,
+  "field": null,
+  "description": "A sophomore majoring in Economics and Computer Science who is confident in theoretical math but feels intimidated by the manual memory management required in C++.",
+  "studentId": "offline-datastructures_some_prior_exposure_10",
+  "source": "offline-gemini",
+  "nodeCount": 17,
+  "nodes": [
+    {
+      "duration": "75 min",
+      "title": "C++ Memory Management Fundamentals",
+      "nodeRole": "scaffolding_catchup",
+      "type": "subtopic",
+      "description": "A focused review of pointer syntax, references, and manual memory management in C++.",
+      "id": "node_01_scaffold",
+      "dependsOn": [],
+      "difficulty": "beginner",
+      "syllabusBlockId": "block_01",
+      "personalizationRationale": "This student has some_prior_exposure to C++, so a targeted scaffolding node is provided to ensure their understanding of pointers is robust before implementing complex data structures."
+    },
+    {
+      "personalizationRationale": "As a student with some_prior_exposure, they are ready to proceed with core C++ template and OOD requirements once memory management is reviewed.",
+      "syllabusBlockId": "block_01",
+      "difficulty": "intermediate",
+      "dependsOn": [
+        "node_01_scaffold"
+      ],
+      "id": "node_01_core",
+      "description": "Core concepts of C++ classes, inheritance, templates, and exception handling within the context of OOD.",
+      "type": "topic",
+      "nodeRole": "core_required",
+      "title": "OOD, Templates, and Exceptions",
+      "duration": "150 min"
+    },
+    {
+      "personalizationRationale": "Standard curriculum node for the some_prior_exposure tier to bridge the gap between memory management and dynamic data structures.",
+      "syllabusBlockId": "block_02",
+      "difficulty": "intermediate",
+      "dependsOn": [
+        "node_01_core"
+      ],
+      "id": "node_02_core_1",
+      "description": "Implementation details for singly, doubly, and circular linked lists alongside recursion techniques.",
+      "type": "topic",
+      "nodeRole": "core_required",
+      "title": "Linked Lists and Recursion Logic",
+      "duration": "150 min"
+    },
+    {
+      "id": "node_02_quiz1",
+      "dependsOn": [
+        "node_02_core_1"
+      ],
+      "nodeRole": "assessment",
+      "type": "assessment",
+      "description": "An assessment focusing on linked list manipulation and recursive algorithm design.",
+      "duration": "150 min",
+      "title": "Quiz 1: Recursion & Big-O Analysis",
+      "personalizationRationale": "Required assessment for all students; students with some_prior_exposure must demonstrate proficiency in Big-O analysis and recursion.",
+      "difficulty": "intermediate",
+      "syllabusBlockId": "block_02"
+    },
+    {
+      "title": "Stacks and Queues ADTs",
+      "duration": "100 min",
+      "nodeRole": "core_required",
+      "type": "subtopic",
+      "description": "Abstract Data Types for Stacks and Queues, focusing on LIFO and FIFO logic.",
+      "dependsOn": [
+        "node_02_quiz1"
+      ],
+      "id": "node_03_core_1",
+      "difficulty": "intermediate",
+      "syllabusBlockId": "block_03",
+      "personalizationRationale": "Core content for the some_prior_exposure tier focusing on standard sequence-based structures."
+    },
+    {
+      "nodeRole": "core_required",
+      "description": "Deep dive into Vector implementation, dynamic resizing, and the use of Iterators.",
+      "type": "subtopic",
+      "duration": "100 min",
+      "title": "Vectors and Iterators",
+      "id": "node_03_core_2",
+      "dependsOn": [
+        "node_03_core_1"
+      ],
+      "difficulty": "intermediate",
+      "syllabusBlockId": "block_03",
+      "personalizationRationale": "Essential knowledge for students with some_prior_exposure to understand how C++ STL-like vectors are constructed."
+    },
+    {
+      "personalizationRationale": "Part of the core floor for some_prior_exposure students to establish basic sorting and sequence analysis skills.",
+      "difficulty": "intermediate",
+      "syllabusBlockId": "block_03",
+      "id": "node_03_core_3",
+      "dependsOn": [
+        "node_03_core_2"
+      ],
+      "duration": "75 min",
+      "title": "Sequences and Bubble Sort",
+      "nodeRole": "core_required",
+      "type": "subtopic",
+      "description": "Introduction to bubble sort and the sequence ADT as a foundation for sorting."
+    },
+    {
+      "difficulty": "intermediate",
+      "syllabusBlockId": "block_03",
+      "personalizationRationale": "Mandatory midterm assessment checkpoint; ensures the student with some_prior_exposure is prepared for the 25% exam.",
+      "nodeRole": "assessment",
+      "description": "Comprehensive review of all material from C++ foundations through linear structures for the midterm exam.",
+      "type": "assessment",
+      "title": "Midterm Review Assessment",
+      "duration": "100 min",
+      "id": "node_03_midterm_review",
+      "dependsOn": [
+        "node_03_core_3"
+      ]
+    },
+    {
+      "syllabusBlockId": "block_04",
+      "difficulty": "intermediate",
+      "personalizationRationale": "Building on the some_prior_exposure tier's programming experience to introduce non-linear data structures.",
+      "description": "General tree properties and standard traversal algorithms (pre-order, post-order).",
+      "type": "topic",
+      "nodeRole": "core_required",
+      "duration": "125 min",
+      "title": "General Trees and Traversals",
+      "id": "node_04_core_1",
+      "dependsOn": [
+        "node_03_midterm_review"
+      ]
+    },
+    {
+      "syllabusBlockId": "block_04",
+      "difficulty": "intermediate",
+      "personalizationRationale": "Core requirement for all students to master binary trees before moving to balanced search trees.",
+      "duration": "100 min",
+      "title": "Binary Tree Implementation",
+      "type": "subtopic",
+      "description": "Binary tree structures, implementation, and mathematical properties.",
+      "nodeRole": "core_required",
+      "id": "node_04_core_2",
+      "dependsOn": [
+        "node_04_core_1"
+      ]
+    },
+    {
+      "personalizationRationale": "Required content for the some_prior_exposure tier, scaling the node count to match this smaller block's scope.",
+      "syllabusBlockId": "block_05",
+      "difficulty": "intermediate",
+      "dependsOn": [
+        "node_04_core_2"
+      ],
+      "id": "node_05_core_1",
+      "duration": "150 min",
+      "title": "Priority Queues and Heaps",
+      "description": "Heap implementation of priority queues and the heap-sort concept.",
+      "type": "topic",
+      "nodeRole": "core_required"
+    },
+    {
+      "personalizationRationale": "Core instruction for some_prior_exposure students on efficient key-value lookups.",
+      "syllabusBlockId": "block_06",
+      "difficulty": "intermediate",
+      "dependsOn": [
+        "node_05_core_1"
+      ],
+      "id": "node_06_core_1",
+      "type": "topic",
+      "description": "Design of hash functions, collision resolution strategies, and skip list theory.",
+      "nodeRole": "core_required",
+      "title": "Hash Tables and Dictionaries",
+      "duration": "150 min"
+    },
+    {
+      "personalizationRationale": "Standard assessment to track progress for students in the some_prior_exposure tier.",
+      "syllabusBlockId": "block_06",
+      "difficulty": "intermediate",
+      "dependsOn": [
+        "node_06_core_1"
+      ],
+      "id": "node_06_quiz3",
+      "title": "Quiz 3: Maps & Hashing",
+      "duration": "75 min",
+      "description": "A quiz covering hash tables, maps, and the theoretical efficiency of dictionaries.",
+      "type": "assessment",
+      "nodeRole": "assessment"
+    },
+    {
+      "personalizationRationale": "Foundational proof-heavy content for the some_prior_exposure tier, preparing them for complex tree balancing.",
+      "difficulty": "advanced",
+      "syllabusBlockId": "block_07",
+      "dependsOn": [
+        "node_06_quiz3"
+      ],
+      "id": "node_07_core_1",
+      "title": "BST and AVL Search Trees",
+      "duration": "115 min",
+      "nodeRole": "core_required",
+      "type": "topic",
+      "description": "Binary Search Trees (BST) and the mechanics of AVL tree rotations."
+    },
+    {
+      "duration": "110 min",
+      "title": "Red-Black and Multi-Way Trees",
+      "nodeRole": "core_required",
+      "description": "Detailed study of (2,4) trees and the transformation to Red-Black trees.",
+      "type": "subtopic",
+      "id": "node_07_core_2",
+      "dependsOn": [
+        "node_07_core_1"
+      ],
+      "difficulty": "advanced",
+      "syllabusBlockId": "block_07",
+      "personalizationRationale": "Ensures students with some_prior_exposure master the most advanced tree structures required for the final exam."
+    },
+    {
+      "personalizationRationale": "Final sorting block for some_prior_exposure tier to complete their algorithmic toolkit.",
+      "syllabusBlockId": "block_08",
+      "difficulty": "intermediate",
+      "dependsOn": [
+        "node_07_core_2"
+      ],
+      "id": "node_08_core_1",
+      "description": "Comparison of Merge Sort and Selection Sort with an emphasis on divide-and-conquer logic.",
+      "type": "topic",
+      "nodeRole": "core_required",
+      "duration": "100 min",
+      "title": "Advanced Sorting Algorithms"
+    },
+    {
+      "personalizationRationale": "Mandatory cumulative assessment node to ensure the student with some_prior_exposure has synthesized all course content.",
+      "syllabusBlockId": "block_08",
+      "difficulty": "advanced",
+      "dependsOn": [
+        "node_08_core_1"
+      ],
+      "id": "node_08_final_review",
+      "description": "Cumulative review session and final quiz covering the entire course syllabus in preparation for the final exam.",
+      "type": "assessment",
+      "nodeRole": "assessment",
+      "duration": "125 min",
+      "title": "Final Cumulative Review & Quiz 4"
+    }
+  ]
+}

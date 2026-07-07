@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import argparse
 import sys
 from pathlib import Path
 
@@ -10,6 +11,7 @@ STUDY_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(STUDY_ROOT))
 
 from lib.api_client import load_json  # noqa: E402
+from lib.course_paths import resolve  # noqa: E402
 
 REQUIRED_TOP = ("courseTitle", "blocks", "learningObjectives", "prerequisites", "scheduleWeeks")
 REQUIRED_BLOCK = ("id", "title", "calendarWeek", "lessons", "dedupeKey")
@@ -56,7 +58,15 @@ def validate_syllabus(syllabus: dict) -> list[str]:
 
 
 def main() -> int:
-    path = STUDY_ROOT / "data" / "syllabus" / "syllabus.json"
+    parser = argparse.ArgumentParser(description="Validate syllabus.json schema and dedupe keys")
+    parser.add_argument(
+        "--course",
+        default=None,
+        help="Course id under data/courses/<id>/ (omit for the default AI-literacy course)",
+    )
+    args = parser.parse_args()
+
+    path = resolve(args.course).syllabus
     syllabus = load_json(path)
     errors = validate_syllabus(syllabus)
     if errors:

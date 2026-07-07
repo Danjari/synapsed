@@ -1,0 +1,233 @@
+{
+  "profileId": "os_no_prior_exposure_1",
+  "cluster": null,
+  "field": null,
+  "description": "A high-achieving student who excels in theoretical data structures and logic but feels intimidated by the transition from high-level languages like Python to systems-level C programming.",
+  "studentId": "offline-os_no_prior_exposure_1",
+  "source": "offline-gemini",
+  "nodeCount": 16,
+  "nodes": [
+    {
+      "duration": "90 min",
+      "personalizationRationale": "As this student has no prior exposure to systems programming, we provide a primer on C pointers and memory which are essential for understanding OS kernels.",
+      "difficulty": "beginner",
+      "description": "A foundational primer on C programming, focusing on pointers, memory addresses, and the stack/heap, which are prerequisites for understanding OS kernel operations.",
+      "nodeRole": "scaffolding_catchup",
+      "syllabusBlockId": "block_01",
+      "dependsOn": [],
+      "title": "C Programming for Systems Basics",
+      "id": "node_01_c_primer",
+      "type": "subtopic"
+    },
+    {
+      "type": "subtopic",
+      "id": "node_02_arch_intro",
+      "title": "Computer Architecture & OS Interface",
+      "dependsOn": [
+        "node_01_c_primer"
+      ],
+      "syllabusBlockId": "block_01",
+      "nodeRole": "scaffolding_catchup",
+      "difficulty": "beginner",
+      "description": "An overview of computer architecture from an OS perspective, including registers, the program counter, and how the CPU interacts with main memory.",
+      "personalizationRationale": "Given the no_prior_exposure tier, a review of hardware-software interaction is necessary before diving into OS services.",
+      "duration": "60 min"
+    },
+    {
+      "type": "subtopic",
+      "id": "node_03_env_setup",
+      "title": "Systems Development Environment Setup",
+      "syllabusBlockId": "block_01",
+      "dependsOn": [
+        "node_02_arch_intro"
+      ],
+      "nodeRole": "scaffolding_catchup",
+      "description": "Introduction to the Unix command line, the GCC compiler toolchain, and basic Makefile usage for compiling system-level code.",
+      "difficulty": "beginner",
+      "personalizationRationale": "The student's no_prior_exposure status requires a hands-on introduction to the command line environment used for OS assignments.",
+      "duration": "60 min"
+    },
+    {
+      "type": "topic",
+      "id": "node_04_os_foundations",
+      "title": "OS Foundations & Kernel Structures",
+      "dependsOn": [
+        "node_03_env_setup"
+      ],
+      "syllabusBlockId": "block_01",
+      "nodeRole": "core_required",
+      "difficulty": "intermediate",
+      "description": "Exploration of OS services, system call interfaces, and the fundamental distinction between kernel mode and user mode.",
+      "personalizationRationale": "This core node establishes the fundamental structure of an OS, required for all students regardless of their background.",
+      "duration": "90 min"
+    },
+    {
+      "type": "topic",
+      "id": "node_05_process_lifecycle",
+      "title": "Process Lifecycle & Operations",
+      "dependsOn": [
+        "node_04_os_foundations"
+      ],
+      "syllabusBlockId": "block_02",
+      "nodeRole": "core_required",
+      "description": "Understanding the process control block (PCB), process states, and the mechanics of process creation via fork() and exec().",
+      "difficulty": "intermediate",
+      "personalizationRationale": "Process management is a foundational concept that every student must master for the cumulative exams.",
+      "duration": "100 min"
+    },
+    {
+      "duration": "125 min",
+      "personalizationRationale": "IPC is essential for understanding how complex systems are built, forming a core part of the syllabus.",
+      "description": "Comparing shared memory and message passing models for communication between independent processes.",
+      "difficulty": "intermediate",
+      "nodeRole": "core_required",
+      "dependsOn": [
+        "node_05_process_lifecycle"
+      ],
+      "syllabusBlockId": "block_02",
+      "title": "Inter-Process Communication (IPC)",
+      "id": "node_06_ipc_mechanisms",
+      "type": "topic"
+    },
+    {
+      "duration": "100 min",
+      "personalizationRationale": "Threading is a mandatory topic that introduces the complexities of concurrency required for later synchronization modules.",
+      "description": "Transitioning from processes to threads, covering multithreading models, concurrency benefits, and threading libraries like Pthreads.",
+      "difficulty": "intermediate",
+      "nodeRole": "core_required",
+      "dependsOn": [
+        "node_06_ipc_mechanisms"
+      ],
+      "syllabusBlockId": "block_03",
+      "title": "Threads & Concurrency Models",
+      "id": "node_07_threads_intro",
+      "type": "topic"
+    },
+    {
+      "type": "topic",
+      "id": "node_08_cpu_scheduling",
+      "title": "CPU Scheduling Algorithms",
+      "syllabusBlockId": "block_03",
+      "dependsOn": [
+        "node_07_threads_intro"
+      ],
+      "nodeRole": "core_required",
+      "description": "Analyzing CPU scheduling criteria and algorithms like Round Robin, Priority, and Multi-level Queue scheduling.",
+      "difficulty": "intermediate",
+      "personalizationRationale": "This core topic is vital for understanding system performance and resource allocation.",
+      "duration": "120 min"
+    },
+    {
+      "description": "A comprehensive review session and practice exam covering Chapters 1 through 5 in preparation for the week 8 midterm.",
+      "difficulty": "intermediate",
+      "nodeRole": "assessment",
+      "duration": "80 min",
+      "personalizationRationale": "As a required assessment node, this ensures the student is prepared for the first 20% of their final grade.",
+      "id": "node_09_midterm_review_assessment",
+      "type": "assessment",
+      "syllabusBlockId": "block_03",
+      "dependsOn": [
+        "node_08_cpu_scheduling"
+      ],
+      "title": "Midterm Review: Processes & Scheduling"
+    },
+    {
+      "difficulty": "advanced",
+      "description": "Addressing the critical section problem using hardware and software solutions like Mutexes and Semaphores.",
+      "nodeRole": "core_required",
+      "duration": "150 min",
+      "personalizationRationale": "Synchronization is a core course objective and is heavily tested on both projects and the final exam.",
+      "id": "node_10_sync_primitives",
+      "type": "topic",
+      "syllabusBlockId": "block_04",
+      "dependsOn": [
+        "node_09_midterm_review_assessment"
+      ],
+      "title": "Process Synchronization Primitives"
+    },
+    {
+      "type": "subtopic",
+      "id": "node_11_sync_problems_logic",
+      "title": "Classic Problems of Synchronization",
+      "syllabusBlockId": "block_04",
+      "dependsOn": [
+        "node_11_deadlock_handling"
+      ],
+      "nodeRole": "core_required",
+      "difficulty": "advanced",
+      "description": "Applying synchronization tools to classic problems like the Bounded-Buffer, Readers-Writers, and Dining Philosophers.",
+      "personalizationRationale": "The student must be able to model synchronization analytically to succeed in the final exam.",
+      "duration": "150 min"
+    },
+    {
+      "syllabusBlockId": "block_05",
+      "dependsOn": [
+        "node_10_sync_primitives"
+      ],
+      "title": "Deadlock Prevention & Avoidance",
+      "id": "node_11_deadlock_handling",
+      "type": "topic",
+      "duration": "150 min",
+      "personalizationRationale": "Deadlock management is a mandatory, though smaller, component of the OS concepts every student must master.",
+      "description": "Defining deadlock conditions and exploring strategies for prevention, avoidance (Banker's Algorithm), and detection.",
+      "difficulty": "intermediate",
+      "nodeRole": "core_required"
+    },
+    {
+      "type": "topic",
+      "id": "node_12_physical_memory",
+      "title": "Main Memory & Paging Mechanisms",
+      "dependsOn": [
+        "node_11_sync_problems_logic"
+      ],
+      "syllabusBlockId": "block_06",
+      "nodeRole": "core_required",
+      "difficulty": "intermediate",
+      "description": "Hardware-based memory management, including address binding, logical vs physical address spaces, and basic paging.",
+      "personalizationRationale": "Memory management is a core syllabus pillar and essential for the upcoming project deliveries.",
+      "duration": "150 min"
+    },
+    {
+      "type": "subtopic",
+      "id": "node_13_virtual_memory",
+      "title": "Virtual Memory & Page Replacement",
+      "syllabusBlockId": "block_06",
+      "dependsOn": [
+        "node_12_physical_memory"
+      ],
+      "nodeRole": "core_required",
+      "description": "Deep dive into demand paging, page replacement algorithms (LRU, FIFO, Optimal), and the problem of thrashing.",
+      "difficulty": "advanced",
+      "personalizationRationale": "Virtual memory concepts are advanced core requirements that are central to modern OS design.",
+      "duration": "150 min"
+    },
+    {
+      "type": "topic",
+      "id": "node_14_io_file_systems_core",
+      "title": "I/O Systems & File Storage Implementation",
+      "dependsOn": [
+        "node_13_virtual_memory"
+      ],
+      "syllabusBlockId": "block_07",
+      "nodeRole": "core_required",
+      "difficulty": "intermediate",
+      "description": "Overview of I/O hardware, kernel I/O subsystems, and the structural implementation of file systems on disk.",
+      "personalizationRationale": "I/O and File Systems represent the final mandatory block of the syllabus, integrating memory and process concepts.",
+      "duration": "200 min"
+    },
+    {
+      "nodeRole": "assessment",
+      "difficulty": "advanced",
+      "description": "A final cumulative review session covering all textbook chapters from the foundations through I/O, preparing for the cumulative final.",
+      "personalizationRationale": "A mandatory assessment node to ensure the student can synthesize the entire course for the 40% final exam.",
+      "duration": "100 min",
+      "type": "assessment",
+      "id": "node_15_final_review_assessment",
+      "title": "Final Cumulative Course Review",
+      "dependsOn": [
+        "node_14_io_file_systems_core"
+      ],
+      "syllabusBlockId": "block_07"
+    }
+  ]
+}

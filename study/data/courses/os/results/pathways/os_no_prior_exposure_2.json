@@ -1,0 +1,247 @@
+{
+  "profileId": "os_no_prior_exposure_2",
+  "cluster": null,
+  "field": null,
+  "description": "A mathematically-inclined junior who excels in theoretical computer science and algorithm design but has only worked in high-level languages like Java and Python.",
+  "studentId": "offline-os_no_prior_exposure_2",
+  "source": "offline-gemini",
+  "nodeCount": 17,
+  "nodes": [
+    {
+      "type": "subtopic",
+      "duration": "60 min",
+      "syllabusBlockId": "block_01",
+      "nodeRole": "scaffolding_catchup",
+      "difficulty": "beginner",
+      "dependsOn": [],
+      "personalizationRationale": "As the student has no_prior_exposure to C, this node provides the necessary language foundation for OS development.",
+      "title": "C Programming Fundamentals for Systems",
+      "description": "A primer on C syntax, pointers, and memory management specifically for students with no prior systems programming experience.",
+      "id": "n1"
+    },
+    {
+      "title": "Foundational Computer Architecture Review",
+      "personalizationRationale": "Bridges the gap between hardware and software for a student with no_prior_exposure to low-level concepts.",
+      "id": "n2",
+      "description": "A review of CPU registers, the fetch-decode-execute cycle, and basic computer architecture to contextualize OS operations.",
+      "type": "subtopic",
+      "duration": "60 min",
+      "difficulty": "beginner",
+      "syllabusBlockId": "block_01",
+      "nodeRole": "scaffolding_catchup",
+      "dependsOn": [
+        "n1"
+      ]
+    },
+    {
+      "description": "Guided walkthrough of using the Linux command line and development environment used in the course projects.",
+      "id": "n3",
+      "title": "Navigating the OS Development Environment",
+      "personalizationRationale": "Provides essential environment setup support for a student starting with no_prior_exposure to OS toolchains.",
+      "dependsOn": [
+        "n2"
+      ],
+      "difficulty": "beginner",
+      "syllabusBlockId": "block_01",
+      "nodeRole": "scaffolding_catchup",
+      "duration": "60 min",
+      "type": "subtopic"
+    },
+    {
+      "dependsOn": [
+        "n3"
+      ],
+      "syllabusBlockId": "block_01",
+      "nodeRole": "core_required",
+      "difficulty": "intermediate",
+      "duration": "120 min",
+      "type": "topic",
+      "description": "Exploring the architecture of the kernel, including the distinction between user mode and kernel mode and the role of system calls.",
+      "id": "n4",
+      "title": "OS Services and System Structures",
+      "personalizationRationale": "Mandatory core content for all students covering the structural design of operating systems."
+    },
+    {
+      "personalizationRationale": "Foundational process management theory required for all cumulative exam material.",
+      "title": "Process Lifecycle and Management",
+      "description": "Defining the process abstraction, the Process Control Block (PCB), and the state transition diagram.",
+      "id": "n5",
+      "type": "topic",
+      "duration": "100 min",
+      "difficulty": "intermediate",
+      "syllabusBlockId": "block_02",
+      "nodeRole": "core_required",
+      "dependsOn": [
+        "n4"
+      ]
+    },
+    {
+      "id": "n6",
+      "description": "Methods for processes to communicate, focusing on shared memory mechanisms and message passing protocols.",
+      "personalizationRationale": "Core requirement to understand how isolated processes interact safely in a system.",
+      "title": "Inter-Process Communication (IPC)",
+      "syllabusBlockId": "block_02",
+      "nodeRole": "core_required",
+      "difficulty": "intermediate",
+      "dependsOn": [
+        "n5"
+      ],
+      "type": "subtopic",
+      "duration": "125 min"
+    },
+    {
+      "id": "n7",
+      "description": "Introduction to multi-threaded programming, threading libraries (Pthreads), and the benefits of concurrency.",
+      "personalizationRationale": "Core content for understanding how modern OSs handle multiple flows of execution.",
+      "title": "Threading Models and Libraries",
+      "dependsOn": [
+        "n6"
+      ],
+      "difficulty": "intermediate",
+      "syllabusBlockId": "block_03",
+      "nodeRole": "core_required",
+      "duration": "150 min",
+      "type": "topic"
+    },
+    {
+      "dependsOn": [
+        "n7"
+      ],
+      "syllabusBlockId": "block_03",
+      "nodeRole": "core_required",
+      "difficulty": "intermediate",
+      "duration": "100 min",
+      "type": "subtopic",
+      "description": "Evaluation of CPU scheduling algorithms including FCFS, SJF, and Round Robin using performance metrics.",
+      "id": "n8",
+      "title": "CPU Scheduling Criteria and Algorithms",
+      "personalizationRationale": "Critical core topic for modeling system performance and resource allocation."
+    },
+    {
+      "personalizationRationale": "Mandatory midterm checkpoint to ensure mastery of foundational concepts before the exam.",
+      "title": "Midterm Review: Foundations and Processes",
+      "description": "A comprehensive review and practice assessment covering all material from Chapters 1-5 to prepare for the midterm.",
+      "id": "n9",
+      "duration": "50 min",
+      "type": "assessment",
+      "dependsOn": [
+        "n8"
+      ],
+      "difficulty": "intermediate",
+      "syllabusBlockId": "block_03",
+      "nodeRole": "assessment"
+    },
+    {
+      "title": "Synchronization Primitives and Mutexes",
+      "personalizationRationale": "Essential core module for building thread-safe OS primitives and applications.",
+      "id": "n10",
+      "description": "Solving the critical section problem using hardware and software solutions like mutex locks and semaphores.",
+      "duration": "150 min",
+      "type": "topic",
+      "dependsOn": [
+        "n9"
+      ],
+      "syllabusBlockId": "block_04",
+      "nodeRole": "core_required",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "n11",
+      "description": "Application of synchronization primitives to classic problems like the Producer-Consumer and Dining Philosophers.",
+      "title": "Classic Problems of Synchronization",
+      "personalizationRationale": "Core requirement focused on practical application of synchronization theory.",
+      "difficulty": "advanced",
+      "syllabusBlockId": "block_04",
+      "nodeRole": "core_required",
+      "dependsOn": [
+        "n10"
+      ],
+      "type": "subtopic",
+      "duration": "150 min"
+    },
+    {
+      "title": "Deadlock Characterization and Avoidance",
+      "personalizationRationale": "Core requirement to understand resource allocation safety and deadlock detection.",
+      "id": "n12",
+      "description": "Identifying deadlock conditions and implementing Banker's algorithm for deadlock avoidance.",
+      "type": "topic",
+      "duration": "150 min",
+      "syllabusBlockId": "block_05",
+      "nodeRole": "core_required",
+      "difficulty": "intermediate",
+      "dependsOn": [
+        "n11"
+      ]
+    },
+    {
+      "type": "topic",
+      "duration": "150 min",
+      "syllabusBlockId": "block_06",
+      "nodeRole": "core_required",
+      "difficulty": "advanced",
+      "dependsOn": [
+        "n12"
+      ],
+      "title": "Physical Memory and Paging Structures",
+      "personalizationRationale": "Fundamental memory management concepts required for the final project and exam.",
+      "description": "Principles of contiguous allocation, fragmentation, and the implementation of paging and page tables.",
+      "id": "n13"
+    },
+    {
+      "type": "subtopic",
+      "duration": "150 min",
+      "syllabusBlockId": "block_06",
+      "nodeRole": "core_required",
+      "difficulty": "advanced",
+      "dependsOn": [
+        "n13"
+      ],
+      "title": "Virtual Memory and Page Replacement",
+      "personalizationRationale": "Core requirement focusing on virtualizing memory to support larger applications.",
+      "description": "Advanced memory concepts including demand paging, thrashing, and page replacement algorithms (LRU, FIFO).",
+      "id": "n14"
+    },
+    {
+      "id": "n15",
+      "description": "Overview of the I/O subsystem architecture, including interrupt-driven I/O and DMA performance tradeoffs.",
+      "personalizationRationale": "Mandatory core material regarding the OS interface with external hardware.",
+      "title": "I/O Systems and Performance",
+      "dependsOn": [
+        "n14"
+      ],
+      "difficulty": "intermediate",
+      "syllabusBlockId": "block_07",
+      "nodeRole": "core_required",
+      "duration": "150 min",
+      "type": "topic"
+    },
+    {
+      "id": "n16",
+      "description": "Implementation details of file systems, including disk block allocation and metadata management.",
+      "title": "File System Implementation Strategies",
+      "personalizationRationale": "Required capstone content for understanding persistent storage implementations.",
+      "difficulty": "advanced",
+      "syllabusBlockId": "block_07",
+      "nodeRole": "core_required",
+      "dependsOn": [
+        "n15"
+      ],
+      "type": "subtopic",
+      "duration": "100 min"
+    },
+    {
+      "title": "Final Cumulative Course Review",
+      "personalizationRationale": "Final assessment checkpoint for the cumulative final exam covering all blocks.",
+      "id": "n17",
+      "description": "A cumulative review of the entire syllabus, focusing on cross-topic connections between memory, scheduling, and sync.",
+      "duration": "50 min",
+      "type": "assessment",
+      "dependsOn": [
+        "n16"
+      ],
+      "difficulty": "advanced",
+      "syllabusBlockId": "block_07",
+      "nodeRole": "assessment"
+    }
+  ]
+}

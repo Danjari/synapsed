@@ -1,0 +1,247 @@
+{
+  "profileId": "os_no_prior_exposure_5",
+  "cluster": null,
+  "field": null,
+  "description": "A junior-year CS student with a strong background in theoretical data structures and high-level application development who feels mathematically confident but technically intimidated by the shift to C-based systems programming.",
+  "studentId": "offline-os_no_prior_exposure_5",
+  "source": "offline-gemini",
+  "nodeCount": 17,
+  "nodes": [
+    {
+      "id": "node_01",
+      "type": "subtopic",
+      "duration": "60 min",
+      "description": "Introduction to C programming syntax, pointers, and memory management essential for systems work.",
+      "dependsOn": [],
+      "nodeRole": "scaffolding_catchup",
+      "difficulty": "beginner",
+      "title": "C Foundations for Systems Programming",
+      "personalizationRationale": "Because the student has no_prior_exposure to systems programming, this node builds the necessary C-language foundation for understanding OS kernels.",
+      "syllabusBlockId": "block_01"
+    },
+    {
+      "id": "node_02",
+      "description": "Overview of CPU registers, the fetch-decode-execute cycle, and how interrupts bridge hardware and software.",
+      "type": "subtopic",
+      "duration": "60 min",
+      "nodeRole": "scaffolding_catchup",
+      "dependsOn": [
+        "node_01"
+      ],
+      "difficulty": "beginner",
+      "personalizationRationale": "As a student with no_prior_exposure, grasping the underlying hardware architecture is a prerequisite for understanding OS structures.",
+      "syllabusBlockId": "block_01",
+      "title": "Hardware-Software Interface Overview"
+    },
+    {
+      "dependsOn": [
+        "node_02"
+      ],
+      "nodeRole": "scaffolding_catchup",
+      "duration": "60 min",
+      "type": "subtopic",
+      "description": "Deep dive into the transition between User Mode and Kernel Mode using system calls.",
+      "id": "node_03",
+      "title": "The System Call Mechanism",
+      "personalizationRationale": "Providing extra context on the privilege separation for a student with no_prior_exposure ensures they understand the fundamental security model of an OS.",
+      "syllabusBlockId": "block_01",
+      "difficulty": "beginner"
+    },
+    {
+      "personalizationRationale": "This core node provides the essential syllabus coverage of OS services required for all students regardless of background.",
+      "syllabusBlockId": "block_01",
+      "title": "OS Structures & Services",
+      "difficulty": "intermediate",
+      "duration": "120 min",
+      "type": "topic",
+      "description": "Introduction to OS services, system structures, and the difference between monolithic and microkernel designs.",
+      "id": "node_04",
+      "dependsOn": [
+        "node_03"
+      ],
+      "nodeRole": "core_required"
+    },
+    {
+      "title": "The Process Abstraction",
+      "syllabusBlockId": "block_02",
+      "personalizationRationale": "Understanding the process abstraction is fundamental to the entire course; this node ensures the student masters lifecycle management.",
+      "difficulty": "intermediate",
+      "dependsOn": [
+        "node_04"
+      ],
+      "nodeRole": "core_required",
+      "duration": "110 min",
+      "type": "topic",
+      "description": "Detailed look at process states, the Process Control Block (PCB), and context switching.",
+      "id": "node_05"
+    },
+    {
+      "description": "Mechanisms for processes to communicate via shared memory, message passing, and sockets.",
+      "type": "topic",
+      "duration": "115 min",
+      "id": "node_06",
+      "nodeRole": "core_required",
+      "dependsOn": [
+        "node_05"
+      ],
+      "syllabusBlockId": "block_02",
+      "personalizationRationale": "IPC is a core syllabus requirement that bridges process management with distributed and concurrent systems.",
+      "title": "Inter-Process Communication (IPC)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "node_07",
+      "duration": "100 min",
+      "type": "topic",
+      "description": "Exploring multithreading models, threading libraries (Pthreads/Windows), and implicit threading.",
+      "dependsOn": [
+        "node_06"
+      ],
+      "nodeRole": "core_required",
+      "difficulty": "intermediate",
+      "title": "Threads & Threading Models",
+      "personalizationRationale": "Thread management is a core requirement; even with no_prior_exposure, the student must master concurrent execution units.",
+      "syllabusBlockId": "block_03"
+    },
+    {
+      "dependsOn": [
+        "node_07"
+      ],
+      "nodeRole": "core_required",
+      "id": "node_08",
+      "duration": "120 min",
+      "type": "topic",
+      "description": "Analysis of CPU scheduling algorithms including FCFS, SJF, Priority, and Round Robin.",
+      "difficulty": "intermediate",
+      "syllabusBlockId": "block_03",
+      "personalizationRationale": "Mastering scheduling criteria and algorithms is a core competency tested on both the midterm and final exams.",
+      "title": "CPU Scheduling Algorithms"
+    },
+    {
+      "difficulty": "intermediate",
+      "title": "Midterm Review (Ch. 1-5)",
+      "syllabusBlockId": "block_03",
+      "personalizationRationale": "This required assessment checkpoint prepares students for the midterm, ensuring no_prior_exposure doesn't lead to early exam failure.",
+      "id": "node_09",
+      "description": "Comprehensive review session covering Chapters 1-5 in preparation for the week-8 midterm exam.",
+      "type": "assessment",
+      "duration": "80 min",
+      "nodeRole": "assessment",
+      "dependsOn": [
+        "node_08"
+      ]
+    },
+    {
+      "type": "topic",
+      "duration": "150 min",
+      "description": "The critical-section problem and software/hardware solutions including Mutex locks.",
+      "id": "node_10",
+      "dependsOn": [
+        "node_09"
+      ],
+      "nodeRole": "core_required",
+      "personalizationRationale": "Synchronization is a core course objective; this node builds the tools needed for safe concurrent programming.",
+      "syllabusBlockId": "block_04",
+      "title": "Process Synchronization: Mutexes",
+      "difficulty": "intermediate"
+    },
+    {
+      "difficulty": "intermediate",
+      "title": "Semaphores & Classic Sync Problems",
+      "personalizationRationale": "Classic synchronization problems are required syllabus components and are heavily used in upcoming project deliveries.",
+      "syllabusBlockId": "block_04",
+      "dependsOn": [
+        "node_10"
+      ],
+      "nodeRole": "core_required",
+      "id": "node_11",
+      "type": "topic",
+      "duration": "150 min",
+      "description": "Using semaphores and monitors to solve classic problems like Bounded Buffer and Dining Philosophers."
+    },
+    {
+      "nodeRole": "core_required",
+      "dependsOn": [
+        "node_11"
+      ],
+      "description": "Characterizing deadlock and applying prevention, avoidance, and detection strategies.",
+      "type": "topic",
+      "duration": "150 min",
+      "id": "node_12",
+      "title": "Deadlock Prevention & Avoidance",
+      "personalizationRationale": "Deadlock theory is a mandatory module required for modeling system reliability analytically.",
+      "syllabusBlockId": "block_05",
+      "difficulty": "intermediate"
+    },
+    {
+      "difficulty": "intermediate",
+      "title": "Physical Memory & Paging",
+      "syllabusBlockId": "block_06",
+      "personalizationRationale": "Core memory management concepts are essential for the final exam and the memory-related programming projects.",
+      "id": "node_13",
+      "type": "topic",
+      "duration": "150 min",
+      "description": "Logical vs physical addressing, contiguous allocation, and the transition to paging.",
+      "dependsOn": [
+        "node_12"
+      ],
+      "nodeRole": "core_required"
+    },
+    {
+      "nodeRole": "core_required",
+      "dependsOn": [
+        "node_13"
+      ],
+      "id": "node_14",
+      "description": "Demand paging, page replacement algorithms (LRU, Optimal), and the mechanics of thrashing.",
+      "duration": "150 min",
+      "type": "topic",
+      "difficulty": "intermediate",
+      "title": "Virtual Memory & Page Replacement",
+      "syllabusBlockId": "block_06",
+      "personalizationRationale": "Virtual memory management is a mandatory block that explains how OS handles resources larger than physical RAM."
+    },
+    {
+      "title": "I/O Systems & Interfaces",
+      "personalizationRationale": "I/O systems are a required capstone topic to understand how the OS interacts with external devices.",
+      "syllabusBlockId": "block_07",
+      "difficulty": "intermediate",
+      "nodeRole": "core_required",
+      "dependsOn": [
+        "node_14"
+      ],
+      "description": "Understanding I/O hardware, polling vs interrupts, and DMA interfaces.",
+      "duration": "150 min",
+      "type": "topic",
+      "id": "node_15"
+    },
+    {
+      "difficulty": "intermediate",
+      "syllabusBlockId": "block_07",
+      "personalizationRationale": "File system implementation is a core requirement that combines memory management and I/O concepts.",
+      "title": "File System Implementation",
+      "id": "node_16",
+      "type": "topic",
+      "duration": "150 min",
+      "description": "Structure of file systems, directory implementation, and allocation methods (linked, indexed).",
+      "dependsOn": [
+        "node_15"
+      ],
+      "nodeRole": "core_required"
+    },
+    {
+      "type": "assessment",
+      "duration": "120 min",
+      "description": "Cumulative review of the entire syllabus (Ch. 1-15) in preparation for the week-17 final exam.",
+      "id": "node_17",
+      "dependsOn": [
+        "node_16"
+      ],
+      "nodeRole": "assessment",
+      "title": "Cumulative Final Review",
+      "personalizationRationale": "Final assessment checkpoint to ensure the student has successfully bridged their no_prior_exposure gap to master the full syllabus.",
+      "syllabusBlockId": "block_07",
+      "difficulty": "advanced"
+    }
+  ]
+}

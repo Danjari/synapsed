@@ -1,0 +1,607 @@
+{
+  "course_id": "os",
+  "design": "3 tiers x 10 profiles, LLM-generated (script 12)",
+  "tier_question_id": "prereq_c_experience",
+  "profiles": [
+    {
+      "id": "os_no_prior_exposure_1",
+      "tier": "no_prior_exposure",
+      "description": "A high-achieving student who excels in theoretical data structures and logic but feels intimidated by the transition from high-level languages like Python to systems-level C programming.",
+      "answers": {
+        "assessment_exam_prep": "Practicing analytical problems and theory-based questions.",
+        "assessment_pair_programming": "Neutral; I am willing to work in pairs for projects.",
+        "challenge_pacing_scaffolding": "I need extra scaffolding/step-by-step guides for C programming and APIs.",
+        "challenge_time_commitment": "I am taking a heavy laboratory science course this semester, so weeks 9 and 12 will be particularly difficult as my midterms in that class coincide with the OS projects.",
+        "lo_sync_challenge": "I am worried about the non-deterministic nature of race conditions and how to effectively debug code where the error might not happen every time I run it.",
+        "lo_process_thread_readiness": "I understand the theory but have never implemented them.",
+        "lo_analytic_modeling": "4",
+        "prereq_knowledge_check": "Data Structures (linked lists, queues)",
+        "learning_style_preference_ranking": "Attending lectures and participating in discussions., Implementing code in programming projects., Solving practice problems for the midterm/final., Reading the textbook (Silberschatz) and taking notes.",
+        "goal_career_alignment": "I am interested in pursuing a career in Cybersecurity; I recognize that understanding OS internals like memory protection and privilege levels is fundamental to identifying system vulnerabilities.",
+        "goal_interest_area": "Synchronization and Concurrency",
+        "prereq_confidence_rating": "1",
+        "prereq_c_experience": "No prior exposure: I have never programmed in C or worked with systems-level code."
+      }
+    },
+    {
+      "id": "os_no_prior_exposure_2",
+      "tier": "no_prior_exposure",
+      "description": "A mathematically-inclined junior who excels in theoretical computer science and algorithm design but has only worked in high-level languages like Java and Python.",
+      "answers": {
+        "lo_analytic_modeling": "4",
+        "challenge_pacing_scaffolding": "I need extra scaffolding/step-by-step guides for C programming and APIs.",
+        "goal_career_alignment": "As an aspiring Software Engineer, I want to understand how my high-level code interacts with the underlying hardware, especially regarding concurrency and resource allocation.",
+        "lo_process_thread_readiness": "I understand the theory but have never implemented them.",
+        "prereq_knowledge_check": "Data Structures (linked lists, queues)",
+        "challenge_time_commitment": "I am taking Distributed Databases this semester, which also has heavy late-semester deliverables, so I am worried about the overlap in weeks 12 and 15.",
+        "goal_interest_area": "Process and Thread Management",
+        "prereq_confidence_rating": "1",
+        "learning_style_preference_ranking": "Solving practice problems for the midterm/final., Attending lectures and participating in discussions., Reading the textbook (Silberschatz) and taking notes., Implementing code in programming projects.",
+        "lo_sync_challenge": "I am concerned about the logic of debugging race conditions and deadlocks, especially since I have no experience with the syntax of synchronization primitives in C.",
+        "assessment_exam_prep": "Practicing analytical problems and theory-based questions.",
+        "assessment_pair_programming": "Neutral; I am willing to work in pairs for projects.",
+        "prereq_c_experience": "No prior exposure: I have never programmed in C or worked with systems-level code."
+      }
+    },
+    {
+      "id": "os_no_prior_exposure_3",
+      "tier": "no_prior_exposure",
+      "description": "A mathematically-inclined junior who has primarily used high-level languages like Python and Java and is now tackling systems-level concepts for the first time.",
+      "answers": {
+        "prereq_knowledge_check": "Data Structures (linked lists, queues)",
+        "challenge_pacing_scaffolding": "I need extra scaffolding/step-by-step guides for C programming and APIs.",
+        "lo_analytic_modeling": "4",
+        "assessment_pair_programming": "Neutral; I am willing to work in pairs for projects.",
+        "prereq_confidence_rating": "1",
+        "learning_style_preference_ranking": "Solving practice problems for the midterm/final., Attending lectures and participating in discussions., Implementing code in programming projects., Reading the textbook (Silberschatz) and taking notes.",
+        "challenge_time_commitment": "I am part of the university debate team and have a regional tournament during Week 12, so I will need to coordinate early with my partner to start that project ahead of time.",
+        "goal_interest_area": "Memory Management and Virtual Memory",
+        "lo_process_thread_readiness": "I understand the theory but have never implemented them.",
+        "assessment_exam_prep": "Practicing analytical problems and theory-based questions.",
+        "goal_career_alignment": "I plan to pursue high-level software engineering, but I want to understand the 'black box' of the operating system so I can write more efficient and resource-aware code in any language.",
+        "lo_sync_challenge": "My biggest concern is the abstract nature of semaphores\u2014it seems difficult to debug logic errors that don't result in immediate crashes but rather silent data corruption or race conditions.",
+        "prereq_c_experience": "No prior exposure: I have never programmed in C or worked with systems-level code."
+      }
+    },
+    {
+      "id": "os_no_prior_exposure_4",
+      "tier": "no_prior_exposure",
+      "description": "An academically strong student who excels in theoretical computer science and high-level data structures but feels apprehensive about the transition to manual memory management and C syntax.",
+      "answers": {
+        "challenge_time_commitment": "I am taking an Algorithms elective this semester, so the weeks where programming projects are due might be quite stressful given the heavy workload in both classes.",
+        "lo_sync_challenge": "I am worried about the difficulty of debugging non-deterministic race conditions, especially since I'm still learning how to visualize concurrent execution.",
+        "lo_analytic_modeling": "4",
+        "prereq_confidence_rating": "2",
+        "lo_process_thread_readiness": "I understand the theory but have never implemented them.",
+        "goal_career_alignment": "I plan to pursue a career in high-performance backend software engineering, so understanding how the OS manages concurrency and resources is vital for writing efficient code.",
+        "learning_style_preference_ranking": "Attending lectures and participating in discussions., Solving practice problems for the midterm/final., Implementing code in programming projects., Reading the textbook (Silberschatz) and taking notes.",
+        "prereq_knowledge_check": "Data Structures (linked lists, queues)",
+        "goal_interest_area": "Synchronization and Concurrency",
+        "assessment_exam_prep": "Practicing analytical problems and theory-based questions.",
+        "challenge_pacing_scaffolding": "I need extra scaffolding/step-by-step guides for C programming and APIs.",
+        "assessment_pair_programming": "Very comfortable; I enjoy collaborative coding.",
+        "prereq_c_experience": "No prior exposure: I have never programmed in C or worked with systems-level code."
+      }
+    },
+    {
+      "id": "os_no_prior_exposure_5",
+      "tier": "no_prior_exposure",
+      "description": "A junior-year CS student with a strong background in theoretical data structures and high-level application development who feels mathematically confident but technically intimidated by the shift to C-based systems programming.",
+      "answers": {
+        "lo_sync_challenge": "My main concern is the logic of debugging deadlocks; I understand the concept of a mutex, but I'm afraid I won't be able to spot where a race condition is happening in a complex program.",
+        "learning_style_preference_ranking": "Solving practice problems for the midterm/final., Attending lectures and participating in discussions., Implementing code in programming projects., Reading the textbook (Silberschatz) and taking notes.",
+        "goal_interest_area": "Process and Thread Management",
+        "prereq_knowledge_check": "Data Structures (linked lists, queues)",
+        "challenge_pacing_scaffolding": "I need extra scaffolding/step-by-step guides for C programming and APIs.",
+        "lo_process_thread_readiness": "I understand the theory but have never implemented them.",
+        "goal_career_alignment": "As an aspiring backend software engineer, I believe understanding how the OS manages concurrency and scheduling is vital for building scalable web services, even if I usually work in higher-level languages like Java.",
+        "assessment_exam_prep": "Practicing analytical problems and theory-based questions.",
+        "challenge_time_commitment": "I have a significant commitment to a research lab assistantship that peaks during mid-semester, which might make the intensive project weeks in 9 and 12 quite difficult to manage.",
+        "prereq_confidence_rating": "1",
+        "assessment_pair_programming": "Neutral; I am willing to work in pairs for projects.",
+        "lo_analytic_modeling": "4",
+        "prereq_c_experience": "No prior exposure: I have never programmed in C or worked with systems-level code."
+      }
+    },
+    {
+      "id": "os_no_prior_exposure_6",
+      "tier": "no_prior_exposure",
+      "description": "A cybersecurity-focused student who is mathematically strong and comfortable with theory but feels significant anxiety about the transition from high-level languages to C and low-level memory management.",
+      "answers": {
+        "goal_career_alignment": "I am interested in a career in Cybersecurity, where understanding how the operating system handles memory and permissions is essential for identifying and mitigating low-level vulnerabilities.",
+        "goal_interest_area": "Memory Management and Virtual Memory",
+        "challenge_pacing_scaffolding": "I need extra scaffolding/step-by-step guides for C programming and APIs.",
+        "prereq_knowledge_check": "Data Structures (linked lists, queues)",
+        "learning_style_preference_ranking": "Attending lectures and participating in discussions., Solving practice problems for the midterm/final., Reading the textbook (Silberschatz) and taking notes., Implementing code in programming projects.",
+        "assessment_exam_prep": "Practicing analytical problems and theory-based questions.",
+        "prereq_confidence_rating": "1",
+        "challenge_time_commitment": "I have a recurring capstone meeting on Tuesday evenings, so I will need to ensure my pair programming sessions for the mid-semester projects are scheduled for weekends or earlier in the week.",
+        "assessment_pair_programming": "Neutral; I am willing to work in pairs for projects.",
+        "lo_process_thread_readiness": "I understand the theory but have never implemented them.",
+        "lo_sync_challenge": "My main concern is visualizing how multiple threads interact in real-time, and I'm worried that my lack of experience with C syntax will make it harder to catch logic errors like deadlocks or race conditions.",
+        "lo_analytic_modeling": "4",
+        "prereq_c_experience": "No prior exposure: I have never programmed in C or worked with systems-level code."
+      }
+    },
+    {
+      "id": "os_no_prior_exposure_7",
+      "tier": "no_prior_exposure",
+      "description": "A third-year student with a strong background in high-level Python development and theoretical computer science who is apprehensive about the transition to low-level C programming.",
+      "answers": {
+        "lo_sync_challenge": "I am worried about the logic of deadlocks and race conditions, especially since I'll be learning the C syntax for mutexes and semaphores at the same time.",
+        "goal_interest_area": "Process and Thread Management",
+        "challenge_time_commitment": "I have a heavy course load this semester and a recurring commitment on Thursday nights, which makes the mid-week deadlines for the programming projects a bit stressful.",
+        "lo_process_thread_readiness": "I understand the theory but have never implemented them.",
+        "learning_style_preference_ranking": "Attending lectures and participating in discussions., Solving practice problems for the midterm/final., Implementing code in programming projects., Reading the textbook (Silberschatz) and taking notes.",
+        "assessment_exam_prep": "Practicing analytical problems and theory-based questions.",
+        "prereq_knowledge_check": "Data Structures (linked lists, queues)",
+        "lo_analytic_modeling": "4",
+        "prereq_confidence_rating": "1",
+        "assessment_pair_programming": "Neutral; I am willing to work in pairs for projects.",
+        "goal_career_alignment": "I am interested in pursuing a career in Cybersecurity, so I want to understand how the OS manages permissions, memory isolation, and process security at a fundamental level.",
+        "challenge_pacing_scaffolding": "I need extra scaffolding/step-by-step guides for C programming and APIs.",
+        "prereq_c_experience": "No prior exposure: I have never programmed in C or worked with systems-level code."
+      }
+    },
+    {
+      "id": "os_no_prior_exposure_8",
+      "tier": "no_prior_exposure",
+      "description": "A diligent student with a strong background in theoretical CS and data structures in Python, but who feels intimidated by the transition to low-level C programming.",
+      "answers": {
+        "goal_career_alignment": "I aim to become a high-level Software Engineer; understanding the underlying OS will help me write more efficient code and better understand memory overhead in large-scale applications.",
+        "learning_style_preference_ranking": "Solving practice problems for the midterm/final., Attending lectures and participating in discussions., Implementing code in programming projects., Reading the textbook (Silberschatz) and taking notes.",
+        "assessment_pair_programming": "Neutral; I am willing to work in pairs for projects.",
+        "assessment_exam_prep": "Practicing analytical problems and theory-based questions.",
+        "prereq_knowledge_check": "Data Structures (linked lists, queues)",
+        "prereq_confidence_rating": "1",
+        "lo_process_thread_readiness": "I understand the theory but have never implemented them.",
+        "lo_sync_challenge": "My main concern is visualizing the race conditions; since I've only written sequential code, the non-deterministic nature of thread execution feels very abstract.",
+        "challenge_pacing_scaffolding": "I need extra scaffolding/step-by-step guides for C programming and APIs.",
+        "goal_interest_area": "Memory Management and Virtual Memory",
+        "lo_analytic_modeling": "4",
+        "challenge_time_commitment": "I have a heavy lab schedule for my Physics minor during week 9, which makes the second project deadline a bit stressful for me.",
+        "prereq_c_experience": "No prior exposure: I have never programmed in C or worked with systems-level code."
+      }
+    },
+    {
+      "id": "os_no_prior_exposure_9",
+      "tier": "no_prior_exposure",
+      "description": "A junior Computer Science student with a strong background in high-level languages and theoretical data structures who feels a significant gap in their low-level programming skills.",
+      "answers": {
+        "assessment_pair_programming": "Neutral; I am willing to work in pairs for projects.",
+        "prereq_confidence_rating": "1",
+        "challenge_time_commitment": "I am taking a heavy math load this semester, so I am concerned about the time required to bridge the gap in my C knowledge while meeting the deadlines for projects 2 and 3.",
+        "assessment_exam_prep": "Practicing analytical problems and theory-based questions.",
+        "goal_career_alignment": "I plan to pursue a career in backend software engineering where understanding thread safety and resource management is critical for building scalable systems, even if the primary language isn't C.",
+        "learning_style_preference_ranking": "Solving practice problems for the midterm/final., Attending lectures and participating in discussions., Implementing code in programming projects., Reading the textbook (Silberschatz) and taking notes.",
+        "goal_interest_area": "Synchronization and Concurrency",
+        "lo_sync_challenge": "The abstract logic of semaphores makes sense to me, but I'm worried about the practical implementation details and how to debug race conditions in a language I'm not familiar with.",
+        "lo_analytic_modeling": "4",
+        "challenge_pacing_scaffolding": "I need extra scaffolding/step-by-step guides for C programming and APIs.",
+        "lo_process_thread_readiness": "I understand the theory but have never implemented them.",
+        "prereq_knowledge_check": "Data Structures (linked lists, queues)",
+        "prereq_c_experience": "No prior exposure: I have never programmed in C or worked with systems-level code."
+      }
+    },
+    {
+      "id": "os_no_prior_exposure_10",
+      "tier": "no_prior_exposure",
+      "description": "A third-year student with strong theoretical foundations in Python and Java who is pivoting toward Cybersecurity but feels a significant gap in their knowledge regarding C and low-level memory management.",
+      "answers": {
+        "challenge_time_commitment": "I am taking a heavy load of lab-based courses this semester, so the weeks where projects are due will be very tight; I'll need to front-load my work.",
+        "goal_career_alignment": "I plan to specialize in Cybersecurity, and I recognize that understanding OS-level vulnerabilities like buffer overflows and privilege escalation is impossible without first mastering how the kernel manages resources.",
+        "prereq_knowledge_check": "Data Structures (linked lists, queues)",
+        "assessment_pair_programming": "Neutral; I am willing to work in pairs for projects.",
+        "lo_analytic_modeling": "4",
+        "lo_process_thread_readiness": "I understand the theory but have never implemented them.",
+        "learning_style_preference_ranking": "Attending lectures and participating in discussions., Solving practice problems for the midterm/final.., Reading the textbook (Silberschatz) and taking notes., Implementing code in programming projects.",
+        "lo_sync_challenge": "My biggest concern is the abstract nature of race conditions; I'm worried about debugging errors that are non-deterministic and don't happen every time the code runs.",
+        "goal_interest_area": "Synchronization and Concurrency",
+        "challenge_pacing_scaffolding": "I need extra scaffolding/step-by-step guides for C programming and APIs.",
+        "assessment_exam_prep": "Practicing analytical problems and theory-based questions.",
+        "prereq_confidence_rating": "1",
+        "prereq_c_experience": "No prior exposure: I have never programmed in C or worked with systems-level code."
+      }
+    },
+    {
+      "id": "os_some_prior_exposure_1",
+      "tier": "some_prior_exposure",
+      "description": "A junior Computer Science major aiming for a career in Cybersecurity who is confident with command-line tools but struggles with manual memory management and low-level debugging in C.",
+      "answers": {
+        "challenge_time_commitment": "I have a heavy course load this semester and a recurring commitment on Thursday nights, which makes the mid-semester project deadlines in weeks 9 and 12 a bit daunting.",
+        "goal_interest_area": "Memory Management and Virtual Memory",
+        "prereq_knowledge_check": "Command-line (Unix/Linux) proficiency",
+        "challenge_pacing_scaffolding": "I need extra scaffolding/step-by-step guides for C programming and APIs.",
+        "prereq_confidence_rating": "2",
+        "lo_process_thread_readiness": "I understand the theory but have never implemented them.",
+        "learning_style_preference_ranking": "Implementing code in programming projects., Attending lectures and participating in discussions., Solving practice problems for the midterm/final., Reading the textbook (Silberschatz) and taking notes.",
+        "goal_career_alignment": "I want to specialize in Cybersecurity, so I need to understand how the OS manages memory and permissions to protect against exploits like buffer overflows.",
+        "lo_sync_challenge": "My biggest concern is visualizing and debugging race conditions that only happen occasionally, especially when using semaphores to coordinate multiple threads.",
+        "assessment_pair_programming": "Neutral; I am willing to work in pairs for projects.",
+        "assessment_exam_prep": "Practicing analytical problems and theory-based questions.",
+        "lo_analytic_modeling": "3",
+        "prereq_c_experience": "Some prior exposure: I have written basic programs in C or used a command-line interface."
+      }
+    },
+    {
+      "id": "os_some_prior_exposure_2",
+      "tier": "some_prior_exposure",
+      "description": "A Cybersecurity-focused junior who is confident in theoretical problem-solving but feels intimidated by the manual memory management and pointer arithmetic required in C.",
+      "answers": {
+        "goal_career_alignment": "I want to go into Cybersecurity, so understanding how memory isolation and kernel-level permissions work is crucial for identifying vulnerabilities like buffer overflows.",
+        "prereq_confidence_rating": "2",
+        "assessment_exam_prep": "Practicing analytical problems and theory-based questions.",
+        "prereq_knowledge_check": "Command-line (Unix/Linux) proficiency",
+        "challenge_time_commitment": "I have a heavy lab-based course in the same semester, so I will need to start projects early to avoid the week 12 crunch.",
+        "lo_process_thread_readiness": "I understand the theory but have never implemented them.",
+        "challenge_pacing_scaffolding": "I need extra scaffolding/step-by-step guides for C programming and APIs.",
+        "goal_interest_area": "Memory Management and Virtual Memory",
+        "learning_style_preference_ranking": "Solving practice problems for the midterm/final., Implementing code in programming projects., Attending lectures and participating in discussions., Reading the textbook (Silberschatz) and taking notes.",
+        "assessment_pair_programming": "Neutral; I am willing to work in pairs for projects.",
+        "lo_analytic_modeling": "4",
+        "lo_sync_challenge": "My biggest concern is being able to visualize and trace potential race conditions or deadlocks before they actually crash my program.",
+        "prereq_c_experience": "Some prior exposure: I have written basic programs in C or used a command-line interface."
+      }
+    },
+    {
+      "id": "os_some_prior_exposure_3",
+      "tier": "some_prior_exposure",
+      "description": "A Cybersecurity-focused junior who excels at analytical problem-solving and logic but feels intimidated by low-level C pointers and manual memory management.",
+      "answers": {
+        "challenge_time_commitment": "I am currently balancing a part-time remote internship, which makes the mid-semester crunch (weeks 9 and 12) particularly difficult for intensive coding projects.",
+        "goal_interest_area": "Memory Management and Virtual Memory",
+        "lo_analytic_modeling": "4",
+        "assessment_exam_prep": "Practicing analytical problems and theory-based questions.",
+        "lo_sync_challenge": "My primary concern is the complexity of debugging deadlocks and race conditions, as they seem very difficult to replicate and fix in a C environment.",
+        "prereq_confidence_rating": "2",
+        "learning_style_preference_ranking": "Solving practice problems for the midterm/final., Attending lectures and participating in discussions., Implementing code in programming projects., Reading the textbook (Silberschatz) and taking notes.",
+        "challenge_pacing_scaffolding": "I need extra scaffolding/step-by-step guides for C programming and APIs.",
+        "lo_process_thread_readiness": "I understand the theory but have never implemented them.",
+        "goal_career_alignment": "I am aiming for a career in Cybersecurity; I believe that understanding kernel-level memory management and process isolation is essential for identifying and mitigating system vulnerabilities.",
+        "prereq_knowledge_check": "Data Structures (linked lists, queues)",
+        "assessment_pair_programming": "Neutral; I am willing to work in pairs for projects.",
+        "prereq_c_experience": "Some prior exposure: I have written basic programs in C or used a command-line interface."
+      }
+    },
+    {
+      "id": "os_some_prior_exposure_4",
+      "tier": "some_prior_exposure",
+      "description": "A theory-oriented student interested in cybersecurity who excels at analytical modeling but feels intimidated by low-level C memory management and debugging.",
+      "answers": {
+        "assessment_exam_prep": "Practicing analytical problems and theory-based questions.",
+        "challenge_pacing_scaffolding": "I need extra scaffolding/step-by-step guides for C programming and APIs.",
+        "goal_career_alignment": "I am planning to pursue a career in Cybersecurity; understanding memory management and how the kernel handles permissions is fundamental to identifying and preventing system-level vulnerabilities.",
+        "assessment_pair_programming": "Neutral; I am willing to work in pairs for projects.",
+        "challenge_time_commitment": "I am taking a heavy laboratory science course this semester, so the weeks with project deadlines will require very careful time management to ensure I can handle the C debugging workload.",
+        "prereq_knowledge_check": "Data Structures (linked lists, queues)",
+        "prereq_confidence_rating": "2",
+        "learning_style_preference_ranking": "Solving practice problems for the midterm/final., Attending lectures and participating in discussions., Reading the textbook (Silberschatz) and taking notes., Implementing code in programming projects.",
+        "lo_analytic_modeling": "4",
+        "goal_interest_area": "Memory Management and Virtual Memory",
+        "lo_process_thread_readiness": "I understand the theory but have never implemented them.",
+        "lo_sync_challenge": "My biggest concern is the non-deterministic nature of race conditions\u2014I worry about writing code that seems to work but fails under specific timing conditions that I don't know how to test for.",
+        "prereq_c_experience": "Some prior exposure: I have written basic programs in C or used a command-line interface."
+      }
+    },
+    {
+      "id": "os_some_prior_exposure_5",
+      "tier": "some_prior_exposure",
+      "description": "A junior Computer Science major aiming for a career in software engineering who is mathematically confident but feels intimidated by low-level memory management in C.",
+      "answers": {
+        "lo_sync_challenge": "Visualizing how multiple threads interact in real-time and preventing race conditions without over-complicating the logic.",
+        "learning_style_preference_ranking": "Implementing code in programming projects., Attending lectures and participating in discussions., Solving practice problems for the midterm/final., Reading the textbook (Silberschatz) and taking notes.",
+        "challenge_time_commitment": "I am a member of a varsity sports team, so my travel schedule during weeks 9 and 12 might make meeting with my project partner difficult.",
+        "assessment_pair_programming": "Neutral; I am willing to work in pairs for projects.",
+        "prereq_knowledge_check": "Data Structures (linked lists, queues)",
+        "challenge_pacing_scaffolding": "I need extra scaffolding/step-by-step guides for C programming and APIs.",
+        "lo_analytic_modeling": "4",
+        "goal_career_alignment": "I want to be a Full-Stack Software Engineer, and understanding concurrency and process management is essential for building scalable and efficient backend systems.",
+        "lo_process_thread_readiness": "I understand the theory but have never implemented them.",
+        "goal_interest_area": "Process and Thread Management",
+        "assessment_exam_prep": "Practicing analytical problems and theory-based questions.",
+        "prereq_confidence_rating": "2",
+        "prereq_c_experience": "Some prior exposure: I have written basic programs in C or used a command-line interface."
+      }
+    },
+    {
+      "id": "os_some_prior_exposure_6",
+      "tier": "some_prior_exposure",
+      "description": "A junior Computer Science major focusing on cybersecurity who is confident in high-level data structures but feels anxious about low-level memory management and debugging in C.",
+      "answers": {
+        "learning_style_preference_ranking": "Implementing code in programming projects., Attending lectures and participating in discussions., Solving practice problems for the midterm/final., Reading the textbook (Silberschatz) and taking notes.",
+        "challenge_pacing_scaffolding": "I need extra scaffolding/step-by-step guides for C programming and APIs.",
+        "lo_analytic_modeling": "3",
+        "goal_career_alignment": "I am aiming for a career in Cybersecurity, so I need to deeply understand how the OS handles memory protection, process isolation, and kernel-space privileges to identify vulnerabilities.",
+        "challenge_time_commitment": "I have a heavy workload for a math elective during the mid-semester, so the week 9 project will require very careful time management on my part.",
+        "prereq_confidence_rating": "2",
+        "assessment_exam_prep": "Focusing on homework and project implementation.",
+        "lo_sync_challenge": "My biggest concern is the difficulty of debugging race conditions and deadlocks, which I've heard can be non-deterministic and hard to reproduce in C.",
+        "lo_process_thread_readiness": "I understand the theory but have never implemented them.",
+        "prereq_knowledge_check": "Data Structures (linked lists, queues)",
+        "assessment_pair_programming": "Neutral; I am willing to work in pairs for projects.",
+        "goal_interest_area": "Memory Management and Virtual Memory",
+        "prereq_c_experience": "Some prior exposure: I have written basic programs in C or used a command-line interface."
+      }
+    },
+    {
+      "id": "os_some_prior_exposure_7",
+      "tier": "some_prior_exposure",
+      "description": "A junior Computer Science major with a strong interest in Cybersecurity who feels confident in high-level logic but struggles with manual memory management and low-level C debugging.",
+      "answers": {
+        "assessment_exam_prep": "Practicing analytical problems and theory-based questions.",
+        "prereq_confidence_rating": "2",
+        "challenge_time_commitment": "I have a part-time internship that requires 10 hours a week, which might make the deadlines in weeks 9 and 12 particularly challenging.",
+        "goal_career_alignment": "I am aiming for a career in Cybersecurity, where understanding kernel-level memory isolation and race conditions is essential for identifying vulnerabilities.",
+        "lo_sync_challenge": "I am worried about the complexity of debugging deadlocks and visualizing how different threads interact in real-time.",
+        "goal_interest_area": "Synchronization and Concurrency",
+        "lo_process_thread_readiness": "I understand the theory but have never implemented them.",
+        "lo_analytic_modeling": "3",
+        "challenge_pacing_scaffolding": "I need extra scaffolding/step-by-step guides for C programming and APIs.",
+        "learning_style_preference_ranking": "Implementing code in programming projects., Solving practice problems for the midterm/final., Attending lectures and participating in discussions., Reading the textbook (Silberschatz) and taking notes.",
+        "prereq_knowledge_check": "Data Structures (linked lists, queues)",
+        "assessment_pair_programming": "Neutral; I am willing to work in pairs for projects.",
+        "prereq_c_experience": "Some prior exposure: I have written basic programs in C or used a command-line interface."
+      }
+    },
+    {
+      "id": "os_some_prior_exposure_8",
+      "tier": "some_prior_exposure",
+      "description": "A junior CS major who is strong in theoretical logic and data structures but feels intimidated by low-level C memory management and debugging.",
+      "answers": {
+        "assessment_pair_programming": "Neutral; I am willing to work in pairs for projects.",
+        "prereq_knowledge_check": "Data Structures (linked lists, queues)",
+        "lo_sync_challenge": "My biggest concern is debugging non-deterministic errors like race conditions that don't appear every time the code runs.",
+        "challenge_pacing_scaffolding": "I need extra scaffolding/step-by-step guides for C programming and APIs.",
+        "goal_career_alignment": "As someone aiming for a career in back-end software engineering, I want to understand how the OS manages concurrency and memory so I can write more efficient, high-performance applications.",
+        "challenge_time_commitment": "I am balancing a heavy Algorithms load and an on-campus job, so the weeks of projects 3 and 4 will be especially tight for me.",
+        "learning_style_preference_ranking": "Implementing code in programming projects., Solving practice problems for the midterm/final., Attending lectures and participating in discussions., Reading the textbook (Silberschatz) and taking notes.",
+        "lo_process_thread_readiness": "I understand the theory but have never implemented them.",
+        "prereq_confidence_rating": "2",
+        "assessment_exam_prep": "Practicing analytical problems and theory-based questions.",
+        "lo_analytic_modeling": "4",
+        "goal_interest_area": "Synchronization and Concurrency",
+        "prereq_c_experience": "Some prior exposure: I have written basic programs in C or used a command-line interface."
+      }
+    },
+    {
+      "id": "os_some_prior_exposure_9",
+      "tier": "some_prior_exposure",
+      "description": "A junior CS student who is comfortable with high-level data structures and collaboration but feels intimidated by low-level C memory management and debugging.",
+      "answers": {
+        "lo_process_thread_readiness": "I understand the theory but have never implemented them.",
+        "lo_sync_challenge": "My biggest concern is the difficulty of debugging non-deterministic errors like deadlocks or race conditions that might only happen occasionally during execution.",
+        "goal_interest_area": "Synchronization and Concurrency",
+        "goal_career_alignment": "I am interested in becoming a backend software engineer, and I believe that mastering concurrency and synchronization will help me write more efficient, scalable code for cloud-based applications.",
+        "lo_analytic_modeling": "3",
+        "challenge_time_commitment": "I am working a part-time internship alongside my studies, so I will need to be very disciplined about starting the projects as soon as they are released to manage the workload during those peak weeks.",
+        "assessment_exam_prep": "Practicing analytical problems and theory-based questions.",
+        "assessment_pair_programming": "Very comfortable; I enjoy collaborative coding.",
+        "learning_style_preference_ranking": "Implementing code in programming projects., Solving practice problems for the midterm/final., Attending lectures and participating in discussions., Reading the textbook (Silberschatz) and taking notes.",
+        "prereq_confidence_rating": "2",
+        "challenge_pacing_scaffolding": "I need extra scaffolding/step-by-step guides for C programming and APIs.",
+        "prereq_knowledge_check": "Data Structures (linked lists, queues)",
+        "prereq_c_experience": "Some prior exposure: I have written basic programs in C or used a command-line interface."
+      }
+    },
+    {
+      "id": "os_some_prior_exposure_10",
+      "tier": "some_prior_exposure",
+      "description": "A theory-oriented student who excels at analytical modeling and logic but feels intimidated by low-level C implementation and memory debugging.",
+      "answers": {
+        "assessment_pair_programming": "Neutral; I am willing to work in pairs for projects.",
+        "lo_process_thread_readiness": "I understand the theory but have never implemented them.",
+        "learning_style_preference_ranking": "Solving practice problems for the midterm/final., Attending lectures and participating in discussions., Implementing code in programming projects., Reading the textbook (Silberschatz) and taking notes.",
+        "lo_analytic_modeling": "4",
+        "challenge_pacing_scaffolding": "I need extra scaffolding/step-by-step guides for C programming and APIs.",
+        "prereq_knowledge_check": "Data Structures (linked lists, queues)",
+        "assessment_exam_prep": "Practicing analytical problems and theory-based questions.",
+        "goal_career_alignment": "I want to work in backend software engineering, and understanding how memory is allocated and managed will help me write more efficient code even in higher-level languages.",
+        "prereq_confidence_rating": "2",
+        "lo_sync_challenge": "My main concern is visualizing the race conditions and deadlocks that occur when multiple threads interact; it seems difficult to track mentally without seeing it happen.",
+        "challenge_time_commitment": "I have a heavy lab-based course this semester, so I am concerned about the overlap between lab reports and the project deadlines in weeks 9 and 12.",
+        "goal_interest_area": "Memory Management and Virtual Memory",
+        "prereq_c_experience": "Some prior exposure: I have written basic programs in C or used a command-line interface."
+      }
+    },
+    {
+      "id": "os_strong_prior_exposure_1",
+      "tier": "strong_prior_exposure",
+      "description": "A junior computer science student with a strong background in low-level development from a previous cybersecurity internship, seeking to deepen their understanding of kernel-level security.",
+      "answers": {
+        "lo_analytic_modeling": "4",
+        "lo_sync_challenge": "My main concern is the complexity of debugging non-deterministic race conditions and ensuring that my synchronization logic doesn't introduce significant performance regressions or deadlocks.",
+        "challenge_pacing_scaffolding": "I prefer hands-on experimental evaluation of design tradeoffs.",
+        "assessment_exam_prep": "Practicing analytical problems and theory-based questions.",
+        "learning_style_preference_ranking": "Implementing code in programming projects., Solving practice problems for the midterm/final., Attending lectures and participating in discussions., Reading the textbook (Silberschatz) and taking notes.",
+        "assessment_pair_programming": "Very comfortable; I enjoy collaborative coding.",
+        "prereq_confidence_rating": "5",
+        "lo_process_thread_readiness": "I have experience creating or managing processes/threads in code.",
+        "goal_interest_area": "Synchronization and Concurrency",
+        "goal_career_alignment": "I am aiming for a career in cybersecurity research, specifically focusing on kernel-level vulnerabilities and exploit mitigation, which requires a deep understanding of how OS internals manage resources.",
+        "prereq_knowledge_check": "Memory Addressing and Pointers",
+        "challenge_time_commitment": "I have a major research symposium presentation during week 12, so I will need to front-load the work for the third project to avoid a scheduling conflict.",
+        "prereq_c_experience": "Strong prior exposure: I am comfortable with pointers, manual memory management, and systems programming."
+      }
+    },
+    {
+      "id": "os_strong_prior_exposure_2",
+      "tier": "strong_prior_exposure",
+      "description": "A Computer Science junior with a background in competitive programming and a professional interest in cybersecurity and systems vulnerability research.",
+      "answers": {
+        "assessment_exam_prep": "Practicing analytical problems and theory-based questions.",
+        "assessment_pair_programming": "Neutral; I am willing to work in pairs for projects.",
+        "goal_career_alignment": "I want to work in cybersecurity, specifically in exploit development and kernel-level security, where a deep understanding of memory protections and concurrency is essential.",
+        "prereq_knowledge_check": "Memory Addressing and Pointers",
+        "lo_analytic_modeling": "4",
+        "goal_interest_area": "Synchronization and Concurrency",
+        "prereq_confidence_rating": "5",
+        "learning_style_preference_ranking": "Implementing code in programming projects., Solving practice problems for the midterm/final., Attending lectures and participating in discussions., Reading the textbook (Silberschatz) and taking notes.",
+        "challenge_pacing_scaffolding": "I prefer hands-on experimental evaluation of design tradeoffs.",
+        "challenge_time_commitment": "I am currently assisting with a research project on campus, which might make the final project week (Week 15) slightly more pressured.",
+        "lo_process_thread_readiness": "I have experience creating or managing processes/threads in code.",
+        "lo_sync_challenge": "My primary concern is identifying and debugging non-deterministic race conditions that only appear under specific load conditions in multi-threaded environments.",
+        "prereq_c_experience": "Strong prior exposure: I am comfortable with pointers, manual memory management, and systems programming."
+      }
+    },
+    {
+      "id": "os_strong_prior_exposure_3",
+      "tier": "strong_prior_exposure",
+      "description": "An ambitious junior Computer Science major with a heavy background in cybersecurity and competitive hacking who prefers hands-on implementation over theoretical modeling.",
+      "answers": {
+        "lo_sync_challenge": "Developing a deep intuition for race conditions that only appear under specific load conditions or edge cases in concurrent code.",
+        "assessment_exam_prep": "Focusing on homework and project implementation.",
+        "prereq_confidence_rating": "5",
+        "challenge_time_commitment": "I participate in several weekend-long Capture The Flag (CTF) security competitions that may coincide with the late-semester project deadlines.",
+        "lo_analytic_modeling": "3",
+        "goal_interest_area": "Process and Thread Management",
+        "assessment_pair_programming": "Uncomfortable; I prefer working alone but will follow the course requirement.",
+        "lo_process_thread_readiness": "I have experience creating or managing processes/threads in code.",
+        "goal_career_alignment": "I am aiming for a career in Cybersecurity research, specifically in vulnerability analysis and exploit development, which requires a deep understanding of kernel internals and memory protection.",
+        "challenge_pacing_scaffolding": "I prefer hands-on experimental evaluation of design tradeoffs.",
+        "learning_style_preference_ranking": "Implementing code in programming projects., Attending lectures and participating in discussions., Solving practice problems for the midterm/final., Reading the textbook (Silberschatz) and taking notes.",
+        "prereq_knowledge_check": "Command-line (Unix/Linux) proficiency",
+        "prereq_c_experience": "Strong prior exposure: I am comfortable with pointers, manual memory management, and systems programming."
+      }
+    },
+    {
+      "id": "os_strong_prior_exposure_4",
+      "tier": "strong_prior_exposure",
+      "description": "A high-achieving student focused on cybersecurity who excels at low-level implementation but is wary of the time-consuming nature of debugging complex concurrency issues.",
+      "answers": {
+        "learning_style_preference_ranking": "Implementing code in programming projects., Attending lectures and participating in discussions., Solving practice problems for the midterm/final., Reading the textbook (Silberschatz) and taking notes.",
+        "prereq_confidence_rating": "5",
+        "lo_sync_challenge": "My biggest concern is debugging non-deterministic race conditions and ensuring that my synchronization logic doesn't introduce significant performance bottlenecks or deadlocks.",
+        "assessment_pair_programming": "Neutral; I am willing to work in pairs for projects.",
+        "challenge_time_commitment": "I am participating in several regional CTF (Capture The Flag) competitions this semester, which often fall on weekends near the project deadlines.",
+        "lo_analytic_modeling": "4",
+        "lo_process_thread_readiness": "I have experience creating or managing processes/threads in code.",
+        "challenge_pacing_scaffolding": "I prefer hands-on experimental evaluation of design tradeoffs.",
+        "goal_career_alignment": "I aim to work in cybersecurity and exploit development, which requires a deep understanding of how the kernel manages memory and how vulnerabilities like buffer overflows or race conditions manifest at the OS level.",
+        "goal_interest_area": "Memory Management and Virtual Memory",
+        "prereq_knowledge_check": "Memory Addressing and Pointers",
+        "assessment_exam_prep": "Focusing on homework and project implementation.",
+        "prereq_c_experience": "Strong prior exposure: I am comfortable with pointers, manual memory management, and systems programming."
+      }
+    },
+    {
+      "id": "os_strong_prior_exposure_5",
+      "tier": "strong_prior_exposure",
+      "description": "A junior Computer Science major with a specialization in Cybersecurity and professional experience in firmware development who seeks to understand OS internals for security auditing.",
+      "answers": {
+        "challenge_time_commitment": "I have a major security competition in week 9, so I intend to complete the second project early to avoid conflicts.",
+        "prereq_knowledge_check": "Memory Addressing and Pointers",
+        "assessment_exam_prep": "Practicing analytical problems and theory-based questions.",
+        "assessment_pair_programming": "Very comfortable; I enjoy collaborative coding.",
+        "lo_process_thread_readiness": "I have experience creating or managing processes/threads in code.",
+        "lo_analytic_modeling": "4",
+        "lo_sync_challenge": "My primary concern is the difficulty of debugging non-deterministic race conditions and ensuring that my synchronization logic does not lead to priority inversion or deadlocks.",
+        "goal_career_alignment": "I am pursuing a career in cybersecurity and exploit research, where a deep understanding of kernel-level memory protections and concurrency is vital for identifying vulnerabilities.",
+        "challenge_pacing_scaffolding": "I prefer hands-on experimental evaluation of design tradeoffs.",
+        "prereq_confidence_rating": "5",
+        "goal_interest_area": "Synchronization and Concurrency",
+        "learning_style_preference_ranking": "Implementing code in programming projects., Solving practice problems for the midterm/final., Attending lectures and participating in discussions., Reading the textbook (Silberschatz) and taking notes.",
+        "prereq_c_experience": "Strong prior exposure: I am comfortable with pointers, manual memory management, and systems programming."
+      }
+    },
+    {
+      "id": "os_strong_prior_exposure_6",
+      "tier": "strong_prior_exposure",
+      "description": "A Junior CS major with a strong background in systems security who prefers building and breaking things over theoretical modeling.",
+      "answers": {
+        "goal_interest_area": "Synchronization and Concurrency",
+        "assessment_exam_prep": "Focusing on homework and project implementation.",
+        "challenge_time_commitment": "I am part of the university's competitive cybersecurity team, and our travel schedule for CTF competitions often lands on weekends prior to major project deadlines.",
+        "lo_sync_challenge": "My main concern is the non-deterministic nature of race conditions and the difficulty of verifying that a system is truly deadlock-free during heavy load.",
+        "prereq_confidence_rating": "5",
+        "learning_style_preference_ranking": "Implementing code in programming projects., Attending lectures and participating in discussions., Solving practice problems for the midterm/final., Reading the textbook (Silberschatz) and taking notes.",
+        "lo_analytic_modeling": "3",
+        "assessment_pair_programming": "Neutral; I am willing to work in pairs for projects.",
+        "goal_career_alignment": "I want to specialize in vulnerability research and exploit development, which requires a deep understanding of how kernels manage memory and isolate processes.",
+        "lo_process_thread_readiness": "I have experience creating or managing processes/threads in code.",
+        "prereq_knowledge_check": "Memory Addressing and Pointers",
+        "challenge_pacing_scaffolding": "I prefer hands-on experimental evaluation of design tradeoffs.",
+        "prereq_c_experience": "Strong prior exposure: I am comfortable with pointers, manual memory management, and systems programming."
+      }
+    },
+    {
+      "id": "os_strong_prior_exposure_7",
+      "tier": "strong_prior_exposure",
+      "description": "A technically proficient junior aiming for a career in high-performance computing and quantitative finance, prioritizing implementation efficiency and concurrency.",
+      "answers": {
+        "lo_process_thread_readiness": "I have experience creating or managing processes/threads in code.",
+        "challenge_pacing_scaffolding": "I prefer hands-on experimental evaluation of design tradeoffs.",
+        "assessment_pair_programming": "Neutral; I am willing to work in pairs for projects.",
+        "learning_style_preference_ranking": "Implementing code in programming projects., Attending lectures and participating in discussions., Solving practice problems for the midterm/final., Reading the textbook (Silberschatz) and taking notes.",
+        "assessment_exam_prep": "Focusing on homework and project implementation.",
+        "prereq_confidence_rating": "5",
+        "lo_analytic_modeling": "4",
+        "challenge_time_commitment": "I have a heavy workload in my Econometrics and Stochastic Calculus courses, so I will need to front-load the programming projects to avoid conflicts with my finance-related midterms.",
+        "goal_interest_area": "Synchronization and Concurrency",
+        "lo_sync_challenge": "Avoiding deadlocks in complex nested lock scenarios and understanding the performance overhead of different synchronization primitives in multi-core environments.",
+        "prereq_knowledge_check": "Memory Addressing and Pointers",
+        "goal_career_alignment": "I plan to go into Quantitative Finance or High-Frequency Trading, where understanding low-level concurrency and memory latency is critical for optimizing execution speeds.",
+        "prereq_c_experience": "Strong prior exposure: I am comfortable with pointers, manual memory management, and systems programming."
+      }
+    },
+    {
+      "id": "os_strong_prior_exposure_8",
+      "tier": "strong_prior_exposure",
+      "description": "A technically advanced Junior Computer Science student with a background in CTF competitions and a specific interest in the security implications of memory management.",
+      "answers": {
+        "goal_career_alignment": "I am pursuing a career in cybersecurity and vulnerability research; understanding the low-level interactions between the kernel and hardware is essential for identifying exploit vectors.",
+        "lo_sync_challenge": "Identifying and preventing non-deterministic race conditions that only manifest under specific scheduler interleavings.",
+        "challenge_pacing_scaffolding": "I prefer hands-on experimental evaluation of design tradeoffs.",
+        "challenge_time_commitment": "Week 9 is a concern because of a concurrent security competition I am participating in, but I typically manage my time by finishing systems labs early.",
+        "lo_analytic_modeling": "4",
+        "goal_interest_area": "Memory Management and Virtual Memory",
+        "lo_process_thread_readiness": "I have experience creating or managing processes/threads in code.",
+        "learning_style_preference_ranking": "1. Implementing code in programming projects., 2. Solving practice problems for the midterm/final., 3. Attending lectures and participating in discussions., 4. Reading the textbook (Silberschatz) and taking notes.",
+        "assessment_pair_programming": "Neutral; I am willing to work in pairs for projects.",
+        "prereq_confidence_rating": "5",
+        "prereq_knowledge_check": "Command-line (Unix/Linux) proficiency",
+        "assessment_exam_prep": "Practicing analytical problems and theory-based questions.",
+        "prereq_c_experience": "Strong prior exposure: I am comfortable with pointers, manual memory management, and systems programming."
+      }
+    },
+    {
+      "id": "os_strong_prior_exposure_9",
+      "tier": "strong_prior_exposure",
+      "description": "A high-achieving student with a background in security research who is highly proficient in low-level programming but seeks deeper insight into concurrency and kernel-space vulnerabilities.",
+      "answers": {
+        "lo_process_thread_readiness": "I have experience creating or managing processes/threads in code.",
+        "challenge_pacing_scaffolding": "I prefer hands-on experimental evaluation of design tradeoffs.",
+        "assessment_exam_prep": "Practicing analytical problems and theory-based questions.",
+        "prereq_confidence_rating": "5",
+        "challenge_time_commitment": "I am balancing this course with a research assistantship in the Systems and Security lab, which might lead to crunch periods during project weeks.",
+        "learning_style_preference_ranking": "Implementing code in programming projects., Solving practice problems for the midterm/final., Attending lectures and participating in discussions., Reading the textbook (Silberschatz) and taking notes.",
+        "goal_interest_area": "Synchronization and Concurrency",
+        "lo_analytic_modeling": "4",
+        "lo_sync_challenge": "My main concern is identifying and preventing subtle race conditions or deadlocks that only appear under specific hardware-level interleavings.",
+        "prereq_knowledge_check": "Memory Addressing and Pointers",
+        "goal_career_alignment": "I intend to pursue a career in cybersecurity and exploit development, so mastering kernel-level resource management and memory isolation is critical for my professional trajectory.",
+        "assessment_pair_programming": "Neutral; I am willing to work in pairs for projects.",
+        "prereq_c_experience": "Strong prior exposure: I am comfortable with pointers, manual memory management, and systems programming."
+      }
+    },
+    {
+      "id": "os_strong_prior_exposure_10",
+      "tier": "strong_prior_exposure",
+      "description": "A Junior CS major with a background in game engine development and a research interest in ML infrastructure who is highly proficient in C but seeks deeper theoretical insight into concurrency.",
+      "answers": {
+        "assessment_exam_prep": "Practicing analytical problems and theory-based questions.",
+        "prereq_knowledge_check": "Memory Addressing and Pointers",
+        "lo_sync_challenge": "My biggest concern is debugging non-deterministic race conditions and ensuring starvation-free synchronization in highly contested multi-threaded environments.",
+        "challenge_time_commitment": "I am currently balancing a research assistantship in distributed systems, so I plan to start the intensive project weeks early to manage my time effectively.",
+        "goal_interest_area": "Synchronization and Concurrency",
+        "challenge_pacing_scaffolding": "I prefer hands-on experimental evaluation of design tradeoffs.",
+        "lo_analytic_modeling": "4",
+        "learning_style_preference_ranking": "Implementing code in programming projects., Attending lectures and participating in discussions., Solving practice problems for the midterm/final., Reading the textbook (Silberschatz) and taking notes.",
+        "goal_career_alignment": "I plan to pursue a career in Machine Learning Systems or High-Performance Computing, where understanding OS-level resource scheduling and memory bottlenecks is critical for optimizing large-scale models.",
+        "assessment_pair_programming": "Very comfortable; I enjoy collaborative coding.",
+        "prereq_confidence_rating": "5",
+        "lo_process_thread_readiness": "I have experience creating or managing processes/threads in code.",
+        "prereq_c_experience": "Strong prior exposure: I am comfortable with pointers, manual memory management, and systems programming."
+      }
+    }
+  ]
+}

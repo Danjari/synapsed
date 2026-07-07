@@ -1,0 +1,233 @@
+{
+  "profileId": "os_some_prior_exposure_3",
+  "cluster": null,
+  "field": null,
+  "description": "A Cybersecurity-focused junior who excels at analytical problem-solving and logic but feels intimidated by low-level C pointers and manual memory management.",
+  "studentId": "offline-os_some_prior_exposure_3",
+  "source": "offline-gemini",
+  "nodeCount": 16,
+  "nodes": [
+    {
+      "id": "n1",
+      "type": "topic",
+      "description": "Introduction to OS services, system calls, and the distinction between kernel and user mode operations.",
+      "difficulty": "beginner",
+      "personalizationRationale": "This foundational core node provides the necessary theoretical framework for a student with some prior exposure to begin formalizing their knowledge.",
+      "nodeRole": "core_required",
+      "title": "OS Foundations & Dual-Mode Operation",
+      "syllabusBlockId": "block_01",
+      "dependsOn": [],
+      "duration": "150 min"
+    },
+    {
+      "difficulty": "beginner",
+      "description": "Review of C-based systems programming concepts and memory address space basics relevant to OS structures.",
+      "id": "n2",
+      "type": "resource",
+      "nodeRole": "scaffolding_catchup",
+      "personalizationRationale": "As this student has some prior exposure, this single scaffolding node in Block 1 reinforces technical prerequisites to ensure they are ready for complex systems programming.",
+      "dependsOn": [
+        "n1"
+      ],
+      "syllabusBlockId": "block_01",
+      "title": "Systems Programming Refresher",
+      "duration": "150 min"
+    },
+    {
+      "type": "topic",
+      "id": "n3",
+      "description": "Exploring the process lifecycle, PCB (Process Control Block) structure, and context switching mechanisms.",
+      "difficulty": "intermediate",
+      "nodeRole": "core_required",
+      "personalizationRationale": "Building on some prior exposure, this core node ensures the student understands the formal process abstraction used in later labs.",
+      "syllabusBlockId": "block_02",
+      "dependsOn": [
+        "n2"
+      ],
+      "title": "Process Lifecycle & Management",
+      "duration": "110 min"
+    },
+    {
+      "duration": "115 min",
+      "syllabusBlockId": "block_02",
+      "dependsOn": [
+        "n3"
+      ],
+      "title": "Mechanics of IPC",
+      "nodeRole": "core_required",
+      "personalizationRationale": "This node formalizes IPC methods for students with some prior exposure, preparing them for multi-process programming projects.",
+      "type": "topic",
+      "id": "n4",
+      "difficulty": "intermediate",
+      "description": "Deep dive into Inter-Process Communication (IPC) using shared memory and message passing interfaces."
+    },
+    {
+      "nodeRole": "core_required",
+      "personalizationRationale": "Thread management is a core requirement; this node extends the student's some prior exposure into standard threading libraries.",
+      "type": "topic",
+      "id": "n5",
+      "description": "Analysis of user vs. kernel threads and common multithreading models like Pthreads and Java threads.",
+      "difficulty": "intermediate",
+      "duration": "100 min",
+      "syllabusBlockId": "block_03",
+      "dependsOn": [
+        "n4"
+      ],
+      "title": "Threads & Threading Models"
+    },
+    {
+      "nodeRole": "core_required",
+      "personalizationRationale": "Quantitative analysis of scheduling is essential for the midterm, aligning with the student's some prior exposure.",
+      "difficulty": "intermediate",
+      "description": "Examination of CPU scheduling criteria and algorithms like Round Robin, Priority, and Multi-level Queue scheduling.",
+      "id": "n6",
+      "type": "topic",
+      "duration": "120 min",
+      "dependsOn": [
+        "n5"
+      ],
+      "syllabusBlockId": "block_03",
+      "title": "CPU Scheduling Algorithms"
+    },
+    {
+      "duration": "80 min",
+      "title": "Midterm Exam Review (Ch. 1-5)",
+      "syllabusBlockId": "block_03",
+      "dependsOn": [
+        "n6"
+      ],
+      "personalizationRationale": "This mandatory assessment checkpoint ensures the student with some prior exposure has mastered the first half of the course material.",
+      "nodeRole": "assessment",
+      "id": "n7",
+      "type": "assessment",
+      "difficulty": "intermediate",
+      "description": "Comprehensive review session covering Chapters 1-5 in preparation for the midterm examination."
+    },
+    {
+      "personalizationRationale": "For a student with some prior exposure, mastering synchronization primitives is critical for upcoming project deliveries.",
+      "nodeRole": "core_required",
+      "id": "n8",
+      "type": "topic",
+      "difficulty": "intermediate",
+      "description": "Detailed study of the critical section problem and hardware/software solutions like Mutex Locks and Semaphores.",
+      "duration": "150 min",
+      "title": "Process Synchronization Primitives",
+      "syllabusBlockId": "block_04",
+      "dependsOn": [
+        "n7"
+      ]
+    },
+    {
+      "duration": "150 min",
+      "title": "Classic Synchronization Problems",
+      "dependsOn": [
+        "n8"
+      ],
+      "syllabusBlockId": "block_04",
+      "personalizationRationale": "This core node challenges students with some prior exposure to apply primitives to complex synchronization scenarios.",
+      "nodeRole": "core_required",
+      "description": "Applying synchronization theory to classic problems like the Dining Philosophers and Producers-Consumers.",
+      "difficulty": "advanced",
+      "id": "n9",
+      "type": "topic"
+    },
+    {
+      "nodeRole": "core_required",
+      "personalizationRationale": "Core conceptual knowledge of deadlocks is required for all students, including those with some prior exposure.",
+      "difficulty": "intermediate",
+      "description": "Identifying the four necessary conditions for deadlock and methods for prevention.",
+      "type": "topic",
+      "id": "n10",
+      "duration": "75 min",
+      "dependsOn": [
+        "n9"
+      ],
+      "syllabusBlockId": "block_05",
+      "title": "Deadlock Characterization"
+    },
+    {
+      "title": "Deadlock Avoidance & Detection",
+      "dependsOn": [
+        "n10"
+      ],
+      "syllabusBlockId": "block_05",
+      "duration": "75 min",
+      "difficulty": "intermediate",
+      "description": "Computational methods for deadlock avoidance, including the Banker's Algorithm and Resource Allocation Graphs.",
+      "id": "n11",
+      "type": "topic",
+      "personalizationRationale": "This technical core node ensures the student with some prior exposure can analytically model system safety.",
+      "nodeRole": "core_required"
+    },
+    {
+      "description": "Exploring main memory allocation, segmentation, and the technical implementation of paging and page tables.",
+      "difficulty": "intermediate",
+      "id": "n12",
+      "type": "topic",
+      "personalizationRationale": "Memory management is heavily tested; this core node provides the depth required for someone with some prior exposure.",
+      "nodeRole": "core_required",
+      "title": "Main Memory & Paging Structures",
+      "dependsOn": [
+        "n11"
+      ],
+      "syllabusBlockId": "block_06",
+      "duration": "150 min"
+    },
+    {
+      "personalizationRationale": "This core node covers virtual memory concepts essential for the cumulative final, building on the student's some prior exposure.",
+      "nodeRole": "core_required",
+      "description": "Concepts of demand paging, thrashing, and page replacement algorithms like LRU and Optimal.",
+      "difficulty": "intermediate",
+      "type": "topic",
+      "id": "n13",
+      "duration": "150 min",
+      "title": "Virtual Memory & Page Replacement",
+      "dependsOn": [
+        "n12"
+      ],
+      "syllabusBlockId": "block_06"
+    },
+    {
+      "nodeRole": "core_required",
+      "personalizationRationale": "This capstone core node integrates hardware-software interfaces for students with some prior exposure.",
+      "difficulty": "intermediate",
+      "description": "Overview of the I/O subsystem, including polling, interrupts, DMA, and standard I/O interfaces.",
+      "type": "topic",
+      "id": "n14",
+      "duration": "120 min",
+      "dependsOn": [
+        "n13"
+      ],
+      "syllabusBlockId": "block_07",
+      "title": "I/O Systems & Performance"
+    },
+    {
+      "personalizationRationale": "Understanding storage implementation is a mandatory learning objective for students with some prior exposure.",
+      "nodeRole": "core_required",
+      "id": "n15",
+      "type": "topic",
+      "description": "Design and implementation of file systems, including allocation methods and directory structures.",
+      "difficulty": "intermediate",
+      "duration": "120 min",
+      "title": "File System Implementation",
+      "syllabusBlockId": "block_07",
+      "dependsOn": [
+        "n14"
+      ]
+    },
+    {
+      "nodeRole": "assessment",
+      "personalizationRationale": "The final assessment ensures the student with some prior exposure is fully prepared for the 40% cumulative final exam.",
+      "difficulty": "advanced",
+      "description": "A cumulative review of all 7 blocks to prepare for the final examination.",
+      "id": "n16",
+      "type": "assessment",
+      "duration": "60 min",
+      "dependsOn": [
+        "n15"
+      ],
+      "syllabusBlockId": "block_07",
+      "title": "Final Cumulative Review"
+    }
+  ]
+}

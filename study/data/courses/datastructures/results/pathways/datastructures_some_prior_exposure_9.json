@@ -1,0 +1,261 @@
+{
+  "profileId": "datastructures_some_prior_exposure_9",
+  "cluster": null,
+  "field": null,
+  "description": "A second-year Mathematics major who is comfortable with high-level logic but feels less confident about the low-level implementation details of C++.",
+  "studentId": "offline-datastructures_some_prior_exposure_9",
+  "source": "offline-gemini",
+  "nodeCount": 18,
+  "nodes": [
+    {
+      "dependsOn": [],
+      "personalizationRationale": "Since the student has some_prior_exposure, this targeted scaffolding node ensures their understanding of memory semantics is solid before proceeding.",
+      "description": "Refresher on C++ syntax focusing on pointers, references, and memory allocation to bridge gaps for students with some prior exposure.",
+      "type": "subtopic",
+      "syllabusBlockId": "block_01",
+      "nodeRole": "scaffolding_catchup",
+      "title": "C++ Pointer & Reference Review",
+      "duration": "75 min",
+      "id": "node_01",
+      "difficulty": "beginner"
+    },
+    {
+      "description": "Defining classes, implementing inheritance, and using C++ templates for generic programming.",
+      "dependsOn": [
+        "node_01"
+      ],
+      "personalizationRationale": "As a student with some_prior_exposure, this core node builds upon their foundation to master the required C++ object-oriented design principles.",
+      "title": "Classes, Inheritance & Templates",
+      "duration": "75 min",
+      "id": "node_02",
+      "difficulty": "intermediate",
+      "type": "subtopic",
+      "syllabusBlockId": "block_01",
+      "nodeRole": "core_required"
+    },
+    {
+      "description": "Handling runtime errors using exceptions and understanding C++ memory management principles.",
+      "dependsOn": [
+        "node_02"
+      ],
+      "personalizationRationale": "This core module provides necessary C++ proficiency for students with some_prior_exposure to ensure they are prepared for manual resource management.",
+      "title": "Exceptions & Memory Management",
+      "duration": "75 min",
+      "id": "node_03",
+      "difficulty": "intermediate",
+      "type": "subtopic",
+      "syllabusBlockId": "block_01",
+      "nodeRole": "core_required"
+    },
+    {
+      "dependsOn": [
+        "node_03"
+      ],
+      "personalizationRationale": "Given the student's some_prior_exposure, this core requirement focuses on implementing fundamental list structures required for the cumulative syllabus.",
+      "description": "Implementation and manipulation of singly, doubly, and circular linked lists in C++.",
+      "type": "subtopic",
+      "nodeRole": "core_required",
+      "syllabusBlockId": "block_02",
+      "id": "node_04",
+      "duration": "150 min",
+      "title": "Linked List Implementations",
+      "difficulty": "intermediate"
+    },
+    {
+      "description": "Checkpoint covering recursion principles and asymptotic (Big-O) notation for algorithm analysis.",
+      "dependsOn": [
+        "node_04"
+      ],
+      "personalizationRationale": "This assessment ensures the student with some_prior_exposure is meeting the essential learning objectives for recursion and performance analysis.",
+      "difficulty": "intermediate",
+      "id": "node_05",
+      "duration": "150 min",
+      "title": "Quiz 1: Recursion & Analysis",
+      "type": "assessment",
+      "nodeRole": "assessment",
+      "syllabusBlockId": "block_02"
+    },
+    {
+      "difficulty": "intermediate",
+      "duration": "100 min",
+      "title": "Stacks & Queues ADTs",
+      "id": "node_06",
+      "syllabusBlockId": "block_03",
+      "nodeRole": "core_required",
+      "type": "subtopic",
+      "description": "Abstract Data Types for Stacks and Queues using array-based and list-based implementations.",
+      "personalizationRationale": "Core requirement for all students to master sequence-based data structures, building on the some_prior_exposure tier's basic programming skills.",
+      "dependsOn": [
+        "node_05"
+      ]
+    },
+    {
+      "nodeRole": "core_required",
+      "syllabusBlockId": "block_03",
+      "type": "subtopic",
+      "difficulty": "intermediate",
+      "id": "node_07",
+      "title": "Vectors & Iterators",
+      "duration": "100 min",
+      "personalizationRationale": "For a student with some_prior_exposure, this node bridges basic array concepts to advanced C++ STL-style vector and iterator usage.",
+      "dependsOn": [
+        "node_06"
+      ],
+      "description": "Understanding dynamic arrays (vectors), the iterator pattern, and list sequences."
+    },
+    {
+      "dependsOn": [
+        "node_07"
+      ],
+      "personalizationRationale": "Standard syllabus requirement to introduce sorting logic to students who have some_prior_exposure to general programming.",
+      "description": "Introduction to sequence sorting using the Bubble Sort algorithm and complexity analysis.",
+      "type": "subtopic",
+      "nodeRole": "core_required",
+      "syllabusBlockId": "block_03",
+      "difficulty": "intermediate",
+      "id": "node_08",
+      "duration": "75 min",
+      "title": "Sequences & Bubble Sort"
+    },
+    {
+      "type": "assessment",
+      "nodeRole": "assessment",
+      "syllabusBlockId": "block_03",
+      "id": "node_09",
+      "title": "Midterm Review Checkpoint",
+      "duration": "100 min",
+      "difficulty": "intermediate",
+      "dependsOn": [
+        "node_08"
+      ],
+      "personalizationRationale": "A required checkpoint for every student to verify mastery of foundational C++ and sequence structures before the midterm.",
+      "description": "Comprehensive review of material from blocks 1 through 3 to prepare for the midterm exam."
+    },
+    {
+      "description": "Definitions and properties of general trees and binary tree structures.",
+      "personalizationRationale": "Moving into non-linear structures, this core node is essential for the some_prior_exposure student to understand hierarchical data.",
+      "dependsOn": [
+        "node_09"
+      ],
+      "title": "Tree Foundations",
+      "duration": "100 min",
+      "id": "node_10",
+      "difficulty": "intermediate",
+      "syllabusBlockId": "block_04",
+      "nodeRole": "core_required",
+      "type": "subtopic"
+    },
+    {
+      "nodeRole": "core_required",
+      "syllabusBlockId": "block_04",
+      "type": "subtopic",
+      "difficulty": "intermediate",
+      "id": "node_11",
+      "title": "Tree Traversal Algorithms",
+      "duration": "125 min",
+      "personalizationRationale": "This core node ensures the student can apply recursion to tree structures, a key requirement for the course.",
+      "dependsOn": [
+        "node_10"
+      ],
+      "description": "Implementing tree traversal algorithms including pre-order, post-order, and in-order visits."
+    },
+    {
+      "id": "node_12",
+      "duration": "150 min",
+      "title": "Heaps & Priority Queues",
+      "difficulty": "intermediate",
+      "nodeRole": "core_required",
+      "syllabusBlockId": "block_05",
+      "type": "subtopic",
+      "description": "Implementation of Priority Queues using binary heaps and heap-sort fundamentals.",
+      "personalizationRationale": "Mandatory core topic for all students; leverages prior understanding of binary trees in a more specialized structure.",
+      "dependsOn": [
+        "node_11"
+      ]
+    },
+    {
+      "difficulty": "intermediate",
+      "title": "Maps & Hash Tables",
+      "duration": "225 min",
+      "id": "node_13",
+      "type": "subtopic",
+      "syllabusBlockId": "block_06",
+      "nodeRole": "core_required",
+      "description": "Hash functions, collision resolution strategies, and the Map/Dictionary ADT.",
+      "dependsOn": [
+        "node_12"
+      ],
+      "personalizationRationale": "Core requirement focusing on efficient lookup structures, which is critical for the final examination."
+    },
+    {
+      "description": "Binary Search Tree (BST) operations and introduction to AVL tree rotations for balance.",
+      "dependsOn": [
+        "node_13"
+      ],
+      "personalizationRationale": "As a core topic, this introduces the theoretical complexity of balanced trees to students with some_prior_exposure.",
+      "title": "BSTs & AVL Trees\u5e73\u8861",
+      "duration": "115 min",
+      "id": "node_14",
+      "difficulty": "advanced",
+      "type": "subtopic",
+      "syllabusBlockId": "block_07",
+      "nodeRole": "core_required"
+    },
+    {
+      "id": "node_15",
+      "duration": "110 min",
+      "title": "Red-Black & Multi-Way Trees\u5e73\u8861",
+      "difficulty": "advanced",
+      "nodeRole": "core_required",
+      "syllabusBlockId": "block_07",
+      "type": "subtopic",
+      "description": "Advanced search trees including (2,4) trees and Red-Black tree properties.",
+      "personalizationRationale": "The most proof-heavy section of the course, required for all students to understand the performance guarantees of modern libraries.",
+      "dependsOn": [
+        "node_14"
+      ]
+    },
+    {
+      "difficulty": "intermediate",
+      "duration": "100 min",
+      "title": "Efficient Sorting Algorithms",
+      "id": "node_16",
+      "syllabusBlockId": "block_08",
+      "nodeRole": "core_required",
+      "type": "subtopic",
+      "description": "Divide-and-conquer sorting with Merge Sort and comparison-based Selection Sort.",
+      "personalizationRationale": "Standard capstone requirement to master efficient sorting algorithms and their Big-O proofs.",
+      "dependsOn": [
+        "node_15"
+      ]
+    },
+    {
+      "type": "assessment",
+      "nodeRole": "assessment",
+      "syllabusBlockId": "block_08",
+      "id": "node_17",
+      "title": "Quiz 4: Trees & Sorting",
+      "duration": "50 min",
+      "difficulty": "advanced",
+      "dependsOn": [
+        "node_16"
+      ],
+      "personalizationRationale": "Ensures mastery of the late-semester advanced topics for students with some_prior_exposure.",
+      "description": "Final quiz covering Balanced Trees and Sorting Algorithms."
+    },
+    {
+      "type": "assessment",
+      "nodeRole": "assessment",
+      "syllabusBlockId": "block_08",
+      "difficulty": "intermediate",
+      "id": "node_18",
+      "title": "Final Course Capstone Review",
+      "duration": "75 min",
+      "dependsOn": [
+        "node_17"
+      ],
+      "personalizationRationale": "Mandatory cumulative checkpoint to prepare students with some_prior_exposure for the final examination on all course material.",
+      "description": "Cumulative review of all course topics including C++, Sequences, Trees, and Sorting in preparation for the final exam."
+    }
+  ]
+}
