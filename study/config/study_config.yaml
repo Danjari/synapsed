@@ -12,6 +12,8 @@ research:
   min_within_cluster_multiset_jaccard: 0.65
   max_contrast_cluster_multiset_jaccard: 0.70
   min_style_control_pass_rate: 0.8
+  min_rule_pass_rate: 0.85
+  min_profile_pass_rate: 0.80
   contrasting_cluster_pairs:
     - [humanities_social, cs_technical]
     - [humanities_social, business_mba]

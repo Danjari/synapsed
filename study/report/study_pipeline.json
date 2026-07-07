@@ -1,0 +1,59 @@
+{
+  "folder": "study/",
+  "purpose": "Offline replication of pathway generation and validation before human subjects (Phase 0).",
+  "components": [
+    {
+      "path": "data/syllabus/syllabus.json",
+      "what": "7 blocks with syllabusBlockId tags on every lesson",
+      "why": "Measure structure (which syllabus sections appear), not cosmetic title changes",
+      "built_by": "scripts/01_build_syllabus_json.py, 04_process_syllabus.py"
+    },
+    {
+      "path": "data/profiles/synthetic_profiles.json",
+      "what": "50 synthetic survey responses grouped by academic field",
+      "why": "Cross-field diversity for cluster and contrast tests",
+      "built_by": "scripts/05_generate_synthetic_profiles.py"
+    },
+    {
+      "path": "data/prompts/pathway_generation_spec.json",
+      "what": "Personalization rules, judge rubric, H1-H5 definitions",
+      "why": "Pre-registered policy the generator and evaluator both reference",
+      "built_by": "Manual + synced to app pathwayPrompt.ts"
+    },
+    {
+      "path": "lib/personalization_prompt.py",
+      "what": "Assembles Gemini prompt from syllabus + survey + rules",
+      "why": "Same logic as production app, runnable in Python"
+    },
+    {
+      "path": "lib/pathway_generator.py",
+      "what": "Calls Gemini with forced function-call JSON output",
+      "why": "Predictable pathway schema; retries on failure"
+    },
+    {
+      "path": "scripts/07_generate_pathways_offline.py",
+      "what": "Generates one pathway per profile; resume + rate limits",
+      "why": "Batch overnight runs without database"
+    },
+    {
+      "path": "lib/research_metrics.py",
+      "what": "Jaccard, contrasts, cluster analysis",
+      "why": "Deterministic, reproducible evaluation"
+    },
+    {
+      "path": "lib/rule_validator.py",
+      "what": "Checks each pathway against survey-derived rules",
+      "why": "Automated compliance without LLM cost"
+    },
+    {
+      "path": "lib/llm_judge.py",
+      "what": "Claude scores pathway-profile alignment",
+      "why": "Supplementary human-like review; separate model from generator"
+    },
+    {
+      "path": "scripts/09_research_evaluation.py",
+      "what": "Runs all gates; writes research_evaluation.json",
+      "why": "Single PASS/FAIL command for Phase 0"
+    }
+  ]
+}

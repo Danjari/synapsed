@@ -1,0 +1,103 @@
+{
+  "version": "1.0",
+  "phase": "Phase 0 synthetic validation",
+  "syllabus": "AI literacy course, 7 tagged blocks (~10 contact hours after deduplication)",
+  "primary_gate": "Deterministic metrics + rule checker. LLM judge is supplementary.",
+  "metrics": [
+    {
+      "id": "title_jaccard",
+      "name": "Title Jaccard (deprecated primary)",
+      "script": "08_analyze_pathway_diversity.py",
+      "role": "secondary_diagnostic",
+      "why_not_primary": "Gemini paraphrases titles ('Introduction to AI' vs 'Introduction to artificial intelligence') so identical structures look different.",
+      "formula": "J(A,B) = |titles_A ∩ titles_B| / |titles_A ∪ titles_B|",
+      "input": "Set of lesson title strings per pathway"
+    },
+    {
+      "id": "multiset_jaccard",
+      "name": "Block multiset Jaccard",
+      "script": "09_research_evaluation.py",
+      "role": "primary_diversity",
+      "formula": "For block counts c_A, c_B over syllabusBlockId: J = Σ_k min(c_A(k), c_B(k)) / Σ_k max(c_A(k), c_B(k))",
+      "interpretation": "1.0 = identical block coverage; lower = more structural difference. Gate: mean pairwise J < 0.92.",
+      "threshold": 0.92,
+      "threshold_direction": "less_than_mean"
+    },
+    {
+      "id": "sequence_jaccard",
+      "name": "Block sequence Jaccard",
+      "script": "09_research_evaluation.py",
+      "role": "diagnostic_and_h5",
+      "formula": "Treat ordered sequence as set of (position, block_id) pairs; standard Jaccard on those sets.",
+      "used_in": ["H5_learning_style_invariance", "style_control_pairs"]
+    },
+    {
+      "id": "contrast_hypotheses",
+      "name": "Pre-registered contrast tests H1-H5",
+      "script": "09_research_evaluation.py",
+      "role": "primary",
+      "spec_file": "data/prompts/pathway_generation_spec.json",
+      "detail_file": "report/hypotheses.json",
+      "gate": "≥ 80% of H1-H5 pass"
+    },
+    {
+      "id": "cluster_within_between",
+      "name": "Cluster similarity analysis",
+      "script": "09_research_evaluation.py",
+      "role": "primary",
+      "formula": "Same as multiset Jaccard, aggregated within same cluster vs across contrasting cluster pairs.",
+      "gates": {
+        "mean_within_cluster_multiset_jaccard_min": 0.65,
+        "mean_contrast_cluster_multiset_jaccard_max": 0.7
+      },
+      "contrasting_pairs": [
+        ["humanities_social", "cs_technical"],
+        ["humanities_social", "business_mba"],
+        ["business_mba", "cs_technical"]
+      ]
+    },
+    {
+      "id": "learning_preference_match",
+      "name": "Learning preference invariance (formerly learning style match)",
+      "script": "09_research_evaluation.py",
+      "role": "primary",
+      "definition": "For 6 style-control profiles that differ from a paired profile only in learning_1 (survey preference), block sequence Jaccard must be ≥ 0.85.",
+      "gate": "≥ 80% of pairs pass",
+      "note": "learning_1 affects tutor wording in node descriptions, not syllabus structure."
+    },
+    {
+      "id": "rule_compliance",
+      "name": "Rule-based policy checker",
+      "script": "lib/rule_validator.py",
+      "role": "primary",
+      "rules_source": "data/prompts/pathway_generation_spec.json personalizationRules",
+      "detail_file": "report/rules_checked.json",
+      "formula": "rule_pass_rate = passed_rule_checks / total_applicable_rule_checks across all profiles",
+      "gates": {
+        "min_rule_pass_rate": 0.85,
+        "min_profile_pass_rate": 0.8
+      }
+    },
+    {
+      "id": "llm_judge",
+      "name": "Claude LLM judge (supplementary)",
+      "script": "lib/llm_judge.py",
+      "role": "supplementary",
+      "generator_model": "Google Gemini (GEMINI_MODEL env)",
+      "judge_model": "Anthropic Claude (CLAUDE_JUDGE_MODEL, default claude-sonnet-4-6)",
+      "sample_size": 15,
+      "sampling": "Stratified across clusters",
+      "rubric_dimensions": [
+        "prior_knowledge_alignment",
+        "goal_track_alignment",
+        "structural_personalization",
+        "syllabus_fidelity",
+        "internal_coherence"
+      ],
+      "scale": "1-5 per dimension; mean_score = average across dimensions",
+      "gate_when_enabled": "mean ≥ 3.5 (only with --with-judge flag)",
+      "cost_note": "~$3 for 15 profiles in one run"
+    }
+  ],
+  "final_results_file": "data/results/reports/research_evaluation.json"
+}

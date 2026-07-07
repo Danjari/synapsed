@@ -1,0 +1,54 @@
+{
+  "description": "Synthetic student profiles simulate onboarding survey answers. No LLM is used to generate profiles; they are hand-authored and script-expanded.",
+  "generation_method": {
+    "script": "scripts/05_generate_synthetic_profiles.py",
+    "steps": [
+      "10 anchor profiles (CANONICAL list) cover hypothesis test personas",
+      "40 extension profiles clone anchor answer patterns with field-specific text (CS, Business, Econ, Math, Health, Humanities)",
+      "6 style-control profiles copy a partner profile except learning_1 (learning preference)"
+    ],
+    "output": "data/profiles/synthetic_profiles.json",
+    "total": 50
+  },
+  "survey_fields": {
+    "goals_1": "Primary learning goals",
+    "goals_2": "Enrollment motivation",
+    "prereq_1": "Self-rated prerequisite confidence (Very uncertain → Very confident)",
+    "learning_1": "Preferred learning modality (Visual, Auditory, Kinesthetic, Reading/Writing, Mixed). Stored as metadata for tutor tone; must not change pathway structure.",
+    "bloom_remember": "Prior knowledge recall",
+    "bloom_understand": "Expected learning outcomes",
+    "bloom_apply": "Planned application",
+    "bloom_analyze": "Anticipated challenges"
+  },
+  "clusters": {
+    "cs_technical": 8,
+    "business_mba": 8,
+    "economics": 7,
+    "math_stats": 7,
+    "health_medicine": 7,
+    "humanities_social": 7,
+    "style_control": 6
+  },
+  "anchor_profile_example": {
+    "id": "low_knowledge_general",
+    "cluster": "humanities_social",
+    "field": "History",
+    "description": "History BA sophomore, no STEM background, first AI course",
+    "answers": {
+      "goals_1": "Understand what AI is and how it affects society and historical research",
+      "goals_2": "Required elective for my degree",
+      "prereq_1": "Very uncertain",
+      "learning_1": "Visual (diagrams, charts, videos)",
+      "bloom_remember": "I have not taken any AI or programming courses",
+      "bloom_understand": "Basic AI vocabulary and how historians might use AI tools",
+      "bloom_apply": "Use AI responsibly when reviewing sources and drafting essays",
+      "bloom_analyze": "I worry about technical jargon and misinformation in AI outputs"
+    }
+  },
+  "style_control_example": {
+    "id": "learning_style_control",
+    "paired_with": "medium_knowledge_mixed",
+    "only_difference": "learning_1 changed from Mixed approach to Kinesthetic (hands-on activities)",
+    "purpose": "Test that learning preference does not reroute syllabus blocks"
+  }
+}

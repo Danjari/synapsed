@@ -1,0 +1,49 @@
+{
+  "run_label": "Run 3 (final Phase 0 configuration)",
+  "date": "2026-06",
+  "syllabus": "study/data/syllabus/syllabus.json",
+  "profiles": 50,
+  "pathways": 50,
+  "verdict": "PASS",
+  "primary_gate": "deterministic",
+  "metrics": {
+    "mean_multiset_jaccard": 0.5852,
+    "max_allowed_multiset_jaccard": 0.92,
+    "contrasts_passed": "5/5",
+    "mean_within_cluster_jaccard": 0.7448,
+    "mean_contrast_cluster_jaccard": 0.4402,
+    "learning_preference_match_rate": 1.0,
+    "rule_pass_rate": 0.9598,
+    "profile_rule_pass_rate": 0.82,
+    "llm_judge_mean": null,
+    "llm_judge_note": "Not run in final deterministic evaluation. Run 2 judge mean was 4.01 on n=15 sample."
+  },
+  "iteration_history": [
+    {
+      "run": 1,
+      "profiles": 10,
+      "metric_focus": "Title Jaccard (misleading)",
+      "result": "FAIL",
+      "style_match": 0.667,
+      "judge_mean": 3.46
+    },
+    {
+      "run": 2,
+      "profiles": 50,
+      "changes": "Block tags, prompt v2.0, Claude judge added",
+      "result": "FAIL",
+      "style_match": 0.5,
+      "judge_mean": 4.01
+    },
+    {
+      "run": 3,
+      "profiles": 50,
+      "changes": "Structure lock for style-control twins; rule checker added",
+      "result": "PASS",
+      "style_match": 1.0,
+      "rule_pass_rate": 0.9598
+    }
+  ],
+  "thresholds_fixed": true,
+  "config_file": "config/study_config.yaml"
+}

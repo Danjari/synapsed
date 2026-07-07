@@ -23,6 +23,7 @@ from lib.research_metrics import (  # noqa: E402
     pairwise_block_metrics,
     research_gate_verdict,
 )
+from lib.rule_validator import evaluate_all_rules, rule_gate_verdict  # noqa: E402
 
 
 def load_pathways(pathways_dir: Path) -> dict[str, list[dict]]:
@@ -121,11 +122,10 @@ def build_html_report(report: dict) -> str:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Research-grade pathway evaluation")
-    parser.add_argument("--skip-judge", action="store_true", help="Skip LLM-as-judge")
     parser.add_argument(
-        "--judge-all",
+        "--with-judge",
         action="store_true",
-        help="Judge every profile (default: stratified sample for 50-profile runs)",
+        help="Include Claude LLM judge (supplementary; not required for primary pass)",
     )
     args = parser.parse_args()
 
@@ -179,13 +179,20 @@ def main() -> int:
         min_style_control_pass_rate=research_cfg.get("min_style_control_pass_rate", 0.8),
     )
 
+    rule_results = evaluate_all_rules(profiles, pathways)
+    rule_verdict = rule_gate_verdict(
+        rule_results,
+        min_rule_pass_rate=research_cfg.get("min_rule_pass_rate", 0.85),
+        min_profile_pass_rate=research_cfg.get("min_profile_pass_rate", 0.80),
+    )
+
     judge_results: list[dict] | None = None
     judge_sample_ids: list[str] | None = None
-    if not args.skip_judge:
+    if args.with_judge:
         sample_size = research_cfg.get("judge_sample_size", 15)
         judge_sample_ids = (
             [p["id"] for p in profiles]
-            if args.judge_all or len(profiles) <= sample_size
+            if getattr(args, "judge_all", False) or len(profiles) <= sample_size
             else stratified_judge_sample(profiles, sample_size)
         )
         print(f"Running Claude judge on {len(judge_sample_ids)} profiles...")
@@ -201,13 +208,16 @@ def main() -> int:
         max_mean_multiset_jaccard=research_cfg.get("max_mean_multiset_jaccard", 0.92),
         min_contrast_pass_rate=research_cfg.get("min_contrast_pass_rate", 0.8),
         min_mean_judge_score=research_cfg.get("min_mean_judge_score", 3.5),
+        require_judge=args.with_judge,
     )
 
-    combined_passed = core_verdict["passed"] and cluster_verdict["passed"]
+    combined_passed = core_verdict["passed"] and cluster_verdict["passed"] and rule_verdict["passed"]
     verdict = {
         **core_verdict,
         "passed": combined_passed,
         "cluster_gate": cluster_verdict,
+        "rule_gate": rule_verdict,
+        "primary_gate": "deterministic",
     }
 
     title_gate = evaluate_gate(
@@ -223,6 +233,7 @@ def main() -> int:
         "block_metrics": block_metrics,
         "cluster_metrics": cluster_metrics,
         "contrast_hypotheses": contrast_results,
+        "rule_compliance": rule_results,
         "llm_judge": judge_results,
         "judge_sample_ids": judge_sample_ids,
         "title_metrics": {
@@ -244,8 +255,9 @@ def main() -> int:
     print(f"  within-cluster mean: {cluster_metrics.get('mean_within_cluster_multiset_jaccard')}")
     print(f"  contrast-cluster mean: {cluster_metrics.get('mean_contrast_cluster_multiset_jaccard')}")
     print(f"  contrast hypotheses: {verdict['contrasts_passed']}/{verdict['contrasts_total']}")
+    print(f"  rule compliance: {rule_verdict['rule_pass_rate']} (min {rule_verdict['min_rule_pass_rate']})")
     if verdict.get("mean_judge_score") is not None:
-        print(f"  mean judge score: {verdict['mean_judge_score']}")
+        print(f"  mean judge score (supplementary): {verdict['mean_judge_score']}")
     print(f"Reports: {reports_dir}/research_evaluation.json")
     return 0 if verdict["passed"] else 2
 

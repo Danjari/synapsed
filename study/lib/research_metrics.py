@@ -128,6 +128,7 @@ def research_gate_verdict(
     max_mean_multiset_jaccard: float = 0.92,
     min_contrast_pass_rate: float = 0.8,
     min_mean_judge_score: float = 3.5,
+    require_judge: bool = False,
 ) -> dict[str, Any]:
     contrasts_passed = sum(1 for c in contrast_results if c.get("passed"))
     contrast_rate = contrasts_passed / len(contrast_results) if contrast_results else 0.0
@@ -142,7 +143,10 @@ def research_gate_verdict(
     # Pathways should differ in block coverage (not identical) but not be absurdly low on all pairs
     coverage_diverse = mean_multi < max_mean_multiset_jaccard
     contrasts_ok = contrast_rate >= min_contrast_pass_rate
-    judge_ok = mean_judge is None or mean_judge >= min_mean_judge_score
+    if require_judge and judge_results:
+        judge_ok = mean_judge is not None and mean_judge >= min_mean_judge_score
+    else:
+        judge_ok = True  # supplementary only unless --with-judge
 
     passed = coverage_diverse and contrasts_ok and judge_ok
 
@@ -156,10 +160,12 @@ def research_gate_verdict(
         "contrasts_total": len(contrast_results),
         "mean_judge_score": round(mean_judge, 3) if mean_judge is not None else None,
         "min_mean_judge_score": min_mean_judge_score,
+        "judge_required_for_pass": require_judge,
         "checks": {
             "block_coverage_diverse": coverage_diverse,
             "contrast_hypotheses": contrasts_ok,
-            "llm_judge": judge_ok,
+            "llm_judge": judge_ok if require_judge else None,
+            "llm_judge_supplementary": not require_judge,
         },
     }
 

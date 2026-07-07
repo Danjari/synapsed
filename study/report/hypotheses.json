@@ -1,0 +1,51 @@
+{
+  "description": "Pre-registered structural contrast tests. Anchor profiles are fixed IDs used before the 50-profile expansion.",
+  "gate": "At least 80% must pass (4 of 5 minimum; all 5 required in current run).",
+  "hypotheses": [
+    {
+      "id": "H1_foundation_depth",
+      "claim": "Low-knowledge profile receives more block_01 (AI Basics) nodes than research profile.",
+      "profile_a": "low_knowledge_general",
+      "profile_b": "high_knowledge_research",
+      "metric": "block_01_node_count",
+      "test": "count_a > count_b",
+      "run3_result": { "count_a": 3, "count_b": 1, "passed": true }
+    },
+    {
+      "id": "H2_business_vs_research_track",
+      "claim": "Business leader receives more block_05a (Business track) nodes than research profile.",
+      "profile_a": "business_leader",
+      "profile_b": "high_knowledge_research",
+      "metric": "block_05a_node_count",
+      "test": "count_a > count_b",
+      "run3_result": { "count_a": 4, "count_b": 1, "passed": true }
+    },
+    {
+      "id": "H3_research_track_workflows",
+      "claim": "Research profile receives more block_05b (Technical track) nodes than business leader.",
+      "profile_a": "high_knowledge_research",
+      "profile_b": "business_leader",
+      "metric": "block_05b_node_count",
+      "test": "count_a > count_b",
+      "run3_result": { "count_a": 4, "count_b": 0, "passed": true }
+    },
+    {
+      "id": "H4_ethics_emphasis",
+      "claim": "Ethics-focused profile receives more block_06 (Ethics) nodes than neutral profile.",
+      "profile_a": "ethics_focused",
+      "profile_b": "medium_knowledge_mixed",
+      "metric": "block_06_node_count",
+      "test": "count_a > count_b",
+      "run3_result": { "count_a": 5, "count_b": 3, "passed": true }
+    },
+    {
+      "id": "H5_learning_preference_invariance",
+      "claim": "Style-control twin shares block sequence with paired profile (learning_1 must not change structure).",
+      "profile_a": "learning_style_control",
+      "profile_b": "medium_knowledge_mixed",
+      "metric": "block_sequence_similarity",
+      "test": "sequence_jaccard >= 0.85",
+      "run3_result": { "sequence_jaccard": 1.0, "passed": true }
+    }
+  ]
+}
