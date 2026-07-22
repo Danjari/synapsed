@@ -273,7 +273,7 @@ const workflow = new StateGraph({
   .addNode("llm", callLlm)
   .addNode("tools", callTools)
   .addEdge(START, "llm")
-  .addConditionalEdges("llm", shouldContinue, {
+  .addConditionalEdges("llm", shouldContinue as any, {
     tools: "tools",
     [END]: END,
   })
@@ -376,12 +376,13 @@ function extractSourcesFromMessages(messages: BaseMessage[]): SourceMetadata[] {
 // introduced in a newer version of @langchain/langgraph.
 async function clearCorruptedCheckpoint(threadId: string): Promise<void> {
   try {
+    const safeThreadId = sanitizeCheckpointThreadId(threadId);
     const db = mongoClient.db();
     await Promise.all([
-      db.collection('checkpoints').deleteMany({ thread_id: threadId }),
-      db.collection('checkpoint_writes').deleteMany({ thread_id: threadId }),
+      db.collection('checkpoints').deleteMany({ thread_id: safeThreadId }),
+      db.collection('checkpoint_writes').deleteMany({ thread_id: safeThreadId }),
     ]);
-    console.warn('[invokeAgent] Cleared corrupted checkpoint for thread:', threadId);
+    console.warn('[invokeAgent] Cleared corrupted checkpoint for thread:', safeThreadId);
   } catch (err) {
     console.error('[invokeAgent] Failed to clear corrupted checkpoint:', err);
   }
@@ -391,17 +392,28 @@ function isCheckpointFormatError(error: unknown): boolean {
   return error instanceof Error && error.message.includes('pending_sends is not iterable');
 }
 
+/**
+ * Coerce checkpoint identifiers to plain strings.
+ * Prevents NoSQL operator injection into MongoDBSaver queries
+ * (GHSA-98xf-r82g-9mhx) when clients send object payloads.
+ */
+function sanitizeCheckpointThreadId(threadId: unknown): string {
+  if (typeof threadId === "string" && threadId.trim().length > 0) {
+    return threadId;
+  }
+  return `temp-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+
 // Helper function to invoke the agent with a simple message
 export async function invokeAgent(userMessage: string, threadId?: string, classId?: string, userId?: string, conversationId?: string): Promise<AgentResponse> {
   try {
     // Get compiled agent (will compile once on first call)
     const agent = await getCompiledAgent();
 
+    const safeThreadId = sanitizeCheckpointThreadId(threadId);
     // Pass config with thread_id if provided for memory
     // Ensure config is always a valid object (MongoDB checkpointer requires this)
-    const config = threadId 
-      ? { configurable: { thread_id: threadId } } 
-      : { configurable: { thread_id: `temp-${Date.now()}-${Math.random()}` } };
+    const config = { configurable: { thread_id: safeThreadId } };
 
     // Prepare the input messages
     const messages: BaseMessage[] = [];
@@ -412,7 +424,7 @@ export async function invokeAgent(userMessage: string, threadId?: string, classI
       classId,
       lessonId: classId,
       userId,
-      threadId,
+      threadId: safeThreadId,
     };
 
     // Context Injection
@@ -518,7 +530,8 @@ export async function invokeAgent(userMessage: string, threadId?: string, classI
 export async function streamAgent(userMessage: string, threadId?: string, classId?: string, userId?: string) {
   try {
     const agent = await getCompiledAgent();
-    const config = threadId ? { configurable: { thread_id: threadId } } : { configurable: {} };
+    const safeThreadId = sanitizeCheckpointThreadId(threadId);
+    const config = { configurable: { thread_id: safeThreadId } };
     const messages: BaseMessage[] = [];
 
     let fullUserMessage = userMessage;
