@@ -273,6 +273,7 @@ const workflow = new StateGraph({
   .addNode("llm", callLlm)
   .addNode("tools", callTools)
   .addEdge(START, "llm")
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- LangGraph 1.x conditional edge typing vs custom MessagesState
   .addConditionalEdges("llm", shouldContinue as any, {
     tools: "tools",
     [END]: END,
