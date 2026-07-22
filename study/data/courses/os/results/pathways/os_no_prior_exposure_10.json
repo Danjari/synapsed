@@ -1,0 +1,247 @@
+{
+  "profileId": "os_no_prior_exposure_10",
+  "cluster": null,
+  "field": null,
+  "description": "A third-year student with strong theoretical foundations in Python and Java who is pivoting toward Cybersecurity but feels a significant gap in their knowledge regarding C and low-level memory management.",
+  "studentId": "offline-os_no_prior_exposure_10",
+  "source": "offline-gemini",
+  "nodeCount": 17,
+  "nodes": [
+    {
+      "personalizationRationale": "This module on C-language basics is vital for a student with no prior exposure to ensure they can manipulate the low-level data structures used in OS kernels.",
+      "dependsOn": [],
+      "description": "Introduction to C syntax, pointers, and memory management basics necessary for systems-level programming.",
+      "nodeRole": "scaffolding_catchup",
+      "type": "resource",
+      "id": "n1",
+      "syllabusBlockId": "block_01",
+      "duration": "60 min",
+      "difficulty": "beginner",
+      "title": "Systems Programming Foundations: C & Pointers"
+    },
+    {
+      "title": "The Hardware-Software Interface",
+      "difficulty": "beginner",
+      "duration": "60 min",
+      "type": "subtopic",
+      "syllabusBlockId": "block_01",
+      "id": "n2",
+      "nodeRole": "scaffolding_catchup",
+      "personalizationRationale": "As a student with no prior exposure, understanding the interrupt-driven nature of hardware is a necessary bridge before analyzing software OS structures.",
+      "dependsOn": [
+        "n1"
+      ],
+      "description": "Conceptual overview of the hardware-software interface, including registers, CPU cycles, and the role of the BIOS."
+    },
+    {
+      "duration": "60 min",
+      "title": "Dev Environment: Linux Tooling & Shell Basics",
+      "difficulty": "beginner",
+      "dependsOn": [
+        "n2"
+      ],
+      "personalizationRationale": "Mastering the compilation process and shell commands provides the prerequisite technical literacy for a student with no prior exposure to start OS development.",
+      "description": "Practical guide to the Linux development environment, using GCC for compilation and basic GDB debugging techniques.",
+      "id": "n3",
+      "syllabusBlockId": "block_01",
+      "type": "resource",
+      "nodeRole": "scaffolding_catchup"
+    },
+    {
+      "title": "OS Services and System Structures",
+      "difficulty": "intermediate",
+      "duration": "120 min",
+      "type": "topic",
+      "syllabusBlockId": "block_01",
+      "id": "n4",
+      "nodeRole": "core_required",
+      "description": "Core OS foundations covering services, system structures, and the critical distinction between kernel and user modes.",
+      "personalizationRationale": "This core node establishes the essential distinction between user and kernel mode, a foundational concept for all subsequent course modules.",
+      "dependsOn": [
+        "n3"
+      ]
+    },
+    {
+      "duration": "110 min",
+      "difficulty": "intermediate",
+      "title": "Process Abstraction and Lifecycle",
+      "description": "Analysis of process lifecycles, states, and the operations required to manage process creation and termination.",
+      "dependsOn": [
+        "n4"
+      ],
+      "personalizationRationale": "This node covers the fundamental process abstraction which is the primary unit of work for the operating system and a key exam topic.",
+      "nodeRole": "core_required",
+      "id": "n5",
+      "syllabusBlockId": "block_02",
+      "type": "topic"
+    },
+    {
+      "description": "Techniques for process communication, including shared memory models, message passing systems, and socket programming.",
+      "personalizationRationale": "Inter-process communication is a required syllabus topic that bridges individual process management with networked and multi-threaded systems.",
+      "dependsOn": [
+        "n5"
+      ],
+      "type": "subtopic",
+      "id": "n6",
+      "syllabusBlockId": "block_02",
+      "nodeRole": "core_required",
+      "duration": "115 min",
+      "title": "Inter-Process Communication (IPC) Mechanisms",
+      "difficulty": "intermediate"
+    },
+    {
+      "description": "Introduction to threads, multi-threading models (M:1, 1:1, M:M), and implicit threading libraries like OpenMP.",
+      "dependsOn": [
+        "n6"
+      ],
+      "personalizationRationale": "Threading is essential for modern high-performance software; every student must master threading models for both exams and projects.",
+      "syllabusBlockId": "block_03",
+      "id": "n7",
+      "type": "topic",
+      "nodeRole": "core_required",
+      "duration": "100 min",
+      "title": "Threading Models and Multicore Programming",
+      "difficulty": "intermediate"
+    },
+    {
+      "duration": "100 min",
+      "title": "CPU Scheduling Algorithms & Evaluation",
+      "difficulty": "advanced",
+      "dependsOn": [
+        "n7"
+      ],
+      "personalizationRationale": "Algorithmic scheduling is a core analytical objective for the course and is tested heavily on the midterm exam.",
+      "description": "Detailed study of CPU scheduling criteria and algorithms like Round Robin, Priority Scheduling, and Multi-level Feedback Queues.",
+      "id": "n8",
+      "syllabusBlockId": "block_03",
+      "type": "subtopic",
+      "nodeRole": "core_required"
+    },
+    {
+      "duration": "100 min",
+      "difficulty": "intermediate",
+      "title": "Midterm Review: Foundations to Scheduling",
+      "description": "Comprehensive review session and practice exam covering Chapters 1 through 5 to prepare for the week-8 midterm.",
+      "personalizationRationale": "This mandatory midterm review ensures the student with no prior exposure has solidified their understanding of foundational concepts before the first major exam.",
+      "dependsOn": [
+        "n8"
+      ],
+      "nodeRole": "assessment",
+      "type": "assessment",
+      "syllabusBlockId": "block_03",
+      "id": "n9"
+    },
+    {
+      "duration": "150 min",
+      "title": "Process Synchronization & Mutex Locks",
+      "difficulty": "advanced",
+      "personalizationRationale": "Synchronization is a high-difficulty core requirement that every student must apply in their multi-threaded programming projects.",
+      "dependsOn": [
+        "n9"
+      ],
+      "description": "Examination of the critical section problem and tools like mutex locks and semaphores to prevent race conditions.",
+      "type": "topic",
+      "syllabusBlockId": "block_04",
+      "id": "n10",
+      "nodeRole": "core_required"
+    },
+    {
+      "title": "Monitors and Classic Synchronization Problems",
+      "difficulty": "advanced",
+      "duration": "150 min",
+      "syllabusBlockId": "block_04",
+      "id": "n11",
+      "type": "subtopic",
+      "nodeRole": "core_required",
+      "dependsOn": [
+        "n10"
+      ],
+      "personalizationRationale": "Mastering classic problems is required to demonstrate the ability to model and solve complex concurrency issues analytically.",
+      "description": "Analysis of monitors and classic synchronization problems including the Dining Philosophers and Readers-Writers problems."
+    },
+    {
+      "description": "Study of deadlock characterization, prevention strategies, and the Banker's algorithm for deadlock avoidance.",
+      "dependsOn": [
+        "n11"
+      ],
+      "personalizationRationale": "Though a smaller block, deadlock theory is a required part of the cumulative final and essential for system reliability analysis.",
+      "syllabusBlockId": "block_05",
+      "id": "n12",
+      "type": "topic",
+      "nodeRole": "core_required",
+      "duration": "150 min",
+      "title": "Deadlock Characterization and Avoidance",
+      "difficulty": "intermediate"
+    },
+    {
+      "duration": "150 min",
+      "title": "Physical Memory & Paging Mechanisms",
+      "difficulty": "intermediate",
+      "description": "Foundations of memory management, covering contiguous allocation, paging concepts, and page table structures.",
+      "personalizationRationale": "Physical memory management is a prerequisite for understanding how the OS interacts with modern hardware architectures.",
+      "dependsOn": [
+        "n12"
+      ],
+      "type": "topic",
+      "id": "n13",
+      "syllabusBlockId": "block_06",
+      "nodeRole": "core_required"
+    },
+    {
+      "difficulty": "advanced",
+      "title": "Virtual Memory & Page Replacement Algorithms",
+      "duration": "150 min",
+      "nodeRole": "core_required",
+      "id": "n14",
+      "syllabusBlockId": "block_06",
+      "type": "subtopic",
+      "description": "Exploration of virtual memory, demand paging, and page replacement algorithms like LRU and Optimal.",
+      "dependsOn": [
+        "n13"
+      ],
+      "personalizationRationale": "Virtual memory is a cornerstone of OS design and a critical component of the semester's memory management project."
+    },
+    {
+      "duration": "100 min",
+      "title": "I/O Systems and Subsystem Performance",
+      "difficulty": "intermediate",
+      "dependsOn": [
+        "n14"
+      ],
+      "personalizationRationale": "Understanding I/O performance and interfaces is a required capstone skill for completing the system-wide perspective of the course.",
+      "description": "Overview of I/O hardware, kernel I/O subsystems, and the interface between drivers and the OS kernel.",
+      "id": "n15",
+      "syllabusBlockId": "block_07",
+      "type": "topic",
+      "nodeRole": "core_required"
+    },
+    {
+      "personalizationRationale": "File system design is the final core module before the cumulative exam, focusing on how data persistence is managed by the OS.",
+      "dependsOn": [
+        "n15"
+      ],
+      "description": "Investigation of file system implementation, directory structures, and allocation methods for persistent storage.",
+      "type": "subtopic",
+      "id": "n16",
+      "syllabusBlockId": "block_07",
+      "nodeRole": "core_required",
+      "duration": "100 min",
+      "title": "File System Implementation & Storage",
+      "difficulty": "intermediate"
+    },
+    {
+      "nodeRole": "assessment",
+      "id": "n17",
+      "syllabusBlockId": "block_07",
+      "type": "assessment",
+      "description": "Final comprehensive review session covering all course material from Week 1 through 15 in preparation for the cumulative final exam.",
+      "dependsOn": [
+        "n16"
+      ],
+      "personalizationRationale": "The cumulative final review is mandatory for all students to ensure readiness for the exam which constitutes 40% of the grade.",
+      "difficulty": "advanced",
+      "title": "Cumulative Final Course Review",
+      "duration": "100 min"
+    }
+  ]
+}

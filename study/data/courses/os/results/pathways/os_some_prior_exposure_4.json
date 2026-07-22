@@ -1,0 +1,233 @@
+{
+  "profileId": "os_some_prior_exposure_4",
+  "cluster": null,
+  "field": null,
+  "description": "A theory-oriented student interested in cybersecurity who excels at analytical modeling but feels intimidated by low-level C memory management and debugging.",
+  "studentId": "offline-os_some_prior_exposure_4",
+  "source": "offline-gemini",
+  "nodeCount": 16,
+  "nodes": [
+    {
+      "id": "node_01_scaffold",
+      "difficulty": "beginner",
+      "nodeRole": "scaffolding_catchup",
+      "description": "A foundational review of C-language memory management, pointers, and structures required to understand kernel operations.",
+      "duration": "90 min",
+      "dependsOn": [],
+      "personalizationRationale": "As the student has some_prior_exposure, this single scaffolding node in block_01 reinforces the specific C-programming prerequisites needed for systems work.",
+      "type": "resource",
+      "title": "Refresher: Systems Programming in C",
+      "syllabusBlockId": "block_01"
+    },
+    {
+      "nodeRole": "core_required",
+      "duration": "210 min",
+      "description": "Introduction to operating system services, kernel vs. user mode, and the design of system call interfaces.",
+      "id": "node_02_core",
+      "difficulty": "intermediate",
+      "syllabusBlockId": "block_01",
+      "title": "OS Structures and System Calls",
+      "dependsOn": [
+        "node_01_scaffold"
+      ],
+      "type": "topic",
+      "personalizationRationale": "Standard core content for block_01 to ensure a student with some_prior_exposure understands basic OS structure."
+    },
+    {
+      "difficulty": "intermediate",
+      "id": "node_03_core",
+      "description": "Analysis of process states, the process control block (PCB), and operations such as creation and termination.",
+      "duration": "110 min",
+      "nodeRole": "core_required",
+      "personalizationRationale": "Essential process management theory required for students with some_prior_exposure to build on later blocks.",
+      "type": "topic",
+      "dependsOn": [
+        "node_02_core"
+      ],
+      "title": "Process Management Fundamentals",
+      "syllabusBlockId": "block_02"
+    },
+    {
+      "id": "node_04_core",
+      "difficulty": "intermediate",
+      "nodeRole": "core_required",
+      "description": "Mechanisms for inter-process communication including shared memory, message passing, and socket-based communication.",
+      "duration": "115 min",
+      "dependsOn": [
+        "node_03_core"
+      ],
+      "type": "topic",
+      "personalizationRationale": "Core IPC content necessary for the required programming projects, tailored for some_prior_exposure.",
+      "title": "Inter-Process Communication (IPC)",
+      "syllabusBlockId": "block_02"
+    },
+    {
+      "difficulty": "intermediate",
+      "id": "node_05_core",
+      "duration": "100 min",
+      "description": "Exploration of threading models (Many-to-One, One-to-One, Many-to-Many) and the Pthreads library.",
+      "nodeRole": "core_required",
+      "type": "topic",
+      "personalizationRationale": "Foundational thread modeling for students with some_prior_exposure to prepare for concurrency challenges.",
+      "dependsOn": [
+        "node_04_core"
+      ],
+      "syllabusBlockId": "block_03",
+      "title": "Threads and Threading Models"
+    },
+    {
+      "description": "Analytical modeling of CPU scheduling algorithms including FCFS, SJF, and Round Robin.",
+      "duration": "100 min",
+      "nodeRole": "core_required",
+      "difficulty": "intermediate",
+      "id": "node_06_core",
+      "title": "CPU Scheduling Algorithms",
+      "syllabusBlockId": "block_03",
+      "type": "topic",
+      "personalizationRationale": "Core scheduling theory required for the midterm exam for a student with some_prior_exposure.",
+      "dependsOn": [
+        "node_05_core"
+      ]
+    },
+    {
+      "syllabusBlockId": "block_03",
+      "title": "Midterm Review (Ch. 1-5) spinning",
+      "personalizationRationale": "Mandatory midterm assessment checkpoint for all students, including those with some_prior_exposure.",
+      "type": "assessment",
+      "dependsOn": [
+        "node_06_core"
+      ],
+      "duration": "100 min",
+      "description": "A comprehensive review session covering Chapters 1-5 in preparation for the week 8 midterm exam.",
+      "nodeRole": "assessment",
+      "difficulty": "intermediate",
+      "id": "node_07_assessment"
+    },
+    {
+      "nodeRole": "core_required",
+      "duration": "150 min",
+      "description": "Defining the critical-section problem and implementing solutions using Mutex locks and Semaphores.",
+      "id": "node_08_core",
+      "difficulty": "intermediate",
+      "syllabusBlockId": "block_04",
+      "title": "Process Synchronization Primitives",
+      "dependsOn": [
+        "node_07_assessment"
+      ],
+      "personalizationRationale": "Core synchronization content essential for final exams and projects for students with some_prior_exposure.",
+      "type": "topic"
+    },
+    {
+      "difficulty": "intermediate",
+      "id": "node_09_core",
+      "description": "Classic synchronization challenges such as the Bounded-Buffer, Readers-Writers, and Dining Philosophers problems.",
+      "duration": "150 min",
+      "nodeRole": "core_required",
+      "type": "topic",
+      "personalizationRationale": "Critical application of synchronization theory for students with some_prior_exposure.",
+      "dependsOn": [
+        "node_08_core"
+      ],
+      "title": "Classic Problems of Synchronization",
+      "syllabusBlockId": "block_04"
+    },
+    {
+      "nodeRole": "core_required",
+      "duration": "75 min",
+      "description": "Characterizing deadlocks and implementing prevention and avoidance strategies like the Banker's Algorithm.",
+      "id": "node_10_core",
+      "difficulty": "intermediate",
+      "syllabusBlockId": "block_05",
+      "title": "Deadlock Characterization and Prevention",
+      "dependsOn": [
+        "node_09_core"
+      ],
+      "personalizationRationale": "Standard required knowledge on deadlock characterization for students with some_prior_exposure.",
+      "type": "topic"
+    },
+    {
+      "difficulty": "intermediate",
+      "id": "node_11_core",
+      "description": "Techniques for deadlock detection in systems and strategies for recovering from a deadlocked state.",
+      "duration": "75 min",
+      "nodeRole": "core_required",
+      "personalizationRationale": "Core deadlocks module content for some_prior_exposure students to ensure full syllabus coverage.",
+      "type": "topic",
+      "dependsOn": [
+        "node_10_core"
+      ],
+      "title": "Deadlock Detection and Recovery",
+      "syllabusBlockId": "block_05"
+    },
+    {
+      "dependsOn": [
+        "node_11_core"
+      ],
+      "type": "topic",
+      "personalizationRationale": "Required memory management fundamentals for a student with some_prior_exposure.",
+      "title": "Physical Memory and Paging",
+      "syllabusBlockId": "block_06",
+      "id": "node_12_core",
+      "difficulty": "intermediate",
+      "nodeRole": "core_required",
+      "description": "Address binding, contiguous allocation, and the transition to hardware-supported paging.",
+      "duration": "100 min"
+    },
+    {
+      "syllabusBlockId": "block_06",
+      "title": "Virtual Memory and Demand Paging",
+      "dependsOn": [
+        "node_12_core"
+      ],
+      "type": "topic",
+      "personalizationRationale": "Foundational virtual memory concepts required for project delivery for some_prior_exposure students.",
+      "nodeRole": "core_required",
+      "duration": "100 min",
+      "description": "Implementation of virtual memory, demand paging, and the impact of page faults on system performance.",
+      "id": "node_13_core",
+      "difficulty": "intermediate"
+    },
+    {
+      "dependsOn": [
+        "node_13_core"
+      ],
+      "type": "subtopic",
+      "personalizationRationale": "Provides advanced design-tradeoff analysis for a student with some_prior_exposure to deepen their understanding of performance.",
+      "title": "Page Replacement Tradeoff Analysis",
+      "syllabusBlockId": "block_06",
+      "id": "node_14_enrichment",
+      "difficulty": "advanced",
+      "nodeRole": "enrichment_advanced",
+      "description": "Experimental evaluation of page replacement algorithms (LRU, Optimal, FIFO) under varying frame allocations.",
+      "duration": "100 min"
+    },
+    {
+      "id": "node_15_core",
+      "difficulty": "intermediate",
+      "nodeRole": "core_required",
+      "description": "Structure of I/O systems, disk scheduling algorithms, and file system implementation strategies.",
+      "duration": "200 min",
+      "dependsOn": [
+        "node_14_enrichment"
+      ],
+      "type": "topic",
+      "personalizationRationale": "Core capstone material on storage and I/O for students with some_prior_exposure.",
+      "title": "I/O Systems and File Storage",
+      "syllabusBlockId": "block_07"
+    },
+    {
+      "title": "Cumulative Final Review",
+      "syllabusBlockId": "block_07",
+      "personalizationRationale": "Mandatory cumulative final assessment review for all students, including those with some_prior_exposure.",
+      "type": "assessment",
+      "dependsOn": [
+        "node_15_core"
+      ],
+      "description": "A cumulative review session encompassing all course materials from week 1-15 in preparation for the final exam.",
+      "duration": "100 min",
+      "nodeRole": "assessment",
+      "difficulty": "intermediate",
+      "id": "node_16_assessment_final"
+    }
+  ]
+}

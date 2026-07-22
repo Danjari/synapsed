@@ -1,0 +1,233 @@
+{
+  "profileId": "os_strong_prior_exposure_8",
+  "cluster": null,
+  "field": null,
+  "description": "A technically advanced Junior Computer Science student with a background in CTF competitions and a specific interest in the security implications of memory management.",
+  "studentId": "offline-os_strong_prior_exposure_8",
+  "source": "offline-gemini",
+  "nodeCount": 16,
+  "nodes": [
+    {
+      "difficulty": "beginner",
+      "duration": "75 min",
+      "title": "OS Structures and Mode Transitions",
+      "personalizationRationale": "As a student with strong_prior_exposure, this core content is delivered efficiently to establish the course's theoretical baseline.",
+      "nodeRole": "core_required",
+      "id": "node_01",
+      "description": "Analyze fundamental operating system services and the distinction between user and kernel modes.",
+      "type": "topic",
+      "dependsOn": [],
+      "syllabusBlockId": "block_01"
+    },
+    {
+      "description": "Investigate the performance and security trade-offs between monolithic, layered, and microkernel architectures.",
+      "type": "subtopic",
+      "dependsOn": [
+        "node_01"
+      ],
+      "syllabusBlockId": "block_01",
+      "difficulty": "advanced",
+      "duration": "75 min",
+      "title": "Kernel Architecture Trade-offs",
+      "personalizationRationale": "Given the student's strong_prior_exposure, we move directly to complex architectural comparisons rather than introductory environment setup.",
+      "nodeRole": "enrichment_advanced",
+      "id": "node_02"
+    },
+    {
+      "nodeRole": "core_required",
+      "id": "node_03",
+      "duration": "110 min",
+      "difficulty": "beginner",
+      "personalizationRationale": "The student's strong_prior_exposure allows for a rapid transition to process control block structures and lifecycle management.",
+      "title": "Process Lifecycle and Control",
+      "syllabusBlockId": "block_02",
+      "description": "Explore the process abstraction, process states, and standard operations like creation and termination.",
+      "dependsOn": [
+        "node_02"
+      ],
+      "type": "topic"
+    },
+    {
+      "duration": "115 min",
+      "difficulty": "advanced",
+      "personalizationRationale": "With strong_prior_exposure, the student can analyze the specific performance penalties and cache implications of different IPC models.",
+      "title": "High-Performance IPC Analysis",
+      "nodeRole": "enrichment_advanced",
+      "id": "node_04",
+      "description": "Evaluate the throughput and latency differences between Shared Memory and Message Passing IPC mechanisms.",
+      "dependsOn": [
+        "node_03"
+      ],
+      "type": "subtopic",
+      "syllabusBlockId": "block_02"
+    },
+    {
+      "duration": "100 min",
+      "difficulty": "intermediate",
+      "title": "Threading Models and Libraries",
+      "personalizationRationale": "Core required content for all students, leveraging the student's strong_prior_exposure to focus on the mapping between user and kernel threads.",
+      "nodeRole": "core_required",
+      "id": "node_05",
+      "description": "Review threading models (Many-to-One, One-to-One) and the use of threading libraries in C.",
+      "type": "topic",
+      "dependsOn": [
+        "node_04"
+      ],
+      "syllabusBlockId": "block_03"
+    },
+    {
+      "nodeRole": "core_required",
+      "id": "node_06",
+      "duration": "100 min",
+      "difficulty": "intermediate",
+      "personalizationRationale": "This foundational scheduling theory is required for all students to meet exam benchmarks.",
+      "title": "CPU Scheduling Algorithms",
+      "syllabusBlockId": "block_03",
+      "description": "Examine CPU scheduling criteria and algorithms like Round Robin, Priority, and Multi-level Feedback Queues.",
+      "dependsOn": [
+        "node_05"
+      ],
+      "type": "topic"
+    },
+    {
+      "personalizationRationale": "This is a mandatory assessment checkpoint covering Chapters 1-5 for all students.",
+      "title": "Midterm Review (Ch. 1-5)",
+      "difficulty": "intermediate",
+      "duration": "100 min",
+      "id": "node_07",
+      "nodeRole": "assessment",
+      "dependsOn": [
+        "node_06"
+      ],
+      "type": "assessment",
+      "description": "Comprehensive review of Operating System Foundations through CPU Scheduling for the Week 8 Midterm.",
+      "syllabusBlockId": "block_03"
+    },
+    {
+      "difficulty": "intermediate",
+      "duration": "150 min",
+      "title": "Synchronization Primitives",
+      "personalizationRationale": "Fundamental synchronization primitives are required for both the final exam and successful project delivery.",
+      "nodeRole": "core_required",
+      "id": "node_08",
+      "description": "Examine the critical section problem, mutex locks, and the role of semaphores in preventing race conditions.",
+      "type": "topic",
+      "dependsOn": [
+        "node_07"
+      ],
+      "syllabusBlockId": "block_04"
+    },
+    {
+      "id": "node_09",
+      "nodeRole": "enrichment_advanced",
+      "title": "Advanced Concurrency Problems",
+      "personalizationRationale": "Explores edge cases in concurrency and lock contention that challenge even students with strong_prior_exposure.",
+      "difficulty": "advanced",
+      "duration": "150 min",
+      "syllabusBlockId": "block_04",
+      "type": "subtopic",
+      "dependsOn": [
+        "node_08"
+      ],
+      "description": "Solve classic synchronization problems like the Dining Philosophers and explore lock-free programming concepts."
+    },
+    {
+      "id": "node_10",
+      "nodeRole": "core_required",
+      "title": "Deadlock Characterization and Prevention",
+      "personalizationRationale": "Core required logic for deadlock management is mandatory for all students, though scaled to reflect the block's smaller syllabus footprint.",
+      "duration": "150 min",
+      "difficulty": "intermediate",
+      "syllabusBlockId": "block_05",
+      "type": "topic",
+      "dependsOn": [
+        "node_09"
+      ],
+      "description": "Define the four necessary conditions for deadlock and evaluate prevention and avoidance strategies."
+    },
+    {
+      "personalizationRationale": "Fundamental memory structures are mandatory for exam preparation and understanding hardware-OS interaction.",
+      "title": "Main Memory and Paging",
+      "duration": "100 min",
+      "difficulty": "intermediate",
+      "id": "node_11",
+      "nodeRole": "core_required",
+      "dependsOn": [
+        "node_10"
+      ],
+      "type": "topic",
+      "description": "Understand physical address spaces, contiguous allocation, and the transition to paging systems.",
+      "syllabusBlockId": "block_06"
+    },
+    {
+      "description": "Analyze demand paging, page replacement algorithms (LRU, FIFO, Optimal), and the concept of thrashing.",
+      "type": "topic",
+      "dependsOn": [
+        "node_11"
+      ],
+      "syllabusBlockId": "block_06",
+      "duration": "100 min",
+      "difficulty": "intermediate",
+      "title": "Virtual Memory Management",
+      "personalizationRationale": "Core required theory on virtual memory management, heavily tested in final project deliveries.",
+      "nodeRole": "core_required",
+      "id": "node_12"
+    },
+    {
+      "id": "node_13",
+      "nodeRole": "enrichment_advanced",
+      "personalizationRationale": "Investigates advanced memory optimizations suitable for students with strong_prior_exposure to low-level hardware.",
+      "title": "Advanced Memory Optimizations",
+      "difficulty": "advanced",
+      "duration": "100 min",
+      "syllabusBlockId": "block_06",
+      "dependsOn": [
+        "node_12"
+      ],
+      "type": "subtopic",
+      "description": "Investigate Translation Lookaside Buffer (TLB) reach, large page support, and hardware-software co-design for memory efficiency."
+    },
+    {
+      "title": "I/O Subsystems and Performance",
+      "personalizationRationale": "Mandatory capstone content on I/O systems required for a complete understanding of system performance.",
+      "duration": "100 min",
+      "difficulty": "intermediate",
+      "id": "node_14",
+      "nodeRole": "core_required",
+      "type": "topic",
+      "dependsOn": [
+        "node_13"
+      ],
+      "description": "Explore I/O hardware interfaces, polling versus interrupts, and Direct Memory Access (DMA).",
+      "syllabusBlockId": "block_07"
+    },
+    {
+      "dependsOn": [
+        "node_14"
+      ],
+      "type": "topic",
+      "description": "Analyze file system structures, allocation methods (indexed, linked), and free-space management.",
+      "syllabusBlockId": "block_07",
+      "personalizationRationale": "This core block ensures the student understands the persistent storage abstractions used in modern operating systems.",
+      "title": "File System Implementation",
+      "duration": "100 min",
+      "difficulty": "intermediate",
+      "id": "node_15",
+      "nodeRole": "core_required"
+    },
+    {
+      "syllabusBlockId": "block_07",
+      "dependsOn": [
+        "node_15"
+      ],
+      "type": "assessment",
+      "description": "Cumulative review of all course material from OS Foundations through File Systems in preparation for the final exam.",
+      "id": "node_16",
+      "nodeRole": "assessment",
+      "personalizationRationale": "Final cumulative assessment required to complete the course and verify mastery of all syllabus blocks.",
+      "title": "Cumulative Final Review",
+      "difficulty": "advanced",
+      "duration": "100 min"
+    }
+  ]
+}

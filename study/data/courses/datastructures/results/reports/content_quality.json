@@ -1,0 +1,72 @@
+{
+  "course_id": "datastructures",
+  "cross_profile_diversity": {
+    "no_prior_exposure": {
+      "scaffolding_catchup": {
+        "n": 30,
+        "mean_pairwise_similarity": 0.555751383304596
+      },
+      "core_required": {
+        "n": 17,
+        "mean_pairwise_similarity": 0.641038715839386
+      },
+      "enrichment_advanced": {
+        "n": 0,
+        "mean_pairwise_similarity": null
+      }
+    },
+    "some_prior_exposure": {
+      "scaffolding_catchup": {
+        "n": 10,
+        "mean_pairwise_similarity": 0.7952577471733093
+      },
+      "core_required": {
+        "n": 11,
+        "mean_pairwise_similarity": 0.7221843600273132
+      },
+      "enrichment_advanced": {
+        "n": 0,
+        "mean_pairwise_similarity": null
+      }
+    },
+    "strong_prior_exposure": {
+      "scaffolding_catchup": {
+        "n": 0,
+        "mean_pairwise_similarity": null
+      },
+      "core_required": {
+        "n": 12,
+        "mean_pairwise_similarity": 0.7147018313407898
+      },
+      "enrichment_advanced": {
+        "n": 14,
+        "mean_pairwise_similarity": 0.635066568851471
+      }
+    }
+  },
+  "within_pathway_separability": {
+    "scaffolding_vs_core_or_enrichment": {
+      "n_pairs": 62,
+      "mean_similarity": 0.4709
+    },
+    "core_or_enrichment_vs_itself": {
+      "n_pairs": 30,
+      "mean_similarity": 0.4769
+    },
+    "interpretation": "If scaffolding-vs-other similarity is close to or higher than core/enrichment-vs-itself, the scaffolding node isn't meaningfully distinct content \u2014 it's a relabeled duplicate."
+  },
+  "readability_by_role": {
+    "scaffolding_catchup": {
+      "n": 40,
+      "mean_flesch_reading_ease": 23.92
+    },
+    "core_required": {
+      "n": 378,
+      "mean_flesch_reading_ease": 34.91
+    },
+    "enrichment_advanced": {
+      "n": 18,
+      "mean_flesch_reading_ease": 11.7
+    }
+  }
+}

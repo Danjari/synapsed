@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { GoogleGenAI, Type } from "@google/genai";
 import { GEMINI_MODEL } from "@/lib/gemini-model";
+import {
+  buildPathwayPrompt,
+  getPathwayFunctionDeclaration,
+  PATHWAY_BLOCK_IDS,
+} from "@/lib/learning-paths/pathwayPrompt";
 
 const geminiClient = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
 
@@ -12,6 +17,7 @@ type PathwayNodeInput = {
   id: string;
   title: string;
   description: string;
+  syllabusBlockId?: string;
   type: string;
   difficulty: string;
   duration: string;
@@ -154,36 +160,18 @@ async function generatePathwayForStudent(
   const questions = Array.isArray(survey.questions) ? survey.questions : [];
   const answers = Array.isArray(response.answers) ? response.answers : [];
 
-  // Build comprehensive prompt
-  const prompt = `Course Information:
-${syllabusContext.courseDescription ? `Description: ${syllabusContext.courseDescription}\n` : ''}
-${syllabusContext.prerequisites ? `Prerequisites: ${syllabusContext.prerequisites}\n` : ''}
-${syllabusContext.learningObjectives ? `Learning Objectives: ${syllabusContext.learningObjectives}\n` : ''}
-${syllabusContext.courseSchedule ? `Course Schedule: ${syllabusContext.courseSchedule}\n` : ''}
-${syllabusContext.assessmentMethods ? `Assessment Methods: ${syllabusContext.assessmentMethods}\n` : ''}
+  const prompt = buildPathwayPrompt(
+    syllabusContext,
+    questions as SurveyQuestion[],
+    answers as SurveyAnswer[]
+  );
 
-Student Survey Responses:
-${(answers as SurveyAnswer[])
-  .map((ans) => {
-    const q = (questions as SurveyQuestion[]).find((q) => q.id == ans.questionId);
-    return `Q: ${q?.text || "Unknown"}\nA: ${ans.answer}`;
-  })
-  .join("\n")}
-
-Based on the course information and the student's survey responses, generate a personalized learning pathway that:
-1. Aligns with the course learning objectives and schedule
-2. Considers the student's learning preferences, prior knowledge, and interests
-3. Takes into account any prerequisites or background knowledge gaps
-4. Incorporates the assessment methods and grading structure
-5. Provides a structured progression through the course material with clear dependencies
-
-Create 10-14 pathway nodes that form a coherent learning journey.`;
-
-  // Function calling schema
-  const generatePathwayFunction = {
-    name: 'generate_learning_pathway',
-    description: 'Generate a learning pathway of structured nodes for a student',
+  const generatePathwayFunction = getPathwayFunctionDeclaration();
+  // Cast for @google/genai Type enum compatibility
+  const functionDeclaration = {
+    ...generatePathwayFunction,
     parameters: {
+      ...generatePathwayFunction.parameters,
       type: Type.OBJECT,
       properties: {
         nodes: {
@@ -194,25 +182,26 @@ Create 10-14 pathway nodes that form a coherent learning journey.`;
               id: { type: Type.STRING },
               title: { type: Type.STRING },
               description: { type: Type.STRING },
-              type: {
-                type: Type.STRING,
-                enum: ['topic', 'subtopic', 'resource', 'assessment'],
-              },
-              difficulty: {
-                type: Type.STRING,
-                enum: ['beginner', 'intermediate', 'advanced'],
-              },
+              syllabusBlockId: { type: Type.STRING, enum: PATHWAY_BLOCK_IDS },
+              type: { type: Type.STRING, enum: ["topic", "subtopic", "resource", "assessment"] },
+              difficulty: { type: Type.STRING, enum: ["beginner", "intermediate", "advanced"] },
               duration: { type: Type.STRING },
-              dependsOn: {
-                type: Type.ARRAY,
-                items: { type: Type.STRING },
-              },
+              dependsOn: { type: Type.ARRAY, items: { type: Type.STRING } },
             },
-            required: ['id', 'title', 'description', 'type', 'difficulty', 'duration', 'dependsOn'],
+            required: [
+              "id",
+              "title",
+              "description",
+              "syllabusBlockId",
+              "type",
+              "difficulty",
+              "duration",
+              "dependsOn",
+            ],
           },
         },
       },
-      required: ['nodes'],
+      required: ["nodes"],
     },
   };
 
@@ -222,7 +211,7 @@ Create 10-14 pathway nodes that form a coherent learning journey.`;
     config: {
       tools: [
         {
-          functionDeclarations: [generatePathwayFunction],
+          functionDeclarations: [functionDeclaration],
         },
       ],
     },
@@ -255,13 +244,15 @@ Create 10-14 pathway nodes that form a coherent learning journey.`;
     },
   });
 
-  // Create pathway nodes
+  // Create pathway nodes (syllabusBlockId embedded in description until schema supports it)
   await prisma.pathwayNode.createMany({
     data: (nodes as PathwayNodeInput[]).map((node) => ({
       pathwayId: pathway.id,
       nodeId: node.id,
       title: node.title,
-      description: node.description,
+      description: node.syllabusBlockId
+        ? `[${node.syllabusBlockId}] ${node.description}`
+        : node.description,
       type: node.type,
       difficulty: node.difficulty,
       duration: node.duration,

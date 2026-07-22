@@ -1,0 +1,183 @@
+{
+  "courseTitle": "Data Structures (CS-UH 1050)",
+  "scheduleWeeks": 16,
+  "estimatedTotalMinutes": 2400,
+  "sources": [
+    { "id": "ds1050", "title": "Data Structures (CS-UH 1050, Section 003)", "hours": 40, "instructor": "Mohamad Kassab" }
+  ],
+  "prerequisites": "CS-UH 1001 (Intro to Computer Science); corequisite CS-UH 1002 (Discrete Mathematics) — required, exam-tested prior/concurrent coursework, not optional background. No prior C++ is assumed, but prior general programming (from CS-UH 1001) is.",
+  "courseDescription": "A required, cumulative 4-credit data structures & algorithms course taught in C++, textbook Goodrich/Tamassia/Mount 'Data Structures and Algorithms in C++' (2nd ed.). Every enrolled student is examined on the full syllabus; there is no elective/alternative-track content. AI-assisted code generation is explicitly disallowed by course policy (idea generation only).",
+  "assessmentMethods": "4 quizzes 15%, 3 assignments 20%, lab 10%, midterm exam 25%, final exam 30%. 55% of the grade is exam-based on material every student must know.",
+  "learningObjectives": [
+    "Design appropriate data structures for a given problem",
+    "Analyze and compare algorithm performance using asymptotic (Big-O) notation",
+    "Demonstrate proficiency with standard data structures (lists, trees, heaps, hash tables)",
+    "Demonstrate C++ programming proficiency",
+    "Design and implement efficient programs using the structures covered"
+  ],
+  "blocks": [
+    {
+      "id": "block_01",
+      "calendarWeek": 1,
+      "title": "C++ Foundations & Object-Oriented Design",
+      "sourceCourse": "Data Structures (CS-UH 1050)",
+      "sourceRef": "Weeks 1-2, Ch.1-2",
+      "estimatedMinutes": 225,
+      "dedupeKey": "cpp_oop_foundations",
+      "pathwayNote": "Required floor block — the one block where prior-C++-exposure most changes needed scaffolding; students with no prior C++ get extra scaffolding nodes here, students with strong prior C++ get enrichment nodes (e.g. move semantics, templates depth) instead.",
+      "objectives": [
+        "Write and compile basic C++ programs (references, arrays, classes)",
+        "Apply object-oriented design: inheritance, templates, exceptions"
+      ],
+      "lessons": [
+        { "title": "Class Introduction & Basics of C++", "source": "ds1050", "sourceRef": "Week 1" },
+        { "title": "References, Arrays & Classes", "source": "ds1050", "sourceRef": "Week 1" },
+        { "title": "Object-Oriented Design: Inheritance, Templates, Exceptions", "source": "ds1050", "sourceRef": "Week 2" }
+      ],
+      "skippedLessons": []
+    },
+    {
+      "id": "block_02",
+      "calendarWeek": 3,
+      "title": "Arrays, Linked Lists & Recursion",
+      "sourceCourse": "Data Structures (CS-UH 1050)",
+      "sourceRef": "Weeks 3-4, Ch.3-4",
+      "estimatedMinutes": 300,
+      "dedupeKey": "linear_structures_recursion",
+      "pathwayNote": "Required floor block; includes Quiz 1 (recursion) as an assessment checkpoint.",
+      "objectives": [
+        "Implement arrays and linked lists",
+        "Apply recursion and asymptotic (Big-O) analysis"
+      ],
+      "lessons": [
+        { "title": "Arrays & Linked Lists", "source": "ds1050", "sourceRef": "Week 3" },
+        { "title": "Linked List Implementation", "source": "ds1050", "sourceRef": "Week 3" },
+        { "title": "Recursion", "source": "ds1050", "sourceRef": "Week 4", "type": "assessment" },
+        { "title": "Algorithm Analysis: Asymptotic (Big-O) Notation", "source": "ds1050", "sourceRef": "Week 4" }
+      ],
+      "skippedLessons": []
+    },
+    {
+      "id": "block_03",
+      "calendarWeek": 5,
+      "title": "Stacks, Queues & Sequence-Based Structures",
+      "sourceCourse": "Data Structures (CS-UH 1050)",
+      "sourceRef": "Weeks 5-7, Ch.5-6",
+      "estimatedMinutes": 375,
+      "dedupeKey": "stacks_queues_sequences",
+      "pathwayNote": "Required floor block; includes Quiz 2 and a midterm-review assessment checkpoint (material through this block is on the midterm).",
+      "objectives": [
+        "Implement stacks, queues, and deques",
+        "Implement vectors, iterators, and lists; apply bubble sort"
+      ],
+      "lessons": [
+        { "title": "Stacks", "source": "ds1050", "sourceRef": "Week 5" },
+        { "title": "Queues & Deques", "source": "ds1050", "sourceRef": "Week 5" },
+        { "title": "Vectors", "source": "ds1050", "sourceRef": "Week 6" },
+        { "title": "Iterators & Lists", "source": "ds1050", "sourceRef": "Week 6" },
+        { "title": "Sequences & Bubble Sort", "source": "ds1050", "sourceRef": "Week 7", "type": "assessment" },
+        { "title": "Midterm Review", "source": "ds1050", "sourceRef": "Week 7", "type": "assessment" }
+      ],
+      "skippedLessons": []
+    },
+    {
+      "id": "block_04",
+      "calendarWeek": 9,
+      "title": "Trees & Tree Traversal",
+      "sourceCourse": "Data Structures (CS-UH 1050)",
+      "sourceRef": "Weeks 9-10, Ch.7",
+      "estimatedMinutes": 225,
+      "dedupeKey": "trees",
+      "pathwayNote": "Required floor block.",
+      "objectives": [
+        "Implement general trees and binary trees",
+        "Apply tree traversal algorithms"
+      ],
+      "lessons": [
+        { "title": "General Trees", "source": "ds1050", "sourceRef": "Week 9" },
+        { "title": "Tree Traversal", "source": "ds1050", "sourceRef": "Week 9" },
+        { "title": "Binary Trees", "source": "ds1050", "sourceRef": "Week 10" }
+      ],
+      "skippedLessons": []
+    },
+    {
+      "id": "block_05",
+      "calendarWeek": 10,
+      "title": "Priority Queues & Heaps",
+      "sourceCourse": "Data Structures (CS-UH 1050)",
+      "sourceRef": "Weeks 10-11, Ch.8",
+      "estimatedMinutes": 150,
+      "dedupeKey": "priority_queues_heaps",
+      "pathwayNote": "Required floor block — smaller than others by lesson count, floor should scale down proportionally, not disappear.",
+      "objectives": [
+        "Implement priority queues",
+        "Implement and analyze heaps"
+      ],
+      "lessons": [
+        { "title": "Priority Queues", "source": "ds1050", "sourceRef": "Week 10" },
+        { "title": "Heaps", "source": "ds1050", "sourceRef": "Week 11" }
+      ],
+      "skippedLessons": []
+    },
+    {
+      "id": "block_06",
+      "calendarWeek": 11,
+      "title": "Maps, Hash Tables & Dictionaries",
+      "sourceCourse": "Data Structures (CS-UH 1050)",
+      "sourceRef": "Weeks 11-12, Ch.9",
+      "estimatedMinutes": 225,
+      "dedupeKey": "maps_hashing",
+      "pathwayNote": "Required floor block; includes Quiz 3 as an assessment checkpoint.",
+      "objectives": [
+        "Implement maps and hash tables",
+        "Compare hash functions, skip lists, ordered maps, and dictionaries"
+      ],
+      "lessons": [
+        { "title": "Maps & Hash Tables", "source": "ds1050", "sourceRef": "Week 11", "type": "assessment" },
+        { "title": "Hash Functions, Skip Lists, Ordered Maps & Dictionaries", "source": "ds1050", "sourceRef": "Week 12" }
+      ],
+      "skippedLessons": []
+    },
+    {
+      "id": "block_07",
+      "calendarWeek": 12,
+      "title": "Balanced & Search Trees (BST, AVL, Red-Black)",
+      "sourceCourse": "Data Structures (CS-UH 1050)",
+      "sourceRef": "Weeks 12-13, Ch.10",
+      "estimatedMinutes": 225,
+      "dedupeKey": "search_trees",
+      "pathwayNote": "Required floor block — the most theory/proof-heavy block; students weaker in discrete-math/proof reasoning get extra scaffolding here.",
+      "objectives": [
+        "Implement binary search trees",
+        "Compare AVL, multi-way search, (2,4), and red-black trees"
+      ],
+      "lessons": [
+        { "title": "Binary Search Trees", "source": "ds1050", "sourceRef": "Week 12" },
+        { "title": "AVL Trees & Multi-Way Search Trees", "source": "ds1050", "sourceRef": "Week 13" },
+        { "title": "(2,4) Trees & Red-Black Trees", "source": "ds1050", "sourceRef": "Week 13" }
+      ],
+      "skippedLessons": []
+    },
+    {
+      "id": "block_08",
+      "calendarWeek": 14,
+      "title": "Sorting Algorithms & Course Capstone",
+      "sourceCourse": "Data Structures (CS-UH 1050)",
+      "sourceRef": "Weeks 14-16, Ch.11",
+      "estimatedMinutes": 225,
+      "dedupeKey": "sorting_and_review",
+      "pathwayNote": "Required capstone block; includes Quiz 4 and the cumulative final-exam review checkpoint.",
+      "objectives": [
+        "Implement and compare merge sort and selection sort",
+        "Synthesize the full course's data structures for the cumulative final"
+      ],
+      "lessons": [
+        { "title": "Merge Sort", "source": "ds1050", "sourceRef": "Week 14", "type": "assessment" },
+        { "title": "Selection Sort", "source": "ds1050", "sourceRef": "Week 14" },
+        { "title": "Additional Topics in Data Structures", "source": "ds1050", "sourceRef": "Week 15" },
+        { "title": "Course Review (Cumulative)", "source": "ds1050", "sourceRef": "Week 16", "type": "assessment" }
+      ],
+      "skippedLessons": []
+    }
+  ]
+}

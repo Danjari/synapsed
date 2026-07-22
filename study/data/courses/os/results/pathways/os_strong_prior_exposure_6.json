@@ -1,0 +1,247 @@
+{
+  "profileId": "os_strong_prior_exposure_6",
+  "cluster": null,
+  "field": null,
+  "description": "A Junior CS major with a strong background in systems security who prefers building and breaking things over theoretical modeling.",
+  "studentId": "offline-os_strong_prior_exposure_6",
+  "source": "offline-gemini",
+  "nodeCount": 17,
+  "nodes": [
+    {
+      "personalizationRationale": "For a student with strong prior exposure, we begin with a concise review of OS foundations to establish a baseline for advanced architectural analysis.",
+      "dependsOn": [],
+      "description": "Examine the architecture of modern operating systems, focusing on the separation of kernel and user modes and the interface provided by system calls.",
+      "syllabusBlockId": "block_01",
+      "id": "node_01",
+      "type": "topic",
+      "duration": "75 min",
+      "difficulty": "intermediate",
+      "title": "OS Architecture & System Calls",
+      "nodeRole": "core_required"
+    },
+    {
+      "duration": "75 min",
+      "difficulty": "advanced",
+      "nodeRole": "enrichment_advanced",
+      "title": "Advanced System Structures & Design Tradeoffs",
+      "syllabusBlockId": "block_01",
+      "dependsOn": [
+        "node_01"
+      ],
+      "personalizationRationale": "This student's strong prior exposure allows for a deeper dive into OS design tradeoffs and structural optimization early in the course.",
+      "description": "Compare monolithic, microkernel, and hybrid OS structures, analyzing performance implications and modularity tradeoffs in production kernels like Linux or Mach.",
+      "type": "topic",
+      "id": "node_02"
+    },
+    {
+      "type": "topic",
+      "id": "node_03",
+      "syllabusBlockId": "block_02",
+      "description": "Review process states, PCB structure, and the mechanics of context switching within the operating system kernel.",
+      "dependsOn": [
+        "node_02"
+      ],
+      "personalizationRationale": "Leveraging this student's strong prior exposure, this node focuses on the low-level implementation details of the process abstraction.",
+      "nodeRole": "core_required",
+      "title": "Process Management & Implementation",
+      "difficulty": "intermediate",
+      "duration": "75 min"
+    },
+    {
+      "title": "IPC Performance & Shared Memory Optimization",
+      "nodeRole": "enrichment_advanced",
+      "duration": "75 min",
+      "difficulty": "advanced",
+      "id": "node_04",
+      "type": "topic",
+      "dependsOn": [
+        "node_03"
+      ],
+      "personalizationRationale": "Since the student has strong prior exposure, we explore advanced IPC performance optimizations rather than basic socket programming.",
+      "description": "Analyze high-performance IPC mechanisms, including shared memory synchronization and zero-copy message passing techniques used in distributed systems.",
+      "syllabusBlockId": "block_02"
+    },
+    {
+      "nodeRole": "core_required",
+      "title": "Multicore Threading Models",
+      "difficulty": "intermediate",
+      "duration": "100 min",
+      "type": "topic",
+      "id": "node_05",
+      "syllabusBlockId": "block_03",
+      "description": "Differentiate between user-level and kernel-level threads and evaluate threading libraries like Pthreads in multi-core environments.",
+      "dependsOn": [
+        "node_04"
+      ],
+      "personalizationRationale": "Given the student's strong prior exposure, this node builds on their knowledge of threading to analyze multicore scalability issues."
+    },
+    {
+      "personalizationRationale": "Strong prior exposure allows the student to quickly master scheduling criteria and apply them to complex system evaluation scenarios.",
+      "dependsOn": [
+        "node_05"
+      ],
+      "description": "Compare CPU scheduling algorithms like Round Robin, Priority, and Multi-level Feedback Queues against real-world workload requirements.",
+      "syllabusBlockId": "block_03",
+      "id": "node_06",
+      "type": "topic",
+      "duration": "100 min",
+      "difficulty": "intermediate",
+      "title": "CPU Scheduling Policy & Evaluation",
+      "nodeRole": "core_required"
+    },
+    {
+      "nodeRole": "assessment",
+      "title": "Midterm Review Assessment (Ch 1-5)",
+      "duration": "100 min",
+      "difficulty": "intermediate",
+      "type": "assessment",
+      "id": "node_07",
+      "syllabusBlockId": "block_03",
+      "personalizationRationale": "This required assessment ensures the student with strong prior exposure has correctly mapped their background knowledge to the specific course learning objectives.",
+      "dependsOn": [
+        "node_06"
+      ],
+      "description": "Synthesize material from OS Foundations through CPU Scheduling in preparation for the midterm exam."
+    },
+    {
+      "title": "Primitives & Classic Sync Problems",
+      "nodeRole": "core_required",
+      "difficulty": "intermediate",
+      "duration": "150 min",
+      "id": "node_08",
+      "type": "topic",
+      "description": "Solve classic synchronization problems like the Bounded-Buffer and Dining Philosophers using mutexes, semaphores, and monitors.",
+      "dependsOn": [
+        "node_07"
+      ],
+      "personalizationRationale": "With strong prior exposure, the student will focus on the formal verification of synchronization primitives and avoiding common pitfalls.",
+      "syllabusBlockId": "block_04"
+    },
+    {
+      "type": "topic",
+      "id": "node_09",
+      "syllabusBlockId": "block_04",
+      "dependsOn": [
+        "node_08"
+      ],
+      "personalizationRationale": "Strong prior exposure justifies an enrichment node focused on advanced lock-free programming techniques used in modern kernel development.",
+      "description": "Examine lock-free data structures, atomic operations, and memory consistency models in modern multi-threaded systems.",
+      "nodeRole": "enrichment_advanced",
+      "title": "Lock-Free Sync & Memory Consistency",
+      "duration": "150 min",
+      "difficulty": "advanced"
+    },
+    {
+      "nodeRole": "core_required",
+      "title": "Deadlock Characterization & Prevention",
+      "difficulty": "intermediate",
+      "duration": "75 min",
+      "type": "topic",
+      "id": "node_10",
+      "syllabusBlockId": "block_05",
+      "description": "Analyze the four necessary conditions for deadlock and methods for prevention through static resource ordering.",
+      "personalizationRationale": "This node provides core theory on deadlock characterization, which remains essential regardless of the student's strong prior exposure.",
+      "dependsOn": [
+        "node_09"
+      ]
+    },
+    {
+      "difficulty": "intermediate",
+      "duration": "75 min",
+      "title": "Deadlock Avoidance & Detection Models",
+      "nodeRole": "core_required",
+      "description": "Implement and analyze the Banker\u2019s Algorithm for deadlock avoidance and resource-allocation graphs for detection.",
+      "personalizationRationale": "Even with strong prior exposure, mastering the analytical modeling of resource allocation is a core requirement for OS design.",
+      "dependsOn": [
+        "node_10"
+      ],
+      "syllabusBlockId": "block_05",
+      "id": "node_11",
+      "type": "topic"
+    },
+    {
+      "type": "topic",
+      "id": "node_12",
+      "syllabusBlockId": "block_06",
+      "description": "Detailed study of paging, page table structures (hierarchical, hashed, inverted), and the role of the TLB in address translation.",
+      "dependsOn": [
+        "node_11"
+      ],
+      "personalizationRationale": "Strong prior exposure enables this student to focus on the hardware-software interface and complexity of multi-level page tables.",
+      "nodeRole": "core_required",
+      "title": "Paging & Address Translation Mechanics",
+      "difficulty": "intermediate",
+      "duration": "100 min"
+    },
+    {
+      "nodeRole": "core_required",
+      "title": "Demand Paging & Replacement Policies",
+      "duration": "100 min",
+      "difficulty": "intermediate",
+      "type": "topic",
+      "id": "node_13",
+      "syllabusBlockId": "block_06",
+      "dependsOn": [
+        "node_12"
+      ],
+      "personalizationRationale": "This core node is critical for the memory management project, ensuring the student's strong prior exposure translates to practical implementation.",
+      "description": "Implement demand paging and evaluate page replacement algorithms like LRU and Optimal under varying memory pressure."
+    },
+    {
+      "title": "Cache Interaction & Advanced Thrashing Analysis",
+      "nodeRole": "enrichment_advanced",
+      "difficulty": "advanced",
+      "duration": "100 min",
+      "id": "node_14",
+      "type": "topic",
+      "description": "Investigate the interaction between OS page replacement and hardware cache hierarchies to mitigate thrashing.",
+      "dependsOn": [
+        "node_13"
+      ],
+      "personalizationRationale": "For a student with strong prior exposure, we add enrichment on the performance impacts of cache locality and hardware-aware memory management.",
+      "syllabusBlockId": "block_06"
+    },
+    {
+      "type": "topic",
+      "id": "node_15",
+      "syllabusBlockId": "block_07",
+      "description": "Explore I/O hardware, interrupt-driven I/O vs. DMA, and the structure of the kernel I/O subsystem.",
+      "dependsOn": [
+        "node_14"
+      ],
+      "personalizationRationale": "Strong prior exposure ensures the student can efficiently navigate I/O subsystem design and its impact on overall system performance.",
+      "nodeRole": "core_required",
+      "title": "I/O Subsystems & Performance Drivers",
+      "difficulty": "intermediate",
+      "duration": "100 min"
+    },
+    {
+      "id": "node_16",
+      "type": "topic",
+      "personalizationRationale": "This core node ensures the student understands the persistent storage abstractions required for the final examination and projects.",
+      "dependsOn": [
+        "node_15"
+      ],
+      "description": "Contrast file allocation methods (contiguous, linked, indexed) and their impact on disk performance and reliability.",
+      "syllabusBlockId": "block_07",
+      "title": "File System Implementation & Reliability Bonds",
+      "nodeRole": "core_required",
+      "duration": "100 min",
+      "difficulty": "intermediate"
+    },
+    {
+      "type": "assessment",
+      "id": "node_17",
+      "syllabusBlockId": "block_07",
+      "dependsOn": [
+        "node_16"
+      ],
+      "personalizationRationale": "This mandatory assessment verifies that the student has integrated their strong prior exposure with the specific advanced topics covered in the course.",
+      "description": "Comprehensive review and assessment of all course topics from process management through file systems for the cumulative final exam.",
+      "nodeRole": "assessment",
+      "title": "Cumulative Final Review & Assessment",
+      "duration": "100 min",
+      "difficulty": "advanced"
+    }
+  ]
+}

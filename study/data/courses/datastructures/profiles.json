@@ -1,0 +1,577 @@
+{
+  "course_id": "datastructures",
+  "design": "3 tiers x 10 profiles, LLM-generated (script 12)",
+  "tier_question_id": "prereq_cpp_tier",
+  "profiles": [
+    {
+      "id": "datastructures_no_prior_exposure_1",
+      "tier": "no_prior_exposure",
+      "description": "A mathematically-inclined sophomore majoring in Data Science who is comfortable with high-level logic and Python but feels intimidated by low-level memory management in C++.",
+      "answers": {
+        "challenge_pacing_workload": "I prefer a steady pace with consistent weekly tasks.",
+        "lo_big_o_experience": "I can identify basic complexities (e.g., O(n) vs O(n^2)) for simple loops.",
+        "lo_ds_familiarity": "Arrays and Vectors",
+        "assess_debugging_style": "Because I'm new to C++, I plan to use print statements (std::cout) to trace execution flow and variable values. I also find it helpful to sketch memory diagrams on paper to track how pointers and addresses are being assigned to help spot logic errors that lead to segmentation faults.",
+        "lo_efficient_design": "2",
+        "goal_career_alignment": "Data Science or Quantitative Analysis",
+        "challenge_theory_heavy": "4",
+        "assess_exam_prep": "Group study and conceptual discussion",
+        "goal_textbook_usage": "I prefer reading the textbook (Goodrich/Tamassia/Mount) for deep theoretical understanding.",
+        "prereq_discrete_math": "4",
+        "prereq_recursion_confidence": "4",
+        "prereq_cpp_tier": "No prior exposure: I have never written code in C++. (This is the standard starting point for the course.)"
+      }
+    },
+    {
+      "id": "datastructures_no_prior_exposure_2",
+      "tier": "no_prior_exposure",
+      "description": "A math-oriented student who excelled in a Python-based Intro to CS course and is now transitioning to C++ with an interest in the theoretical foundations of algorithms.",
+      "answers": {
+        "goal_career_alignment": "Academic Research/Computer Science Theory",
+        "prereq_discrete_math": "4",
+        "lo_ds_familiarity": "Arrays and Vectors",
+        "challenge_theory_heavy": "3",
+        "assess_exam_prep": "Reviewing theoretical proofs and discrete math concepts",
+        "prereq_recursion_confidence": "4",
+        "lo_big_o_experience": "I can identify basic complexities (e.g., O(n) vs O(n^2)) for simple loops.",
+        "goal_textbook_usage": "I prefer reading the textbook (Goodrich/Tamassia/Mount) for deep theoretical understanding.",
+        "challenge_pacing_workload": "I prefer front-loading work to prepare for the heavy 55% exam weight later in the term.",
+        "lo_efficient_design": "3",
+        "assess_debugging_style": "Since I am new to C++, I plan to rely heavily on 'cerr' print statements to track the flow of execution and the state of pointers. I also intend to draw memory diagrams on paper to manually trace how objects are allocated on the heap and ensure that I am correctly deallocating memory to avoid leaks.",
+        "prereq_cpp_tier": "No prior exposure: I have never written code in C++. (This is the standard starting point for the course.)"
+      }
+    },
+    {
+      "id": "datastructures_no_prior_exposure_3",
+      "tier": "no_prior_exposure",
+      "description": "A math-focused student who excels in theoretical logic and proofs but feels intimidated by the transition from high-level languages to C++ memory management.",
+      "answers": {
+        "prereq_recursion_confidence": "4",
+        "lo_big_o_experience": "I can identify basic complexities (e.g., O(n) vs O(n^2)) for simple loops.",
+        "challenge_theory_heavy": "4",
+        "assess_exam_prep": "Reviewing theoretical proofs and discrete math concepts",
+        "goal_career_alignment": "Academic Research/Computer Science Theory",
+        "lo_efficient_design": "2",
+        "lo_ds_familiarity": "Arrays and Vectors",
+        "challenge_pacing_workload": "I prefer front-loading work to prepare for the heavy 55% exam weight later in the term.",
+        "goal_textbook_usage": "I prefer reading the textbook (Goodrich/Tamassia/Mount) for deep theoretical understanding.",
+        "prereq_discrete_math": "4",
+        "assess_debugging_style": "As I am new to C++, I anticipate using a lot of print statements (cout) to track flow and manual desk-checking. I plan to carefully trace my pointer logic on paper to ensure I am not accessing restricted memory or forgetting to deallocate objects I've created.",
+        "prereq_cpp_tier": "No prior exposure: I have never written code in C++. (This is the standard starting point for the course.)"
+      }
+    },
+    {
+      "id": "datastructures_no_prior_exposure_4",
+      "tier": "no_prior_exposure",
+      "description": "A theory-inclined student with a strong interest in academic research who is transitioning from a Python-based introductory background to the rigors of C++ and formal algorithmic analysis.",
+      "answers": {
+        "lo_ds_familiarity": "Arrays and Vectors",
+        "lo_efficient_design": "2",
+        "challenge_theory_heavy": "4",
+        "goal_textbook_usage": "I prefer reading the textbook (Goodrich/Tamassia/Mount) for deep theoretical understanding.",
+        "assess_debugging_style": "Since I am new to C++, I plan to use print statements (std::cout) to trace execution flow and manual 'rubber ducking' to walk through my pointer logic step-by-step. I will also draw memory diagrams on paper to ensure every 'new' has a corresponding 'delete' and to visualize where a pointer might be going out of bounds.",
+        "prereq_discrete_math": "4",
+        "challenge_pacing_workload": "I prefer front-loading work to prepare for the heavy 55% exam weight later in the term.",
+        "prereq_recursion_confidence": "3",
+        "goal_career_alignment": "Academic Research/Computer Science Theory",
+        "assess_exam_prep": "Reviewing theoretical proofs and discrete math concepts",
+        "lo_big_o_experience": "I can identify basic complexities (e.g., O(n) vs O(n^2)) for simple loops.",
+        "prereq_cpp_tier": "No prior exposure: I have never written code in C++. (This is the standard starting point for the course.)"
+      }
+    },
+    {
+      "id": "datastructures_no_prior_exposure_5",
+      "tier": "no_prior_exposure",
+      "description": "A mathematically inclined student who thrives in theoretical logic and proofs but feels intimidated by the transition from high-level Python to the low-level memory management of C++.",
+      "answers": {
+        "assess_debugging_style": "I usually rely on 'print' debugging to trace the flow of data. Since I'm new to C++ and manual memory management, I plan to use a pen-and-paper approach to dry-run my pointer logic and draw out the stack/heap state before I even start coding to prevent leaks in the first place.",
+        "lo_efficient_design": "2",
+        "lo_big_o_experience": "I can identify basic complexities (e.g., O(n) vs O(n^2)) for simple loops.",
+        "challenge_pacing_workload": "I prefer front-loading work to prepare for the heavy 55% exam weight later in the term.",
+        "goal_career_alignment": "Academic Research/Computer Science Theory",
+        "prereq_recursion_confidence": "3",
+        "challenge_theory_heavy": "4",
+        "assess_exam_prep": "Reviewing theoretical proofs and discrete math concepts",
+        "goal_textbook_usage": "I prefer reading the textbook (Goodrich/Tamassia/Mount) for deep theoretical understanding.",
+        "lo_ds_familiarity": "Arrays and Vectors",
+        "prereq_discrete_math": "4",
+        "prereq_cpp_tier": "No prior exposure: I have never written code in C++. (This is the standard starting point for the course.)"
+      }
+    },
+    {
+      "id": "datastructures_no_prior_exposure_6",
+      "tier": "no_prior_exposure",
+      "description": "A mathematically strong student intending to double-major in Economics who is comfortable with logic and proofs but feels intimidated by low-level manual memory management in C++.",
+      "answers": {
+        "assess_debugging_style": "Coming from Python, I am used to automatic memory management, so I plan to use extensive print statements to track pointer addresses and manually trace my logic on paper to understand where my memory allocation goes wrong.",
+        "assess_exam_prep": "Reviewing theoretical proofs and discrete math concepts",
+        "lo_big_o_experience": "I can identify basic complexities (e.g., O(n) vs O(n^2)) for simple loops.",
+        "challenge_theory_heavy": "5",
+        "goal_textbook_usage": "I prefer reading the textbook (Goodrich/Tamassia/Mount) for deep theoretical understanding.",
+        "prereq_recursion_confidence": "3",
+        "lo_efficient_design": "2",
+        "prereq_discrete_math": "4",
+        "lo_ds_familiarity": "Arrays and Vectors",
+        "goal_career_alignment": "Data Science or Quantitative Analysis",
+        "challenge_pacing_workload": "I prefer front-loading work to prepare for the heavy 55% exam weight later in the term.",
+        "prereq_cpp_tier": "No prior exposure: I have never written code in C++. (This is the standard starting point for the course.)"
+      }
+    },
+    {
+      "id": "datastructures_no_prior_exposure_7",
+      "tier": "no_prior_exposure",
+      "description": "A Mathematics major with a strong theoretical foundation who is transitioning to Computer Science and feels more comfortable with abstract logic than low-level implementation.",
+      "answers": {
+        "lo_big_o_experience": "I can identify basic complexities (e.g., O(n) vs O(n^2)) for simple loops.",
+        "lo_efficient_design": "2",
+        "prereq_recursion_confidence": "3",
+        "prereq_discrete_math": "4",
+        "goal_career_alignment": "Data Science or Quantitative Analysis",
+        "assess_exam_prep": "Reviewing theoretical proofs and discrete math concepts",
+        "goal_textbook_usage": "I prefer reading the textbook (Goodrich/Tamassia/Mount) for deep theoretical understanding.",
+        "lo_ds_familiarity": "Arrays and Vectors",
+        "assess_debugging_style": "Since I am new to C++, I expect to rely on manual trace tables and inserting 'cout' statements to track pointer values and memory addresses, while carefully cross-referencing my logic with the textbook's implementation patterns to identify where I might be mismanaging memory.",
+        "challenge_pacing_workload": "I prefer front-loading work to prepare for the heavy 55% exam weight later in the term.",
+        "challenge_theory_heavy": "3",
+        "prereq_cpp_tier": "No prior exposure: I have never written code in C++. (This is the standard starting point for the course.)"
+      }
+    },
+    {
+      "id": "datastructures_no_prior_exposure_8",
+      "tier": "no_prior_exposure",
+      "description": "A mathematically-inclined Data Science major who is confident in logic and algorithmic theory but apprehensive about the technical shift from Python to C++ memory management.",
+      "answers": {
+        "prereq_discrete_math": "4",
+        "lo_big_o_experience": "I can identify basic complexities (e.g., O(n) vs O(n^2)) for simple loops.",
+        "goal_career_alignment": "Data Science or Quantitative Analysis",
+        "challenge_pacing_workload": "I prefer front-loading work to prepare for the heavy 55% exam weight later in the term.",
+        "assess_exam_prep": "Reviewing theoretical proofs and discrete math concepts",
+        "lo_efficient_design": "2",
+        "assess_debugging_style": "Since I am new to C++, I plan to rely on 'rubber duck' debugging and drawing out memory diagrams on a whiteboard to trace pointer movements and addresses. I will use print statements to verify the state of variables at each step until I understand how to use the built-in debugger for things like segmentation faults.",
+        "goal_textbook_usage": "I prefer reading the textbook (Goodrich/Tamassia/Mount) for deep theoretical understanding.",
+        "prereq_recursion_confidence": "3",
+        "challenge_theory_heavy": "4",
+        "lo_ds_familiarity": "Arrays and Vectors",
+        "prereq_cpp_tier": "No prior exposure: I have never written code in C++. (This is the standard starting point for the course.)"
+      }
+    },
+    {
+      "id": "datastructures_no_prior_exposure_9",
+      "tier": "no_prior_exposure",
+      "description": "A mathematically-inclined sophomore interested in theoretical computer science who is comfortable with abstract logic but cautious about transition to low-level memory management in C++.",
+      "answers": {
+        "assess_exam_prep": "Reviewing theoretical proofs and discrete math concepts",
+        "assess_debugging_style": "Since I'm new to C++ syntax, I plan to rely on 'rubber ducking' and manual trace tables on paper to track pointer movements. I'll likely use plenty of print statements to identify exactly where a crash occurs and carefully check my logic against the textbook's pseudocode to ensure I'm not accessing memory I haven't allocated.",
+        "goal_textbook_usage": "I prefer reading the textbook (Goodrich/Tamassia/Mount) for deep theoretical understanding.",
+        "prereq_discrete_math": "4",
+        "challenge_theory_heavy": "4",
+        "goal_career_alignment": "Academic Research/Computer Science Theory",
+        "lo_ds_familiarity": "Arrays and Vectors",
+        "prereq_recursion_confidence": "4",
+        "challenge_pacing_workload": "I prefer front-loading work to prepare for the heavy 55% exam weight later in the term.",
+        "lo_big_o_experience": "I can identify basic complexities (e.g., O(n) vs O(n^2)) for simple loops.",
+        "lo_efficient_design": "2",
+        "prereq_cpp_tier": "No prior exposure: I have never written code in C++. (This is the standard starting point for the course.)"
+      }
+    },
+    {
+      "id": "datastructures_no_prior_exposure_10",
+      "tier": "no_prior_exposure",
+      "description": "A sophomore Data Science major who is highly confident in discrete mathematics and logic but feels intimidated by the transition from Python to low-level memory management in C++.",
+      "answers": {
+        "lo_efficient_design": "2",
+        "goal_textbook_usage": "I prefer reading the textbook (Goodrich/Tamassia/Mount) for deep theoretical understanding.",
+        "assess_exam_prep": "Reviewing theoretical proofs and discrete math concepts",
+        "assess_debugging_style": "Since I haven't used C++ before, I plan to rely on manual trace tables on paper and inserting print statements to track variable states and pinpoint exactly where a crash occurs.",
+        "lo_big_o_experience": "I can identify basic complexities (e.g., O(n) vs O(n^2)) for simple loops.",
+        "prereq_discrete_math": "4",
+        "goal_career_alignment": "Data Science or Quantitative Analysis",
+        "lo_ds_familiarity": "Arrays and Vectors",
+        "challenge_theory_heavy": "4",
+        "prereq_recursion_confidence": "4",
+        "challenge_pacing_workload": "I prefer front-loading work to prepare for the heavy 55% exam weight later in the term.",
+        "prereq_cpp_tier": "No prior exposure: I have never written code in C++. (This is the standard starting point for the course.)"
+      }
+    },
+    {
+      "id": "datastructures_some_prior_exposure_1",
+      "tier": "some_prior_exposure",
+      "description": "An aspiring Data Science major who is comfortable with logic and high-level scripting but feels intimidated by C++'s low-level memory requirements and formal proofs.",
+      "answers": {
+        "prereq_discrete_math": "3",
+        "goal_textbook_usage": "I prefer using the textbook primarily as a reference for syntax and implementation details.",
+        "lo_ds_familiarity": "Arrays and Vectors",
+        "prereq_recursion_confidence": "4",
+        "challenge_pacing_workload": "I prefer a steady pace with consistent weekly tasks.",
+        "assess_debugging_style": "I rely heavily on 'cerr' print statements to track the flow of execution and check where variables might be going out of range, then I try to manually trace the logic on a whiteboard to see where my pointers might be pointing to null or unallocated memory.",
+        "goal_career_alignment": "Data Science or Quantitative Analysis",
+        "lo_big_o_experience": "I can identify basic complexities (e.g., O(n) vs O(n^2)) for simple loops.",
+        "lo_efficient_design": "2",
+        "challenge_theory_heavy": "4",
+        "assess_exam_prep": "Practice coding problems from the textbook (Goodrich/Tamassia/Mount)",
+        "prereq_cpp_tier": "Some prior exposure: I understand basic C++ syntax (loops, variables) but have little experience with pointers, templates, or memory management."
+      }
+    },
+    {
+      "id": "datastructures_some_prior_exposure_2",
+      "tier": "some_prior_exposure",
+      "description": "A mathematically-inclined student interested in Data Science who enjoys the theoretical side of CS but feels less confident about low-level C++ implementation and memory management.",
+      "answers": {
+        "assess_exam_prep": "Group study and conceptual discussion",
+        "prereq_discrete_math": "4",
+        "challenge_theory_heavy": "4",
+        "lo_big_o_experience": "I can identify basic complexities (e.g., O(n) vs O(n^2)) for simple loops.",
+        "goal_career_alignment": "Data Science or Quantitative Analysis",
+        "assess_debugging_style": "I usually go through my code line by line and add 'cout' statements to track variable values before the crash. Since I'm not great with pointers yet, I try to draw a diagram of the memory on paper to see where I might be accessing something out of bounds.",
+        "lo_ds_familiarity": "Arrays and Vectors",
+        "challenge_pacing_workload": "I prefer a steady pace with consistent weekly tasks.",
+        "goal_textbook_usage": "I prefer reading the textbook (Goodrich/Tamassia/Mount) for deep theoretical understanding.",
+        "lo_efficient_design": "3",
+        "prereq_recursion_confidence": "4",
+        "prereq_cpp_tier": "Some prior exposure: I understand basic C++ syntax (loops, variables) but have little experience with pointers, templates, or memory management."
+      }
+    },
+    {
+      "id": "datastructures_some_prior_exposure_3",
+      "tier": "some_prior_exposure",
+      "description": "An analytically minded student interested in Data Science who excels in math but feels hesitant about the low-level implementation details of C++.",
+      "answers": {
+        "lo_ds_familiarity": "Arrays and Vectors",
+        "goal_career_alignment": "Data Science or Quantitative Analysis",
+        "prereq_discrete_math": "4",
+        "challenge_pacing_workload": "I prefer front-loading work to prepare for the heavy 55% exam weight later in the term.",
+        "assess_exam_prep": "Reviewing theoretical proofs and discrete math concepts",
+        "lo_big_o_experience": "I can identify basic complexities (e.g., O(n) vs O(n^2)) for simple loops.",
+        "lo_efficient_design": "2",
+        "goal_textbook_usage": "I prefer reading the textbook (Goodrich/Tamassia/Mount) for deep theoretical understanding.",
+        "assess_debugging_style": "I usually add print statements before and after suspect lines of code to track variable values and determine exactly where the program crashes. Since I'm still learning how memory works in C++, I try to sketch out the logic on paper to see if I am accidentally accessing an index that doesn't exist or a null reference.",
+        "prereq_recursion_confidence": "3",
+        "challenge_theory_heavy": "3",
+        "prereq_cpp_tier": "Some prior exposure: I understand basic C++ syntax (loops, variables) but have little experience with pointers, templates, or memory management."
+      }
+    },
+    {
+      "id": "datastructures_some_prior_exposure_4",
+      "tier": "some_prior_exposure",
+      "description": "A second-year student aiming for a career in quantitative finance who feels comfortable with the mathematical foundations of the course but is intimidated by C++ memory management and low-level implementation.",
+      "answers": {
+        "goal_textbook_usage": "I prefer reading the textbook (Goodrich/Tamassia/Mount) for deep theoretical understanding.",
+        "goal_career_alignment": "Data Science or Quantitative Analysis",
+        "challenge_pacing_workload": "I prefer front-loading work to prepare for the heavy 55% exam weight later in the term.",
+        "lo_efficient_design": "2",
+        "challenge_theory_heavy": "3",
+        "assess_exam_prep": "Reviewing theoretical proofs and discrete math concepts",
+        "lo_ds_familiarity": "Arrays and Vectors",
+        "lo_big_o_experience": "I can identify basic complexities (e.g., O(n) vs O(n^2)) for simple loops.",
+        "assess_debugging_style": "Since I'm not familiar with automated tools yet, I usually use a lot of print statements (std::cout) to track variable values and flow control. For memory issues, I try to draw out a diagram of the logic on paper to see where I might be losing track of a variable's scope or where a loop might be going out of bounds.",
+        "prereq_discrete_math": "4",
+        "prereq_recursion_confidence": "3",
+        "prereq_cpp_tier": "Some prior exposure: I understand basic C++ syntax (loops, variables) but have little experience with pointers, templates, or memory management."
+      }
+    },
+    {
+      "id": "datastructures_some_prior_exposure_5",
+      "tier": "some_prior_exposure",
+      "description": "A math-leaning student aiming for a career in quantitative analysis who is comfortable with logical proofs but feels intimidated by low-level C++ memory management.",
+      "answers": {
+        "prereq_discrete_math": "4",
+        "lo_big_o_experience": "I can identify basic complexities (e.g., O(n) vs O(n^2)) for simple loops.",
+        "prereq_recursion_confidence": "3",
+        "challenge_pacing_workload": "I prefer front-loading work to prepare for the heavy 55% exam weight later in the term.",
+        "lo_ds_familiarity": "Arrays and Vectors",
+        "lo_efficient_design": "3",
+        "assess_exam_prep": "Group study and conceptual discussion",
+        "challenge_theory_heavy": "4",
+        "assess_debugging_style": "I usually rely on 'cout' statements to track variable values and identify where the program hangs. If I get a segfault, I try to isolate the section of code by commenting out blocks until it runs, then I manually trace the logic on paper to check for off-by-one errors in my loops.",
+        "goal_textbook_usage": "I prefer reading the textbook (Goodrich/Tamassia/Mount) for deep theoretical understanding.",
+        "goal_career_alignment": "Data Science or Quantitative Analysis",
+        "prereq_cpp_tier": "Some prior exposure: I understand basic C++ syntax (loops, variables) but have little experience with pointers, templates, or memory management."
+      }
+    },
+    {
+      "id": "datastructures_some_prior_exposure_6",
+      "tier": "some_prior_exposure",
+      "description": "A sophomore aiming for a career in Data Science who feels strong in mathematical logic but remains cautious about C++ memory management and low-level implementation.",
+      "answers": {
+        "prereq_recursion_confidence": "3",
+        "assess_exam_prep": "Re-implementing lab exercises from scratch",
+        "prereq_discrete_math": "4",
+        "challenge_pacing_workload": "I prefer front-loading work to prepare for the heavy 55% exam weight later in the term.",
+        "goal_career_alignment": "Data Science or Quantitative Analysis",
+        "goal_textbook_usage": "I prefer using the textbook primarily as a reference for syntax and implementation details.",
+        "assess_debugging_style": "I typically rely on strategic print statements to track the flow of execution and variable states before a crash. If I get a segmentation fault, I try to isolate the section of code responsible by commenting out blocks and manually checking my array indices and pointer dereferences for null values.",
+        "lo_efficient_design": "2",
+        "lo_big_o_experience": "I can identify basic complexities (e.g., O(n) vs O(n^2)) for simple loops.",
+        "lo_ds_familiarity": "Arrays and Vectors",
+        "challenge_theory_heavy": "5",
+        "prereq_cpp_tier": "Some prior exposure: I understand basic C++ syntax (loops, variables) but have little experience with pointers, templates, or memory management."
+      }
+    },
+    {
+      "id": "datastructures_some_prior_exposure_7",
+      "tier": "some_prior_exposure",
+      "description": "An aspiring quantitative analyst who feels confident in discrete math but is intimidated by C++ memory management and low-level system details.",
+      "answers": {
+        "assess_debugging_style": "I use cerr statements to print out variable values before critical sections and I try to draw the state of the stack and heap on a whiteboard to visualize where a pointer might be going out of bounds.",
+        "challenge_pacing_workload": "I prefer a steady pace with consistent weekly tasks.",
+        "lo_ds_familiarity": "Stacks and Queues",
+        "lo_efficient_design": "2",
+        "lo_big_o_experience": "I can identify basic complexities (e.g., O(n) vs O(n^2)) for simple loops.",
+        "prereq_discrete_math": "4",
+        "challenge_theory_heavy": "4",
+        "goal_textbook_usage": "I prefer reading the textbook (Goodrich/Tamassia/Mount) for deep theoretical understanding.",
+        "prereq_recursion_confidence": "3",
+        "assess_exam_prep": "Reviewing theoretical proofs and discrete math concepts",
+        "goal_career_alignment": "Data Science or Quantitative Analysis",
+        "prereq_cpp_tier": "Some prior exposure: I understand basic C++ syntax (loops, variables) but have little experience with pointers, templates, or memory management."
+      }
+    },
+    {
+      "id": "datastructures_some_prior_exposure_8",
+      "tier": "some_prior_exposure",
+      "description": "A math-leaning sophomore interested in quantitative finance who is confident in logic but feels intimidated by the manual memory management requirements of C++.",
+      "answers": {
+        "goal_career_alignment": "Data Science or Quantitative Analysis",
+        "lo_ds_familiarity": "Arrays and Vectors",
+        "goal_textbook_usage": "I prefer reading the textbook (Goodrich/Tamassia/Mount) for deep theoretical understanding.",
+        "challenge_pacing_workload": "I prefer front-loading work to prepare for the heavy 55% exam weight later in the term.",
+        "prereq_recursion_confidence": "3",
+        "assess_debugging_style": "Since I am still learning how memory works in C++, I typically rely on 'cout' statements to track variable states and pinpoint exactly where a crash occurs. If I suspect a pointer issue, I draw out the memory addresses and stack on paper to visualize where the reference might be breaking.",
+        "assess_exam_prep": "Practice coding problems from the textbook (Goodrich/Tamassia/Mount)",
+        "challenge_theory_heavy": "4",
+        "lo_big_o_experience": "I can identify basic complexities (e.g., O(n) vs O(n^2)) for simple loops.",
+        "prereq_discrete_math": "4",
+        "lo_efficient_design": "2",
+        "prereq_cpp_tier": "Some prior exposure: I understand basic C++ syntax (loops, variables) but have little experience with pointers, templates, or memory management."
+      }
+    },
+    {
+      "id": "datastructures_some_prior_exposure_9",
+      "tier": "some_prior_exposure",
+      "description": "A second-year Mathematics major who is comfortable with high-level logic but feels less confident about the low-level implementation details of C++.",
+      "answers": {
+        "prereq_recursion_confidence": "3",
+        "lo_big_o_experience": "I can identify basic complexities (e.g., O(n) vs O(n^2)) for simple loops.",
+        "goal_textbook_usage": "I prefer using the textbook primarily as a reference for syntax and implementation details.",
+        "lo_efficient_design": "3",
+        "challenge_theory_heavy": "4",
+        "challenge_pacing_workload": "I prefer front-loading work to prepare for the heavy 55% exam weight later in the term.",
+        "prereq_discrete_math": "4",
+        "lo_ds_familiarity": "Arrays and Vectors",
+        "assess_debugging_style": "I usually insert multiple print statements to track the values of variables and determine exactly where the program crashes. For segmentation faults, I check my index bounds and pointer initializations manually, as I am still getting used to manual memory management compared to languages like Python.",
+        "goal_career_alignment": "Data Science or Quantitative Analysis",
+        "assess_exam_prep": "Group study and conceptual discussion",
+        "prereq_cpp_tier": "Some prior exposure: I understand basic C++ syntax (loops, variables) but have little experience with pointers, templates, or memory management."
+      }
+    },
+    {
+      "id": "datastructures_some_prior_exposure_10",
+      "tier": "some_prior_exposure",
+      "description": "A sophomore majoring in Economics and Computer Science who is confident in theoretical math but feels intimidated by the manual memory management required in C++.",
+      "answers": {
+        "challenge_pacing_workload": "I prefer front-loading work to prepare for the heavy 55% exam weight later in the term.",
+        "lo_efficient_design": "2",
+        "assess_debugging_style": "I usually start by manually tracing the logic on paper to find where a pointer might be going out of bounds, then I insert print statements before and after suspected lines to narrow down where the segmentation fault occurs.",
+        "prereq_discrete_math": "4",
+        "goal_textbook_usage": "I prefer reading the textbook (Goodrich/Tamassia/Mount) for deep theoretical understanding.",
+        "prereq_recursion_confidence": "3",
+        "lo_ds_familiarity": "Arrays and Vectors",
+        "lo_big_o_experience": "I can identify basic complexities (e.g., O(n) vs O(n^2)) for simple loops.",
+        "assess_exam_prep": "Reviewing theoretical proofs and discrete math concepts",
+        "challenge_theory_heavy": "5",
+        "goal_career_alignment": "Data Science or Quantitative Analysis",
+        "prereq_cpp_tier": "Some prior exposure: I understand basic C++ syntax (loops, variables) but have little experience with pointers, templates, or memory management."
+      }
+    },
+    {
+      "id": "datastructures_strong_prior_exposure_1",
+      "tier": "strong_prior_exposure",
+      "description": "A second-year Computer Science major who gained extensive C++ experience through personal systems programming projects and is now looking to formalize their understanding of algorithm efficiency.",
+      "answers": {
+        "lo_efficient_design": "4",
+        "goal_textbook_usage": "I prefer using the textbook primarily as a reference for syntax and implementation details.",
+        "goal_career_alignment": "Software Engineering (Industry)",
+        "lo_ds_familiarity": "Heaps or Priority Queues",
+        "assess_debugging_style": "I usually start by using Valgrind to identify the exact line of the memory leak or invalid access. If it's a segfault, I'll use GDB to backtrace the stack and inspect the local variables at the time of the crash. For complex pointer logic, I often draw out the heap and stack on paper to trace exactly where a pointer might be dangling or incorrectly reassigned.",
+        "challenge_pacing_workload": "I prefer front-loading work to prepare for the heavy 55% exam weight later in the term.",
+        "challenge_theory_heavy": "3",
+        "prereq_discrete_math": "4",
+        "prereq_recursion_confidence": "5",
+        "lo_big_o_experience": "I am comfortable performing asymptotic analysis on complex or recursive algorithms.",
+        "assess_exam_prep": "Practice coding problems from the textbook (Goodrich/Tamassia/Mount)",
+        "prereq_cpp_tier": "Strong prior exposure: I am comfortable with C++ OOP, memory management, and advanced features like templates or move semantics."
+      }
+    },
+    {
+      "id": "datastructures_strong_prior_exposure_2",
+      "tier": "strong_prior_exposure",
+      "description": "A junior-level student with a background in competitive programming who is taking the course to formalize their understanding of algorithm analysis and complex data structure implementation.",
+      "answers": {
+        "goal_textbook_usage": "I prefer using the textbook primarily as a reference for syntax and implementation details.",
+        "prereq_discrete_math": "3",
+        "prereq_recursion_confidence": "5",
+        "assess_exam_prep": "Practice coding problems from the textbook (Goodrich/Tamassia/Mount)",
+        "goal_career_alignment": "Competitive Programming",
+        "challenge_theory_heavy": "4",
+        "lo_efficient_design": "4",
+        "lo_ds_familiarity": "Arrays and Vectors",
+        "assess_debugging_style": "I typically use GDB to trace the stack when a segfault occurs and rely on Valgrind to identify the exact origin of memory leaks. Without AI, I also use conditional print statements to monitor pointer addresses and object lifetimes throughout the program's execution.",
+        "challenge_pacing_workload": "I prefer front-loading work to prepare for the heavy 55% exam weight later in the term.",
+        "lo_big_o_experience": "I am comfortable performing asymptotic analysis on complex or recursive algorithms.",
+        "prereq_cpp_tier": "Strong prior exposure: I am comfortable with C++ OOP, memory management, and advanced features like templates or move semantics."
+      }
+    },
+    {
+      "id": "datastructures_strong_prior_exposure_3",
+      "tier": "strong_prior_exposure",
+      "description": "A junior transfer student who has completed a summer internship in systems programming and enjoys building high-performance side projects, but finds formal mathematical proofs less intuitive than implementation.",
+      "answers": {
+        "prereq_discrete_math": "3",
+        "lo_big_o_experience": "I am comfortable performing asymptotic analysis on complex or recursive algorithms.",
+        "assess_debugging_style": "I typically use GDB to identify the exact line where a segmentation fault occurs and inspect the call stack. For memory leaks, I meticulously trace my pointer assignments and verify that my destructors and 'delete' calls match every 'new' operation, often sketching the memory ownership on a whiteboard to track the lifecycle of objects.",
+        "lo_ds_familiarity": "Arrays and Vectors",
+        "goal_career_alignment": "Software Engineering (Industry)",
+        "lo_efficient_design": "4",
+        "challenge_theory_heavy": "4",
+        "challenge_pacing_workload": "I prefer front-loading work to prepare for the heavy 55% exam weight later in the term.",
+        "assess_exam_prep": "Practice coding problems from the textbook (Goodrich/Tamassia/Mount)",
+        "goal_textbook_usage": "I prefer using the textbook primarily as a reference for syntax and implementation details.",
+        "prereq_recursion_confidence": "5",
+        "prereq_cpp_tier": "Strong prior exposure: I am comfortable with C++ OOP, memory management, and advanced features like templates or move semantics."
+      }
+    },
+    {
+      "id": "datastructures_strong_prior_exposure_4",
+      "tier": "strong_prior_exposure",
+      "description": "A proficient C++ developer with a background in systems programming who is now looking to bridge the gap between implementation skills and formal algorithmic theory for potential research opportunities.",
+      "answers": {
+        "goal_textbook_usage": "I prefer reading the textbook (Goodrich/Tamassia/Mount) for deep theoretical understanding.",
+        "assess_debugging_style": "I use GDB to step through the execution and examine the stack trace when a segmentation fault occurs to identify the specific invalid pointer access. For memory leaks, I perform a manual code audit of my RAII implementation, ensuring that every allocation has a corresponding deallocation in the destructor and that I've correctly handled the Rule of Three/Five for my classes.",
+        "lo_big_o_experience": "I am comfortable performing asymptotic analysis on complex or recursive algorithms.",
+        "challenge_theory_heavy": "4",
+        "lo_efficient_design": "4",
+        "challenge_pacing_workload": "I prefer front-loading work to prepare for the heavy 55% exam weight later in the term.",
+        "prereq_discrete_math": "3",
+        "goal_career_alignment": "Academic Research/Computer Science Theory",
+        "prereq_recursion_confidence": "5",
+        "lo_ds_familiarity": "Hash Tables or Maps",
+        "assess_exam_prep": "Reviewing theoretical proofs and discrete math concepts",
+        "prereq_cpp_tier": "Strong prior exposure: I am comfortable with C++ OOP, memory management, and advanced features like templates or move semantics."
+      }
+    },
+    {
+      "id": "datastructures_strong_prior_exposure_5",
+      "tier": "strong_prior_exposure",
+      "description": "A high-achieving student with extensive experience in competitive programming and systems-level C++ who wants to formalize their understanding of algorithmic efficiency.",
+      "answers": {
+        "challenge_theory_heavy": "3",
+        "lo_ds_familiarity": "Heaps or Priority Queues",
+        "assess_exam_prep": "Practice coding problems from the textbook (Goodrich/Tamassia/Mount)",
+        "lo_efficient_design": "4",
+        "lo_big_o_experience": "I am comfortable performing asymptotic analysis on complex or recursive algorithms.",
+        "goal_career_alignment": "Competitive Programming",
+        "goal_textbook_usage": "I prefer using the textbook primarily as a reference for syntax and implementation details.",
+        "assess_debugging_style": "I typically use GDB to identify the specific instruction causing a segmentation fault and perform a backtrace to see the call stack. For memory leaks, I rely on Valgrind and manually tracing the lifecycle of pointers on a whiteboard to ensure every allocation has a corresponding deallocation.",
+        "prereq_discrete_math": "4",
+        "challenge_pacing_workload": "I prefer front-loading work to prepare for the heavy 55% exam weight later in the term.",
+        "prereq_recursion_confidence": "5",
+        "prereq_cpp_tier": "Strong prior exposure: I am comfortable with C++ OOP, memory management, and advanced features like templates or move semantics."
+      }
+    },
+    {
+      "id": "datastructures_strong_prior_exposure_6",
+      "tier": "strong_prior_exposure",
+      "description": "A mathematically-inclined student who is already proficient in C++ systems programming and seeks to build a rigorous theoretical foundation for a future in academic research.",
+      "answers": {
+        "prereq_discrete_math": "3",
+        "goal_textbook_usage": "I prefer reading the textbook (Goodrich/Tamassia/Mount) for deep theoretical understanding.",
+        "assess_debugging_style": "I usually start by isolating the problematic code block and using GDB to inspect the stack trace at the point of the segfault. For memory leaks, I manually track my 'new' and 'delete' calls or use Valgrind to identify lost blocks, then walk through the pointer arithmetic to find the logic error.",
+        "challenge_theory_heavy": "4",
+        "challenge_pacing_workload": "I prefer front-loading work to prepare for the heavy 55% exam weight later in the term.",
+        "goal_career_alignment": "Academic Research/Computer Science Theory",
+        "lo_efficient_design": "4",
+        "lo_big_o_experience": "I am comfortable performing asymptotic analysis on complex or recursive algorithms.",
+        "assess_exam_prep": "Reviewing theoretical proofs and discrete math concepts",
+        "lo_ds_familiarity": "Arrays and Vectors",
+        "prereq_recursion_confidence": "5",
+        "prereq_cpp_tier": "Strong prior exposure: I am comfortable with C++ OOP, memory management, and advanced features like templates or move semantics."
+      }
+    },
+    {
+      "id": "datastructures_strong_prior_exposure_7",
+      "tier": "strong_prior_exposure",
+      "description": "An aspiring quantitative analyst who is highly proficient in systems-level C++ programming but feels less confident in formal mathematical proofs and discrete logic.",
+      "answers": {
+        "assess_debugging_style": "I rely on Valgrind to track down memory leaks and use GDB to inspect the call stack during segmentation faults, checking for null pointers or out-of-bounds access. I also use print statements to trace the state of objects before a crash.",
+        "goal_career_alignment": "Data Science or Quantitative Analysis",
+        "lo_ds_familiarity": "Arrays and Vectors",
+        "challenge_theory_heavy": "4",
+        "assess_exam_prep": "Practice coding problems from the textbook (Goodrich/Tamassia/Mount)",
+        "prereq_recursion_confidence": "5",
+        "goal_textbook_usage": "I prefer using the textbook primarily as a reference for syntax and implementation details.",
+        "lo_big_o_experience": "I am comfortable performing asymptotic analysis on complex or recursive algorithms.",
+        "challenge_pacing_workload": "I prefer front-loading work to prepare for the heavy 55% exam weight later in the term.",
+        "prereq_discrete_math": "3",
+        "lo_efficient_design": "4",
+        "prereq_cpp_tier": "Strong prior exposure: I am comfortable with C++ OOP, memory management, and advanced features like templates or move semantics."
+      }
+    },
+    {
+      "id": "datastructures_strong_prior_exposure_8",
+      "tier": "strong_prior_exposure",
+      "description": "A transfer student with a background in systems programming who excels at implementation and debugging but feels less certain about the formal mathematical proofs required for algorithmic analysis.",
+      "answers": {
+        "assess_exam_prep": "Re-implementing lab exercises from scratch",
+        "assess_debugging_style": "I typically use Valgrind to locate the source of the leak or fault, then manually trace the lifecycle of the pointers involved, often sketching a memory diagram to verify that every 'new' has a corresponding 'delete' and that ownership is clear.",
+        "prereq_recursion_confidence": "5",
+        "lo_big_o_experience": "I am comfortable performing asymptotic analysis on complex or recursive algorithms.",
+        "challenge_theory_heavy": "4",
+        "lo_ds_familiarity": "Heaps or Priority Queues",
+        "goal_career_alignment": "Competitive Programming",
+        "goal_textbook_usage": "I prefer learning through lectures and labs, using the textbook only when stuck.",
+        "lo_efficient_design": "4",
+        "challenge_pacing_workload": "I prefer front-loading work to prepare for the heavy 55% exam weight later in the term.",
+        "prereq_discrete_math": "3",
+        "prereq_cpp_tier": "Strong prior exposure: I am comfortable with C++ OOP, memory management, and advanced features like templates or move semantics."
+      }
+    },
+    {
+      "id": "datastructures_strong_prior_exposure_9",
+      "tier": "strong_prior_exposure",
+      "description": "A mathematically-inclined student who is highly proficient in systems-level C++ implementation but seeks a deeper, more formal understanding of algorithmic proofs for a future in academic research.",
+      "answers": {
+        "challenge_theory_heavy": "4",
+        "prereq_recursion_confidence": "5",
+        "challenge_pacing_workload": "I prefer front-loading work to prepare for the heavy 55% exam weight later in the term.",
+        "lo_efficient_design": "4",
+        "prereq_discrete_math": "3",
+        "lo_big_o_experience": "I am comfortable performing asymptotic analysis on complex or recursive algorithms.",
+        "goal_career_alignment": "Academic Research/Computer Science Theory",
+        "assess_debugging_style": "I typically use Valgrind to pinpoint memory leaks and GDB to investigate the stack trace for segmentation faults. If those aren't available, I use a systematic process of pointer logging and manual 'rubber duck' code reviews to verify ownership and lifetime of every dynamically allocated object.",
+        "lo_ds_familiarity": "Heaps or Priority Queues",
+        "goal_textbook_usage": "I prefer reading the textbook (Goodrich/Tamassia/Mount) for deep theoretical understanding.",
+        "assess_exam_prep": "Reviewing theoretical proofs and discrete math concepts",
+        "prereq_cpp_tier": "Strong prior exposure: I am comfortable with C++ OOP, memory management, and advanced features like templates or move semantics."
+      }
+    },
+    {
+      "id": "datastructures_strong_prior_exposure_10",
+      "tier": "strong_prior_exposure",
+      "description": "A mathematically-inclined student who mastered C++ through competitive programming and is now pursuing a career in theoretical computer science research.",
+      "answers": {
+        "challenge_pacing_workload": "I prefer front-loading work to prepare for the heavy 55% exam weight later in the term.",
+        "prereq_discrete_math": "5",
+        "lo_efficient_design": "5",
+        "goal_career_alignment": "Academic Research/Computer Science Theory",
+        "assess_exam_prep": "Reviewing theoretical proofs and discrete math concepts",
+        "prereq_recursion_confidence": "5",
+        "lo_big_o_experience": "I am comfortable performing asymptotic analysis on complex or recursive algorithms.",
+        "challenge_theory_heavy": "2",
+        "assess_debugging_style": "I typically use GDB to backtrace the stack when a segmentation fault occurs to identify the exact line of failure. For memory leaks, I am accustomed to using Valgrind, but if restricted to manual methods, I perform a thorough code review of my pointer assignments and ensure every 'new' has a corresponding 'delete' within the appropriate scope.",
+        "lo_ds_familiarity": "Heaps or Priority Queues",
+        "goal_textbook_usage": "I prefer reading the textbook (Goodrich/Tamassia/Mount) for deep theoretical understanding.",
+        "prereq_cpp_tier": "Strong prior exposure: I am comfortable with C++ OOP, memory management, and advanced features like templates or move semantics."
+      }
+    }
+  ]
+}

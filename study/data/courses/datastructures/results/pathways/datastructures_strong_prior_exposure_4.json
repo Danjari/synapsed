@@ -1,0 +1,261 @@
+{
+  "profileId": "datastructures_strong_prior_exposure_4",
+  "cluster": null,
+  "field": null,
+  "description": "A proficient C++ developer with a background in systems programming who is now looking to bridge the gap between implementation skills and formal algorithmic theory for potential research opportunities.",
+  "studentId": "offline-datastructures_strong_prior_exposure_4",
+  "source": "offline-gemini",
+  "nodeCount": 18,
+  "nodes": [
+    {
+      "syllabusBlockId": "block_01",
+      "duration": "110 min",
+      "dependsOn": [],
+      "difficulty": "intermediate",
+      "description": "Reviewing C++ pointers, references, and class structures with a focus on memory safety and the Goodrich/Tamassia textbook conventions.",
+      "nodeRole": "core_required",
+      "id": "b1_core_cpp",
+      "title": "C++ Memory & Class Foundations",
+      "type": "topic",
+      "personalizationRationale": "Because the student has strong_prior_exposure, we skip basic syntax and focus on core C++ memory semantics required for subsequent data structure implementations."
+    },
+    {
+      "duration": "115 min",
+      "syllabusBlockId": "block_01",
+      "description": "Deep dive into Resource Acquisition Is Initialization (RAII), move semantics, and template metaprogramming for generic container design.",
+      "difficulty": "advanced",
+      "dependsOn": [
+        "b1_core_cpp"
+      ],
+      "id": "b1_enrich_raii",
+      "nodeRole": "enrichment_advanced",
+      "title": "Advanced C++: RAII and Move Semantics",
+      "personalizationRationale": "This student's strong_prior_exposure permits advanced exploration of C++ idioms that optimize performance in custom data structures.",
+      "type": "topic"
+    },
+    {
+      "personalizationRationale": "Given the student's strong_prior_exposure, this module focuses on rigorous implementation details rather than introductory pointer concepts.",
+      "type": "topic",
+      "difficulty": "intermediate",
+      "description": "Implementation of singly and doubly linked lists, focusing on pointer manipulation and the Big-O costs of basic operations.",
+      "dependsOn": [
+        "b1_core_cpp"
+      ],
+      "duration": "150 min",
+      "syllabusBlockId": "block_02",
+      "title": "Linked List Implementations",
+      "id": "b2_core_lists",
+      "nodeRole": "core_required"
+    },
+    {
+      "duration": "150 min",
+      "syllabusBlockId": "block_02",
+      "difficulty": "intermediate",
+      "description": "Formal assessment of recursion depth, base cases, and asymptotic analysis of recursive vs. iterative algorithms.",
+      "dependsOn": [
+        "b2_core_lists"
+      ],
+      "id": "b2_quiz1_assess",
+      "nodeRole": "assessment",
+      "title": "Quiz 1: Recursion & Asymptotic Analysis",
+      "personalizationRationale": "This assessment validates that the student's strong_prior_exposure translates to accurate Big-O analysis of recursive structures.",
+      "type": "assessment"
+    },
+    {
+      "id": "b3_core_stacks",
+      "nodeRole": "core_required",
+      "title": "Stack and Queue ADTs",
+      "duration": "90 min",
+      "syllabusBlockId": "block_03",
+      "difficulty": "intermediate",
+      "description": "Designing Stack and Queue Abstract Data Types (ADTs) using both array-based and list-based underlying structures.",
+      "dependsOn": [
+        "b2_core_lists"
+      ],
+      "personalizationRationale": "The student's strong_prior_exposure allows for a comparative analysis of implementation strategies for linear ADTs.",
+      "type": "topic"
+    },
+    {
+      "nodeRole": "core_required",
+      "id": "b3_core_vectors",
+      "title": "Vectors & Amortized Analysis",
+      "duration": "95 min",
+      "syllabusBlockId": "block_03",
+      "description": "Detailed study of dynamic array resizing, amortized analysis of the push_back operation, and C++ vector implementation.",
+      "difficulty": "intermediate",
+      "dependsOn": [
+        "b3_core_stacks"
+      ],
+      "type": "topic",
+      "personalizationRationale": "With strong_prior_exposure, the student can focus on the performance implications of amortized constant time in dynamic arrays."
+    },
+    {
+      "type": "topic",
+      "personalizationRationale": "The student's strong_prior_exposure suggests readiness to implement the iterator pattern according to C++ standard library expectations.",
+      "title": "Iterators and Sequences",
+      "nodeRole": "core_required",
+      "id": "b3_core_iterators",
+      "description": "Introduction to the iterator pattern in C++ and its application to generic sequence-based structures.",
+      "difficulty": "intermediate",
+      "dependsOn": [
+        "b3_core_vectors"
+      ],
+      "duration": "90 min",
+      "syllabusBlockId": "block_03"
+    },
+    {
+      "id": "b3_midterm_review",
+      "nodeRole": "assessment",
+      "title": "Midterm Review Checkpoint",
+      "duration": "100 min",
+      "syllabusBlockId": "block_03",
+      "difficulty": "intermediate",
+      "description": "Comprehensive review and practice exam covering linear structures, Big-O, and C++ foundations through the midterm material.",
+      "dependsOn": [
+        "b3_core_iterators"
+      ],
+      "personalizationRationale": "This required assessment ensures the student with strong_prior_exposure is fully prepared for the exam format used in this specific course.",
+      "type": "assessment"
+    },
+    {
+      "personalizationRationale": "Based on the student's strong_prior_exposure, we move directly to tree ADT implementation and architectural design.",
+      "type": "topic",
+      "syllabusBlockId": "block_04",
+      "duration": "110 min",
+      "dependsOn": [
+        "b3_midterm_review"
+      ],
+      "description": "Study of general tree definitions, depth, height, and the Binary Tree ADT implementation in C++.",
+      "difficulty": "intermediate",
+      "id": "b4_core_trees",
+      "nodeRole": "core_required",
+      "title": "Tree Fundamentals and ADTs"
+    },
+    {
+      "description": "Recursive and iterative algorithms for Pre-order, Post-order, and In-order traversals in binary and general trees.",
+      "difficulty": "intermediate",
+      "dependsOn": [
+        "b4_core_trees"
+      ],
+      "duration": "115 min",
+      "syllabusBlockId": "block_04",
+      "title": "Tree Traversal Algorithms",
+      "nodeRole": "core_required",
+      "id": "b4_core_traversal",
+      "type": "topic",
+      "personalizationRationale": "The student's strong_prior_exposure allows them to handle complex traversal logic across varied tree structures."
+    },
+    {
+      "personalizationRationale": "Given the student's strong_prior_exposure, the focus is on the efficient array-based representation of the binary heap.",
+      "type": "topic",
+      "title": "Priority Queues and Heaps",
+      "id": "b5_core_heaps",
+      "nodeRole": "core_required",
+      "dependsOn": [
+        "b4_core_traversal"
+      ],
+      "difficulty": "intermediate",
+      "description": "Implementation of Priority Queues using Binary Heaps, including the up-heap and down-heap bubbling processes.",
+      "syllabusBlockId": "block_05",
+      "duration": "150 min"
+    },
+    {
+      "personalizationRationale": "The student's strong_prior_exposure facilitates a deeper look at the mathematical properties of good hash functions.",
+      "type": "topic",
+      "id": "b6_core_hash",
+      "nodeRole": "core_required",
+      "title": "Hash Tables and Collision Handling",
+      "duration": "125 min",
+      "syllabusBlockId": "block_06",
+      "description": "Designing efficient hash functions and implementing collision resolution strategies like chaining and open addressing.",
+      "difficulty": "intermediate",
+      "dependsOn": [
+        "b5_core_heaps"
+      ]
+    },
+    {
+      "nodeRole": "assessment",
+      "id": "b6_quiz3_assess",
+      "title": "Quiz 3: Maps and Hashing",
+      "syllabusBlockId": "block_06",
+      "duration": "100 min",
+      "dependsOn": [
+        "b6_core_hash"
+      ],
+      "description": "Assessment on map ADT performance, skip lists, and the trade-offs between different hashing strategies.",
+      "difficulty": "intermediate",
+      "type": "assessment",
+      "personalizationRationale": "This assessment ensures the student with strong_prior_exposure masters the specific map implementations covered in the textbook."
+    },
+    {
+      "duration": "75 min",
+      "syllabusBlockId": "block_07",
+      "difficulty": "advanced",
+      "description": "Implementation of Binary Search Trees and the rotation logic required for maintaining AVL tree balance.",
+      "dependsOn": [
+        "b6_quiz3_assess"
+      ],
+      "nodeRole": "core_required",
+      "id": "b7_core_bst_avl",
+      "title": "BST and AVL Tree Implementation\u5e73\u8861",
+      "type": "topic",
+      "personalizationRationale": "The student's strong_prior_exposure provides the necessary C++ proficiency to implement complex node rotation logic."
+    },
+    {
+      "title": "Multi-Way and Red-Black Trees",
+      "nodeRole": "core_required",
+      "id": "b7_core_rb_trees",
+      "dependsOn": [
+        "b7_core_bst_avl"
+      ],
+      "description": "Understanding multi-way search trees, specifically (2,4) trees and their relationship to Red-Black tree structures.",
+      "difficulty": "advanced",
+      "syllabusBlockId": "block_07",
+      "duration": "75 min",
+      "type": "topic",
+      "personalizationRationale": "Because the student has strong_prior_exposure, they can more easily grasp the structural mapping between (2,4) and Red-Black trees."
+    },
+    {
+      "type": "topic",
+      "personalizationRationale": "The student's strong_prior_exposure enables them to engage with the advanced theoretical proofs behind tree balancing.",
+      "duration": "75 min",
+      "syllabusBlockId": "block_07",
+      "difficulty": "advanced",
+      "description": "Formal analysis and mathematical proofs regarding the logarithmic height bounds of balanced search trees.",
+      "dependsOn": [
+        "b7_core_rb_trees"
+      ],
+      "nodeRole": "enrichment_advanced",
+      "id": "b7_enrich_proofs",
+      "title": "Formal Proofs of Tree Balancing"
+    },
+    {
+      "dependsOn": [
+        "b7_enrich_proofs"
+      ],
+      "difficulty": "intermediate",
+      "description": "Comparison of Merge Sort and Selection Sort, focusing on space complexity and stable sorting properties.",
+      "syllabusBlockId": "block_08",
+      "duration": "110 min",
+      "title": "Sorting Algorithms Analysis",
+      "id": "b8_core_sorting",
+      "nodeRole": "core_required",
+      "personalizationRationale": "Given the student's strong_prior_exposure, this module emphasizes the comparative analysis of sorting efficiency in different contexts.",
+      "type": "topic"
+    },
+    {
+      "title": "Cumulative Final Review Assessment",
+      "nodeRole": "assessment",
+      "id": "b8_final_review",
+      "dependsOn": [
+        "b8_core_sorting"
+      ],
+      "difficulty": "intermediate",
+      "description": "Final cumulative review and practice session covering the entire syllabus in preparation for the final exam.",
+      "syllabusBlockId": "block_08",
+      "duration": "115 min",
+      "type": "assessment",
+      "personalizationRationale": "This final assessment ensures that despite their strong_prior_exposure, the student has mastered every specific topic examined in the course."
+    }
+  ]
+}

@@ -1,0 +1,3547 @@
+{
+  "course_id": "datastructures",
+  "personalization_model": "fixed_floor_catchup",
+  "verdict": {
+    "passed": true,
+    "checks": {
+      "coverage_floor": true,
+      "role_mix_monotonic": true,
+      "length_invariance": true
+    }
+  },
+  "profile_count": 30,
+  "pathway_count": 30,
+  "block_floors": {
+    "passed": true,
+    "floors": {
+      "block_01": 2,
+      "block_02": 2,
+      "block_03": 4,
+      "block_04": 2,
+      "block_05": 1,
+      "block_06": 1,
+      "block_07": 2,
+      "block_08": 2
+    },
+    "violations": [],
+    "profiles_checked": 30
+  },
+  "role_mix": {
+    "passed": true,
+    "tier_order": [
+      "no_prior_exposure",
+      "some_prior_exposure",
+      "strong_prior_exposure"
+    ],
+    "tier_means": {
+      "no_prior_exposure": 3.0,
+      "some_prior_exposure": 1.0,
+      "strong_prior_exposure": 0.0
+    },
+    "per_profile": [
+      {
+        "profile_id": "datastructures_no_prior_exposure_1",
+        "tier": "no_prior_exposure",
+        "scaffolding_catchup_count": 3
+      },
+      {
+        "profile_id": "datastructures_no_prior_exposure_2",
+        "tier": "no_prior_exposure",
+        "scaffolding_catchup_count": 3
+      },
+      {
+        "profile_id": "datastructures_no_prior_exposure_3",
+        "tier": "no_prior_exposure",
+        "scaffolding_catchup_count": 3
+      },
+      {
+        "profile_id": "datastructures_no_prior_exposure_4",
+        "tier": "no_prior_exposure",
+        "scaffolding_catchup_count": 3
+      },
+      {
+        "profile_id": "datastructures_no_prior_exposure_5",
+        "tier": "no_prior_exposure",
+        "scaffolding_catchup_count": 3
+      },
+      {
+        "profile_id": "datastructures_no_prior_exposure_6",
+        "tier": "no_prior_exposure",
+        "scaffolding_catchup_count": 3
+      },
+      {
+        "profile_id": "datastructures_no_prior_exposure_7",
+        "tier": "no_prior_exposure",
+        "scaffolding_catchup_count": 3
+      },
+      {
+        "profile_id": "datastructures_no_prior_exposure_8",
+        "tier": "no_prior_exposure",
+        "scaffolding_catchup_count": 3
+      },
+      {
+        "profile_id": "datastructures_no_prior_exposure_9",
+        "tier": "no_prior_exposure",
+        "scaffolding_catchup_count": 3
+      },
+      {
+        "profile_id": "datastructures_no_prior_exposure_10",
+        "tier": "no_prior_exposure",
+        "scaffolding_catchup_count": 3
+      },
+      {
+        "profile_id": "datastructures_some_prior_exposure_1",
+        "tier": "some_prior_exposure",
+        "scaffolding_catchup_count": 1
+      },
+      {
+        "profile_id": "datastructures_some_prior_exposure_2",
+        "tier": "some_prior_exposure",
+        "scaffolding_catchup_count": 1
+      },
+      {
+        "profile_id": "datastructures_some_prior_exposure_3",
+        "tier": "some_prior_exposure",
+        "scaffolding_catchup_count": 1
+      },
+      {
+        "profile_id": "datastructures_some_prior_exposure_4",
+        "tier": "some_prior_exposure",
+        "scaffolding_catchup_count": 1
+      },
+      {
+        "profile_id": "datastructures_some_prior_exposure_5",
+        "tier": "some_prior_exposure",
+        "scaffolding_catchup_count": 1
+      },
+      {
+        "profile_id": "datastructures_some_prior_exposure_6",
+        "tier": "some_prior_exposure",
+        "scaffolding_catchup_count": 1
+      },
+      {
+        "profile_id": "datastructures_some_prior_exposure_7",
+        "tier": "some_prior_exposure",
+        "scaffolding_catchup_count": 1
+      },
+      {
+        "profile_id": "datastructures_some_prior_exposure_8",
+        "tier": "some_prior_exposure",
+        "scaffolding_catchup_count": 1
+      },
+      {
+        "profile_id": "datastructures_some_prior_exposure_9",
+        "tier": "some_prior_exposure",
+        "scaffolding_catchup_count": 1
+      },
+      {
+        "profile_id": "datastructures_some_prior_exposure_10",
+        "tier": "some_prior_exposure",
+        "scaffolding_catchup_count": 1
+      },
+      {
+        "profile_id": "datastructures_strong_prior_exposure_1",
+        "tier": "strong_prior_exposure",
+        "scaffolding_catchup_count": 0
+      },
+      {
+        "profile_id": "datastructures_strong_prior_exposure_2",
+        "tier": "strong_prior_exposure",
+        "scaffolding_catchup_count": 0
+      },
+      {
+        "profile_id": "datastructures_strong_prior_exposure_3",
+        "tier": "strong_prior_exposure",
+        "scaffolding_catchup_count": 0
+      },
+      {
+        "profile_id": "datastructures_strong_prior_exposure_4",
+        "tier": "strong_prior_exposure",
+        "scaffolding_catchup_count": 0
+      },
+      {
+        "profile_id": "datastructures_strong_prior_exposure_5",
+        "tier": "strong_prior_exposure",
+        "scaffolding_catchup_count": 0
+      },
+      {
+        "profile_id": "datastructures_strong_prior_exposure_6",
+        "tier": "strong_prior_exposure",
+        "scaffolding_catchup_count": 0
+      },
+      {
+        "profile_id": "datastructures_strong_prior_exposure_7",
+        "tier": "strong_prior_exposure",
+        "scaffolding_catchup_count": 0
+      },
+      {
+        "profile_id": "datastructures_strong_prior_exposure_8",
+        "tier": "strong_prior_exposure",
+        "scaffolding_catchup_count": 0
+      },
+      {
+        "profile_id": "datastructures_strong_prior_exposure_9",
+        "tier": "strong_prior_exposure",
+        "scaffolding_catchup_count": 0
+      },
+      {
+        "profile_id": "datastructures_strong_prior_exposure_10",
+        "tier": "strong_prior_exposure",
+        "scaffolding_catchup_count": 0
+      }
+    ],
+    "foundational_block_ids": [
+      "block_01"
+    ]
+  },
+  "length_invariance": {
+    "passed": true,
+    "band": [
+      16,
+      20
+    ],
+    "lengths": {
+      "datastructures_no_prior_exposure_1": 19,
+      "datastructures_no_prior_exposure_10": 19,
+      "datastructures_no_prior_exposure_2": 18,
+      "datastructures_no_prior_exposure_3": 19,
+      "datastructures_no_prior_exposure_4": 19,
+      "datastructures_no_prior_exposure_5": 19,
+      "datastructures_no_prior_exposure_6": 19,
+      "datastructures_no_prior_exposure_7": 20,
+      "datastructures_no_prior_exposure_8": 19,
+      "datastructures_no_prior_exposure_9": 18,
+      "datastructures_some_prior_exposure_1": 17,
+      "datastructures_some_prior_exposure_10": 17,
+      "datastructures_some_prior_exposure_2": 18,
+      "datastructures_some_prior_exposure_3": 19,
+      "datastructures_some_prior_exposure_4": 17,
+      "datastructures_some_prior_exposure_5": 18,
+      "datastructures_some_prior_exposure_6": 18,
+      "datastructures_some_prior_exposure_7": 18,
+      "datastructures_some_prior_exposure_8": 17,
+      "datastructures_some_prior_exposure_9": 18,
+      "datastructures_strong_prior_exposure_1": 20,
+      "datastructures_strong_prior_exposure_10": 20,
+      "datastructures_strong_prior_exposure_2": 18,
+      "datastructures_strong_prior_exposure_3": 19,
+      "datastructures_strong_prior_exposure_4": 18,
+      "datastructures_strong_prior_exposure_5": 20,
+      "datastructures_strong_prior_exposure_6": 18,
+      "datastructures_strong_prior_exposure_7": 19,
+      "datastructures_strong_prior_exposure_8": 18,
+      "datastructures_strong_prior_exposure_9": 19
+    },
+    "violations": []
+  },
+  "block_metrics_diagnostic": {
+    "pairwise": [
+      {
+        "profile_a": "datastructures_no_prior_exposure_1",
+        "profile_b": "datastructures_no_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_1",
+        "profile_b": "datastructures_no_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_1",
+        "profile_b": "datastructures_no_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_1",
+        "profile_b": "datastructures_no_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_1",
+        "profile_b": "datastructures_no_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_1",
+        "profile_b": "datastructures_no_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_1",
+        "profile_b": "datastructures_no_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.95
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_1",
+        "profile_b": "datastructures_no_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_1",
+        "profile_b": "datastructures_no_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_1",
+        "profile_b": "datastructures_some_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_1",
+        "profile_b": "datastructures_some_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_1",
+        "profile_b": "datastructures_some_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_1",
+        "profile_b": "datastructures_some_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7273
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_1",
+        "profile_b": "datastructures_some_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_1",
+        "profile_b": "datastructures_some_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_1",
+        "profile_b": "datastructures_some_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_1",
+        "profile_b": "datastructures_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_1",
+        "profile_b": "datastructures_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_1",
+        "profile_b": "datastructures_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_1",
+        "profile_b": "datastructures_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7727
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_1",
+        "profile_b": "datastructures_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7727
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_1",
+        "profile_b": "datastructures_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_1",
+        "profile_b": "datastructures_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7273
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_1",
+        "profile_b": "datastructures_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_1",
+        "profile_b": "datastructures_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7727
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_1",
+        "profile_b": "datastructures_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_1",
+        "profile_b": "datastructures_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7273
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_1",
+        "profile_b": "datastructures_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_1",
+        "profile_b": "datastructures_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8095
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_10",
+        "profile_b": "datastructures_no_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_10",
+        "profile_b": "datastructures_no_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_10",
+        "profile_b": "datastructures_no_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_10",
+        "profile_b": "datastructures_no_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_10",
+        "profile_b": "datastructures_no_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_10",
+        "profile_b": "datastructures_no_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.95
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_10",
+        "profile_b": "datastructures_no_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_10",
+        "profile_b": "datastructures_no_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_10",
+        "profile_b": "datastructures_some_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_10",
+        "profile_b": "datastructures_some_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_10",
+        "profile_b": "datastructures_some_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_10",
+        "profile_b": "datastructures_some_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7273
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_10",
+        "profile_b": "datastructures_some_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_10",
+        "profile_b": "datastructures_some_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_10",
+        "profile_b": "datastructures_some_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_10",
+        "profile_b": "datastructures_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_10",
+        "profile_b": "datastructures_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_10",
+        "profile_b": "datastructures_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_10",
+        "profile_b": "datastructures_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7727
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_10",
+        "profile_b": "datastructures_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7727
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_10",
+        "profile_b": "datastructures_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_10",
+        "profile_b": "datastructures_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7273
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_10",
+        "profile_b": "datastructures_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_10",
+        "profile_b": "datastructures_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7727
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_10",
+        "profile_b": "datastructures_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_10",
+        "profile_b": "datastructures_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7273
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_10",
+        "profile_b": "datastructures_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_10",
+        "profile_b": "datastructures_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8095
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_2",
+        "profile_b": "datastructures_no_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_2",
+        "profile_b": "datastructures_no_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_2",
+        "profile_b": "datastructures_no_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_2",
+        "profile_b": "datastructures_no_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_2",
+        "profile_b": "datastructures_no_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_2",
+        "profile_b": "datastructures_no_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_2",
+        "profile_b": "datastructures_no_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_2",
+        "profile_b": "datastructures_some_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8421
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_2",
+        "profile_b": "datastructures_some_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8421
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_2",
+        "profile_b": "datastructures_some_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_2",
+        "profile_b": "datastructures_some_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_2",
+        "profile_b": "datastructures_some_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8421
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_2",
+        "profile_b": "datastructures_some_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_2",
+        "profile_b": "datastructures_some_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_2",
+        "profile_b": "datastructures_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_2",
+        "profile_b": "datastructures_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8421
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_2",
+        "profile_b": "datastructures_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_2",
+        "profile_b": "datastructures_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8095
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_2",
+        "profile_b": "datastructures_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8095
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_2",
+        "profile_b": "datastructures_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_2",
+        "profile_b": "datastructures_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_2",
+        "profile_b": "datastructures_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_2",
+        "profile_b": "datastructures_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8095
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_2",
+        "profile_b": "datastructures_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_2",
+        "profile_b": "datastructures_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_2",
+        "profile_b": "datastructures_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_2",
+        "profile_b": "datastructures_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_3",
+        "profile_b": "datastructures_no_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_3",
+        "profile_b": "datastructures_no_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_3",
+        "profile_b": "datastructures_no_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_3",
+        "profile_b": "datastructures_no_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.95
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_3",
+        "profile_b": "datastructures_no_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_3",
+        "profile_b": "datastructures_no_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_3",
+        "profile_b": "datastructures_some_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_3",
+        "profile_b": "datastructures_some_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_3",
+        "profile_b": "datastructures_some_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_3",
+        "profile_b": "datastructures_some_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7273
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_3",
+        "profile_b": "datastructures_some_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_3",
+        "profile_b": "datastructures_some_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_3",
+        "profile_b": "datastructures_some_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_3",
+        "profile_b": "datastructures_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_3",
+        "profile_b": "datastructures_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_3",
+        "profile_b": "datastructures_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_3",
+        "profile_b": "datastructures_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7727
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_3",
+        "profile_b": "datastructures_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7727
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_3",
+        "profile_b": "datastructures_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_3",
+        "profile_b": "datastructures_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7273
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_3",
+        "profile_b": "datastructures_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_3",
+        "profile_b": "datastructures_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7727
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_3",
+        "profile_b": "datastructures_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_3",
+        "profile_b": "datastructures_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7273
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_3",
+        "profile_b": "datastructures_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_3",
+        "profile_b": "datastructures_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8095
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_4",
+        "profile_b": "datastructures_no_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_4",
+        "profile_b": "datastructures_no_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_4",
+        "profile_b": "datastructures_no_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8571
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_4",
+        "profile_b": "datastructures_no_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_4",
+        "profile_b": "datastructures_no_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_4",
+        "profile_b": "datastructures_some_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_4",
+        "profile_b": "datastructures_some_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_4",
+        "profile_b": "datastructures_some_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_4",
+        "profile_b": "datastructures_some_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8095
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_4",
+        "profile_b": "datastructures_some_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_4",
+        "profile_b": "datastructures_some_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_4",
+        "profile_b": "datastructures_some_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_4",
+        "profile_b": "datastructures_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_4",
+        "profile_b": "datastructures_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_4",
+        "profile_b": "datastructures_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_4",
+        "profile_b": "datastructures_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8571
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_4",
+        "profile_b": "datastructures_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8571
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_4",
+        "profile_b": "datastructures_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_4",
+        "profile_b": "datastructures_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8095
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_4",
+        "profile_b": "datastructures_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_4",
+        "profile_b": "datastructures_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8571
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_4",
+        "profile_b": "datastructures_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_4",
+        "profile_b": "datastructures_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8095
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_4",
+        "profile_b": "datastructures_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_4",
+        "profile_b": "datastructures_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_5",
+        "profile_b": "datastructures_no_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_5",
+        "profile_b": "datastructures_no_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.95
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_5",
+        "profile_b": "datastructures_no_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_5",
+        "profile_b": "datastructures_no_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_5",
+        "profile_b": "datastructures_some_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_5",
+        "profile_b": "datastructures_some_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_5",
+        "profile_b": "datastructures_some_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_5",
+        "profile_b": "datastructures_some_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7273
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_5",
+        "profile_b": "datastructures_some_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_5",
+        "profile_b": "datastructures_some_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_5",
+        "profile_b": "datastructures_some_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_5",
+        "profile_b": "datastructures_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_5",
+        "profile_b": "datastructures_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_5",
+        "profile_b": "datastructures_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_5",
+        "profile_b": "datastructures_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7727
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_5",
+        "profile_b": "datastructures_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7727
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_5",
+        "profile_b": "datastructures_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_5",
+        "profile_b": "datastructures_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7273
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_5",
+        "profile_b": "datastructures_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_5",
+        "profile_b": "datastructures_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7727
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_5",
+        "profile_b": "datastructures_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_5",
+        "profile_b": "datastructures_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7273
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_5",
+        "profile_b": "datastructures_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_5",
+        "profile_b": "datastructures_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8095
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_6",
+        "profile_b": "datastructures_no_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.95
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_6",
+        "profile_b": "datastructures_no_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_6",
+        "profile_b": "datastructures_no_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_6",
+        "profile_b": "datastructures_some_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_6",
+        "profile_b": "datastructures_some_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_6",
+        "profile_b": "datastructures_some_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_6",
+        "profile_b": "datastructures_some_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7273
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_6",
+        "profile_b": "datastructures_some_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_6",
+        "profile_b": "datastructures_some_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_6",
+        "profile_b": "datastructures_some_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_6",
+        "profile_b": "datastructures_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_6",
+        "profile_b": "datastructures_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_6",
+        "profile_b": "datastructures_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_6",
+        "profile_b": "datastructures_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7727
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_6",
+        "profile_b": "datastructures_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7727
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_6",
+        "profile_b": "datastructures_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_6",
+        "profile_b": "datastructures_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7273
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_6",
+        "profile_b": "datastructures_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_6",
+        "profile_b": "datastructures_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7727
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_6",
+        "profile_b": "datastructures_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_6",
+        "profile_b": "datastructures_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7273
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_6",
+        "profile_b": "datastructures_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_6",
+        "profile_b": "datastructures_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8095
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_7",
+        "profile_b": "datastructures_no_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.95
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_7",
+        "profile_b": "datastructures_no_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_7",
+        "profile_b": "datastructures_some_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_7",
+        "profile_b": "datastructures_some_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_7",
+        "profile_b": "datastructures_some_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8095
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_7",
+        "profile_b": "datastructures_some_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7727
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_7",
+        "profile_b": "datastructures_some_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_7",
+        "profile_b": "datastructures_some_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8095
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_7",
+        "profile_b": "datastructures_some_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8095
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_7",
+        "profile_b": "datastructures_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8095
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_7",
+        "profile_b": "datastructures_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_7",
+        "profile_b": "datastructures_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_7",
+        "profile_b": "datastructures_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8182
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_7",
+        "profile_b": "datastructures_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8182
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_7",
+        "profile_b": "datastructures_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8095
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_7",
+        "profile_b": "datastructures_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7727
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_7",
+        "profile_b": "datastructures_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7273
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_7",
+        "profile_b": "datastructures_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7391
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_7",
+        "profile_b": "datastructures_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8095
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_7",
+        "profile_b": "datastructures_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7727
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_7",
+        "profile_b": "datastructures_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8095
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_7",
+        "profile_b": "datastructures_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8571
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_8",
+        "profile_b": "datastructures_no_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_8",
+        "profile_b": "datastructures_some_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_8",
+        "profile_b": "datastructures_some_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_8",
+        "profile_b": "datastructures_some_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_8",
+        "profile_b": "datastructures_some_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7273
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_8",
+        "profile_b": "datastructures_some_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_8",
+        "profile_b": "datastructures_some_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_8",
+        "profile_b": "datastructures_some_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_8",
+        "profile_b": "datastructures_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_8",
+        "profile_b": "datastructures_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_8",
+        "profile_b": "datastructures_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_8",
+        "profile_b": "datastructures_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7727
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_8",
+        "profile_b": "datastructures_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7727
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_8",
+        "profile_b": "datastructures_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_8",
+        "profile_b": "datastructures_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7273
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_8",
+        "profile_b": "datastructures_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_8",
+        "profile_b": "datastructures_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7727
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_8",
+        "profile_b": "datastructures_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_8",
+        "profile_b": "datastructures_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7273
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_8",
+        "profile_b": "datastructures_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_8",
+        "profile_b": "datastructures_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8095
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_9",
+        "profile_b": "datastructures_some_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8421
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_9",
+        "profile_b": "datastructures_some_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8421
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_9",
+        "profile_b": "datastructures_some_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_9",
+        "profile_b": "datastructures_some_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_9",
+        "profile_b": "datastructures_some_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8421
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_9",
+        "profile_b": "datastructures_some_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_9",
+        "profile_b": "datastructures_some_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_9",
+        "profile_b": "datastructures_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_9",
+        "profile_b": "datastructures_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8421
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_9",
+        "profile_b": "datastructures_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_9",
+        "profile_b": "datastructures_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8095
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_9",
+        "profile_b": "datastructures_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8095
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_9",
+        "profile_b": "datastructures_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_9",
+        "profile_b": "datastructures_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_9",
+        "profile_b": "datastructures_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_9",
+        "profile_b": "datastructures_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8095
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_9",
+        "profile_b": "datastructures_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_9",
+        "profile_b": "datastructures_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_9",
+        "profile_b": "datastructures_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_no_prior_exposure_9",
+        "profile_b": "datastructures_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_1",
+        "profile_b": "datastructures_some_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_1",
+        "profile_b": "datastructures_some_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9444
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_1",
+        "profile_b": "datastructures_some_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_1",
+        "profile_b": "datastructures_some_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_1",
+        "profile_b": "datastructures_some_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9444
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_1",
+        "profile_b": "datastructures_some_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9444
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_1",
+        "profile_b": "datastructures_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9444
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_1",
+        "profile_b": "datastructures_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8889
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_1",
+        "profile_b": "datastructures_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8421
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_1",
+        "profile_b": "datastructures_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_1",
+        "profile_b": "datastructures_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_1",
+        "profile_b": "datastructures_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9444
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_1",
+        "profile_b": "datastructures_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_1",
+        "profile_b": "datastructures_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9444
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_1",
+        "profile_b": "datastructures_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_1",
+        "profile_b": "datastructures_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9444
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_1",
+        "profile_b": "datastructures_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_1",
+        "profile_b": "datastructures_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9444
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_1",
+        "profile_b": "datastructures_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_10",
+        "profile_b": "datastructures_some_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9444
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_10",
+        "profile_b": "datastructures_some_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_10",
+        "profile_b": "datastructures_some_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_10",
+        "profile_b": "datastructures_some_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9444
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_10",
+        "profile_b": "datastructures_some_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9444
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_10",
+        "profile_b": "datastructures_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9444
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_10",
+        "profile_b": "datastructures_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8889
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_10",
+        "profile_b": "datastructures_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8421
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_10",
+        "profile_b": "datastructures_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_10",
+        "profile_b": "datastructures_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_10",
+        "profile_b": "datastructures_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9444
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_10",
+        "profile_b": "datastructures_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_10",
+        "profile_b": "datastructures_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9444
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_10",
+        "profile_b": "datastructures_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_10",
+        "profile_b": "datastructures_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9444
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_10",
+        "profile_b": "datastructures_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_10",
+        "profile_b": "datastructures_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9444
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_10",
+        "profile_b": "datastructures_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_2",
+        "profile_b": "datastructures_some_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_2",
+        "profile_b": "datastructures_some_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9444
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_2",
+        "profile_b": "datastructures_some_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_2",
+        "profile_b": "datastructures_some_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_2",
+        "profile_b": "datastructures_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_2",
+        "profile_b": "datastructures_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9444
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_2",
+        "profile_b": "datastructures_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_2",
+        "profile_b": "datastructures_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_2",
+        "profile_b": "datastructures_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_2",
+        "profile_b": "datastructures_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_2",
+        "profile_b": "datastructures_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_2",
+        "profile_b": "datastructures_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_2",
+        "profile_b": "datastructures_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8095
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_2",
+        "profile_b": "datastructures_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_2",
+        "profile_b": "datastructures_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_2",
+        "profile_b": "datastructures_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_2",
+        "profile_b": "datastructures_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_3",
+        "profile_b": "datastructures_some_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_3",
+        "profile_b": "datastructures_some_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_3",
+        "profile_b": "datastructures_some_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_3",
+        "profile_b": "datastructures_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_3",
+        "profile_b": "datastructures_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_3",
+        "profile_b": "datastructures_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_3",
+        "profile_b": "datastructures_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.95
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_3",
+        "profile_b": "datastructures_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.95
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_3",
+        "profile_b": "datastructures_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_3",
+        "profile_b": "datastructures_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_3",
+        "profile_b": "datastructures_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_3",
+        "profile_b": "datastructures_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8571
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_3",
+        "profile_b": "datastructures_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_3",
+        "profile_b": "datastructures_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_3",
+        "profile_b": "datastructures_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_3",
+        "profile_b": "datastructures_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_4",
+        "profile_b": "datastructures_some_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9444
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_4",
+        "profile_b": "datastructures_some_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9444
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_4",
+        "profile_b": "datastructures_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9444
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_4",
+        "profile_b": "datastructures_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8889
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_4",
+        "profile_b": "datastructures_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8421
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_4",
+        "profile_b": "datastructures_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_4",
+        "profile_b": "datastructures_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_4",
+        "profile_b": "datastructures_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9444
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_4",
+        "profile_b": "datastructures_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_4",
+        "profile_b": "datastructures_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9444
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_4",
+        "profile_b": "datastructures_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_4",
+        "profile_b": "datastructures_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9444
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_4",
+        "profile_b": "datastructures_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_4",
+        "profile_b": "datastructures_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9444
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_4",
+        "profile_b": "datastructures_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_5",
+        "profile_b": "datastructures_some_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_5",
+        "profile_b": "datastructures_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_5",
+        "profile_b": "datastructures_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9444
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_5",
+        "profile_b": "datastructures_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_5",
+        "profile_b": "datastructures_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_5",
+        "profile_b": "datastructures_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_5",
+        "profile_b": "datastructures_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_5",
+        "profile_b": "datastructures_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_5",
+        "profile_b": "datastructures_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_5",
+        "profile_b": "datastructures_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8095
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_5",
+        "profile_b": "datastructures_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_5",
+        "profile_b": "datastructures_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_5",
+        "profile_b": "datastructures_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_5",
+        "profile_b": "datastructures_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_6",
+        "profile_b": "datastructures_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_6",
+        "profile_b": "datastructures_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9444
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_6",
+        "profile_b": "datastructures_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_6",
+        "profile_b": "datastructures_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_6",
+        "profile_b": "datastructures_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_6",
+        "profile_b": "datastructures_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_6",
+        "profile_b": "datastructures_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_6",
+        "profile_b": "datastructures_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_6",
+        "profile_b": "datastructures_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8095
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_6",
+        "profile_b": "datastructures_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_6",
+        "profile_b": "datastructures_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_6",
+        "profile_b": "datastructures_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_6",
+        "profile_b": "datastructures_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_7",
+        "profile_b": "datastructures_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9444
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_7",
+        "profile_b": "datastructures_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_7",
+        "profile_b": "datastructures_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_7",
+        "profile_b": "datastructures_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_7",
+        "profile_b": "datastructures_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_7",
+        "profile_b": "datastructures_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_7",
+        "profile_b": "datastructures_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_7",
+        "profile_b": "datastructures_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8095
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_7",
+        "profile_b": "datastructures_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_7",
+        "profile_b": "datastructures_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_7",
+        "profile_b": "datastructures_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_7",
+        "profile_b": "datastructures_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_8",
+        "profile_b": "datastructures_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9444
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_8",
+        "profile_b": "datastructures_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_8",
+        "profile_b": "datastructures_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_8",
+        "profile_b": "datastructures_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8421
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_8",
+        "profile_b": "datastructures_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_8",
+        "profile_b": "datastructures_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8421
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_8",
+        "profile_b": "datastructures_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7619
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_8",
+        "profile_b": "datastructures_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8421
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_8",
+        "profile_b": "datastructures_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_8",
+        "profile_b": "datastructures_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9444
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_8",
+        "profile_b": "datastructures_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_9",
+        "profile_b": "datastructures_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_9",
+        "profile_b": "datastructures_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_9",
+        "profile_b": "datastructures_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_9",
+        "profile_b": "datastructures_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_9",
+        "profile_b": "datastructures_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_9",
+        "profile_b": "datastructures_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8095
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_9",
+        "profile_b": "datastructures_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_9",
+        "profile_b": "datastructures_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_9",
+        "profile_b": "datastructures_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_some_prior_exposure_9",
+        "profile_b": "datastructures_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_1",
+        "profile_b": "datastructures_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_1",
+        "profile_b": "datastructures_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_1",
+        "profile_b": "datastructures_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.95
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_1",
+        "profile_b": "datastructures_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8095
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_1",
+        "profile_b": "datastructures_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9048
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_1",
+        "profile_b": "datastructures_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_1",
+        "profile_b": "datastructures_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8571
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_1",
+        "profile_b": "datastructures_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_1",
+        "profile_b": "datastructures_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.95
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_10",
+        "profile_b": "datastructures_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_10",
+        "profile_b": "datastructures_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.95
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_10",
+        "profile_b": "datastructures_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8095
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_10",
+        "profile_b": "datastructures_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9048
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_10",
+        "profile_b": "datastructures_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_10",
+        "profile_b": "datastructures_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8571
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_10",
+        "profile_b": "datastructures_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_10",
+        "profile_b": "datastructures_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.95
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_2",
+        "profile_b": "datastructures_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_2",
+        "profile_b": "datastructures_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_2",
+        "profile_b": "datastructures_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_2",
+        "profile_b": "datastructures_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_2",
+        "profile_b": "datastructures_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_2",
+        "profile_b": "datastructures_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_2",
+        "profile_b": "datastructures_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_3",
+        "profile_b": "datastructures_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_3",
+        "profile_b": "datastructures_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8571
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_3",
+        "profile_b": "datastructures_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_3",
+        "profile_b": "datastructures_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_3",
+        "profile_b": "datastructures_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_3",
+        "profile_b": "datastructures_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_4",
+        "profile_b": "datastructures_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_4",
+        "profile_b": "datastructures_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_4",
+        "profile_b": "datastructures_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_4",
+        "profile_b": "datastructures_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_4",
+        "profile_b": "datastructures_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_5",
+        "profile_b": "datastructures_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_5",
+        "profile_b": "datastructures_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8571
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_5",
+        "profile_b": "datastructures_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8095
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_5",
+        "profile_b": "datastructures_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8571
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_6",
+        "profile_b": "datastructures_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.85
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_6",
+        "profile_b": "datastructures_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8947
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_6",
+        "profile_b": "datastructures_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_7",
+        "profile_b": "datastructures_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_7",
+        "profile_b": "datastructures_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9
+      },
+      {
+        "profile_a": "datastructures_strong_prior_exposure_8",
+        "profile_b": "datastructures_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9474
+      }
+    ],
+    "mean_sequence_jaccard": 1.0,
+    "mean_multiset_jaccard": 0.8627,
+    "profile_block_summaries": {
+      "datastructures_no_prior_exposure_1": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07",
+          "block_08"
+        ],
+        "block_counts": {
+          "block_01": 5,
+          "block_02": 2,
+          "block_03": 4,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 1,
+          "block_07": 2,
+          "block_08": 2
+        },
+        "node_count": 19
+      },
+      "datastructures_no_prior_exposure_10": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07",
+          "block_08"
+        ],
+        "block_counts": {
+          "block_01": 5,
+          "block_02": 2,
+          "block_03": 4,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 1,
+          "block_07": 2,
+          "block_08": 2
+        },
+        "node_count": 19
+      },
+      "datastructures_no_prior_exposure_2": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07",
+          "block_08"
+        ],
+        "block_counts": {
+          "block_01": 4,
+          "block_02": 2,
+          "block_03": 4,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 1,
+          "block_07": 2,
+          "block_08": 2
+        },
+        "node_count": 18
+      },
+      "datastructures_no_prior_exposure_3": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07",
+          "block_08"
+        ],
+        "block_counts": {
+          "block_01": 5,
+          "block_02": 2,
+          "block_03": 4,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 1,
+          "block_07": 2,
+          "block_08": 2
+        },
+        "node_count": 19
+      },
+      "datastructures_no_prior_exposure_4": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07",
+          "block_08"
+        ],
+        "block_counts": {
+          "block_01": 4,
+          "block_02": 2,
+          "block_03": 4,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 2,
+          "block_08": 2
+        },
+        "node_count": 19
+      },
+      "datastructures_no_prior_exposure_5": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07",
+          "block_08"
+        ],
+        "block_counts": {
+          "block_01": 5,
+          "block_02": 2,
+          "block_03": 4,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 1,
+          "block_07": 2,
+          "block_08": 2
+        },
+        "node_count": 19
+      },
+      "datastructures_no_prior_exposure_6": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07",
+          "block_08"
+        ],
+        "block_counts": {
+          "block_01": 5,
+          "block_02": 2,
+          "block_03": 4,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 1,
+          "block_07": 2,
+          "block_08": 2
+        },
+        "node_count": 19
+      },
+      "datastructures_no_prior_exposure_7": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07",
+          "block_08"
+        ],
+        "block_counts": {
+          "block_01": 5,
+          "block_02": 2,
+          "block_03": 4,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 1,
+          "block_07": 2,
+          "block_08": 3
+        },
+        "node_count": 20
+      },
+      "datastructures_no_prior_exposure_8": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07",
+          "block_08"
+        ],
+        "block_counts": {
+          "block_01": 5,
+          "block_02": 2,
+          "block_03": 4,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 1,
+          "block_07": 2,
+          "block_08": 2
+        },
+        "node_count": 19
+      },
+      "datastructures_no_prior_exposure_9": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07",
+          "block_08"
+        ],
+        "block_counts": {
+          "block_01": 4,
+          "block_02": 2,
+          "block_03": 4,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 1,
+          "block_07": 2,
+          "block_08": 2
+        },
+        "node_count": 18
+      },
+      "datastructures_some_prior_exposure_1": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07",
+          "block_08"
+        ],
+        "block_counts": {
+          "block_01": 2,
+          "block_02": 2,
+          "block_03": 4,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 2,
+          "block_08": 2
+        },
+        "node_count": 17
+      },
+      "datastructures_some_prior_exposure_10": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07",
+          "block_08"
+        ],
+        "block_counts": {
+          "block_01": 2,
+          "block_02": 2,
+          "block_03": 4,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 2,
+          "block_08": 2
+        },
+        "node_count": 17
+      },
+      "datastructures_some_prior_exposure_2": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07",
+          "block_08"
+        ],
+        "block_counts": {
+          "block_01": 2,
+          "block_02": 2,
+          "block_03": 4,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 2,
+          "block_08": 3
+        },
+        "node_count": 18
+      },
+      "datastructures_some_prior_exposure_3": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07",
+          "block_08"
+        ],
+        "block_counts": {
+          "block_01": 2,
+          "block_02": 3,
+          "block_03": 4,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 2,
+          "block_08": 3
+        },
+        "node_count": 19
+      },
+      "datastructures_some_prior_exposure_4": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07",
+          "block_08"
+        ],
+        "block_counts": {
+          "block_01": 2,
+          "block_02": 2,
+          "block_03": 4,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 2,
+          "block_08": 2
+        },
+        "node_count": 17
+      },
+      "datastructures_some_prior_exposure_5": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07",
+          "block_08"
+        ],
+        "block_counts": {
+          "block_01": 2,
+          "block_02": 2,
+          "block_03": 4,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 2,
+          "block_08": 3
+        },
+        "node_count": 18
+      },
+      "datastructures_some_prior_exposure_6": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07",
+          "block_08"
+        ],
+        "block_counts": {
+          "block_01": 2,
+          "block_02": 2,
+          "block_03": 4,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 2,
+          "block_08": 3
+        },
+        "node_count": 18
+      },
+      "datastructures_some_prior_exposure_7": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07",
+          "block_08"
+        ],
+        "block_counts": {
+          "block_01": 2,
+          "block_02": 2,
+          "block_03": 4,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 2,
+          "block_08": 3
+        },
+        "node_count": 18
+      },
+      "datastructures_some_prior_exposure_8": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07",
+          "block_08"
+        ],
+        "block_counts": {
+          "block_01": 2,
+          "block_02": 2,
+          "block_03": 4,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 1,
+          "block_07": 2,
+          "block_08": 3
+        },
+        "node_count": 17
+      },
+      "datastructures_some_prior_exposure_9": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07",
+          "block_08"
+        ],
+        "block_counts": {
+          "block_01": 3,
+          "block_02": 2,
+          "block_03": 4,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 1,
+          "block_07": 2,
+          "block_08": 3
+        },
+        "node_count": 18
+      },
+      "datastructures_strong_prior_exposure_1": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07",
+          "block_08"
+        ],
+        "block_counts": {
+          "block_01": 3,
+          "block_02": 3,
+          "block_03": 4,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 2,
+          "block_08": 3
+        },
+        "node_count": 20
+      },
+      "datastructures_strong_prior_exposure_10": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07",
+          "block_08"
+        ],
+        "block_counts": {
+          "block_01": 3,
+          "block_02": 3,
+          "block_03": 4,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 2,
+          "block_08": 3
+        },
+        "node_count": 20
+      },
+      "datastructures_strong_prior_exposure_2": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07",
+          "block_08"
+        ],
+        "block_counts": {
+          "block_01": 3,
+          "block_02": 2,
+          "block_03": 4,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 2,
+          "block_08": 2
+        },
+        "node_count": 18
+      },
+      "datastructures_strong_prior_exposure_3": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07",
+          "block_08"
+        ],
+        "block_counts": {
+          "block_01": 2,
+          "block_02": 3,
+          "block_03": 4,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 2,
+          "block_08": 3
+        },
+        "node_count": 19
+      },
+      "datastructures_strong_prior_exposure_4": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07",
+          "block_08"
+        ],
+        "block_counts": {
+          "block_01": 2,
+          "block_02": 2,
+          "block_03": 4,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 3,
+          "block_08": 2
+        },
+        "node_count": 18
+      },
+      "datastructures_strong_prior_exposure_5": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07",
+          "block_08"
+        ],
+        "block_counts": {
+          "block_01": 3,
+          "block_02": 3,
+          "block_03": 4,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 3,
+          "block_08": 2
+        },
+        "node_count": 20
+      },
+      "datastructures_strong_prior_exposure_6": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07",
+          "block_08"
+        ],
+        "block_counts": {
+          "block_01": 3,
+          "block_02": 2,
+          "block_03": 4,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 2,
+          "block_08": 2
+        },
+        "node_count": 18
+      },
+      "datastructures_strong_prior_exposure_7": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07",
+          "block_08"
+        ],
+        "block_counts": {
+          "block_01": 2,
+          "block_02": 2,
+          "block_03": 4,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 3,
+          "block_08": 3
+        },
+        "node_count": 19
+      },
+      "datastructures_strong_prior_exposure_8": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07",
+          "block_08"
+        ],
+        "block_counts": {
+          "block_01": 2,
+          "block_02": 2,
+          "block_03": 4,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 2,
+          "block_08": 3
+        },
+        "node_count": 18
+      },
+      "datastructures_strong_prior_exposure_9": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07",
+          "block_08"
+        ],
+        "block_counts": {
+          "block_01": 3,
+          "block_02": 2,
+          "block_03": 4,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 2,
+          "block_08": 3
+        },
+        "node_count": 19
+      }
+    }
+  },
+  "llm_judge": null,
+  "judge_sample_ids": null
+}

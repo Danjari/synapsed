@@ -1,0 +1,275 @@
+{
+  "profileId": "datastructures_no_prior_exposure_6",
+  "cluster": null,
+  "field": null,
+  "description": "A mathematically strong student intending to double-major in Economics who is comfortable with logic and proofs but feels intimidated by low-level manual memory management in C++.",
+  "studentId": "offline-datastructures_no_prior_exposure_6",
+  "source": "offline-gemini",
+  "nodeCount": 19,
+  "nodes": [
+    {
+      "nodeRole": "scaffolding_catchup",
+      "description": "An introduction to manual memory management, pointer syntax, and the address-of operator specifically for students transitioning from higher-level languages.",
+      "duration": "75 min",
+      "id": "n1",
+      "type": "subtopic",
+      "personalizationRationale": "Because the student has no_prior_exposure to C++, this node provides necessary scaffolding on memory addresses and pointer logic not found in higher-level languages like Python.",
+      "syllabusBlockId": "block_01",
+      "dependsOn": [],
+      "title": "C++ Pointers and Memory Basics",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "n2",
+      "duration": "75 min",
+      "description": "Exploring pass-by-value versus pass-by-reference and the syntax for C-style arrays in a C++ context.",
+      "nodeRole": "scaffolding_catchup",
+      "difficulty": "beginner",
+      "title": "References and Array Foundations",
+      "dependsOn": [
+        "n1"
+      ],
+      "personalizationRationale": "Supporting the no_prior_exposure tier, this lesson bridges the gap between Python-style lists and C++ fixed-size arrays and reference types.",
+      "syllabusBlockId": "block_01",
+      "type": "subtopic"
+    },
+    {
+      "type": "subtopic",
+      "personalizationRationale": "This node addresses the no_prior_exposure tier by providing extra practice with the C++ compilation model and class header/implementation separation.",
+      "syllabusBlockId": "block_01",
+      "difficulty": "beginner",
+      "dependsOn": [
+        "n2"
+      ],
+      "title": "C++ Classes and Template Syntax",
+      "description": "Practice with header files, implementation files, and the basic syntax for generic programming using C++ templates.",
+      "nodeRole": "scaffolding_catchup",
+      "id": "n3",
+      "duration": "75 min"
+    },
+    {
+      "difficulty": "intermediate",
+      "dependsOn": [
+        "n3"
+      ],
+      "title": "Object-Oriented Design & Inheritance",
+      "type": "topic",
+      "syllabusBlockId": "block_01",
+      "personalizationRationale": "Standard requirement for all students, including those with no_prior_exposure, to master the design principles used in the course textbook.",
+      "duration": "75 min",
+      "id": "n4",
+      "description": "Core principles of inheritance, polymorphism, and class hierarchies as implemented in C++.",
+      "nodeRole": "core_required"
+    },
+    {
+      "duration": "30 min",
+      "id": "n5",
+      "nodeRole": "core_required",
+      "description": "Using try-catch blocks and throwing exceptions to handle runtime errors in C++ programs.",
+      "title": "C++ Exception Handling",
+      "dependsOn": [
+        "n4"
+      ],
+      "difficulty": "intermediate",
+      "personalizationRationale": "Core competency for robust C++ programming as outlined in the block_01 curriculum for all students.",
+      "syllabusBlockId": "block_01",
+      "type": "subtopic"
+    },
+    {
+      "difficulty": "intermediate",
+      "title": "Linked List Implementations",
+      "dependsOn": [
+        "n5"
+      ],
+      "syllabusBlockId": "block_02",
+      "personalizationRationale": "Essential for the student to transition from static arrays to dynamic data structures regardless of their no_prior_exposure status.",
+      "type": "topic",
+      "id": "n6",
+      "duration": "150 min",
+      "description": "Implementation details for singly and doubly linked lists, focusing on pointer manipulation.",
+      "nodeRole": "core_required"
+    },
+    {
+      "description": "Formal assessment covering recursive algorithm design and the basics of Big-O notation.",
+      "nodeRole": "assessment",
+      "id": "n7",
+      "duration": "60 min",
+      "personalizationRationale": "Required assessment checkpoint for the no_prior_exposure tier to verify comprehension of fundamental recursion and analysis.",
+      "syllabusBlockId": "block_02",
+      "type": "assessment",
+      "difficulty": "intermediate",
+      "title": "Quiz 1: Recursion and Big-O",
+      "dependsOn": [
+        "n6"
+      ]
+    },
+    {
+      "duration": "150 min",
+      "id": "n8",
+      "nodeRole": "core_required",
+      "description": "Abstract Data Types (ADTs) for Stacks and Queues, including array-based and list-based implementations.",
+      "title": "Stacks, Queues, and Deques",
+      "dependsOn": [
+        "n7"
+      ],
+      "difficulty": "intermediate",
+      "syllabusBlockId": "block_03",
+      "personalizationRationale": "Fundamental sequence-based structures required for general data structure competency for every student.",
+      "type": "topic"
+    },
+    {
+      "dependsOn": [
+        "n8"
+      ],
+      "title": "Vectors and Iterators",
+      "difficulty": "intermediate",
+      "type": "subtopic",
+      "syllabusBlockId": "block_03",
+      "personalizationRationale": "Core C++ Standard Template Library concepts required for all subsequent programming assignments, including those in the no_prior_exposure tier.",
+      "duration": "100 min",
+      "id": "n9",
+      "nodeRole": "core_required",
+      "description": "Using the STL vector class and understanding the iterator pattern for traversing sequences."
+    },
+    {
+      "type": "subtopic",
+      "personalizationRationale": "Mandatory algorithm coverage as per block_03 requirements to ensure consistent progress for the no_prior_exposure tier.",
+      "syllabusBlockId": "block_03",
+      "difficulty": "intermediate",
+      "dependsOn": [
+        "n9"
+      ],
+      "title": "Bubble Sort and Sequences",
+      "description": "Analysis of the bubble sort algorithm and its application within sequence structures.",
+      "nodeRole": "core_required",
+      "id": "n10",
+      "duration": "75 min"
+    },
+    {
+      "syllabusBlockId": "block_03",
+      "personalizationRationale": "Required assessment checkpoint for students in the no_prior_exposure tier to prepare for the 25% midterm exam.",
+      "type": "assessment",
+      "title": "Midterm Review: Blocks 1-3",
+      "dependsOn": [
+        "n10"
+      ],
+      "difficulty": "intermediate",
+      "nodeRole": "assessment",
+      "description": "Comprehensive review and practice exam covering all material from C++ basics through sequence structures.",
+      "id": "n11",
+      "duration": "50 min"
+    },
+    {
+      "personalizationRationale": "Foundation for hierarchical data structures covered in the second half of the course for all students.",
+      "syllabusBlockId": "block_04",
+      "type": "topic",
+      "title": "General and Binary Trees",
+      "dependsOn": [
+        "n11"
+      ],
+      "difficulty": "intermediate",
+      "nodeRole": "core_required",
+      "description": "Terminology and properties of general trees and binary tree structures.",
+      "duration": "115 min",
+      "id": "n12"
+    },
+    {
+      "type": "subtopic",
+      "syllabusBlockId": "block_04",
+      "personalizationRationale": "Core competency for navigating and manipulating tree-based data structures required for the cumulative final.",
+      "difficulty": "intermediate",
+      "dependsOn": [
+        "n12"
+      ],
+      "title": "Tree Traversal Algorithms",
+      "description": "In-order, pre-order, and post-order traversal algorithms for binary trees.",
+      "nodeRole": "core_required",
+      "duration": "110 min",
+      "id": "n13"
+    },
+    {
+      "duration": "150 min",
+      "id": "n14",
+      "nodeRole": "core_required",
+      "description": "Implementation of priority queues using binary heaps and array-based representations.",
+      "dependsOn": [
+        "n13"
+      ],
+      "title": "Priority Queues and Heaps",
+      "difficulty": "intermediate",
+      "type": "topic",
+      "personalizationRationale": "Required content for understanding efficient retrieval of extremes, which remains a core course objective for the no_prior_exposure student.",
+      "syllabusBlockId": "block_05"
+    },
+    {
+      "id": "n15",
+      "duration": "225 min",
+      "nodeRole": "core_required",
+      "description": "Hash functions, collision resolution strategies, and the Map ADT.",
+      "title": "Maps and Hash Tables",
+      "dependsOn": [
+        "n14"
+      ],
+      "difficulty": "intermediate",
+      "syllabusBlockId": "block_06",
+      "personalizationRationale": "Mandatory lesson on key-value storage and hash functions as per block_06 for all students.",
+      "type": "topic"
+    },
+    {
+      "description": "The structure and rotation operations for maintaining balance in AVL trees.",
+      "nodeRole": "core_required",
+      "duration": "125 min",
+      "id": "n16",
+      "syllabusBlockId": "block_07",
+      "personalizationRationale": "Critical theory-heavy material required for the final exam and balanced structure understanding regardless of prior C++ exposure.",
+      "type": "topic",
+      "difficulty": "advanced",
+      "title": "BST and AVL Trees",
+      "dependsOn": [
+        "n15"
+      ]
+    },
+    {
+      "id": "n17",
+      "duration": "100 min",
+      "description": "Exploring (2,4) trees and their relationship to Red-Black tree properties and proofs.",
+      "nodeRole": "core_required",
+      "difficulty": "advanced",
+      "title": "Red-Black and Multi-Way Trees",
+      "dependsOn": [
+        "n16"
+      ],
+      "personalizationRationale": "Advanced search structures mandatory for the complete cumulative syllabus for all students.",
+      "syllabusBlockId": "block_07",
+      "type": "subtopic"
+    },
+    {
+      "id": "n18",
+      "duration": "150 min",
+      "nodeRole": "core_required",
+      "description": "Divide-and-conquer sorting (Merge Sort) and simple selection sorting.",
+      "title": "Merge Sort and Selection Sort",
+      "dependsOn": [
+        "n17"
+      ],
+      "difficulty": "intermediate",
+      "syllabusBlockId": "block_08",
+      "personalizationRationale": "Essential sorting algorithms required for the block_08 capstone and final exam performance.",
+      "type": "topic"
+    },
+    {
+      "nodeRole": "assessment",
+      "description": "Final check on all course learning objectives and cumulative review for the 30% final exam.",
+      "id": "n19",
+      "duration": "75 min",
+      "personalizationRationale": "Mandatory assessment and review node covering all course material to ensure the no_prior_exposure student is ready for the cumulative final.",
+      "syllabusBlockId": "block_08",
+      "type": "assessment",
+      "title": "Final Cumulative Review & Quiz 4",
+      "dependsOn": [
+        "n18"
+      ],
+      "difficulty": "advanced"
+    }
+  ]
+}

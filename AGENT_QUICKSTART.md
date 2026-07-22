@@ -1,5 +1,7 @@
 # Synapsed Agent - Quick Start
 
+**Hub:** [README.md](./README.md) · **Architecture:** [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) · **Canonical agent docs:** [lib/agent/README.md](./lib/agent/README.md)
+
 ## Current State
 
 Synapsed now runs a **single-memory multimodal agent**:

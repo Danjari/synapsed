@@ -1,0 +1,63 @@
+{
+  "source": "data/prompts/pathway_generation_spec.json (personalizationRules v2.0)",
+  "implementation": "study/lib/rule_validator.py",
+  "how_rules_map_to_survey": "Keyword and field checks on concatenated survey answers (goals_1, goals_2, prereq_1, bloom_*).",
+  "rules": [
+    {
+      "id": "node_count",
+      "check": "10 <= total nodes <= 14",
+      "applies_to": "all profiles"
+    },
+    {
+      "id": "ethics_capstone",
+      "check": "block_06 count >= 2",
+      "applies_to": "all profiles"
+    },
+    {
+      "id": "foundation_depth",
+      "check": "block_01 count >= 3",
+      "applies_to": "prereq_1 uncertain OR bloom text indicates no prior AI/ML"
+    },
+    {
+      "id": "foundation_compress",
+      "check": "block_01 count <= 1",
+      "applies_to": "prereq_1 very confident OR bloom mentions ML/neural networks/PyTorch"
+    },
+    {
+      "id": "business_track",
+      "check": "block_05a >= 3 and block_05a > block_05b",
+      "applies_to": "goals mention business/strategy/workplace (not research-heavy)"
+    },
+    {
+      "id": "research_track",
+      "check": "block_05b >= 3 and block_05b >= block_05a",
+      "applies_to": "goals mention research/RAG/fine-tuning/workflows"
+    },
+    {
+      "id": "ethics_emphasis",
+      "check": "block_06 count >= 4",
+      "applies_to": "goals mention ethics/bias/health equity/patient safety"
+    },
+    {
+      "id": "prompting_emphasis",
+      "check": "block_03 + block_04 count >= 3",
+      "applies_to": "goals mention structured prompting/few-shot/chain-of-thought"
+    },
+    {
+      "id": "style_control_exact",
+      "check": "block_counts identical to paired_with profile",
+      "applies_to": "6 style-control profiles with paired_with field"
+    },
+    {
+      "id": "valid_block_ids",
+      "check": "every node syllabusBlockId in {block_01..block_06}",
+      "applies_to": "all profiles"
+    }
+  ],
+  "run3_aggregate": {
+    "rule_pass_rate": 0.9598,
+    "profile_pass_rate": 0.82,
+    "gate_passed": true
+  },
+  "remaining_4_percent": "Some profiles fail one applicable rule (e.g. borderline block counts). See data/results/reports/research_evaluation.json rule_compliance for per-profile detail."
+}

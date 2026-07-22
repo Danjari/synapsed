@@ -1,0 +1,3486 @@
+{
+  "course_id": "os",
+  "personalization_model": "fixed_floor_catchup",
+  "verdict": {
+    "passed": true,
+    "checks": {
+      "coverage_floor": true,
+      "role_mix_monotonic": true,
+      "length_invariance": true
+    }
+  },
+  "profile_count": 30,
+  "pathway_count": 30,
+  "block_floors": {
+    "passed": true,
+    "floors": {
+      "block_01": 2,
+      "block_02": 2,
+      "block_03": 3,
+      "block_04": 2,
+      "block_05": 1,
+      "block_06": 2,
+      "block_07": 2
+    },
+    "violations": [],
+    "profiles_checked": 30
+  },
+  "role_mix": {
+    "passed": true,
+    "tier_order": [
+      "no_prior_exposure",
+      "some_prior_exposure",
+      "strong_prior_exposure"
+    ],
+    "tier_means": {
+      "no_prior_exposure": 3.0,
+      "some_prior_exposure": 1.0,
+      "strong_prior_exposure": 0.0
+    },
+    "per_profile": [
+      {
+        "profile_id": "os_no_prior_exposure_1",
+        "tier": "no_prior_exposure",
+        "scaffolding_catchup_count": 3
+      },
+      {
+        "profile_id": "os_no_prior_exposure_2",
+        "tier": "no_prior_exposure",
+        "scaffolding_catchup_count": 3
+      },
+      {
+        "profile_id": "os_no_prior_exposure_3",
+        "tier": "no_prior_exposure",
+        "scaffolding_catchup_count": 3
+      },
+      {
+        "profile_id": "os_no_prior_exposure_4",
+        "tier": "no_prior_exposure",
+        "scaffolding_catchup_count": 3
+      },
+      {
+        "profile_id": "os_no_prior_exposure_5",
+        "tier": "no_prior_exposure",
+        "scaffolding_catchup_count": 3
+      },
+      {
+        "profile_id": "os_no_prior_exposure_6",
+        "tier": "no_prior_exposure",
+        "scaffolding_catchup_count": 3
+      },
+      {
+        "profile_id": "os_no_prior_exposure_7",
+        "tier": "no_prior_exposure",
+        "scaffolding_catchup_count": 3
+      },
+      {
+        "profile_id": "os_no_prior_exposure_8",
+        "tier": "no_prior_exposure",
+        "scaffolding_catchup_count": 3
+      },
+      {
+        "profile_id": "os_no_prior_exposure_9",
+        "tier": "no_prior_exposure",
+        "scaffolding_catchup_count": 3
+      },
+      {
+        "profile_id": "os_no_prior_exposure_10",
+        "tier": "no_prior_exposure",
+        "scaffolding_catchup_count": 3
+      },
+      {
+        "profile_id": "os_some_prior_exposure_1",
+        "tier": "some_prior_exposure",
+        "scaffolding_catchup_count": 1
+      },
+      {
+        "profile_id": "os_some_prior_exposure_2",
+        "tier": "some_prior_exposure",
+        "scaffolding_catchup_count": 1
+      },
+      {
+        "profile_id": "os_some_prior_exposure_3",
+        "tier": "some_prior_exposure",
+        "scaffolding_catchup_count": 1
+      },
+      {
+        "profile_id": "os_some_prior_exposure_4",
+        "tier": "some_prior_exposure",
+        "scaffolding_catchup_count": 1
+      },
+      {
+        "profile_id": "os_some_prior_exposure_5",
+        "tier": "some_prior_exposure",
+        "scaffolding_catchup_count": 1
+      },
+      {
+        "profile_id": "os_some_prior_exposure_6",
+        "tier": "some_prior_exposure",
+        "scaffolding_catchup_count": 1
+      },
+      {
+        "profile_id": "os_some_prior_exposure_7",
+        "tier": "some_prior_exposure",
+        "scaffolding_catchup_count": 1
+      },
+      {
+        "profile_id": "os_some_prior_exposure_8",
+        "tier": "some_prior_exposure",
+        "scaffolding_catchup_count": 1
+      },
+      {
+        "profile_id": "os_some_prior_exposure_9",
+        "tier": "some_prior_exposure",
+        "scaffolding_catchup_count": 1
+      },
+      {
+        "profile_id": "os_some_prior_exposure_10",
+        "tier": "some_prior_exposure",
+        "scaffolding_catchup_count": 1
+      },
+      {
+        "profile_id": "os_strong_prior_exposure_1",
+        "tier": "strong_prior_exposure",
+        "scaffolding_catchup_count": 0
+      },
+      {
+        "profile_id": "os_strong_prior_exposure_2",
+        "tier": "strong_prior_exposure",
+        "scaffolding_catchup_count": 0
+      },
+      {
+        "profile_id": "os_strong_prior_exposure_3",
+        "tier": "strong_prior_exposure",
+        "scaffolding_catchup_count": 0
+      },
+      {
+        "profile_id": "os_strong_prior_exposure_4",
+        "tier": "strong_prior_exposure",
+        "scaffolding_catchup_count": 0
+      },
+      {
+        "profile_id": "os_strong_prior_exposure_5",
+        "tier": "strong_prior_exposure",
+        "scaffolding_catchup_count": 0
+      },
+      {
+        "profile_id": "os_strong_prior_exposure_6",
+        "tier": "strong_prior_exposure",
+        "scaffolding_catchup_count": 0
+      },
+      {
+        "profile_id": "os_strong_prior_exposure_7",
+        "tier": "strong_prior_exposure",
+        "scaffolding_catchup_count": 0
+      },
+      {
+        "profile_id": "os_strong_prior_exposure_8",
+        "tier": "strong_prior_exposure",
+        "scaffolding_catchup_count": 0
+      },
+      {
+        "profile_id": "os_strong_prior_exposure_9",
+        "tier": "strong_prior_exposure",
+        "scaffolding_catchup_count": 0
+      },
+      {
+        "profile_id": "os_strong_prior_exposure_10",
+        "tier": "strong_prior_exposure",
+        "scaffolding_catchup_count": 0
+      }
+    ],
+    "foundational_block_ids": [
+      "block_01"
+    ]
+  },
+  "length_invariance": {
+    "passed": true,
+    "band": [
+      14,
+      18
+    ],
+    "lengths": {
+      "os_no_prior_exposure_1": 16,
+      "os_no_prior_exposure_10": 17,
+      "os_no_prior_exposure_2": 17,
+      "os_no_prior_exposure_3": 16,
+      "os_no_prior_exposure_4": 17,
+      "os_no_prior_exposure_5": 17,
+      "os_no_prior_exposure_6": 16,
+      "os_no_prior_exposure_7": 17,
+      "os_no_prior_exposure_8": 17,
+      "os_no_prior_exposure_9": 17,
+      "os_some_prior_exposure_1": 16,
+      "os_some_prior_exposure_10": 15,
+      "os_some_prior_exposure_2": 16,
+      "os_some_prior_exposure_3": 16,
+      "os_some_prior_exposure_4": 16,
+      "os_some_prior_exposure_5": 16,
+      "os_some_prior_exposure_6": 16,
+      "os_some_prior_exposure_7": 17,
+      "os_some_prior_exposure_8": 16,
+      "os_some_prior_exposure_9": 16,
+      "os_strong_prior_exposure_1": 15,
+      "os_strong_prior_exposure_10": 16,
+      "os_strong_prior_exposure_2": 16,
+      "os_strong_prior_exposure_3": 16,
+      "os_strong_prior_exposure_4": 16,
+      "os_strong_prior_exposure_5": 16,
+      "os_strong_prior_exposure_6": 17,
+      "os_strong_prior_exposure_7": 16,
+      "os_strong_prior_exposure_8": 16,
+      "os_strong_prior_exposure_9": 16
+    },
+    "violations": []
+  },
+  "block_metrics_diagnostic": {
+    "pairwise": [
+      {
+        "profile_a": "os_no_prior_exposure_1",
+        "profile_b": "os_no_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_no_prior_exposure_1",
+        "profile_b": "os_no_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_no_prior_exposure_1",
+        "profile_b": "os_no_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_no_prior_exposure_1",
+        "profile_b": "os_no_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_no_prior_exposure_1",
+        "profile_b": "os_no_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_no_prior_exposure_1",
+        "profile_b": "os_no_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_no_prior_exposure_1",
+        "profile_b": "os_no_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_no_prior_exposure_1",
+        "profile_b": "os_no_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_no_prior_exposure_1",
+        "profile_b": "os_no_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_no_prior_exposure_1",
+        "profile_b": "os_some_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_1",
+        "profile_b": "os_some_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8235
+      },
+      {
+        "profile_a": "os_no_prior_exposure_1",
+        "profile_b": "os_some_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_1",
+        "profile_b": "os_some_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_1",
+        "profile_b": "os_some_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_1",
+        "profile_b": "os_some_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_1",
+        "profile_b": "os_some_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_1",
+        "profile_b": "os_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_1",
+        "profile_b": "os_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_1",
+        "profile_b": "os_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_no_prior_exposure_1",
+        "profile_b": "os_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8235
+      },
+      {
+        "profile_a": "os_no_prior_exposure_1",
+        "profile_b": "os_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_1",
+        "profile_b": "os_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_1",
+        "profile_b": "os_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_1",
+        "profile_b": "os_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_1",
+        "profile_b": "os_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_1",
+        "profile_b": "os_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7368
+      },
+      {
+        "profile_a": "os_no_prior_exposure_1",
+        "profile_b": "os_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_1",
+        "profile_b": "os_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_1",
+        "profile_b": "os_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_10",
+        "profile_b": "os_no_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_no_prior_exposure_10",
+        "profile_b": "os_no_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_no_prior_exposure_10",
+        "profile_b": "os_no_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_no_prior_exposure_10",
+        "profile_b": "os_no_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_no_prior_exposure_10",
+        "profile_b": "os_no_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_no_prior_exposure_10",
+        "profile_b": "os_no_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_no_prior_exposure_10",
+        "profile_b": "os_no_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_no_prior_exposure_10",
+        "profile_b": "os_no_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_no_prior_exposure_10",
+        "profile_b": "os_some_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_10",
+        "profile_b": "os_some_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_no_prior_exposure_10",
+        "profile_b": "os_some_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_10",
+        "profile_b": "os_some_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_10",
+        "profile_b": "os_some_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7368
+      },
+      {
+        "profile_a": "os_no_prior_exposure_10",
+        "profile_b": "os_some_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_10",
+        "profile_b": "os_some_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_10",
+        "profile_b": "os_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8889
+      },
+      {
+        "profile_a": "os_no_prior_exposure_10",
+        "profile_b": "os_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_10",
+        "profile_b": "os_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_no_prior_exposure_10",
+        "profile_b": "os_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_no_prior_exposure_10",
+        "profile_b": "os_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_10",
+        "profile_b": "os_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_10",
+        "profile_b": "os_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_10",
+        "profile_b": "os_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_10",
+        "profile_b": "os_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_10",
+        "profile_b": "os_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7895
+      },
+      {
+        "profile_a": "os_no_prior_exposure_10",
+        "profile_b": "os_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_10",
+        "profile_b": "os_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_10",
+        "profile_b": "os_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_2",
+        "profile_b": "os_no_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_no_prior_exposure_2",
+        "profile_b": "os_no_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_no_prior_exposure_2",
+        "profile_b": "os_no_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_no_prior_exposure_2",
+        "profile_b": "os_no_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_no_prior_exposure_2",
+        "profile_b": "os_no_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_no_prior_exposure_2",
+        "profile_b": "os_no_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_no_prior_exposure_2",
+        "profile_b": "os_no_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_no_prior_exposure_2",
+        "profile_b": "os_some_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_2",
+        "profile_b": "os_some_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_no_prior_exposure_2",
+        "profile_b": "os_some_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_2",
+        "profile_b": "os_some_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_2",
+        "profile_b": "os_some_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7368
+      },
+      {
+        "profile_a": "os_no_prior_exposure_2",
+        "profile_b": "os_some_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_2",
+        "profile_b": "os_some_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_2",
+        "profile_b": "os_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8889
+      },
+      {
+        "profile_a": "os_no_prior_exposure_2",
+        "profile_b": "os_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_2",
+        "profile_b": "os_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_no_prior_exposure_2",
+        "profile_b": "os_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_no_prior_exposure_2",
+        "profile_b": "os_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_2",
+        "profile_b": "os_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_2",
+        "profile_b": "os_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_2",
+        "profile_b": "os_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_2",
+        "profile_b": "os_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_2",
+        "profile_b": "os_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7895
+      },
+      {
+        "profile_a": "os_no_prior_exposure_2",
+        "profile_b": "os_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_2",
+        "profile_b": "os_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_2",
+        "profile_b": "os_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_3",
+        "profile_b": "os_no_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_no_prior_exposure_3",
+        "profile_b": "os_no_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_no_prior_exposure_3",
+        "profile_b": "os_no_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_no_prior_exposure_3",
+        "profile_b": "os_no_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_no_prior_exposure_3",
+        "profile_b": "os_no_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_no_prior_exposure_3",
+        "profile_b": "os_no_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_no_prior_exposure_3",
+        "profile_b": "os_some_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_3",
+        "profile_b": "os_some_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8235
+      },
+      {
+        "profile_a": "os_no_prior_exposure_3",
+        "profile_b": "os_some_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_3",
+        "profile_b": "os_some_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_3",
+        "profile_b": "os_some_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_3",
+        "profile_b": "os_some_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_3",
+        "profile_b": "os_some_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_3",
+        "profile_b": "os_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_3",
+        "profile_b": "os_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_3",
+        "profile_b": "os_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_no_prior_exposure_3",
+        "profile_b": "os_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8235
+      },
+      {
+        "profile_a": "os_no_prior_exposure_3",
+        "profile_b": "os_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_3",
+        "profile_b": "os_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_3",
+        "profile_b": "os_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_3",
+        "profile_b": "os_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_3",
+        "profile_b": "os_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_3",
+        "profile_b": "os_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7368
+      },
+      {
+        "profile_a": "os_no_prior_exposure_3",
+        "profile_b": "os_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_3",
+        "profile_b": "os_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_3",
+        "profile_b": "os_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_4",
+        "profile_b": "os_no_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_no_prior_exposure_4",
+        "profile_b": "os_no_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_no_prior_exposure_4",
+        "profile_b": "os_no_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_no_prior_exposure_4",
+        "profile_b": "os_no_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_no_prior_exposure_4",
+        "profile_b": "os_no_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_no_prior_exposure_4",
+        "profile_b": "os_some_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_4",
+        "profile_b": "os_some_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_no_prior_exposure_4",
+        "profile_b": "os_some_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_4",
+        "profile_b": "os_some_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_4",
+        "profile_b": "os_some_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7368
+      },
+      {
+        "profile_a": "os_no_prior_exposure_4",
+        "profile_b": "os_some_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_4",
+        "profile_b": "os_some_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_4",
+        "profile_b": "os_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8889
+      },
+      {
+        "profile_a": "os_no_prior_exposure_4",
+        "profile_b": "os_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_4",
+        "profile_b": "os_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_no_prior_exposure_4",
+        "profile_b": "os_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_no_prior_exposure_4",
+        "profile_b": "os_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_4",
+        "profile_b": "os_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_4",
+        "profile_b": "os_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_4",
+        "profile_b": "os_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_4",
+        "profile_b": "os_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_4",
+        "profile_b": "os_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7895
+      },
+      {
+        "profile_a": "os_no_prior_exposure_4",
+        "profile_b": "os_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_4",
+        "profile_b": "os_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_4",
+        "profile_b": "os_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_5",
+        "profile_b": "os_no_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_no_prior_exposure_5",
+        "profile_b": "os_no_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_no_prior_exposure_5",
+        "profile_b": "os_no_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_no_prior_exposure_5",
+        "profile_b": "os_no_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_no_prior_exposure_5",
+        "profile_b": "os_some_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_5",
+        "profile_b": "os_some_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_no_prior_exposure_5",
+        "profile_b": "os_some_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_5",
+        "profile_b": "os_some_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_5",
+        "profile_b": "os_some_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7368
+      },
+      {
+        "profile_a": "os_no_prior_exposure_5",
+        "profile_b": "os_some_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_5",
+        "profile_b": "os_some_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_5",
+        "profile_b": "os_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8889
+      },
+      {
+        "profile_a": "os_no_prior_exposure_5",
+        "profile_b": "os_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_5",
+        "profile_b": "os_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_no_prior_exposure_5",
+        "profile_b": "os_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_no_prior_exposure_5",
+        "profile_b": "os_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_5",
+        "profile_b": "os_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_5",
+        "profile_b": "os_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_5",
+        "profile_b": "os_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_5",
+        "profile_b": "os_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_5",
+        "profile_b": "os_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7895
+      },
+      {
+        "profile_a": "os_no_prior_exposure_5",
+        "profile_b": "os_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_5",
+        "profile_b": "os_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_5",
+        "profile_b": "os_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_6",
+        "profile_b": "os_no_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_no_prior_exposure_6",
+        "profile_b": "os_no_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_no_prior_exposure_6",
+        "profile_b": "os_no_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_no_prior_exposure_6",
+        "profile_b": "os_some_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_6",
+        "profile_b": "os_some_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8235
+      },
+      {
+        "profile_a": "os_no_prior_exposure_6",
+        "profile_b": "os_some_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_6",
+        "profile_b": "os_some_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_6",
+        "profile_b": "os_some_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_6",
+        "profile_b": "os_some_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_6",
+        "profile_b": "os_some_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_6",
+        "profile_b": "os_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_6",
+        "profile_b": "os_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_6",
+        "profile_b": "os_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_no_prior_exposure_6",
+        "profile_b": "os_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8235
+      },
+      {
+        "profile_a": "os_no_prior_exposure_6",
+        "profile_b": "os_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_6",
+        "profile_b": "os_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_6",
+        "profile_b": "os_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_6",
+        "profile_b": "os_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_6",
+        "profile_b": "os_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_6",
+        "profile_b": "os_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7368
+      },
+      {
+        "profile_a": "os_no_prior_exposure_6",
+        "profile_b": "os_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_6",
+        "profile_b": "os_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_6",
+        "profile_b": "os_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_no_prior_exposure_7",
+        "profile_b": "os_no_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_no_prior_exposure_7",
+        "profile_b": "os_no_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_no_prior_exposure_7",
+        "profile_b": "os_some_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_7",
+        "profile_b": "os_some_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_no_prior_exposure_7",
+        "profile_b": "os_some_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_7",
+        "profile_b": "os_some_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_7",
+        "profile_b": "os_some_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7368
+      },
+      {
+        "profile_a": "os_no_prior_exposure_7",
+        "profile_b": "os_some_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_7",
+        "profile_b": "os_some_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_7",
+        "profile_b": "os_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8889
+      },
+      {
+        "profile_a": "os_no_prior_exposure_7",
+        "profile_b": "os_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_7",
+        "profile_b": "os_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_no_prior_exposure_7",
+        "profile_b": "os_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_no_prior_exposure_7",
+        "profile_b": "os_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_7",
+        "profile_b": "os_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_7",
+        "profile_b": "os_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_7",
+        "profile_b": "os_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_7",
+        "profile_b": "os_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_7",
+        "profile_b": "os_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7895
+      },
+      {
+        "profile_a": "os_no_prior_exposure_7",
+        "profile_b": "os_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_7",
+        "profile_b": "os_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_7",
+        "profile_b": "os_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_8",
+        "profile_b": "os_no_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_no_prior_exposure_8",
+        "profile_b": "os_some_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_8",
+        "profile_b": "os_some_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_no_prior_exposure_8",
+        "profile_b": "os_some_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_8",
+        "profile_b": "os_some_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_8",
+        "profile_b": "os_some_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7368
+      },
+      {
+        "profile_a": "os_no_prior_exposure_8",
+        "profile_b": "os_some_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_8",
+        "profile_b": "os_some_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_8",
+        "profile_b": "os_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8889
+      },
+      {
+        "profile_a": "os_no_prior_exposure_8",
+        "profile_b": "os_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_8",
+        "profile_b": "os_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_no_prior_exposure_8",
+        "profile_b": "os_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_no_prior_exposure_8",
+        "profile_b": "os_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_8",
+        "profile_b": "os_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_8",
+        "profile_b": "os_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_8",
+        "profile_b": "os_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_8",
+        "profile_b": "os_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_8",
+        "profile_b": "os_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7895
+      },
+      {
+        "profile_a": "os_no_prior_exposure_8",
+        "profile_b": "os_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_8",
+        "profile_b": "os_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_8",
+        "profile_b": "os_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_9",
+        "profile_b": "os_some_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_9",
+        "profile_b": "os_some_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_no_prior_exposure_9",
+        "profile_b": "os_some_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_9",
+        "profile_b": "os_some_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_9",
+        "profile_b": "os_some_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7368
+      },
+      {
+        "profile_a": "os_no_prior_exposure_9",
+        "profile_b": "os_some_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_9",
+        "profile_b": "os_some_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_9",
+        "profile_b": "os_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8889
+      },
+      {
+        "profile_a": "os_no_prior_exposure_9",
+        "profile_b": "os_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_9",
+        "profile_b": "os_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_no_prior_exposure_9",
+        "profile_b": "os_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_no_prior_exposure_9",
+        "profile_b": "os_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_9",
+        "profile_b": "os_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_9",
+        "profile_b": "os_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_9",
+        "profile_b": "os_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_9",
+        "profile_b": "os_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_9",
+        "profile_b": "os_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7895
+      },
+      {
+        "profile_a": "os_no_prior_exposure_9",
+        "profile_b": "os_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_9",
+        "profile_b": "os_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_no_prior_exposure_9",
+        "profile_b": "os_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_some_prior_exposure_1",
+        "profile_b": "os_some_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9375
+      },
+      {
+        "profile_a": "os_some_prior_exposure_1",
+        "profile_b": "os_some_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_1",
+        "profile_b": "os_some_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_1",
+        "profile_b": "os_some_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_some_prior_exposure_1",
+        "profile_b": "os_some_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_some_prior_exposure_1",
+        "profile_b": "os_some_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_1",
+        "profile_b": "os_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_some_prior_exposure_1",
+        "profile_b": "os_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_1",
+        "profile_b": "os_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_1",
+        "profile_b": "os_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9375
+      },
+      {
+        "profile_a": "os_some_prior_exposure_1",
+        "profile_b": "os_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_1",
+        "profile_b": "os_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_1",
+        "profile_b": "os_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_1",
+        "profile_b": "os_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_1",
+        "profile_b": "os_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_1",
+        "profile_b": "os_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_some_prior_exposure_1",
+        "profile_b": "os_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_1",
+        "profile_b": "os_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_1",
+        "profile_b": "os_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_10",
+        "profile_b": "os_some_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9375
+      },
+      {
+        "profile_a": "os_some_prior_exposure_10",
+        "profile_b": "os_some_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9375
+      },
+      {
+        "profile_a": "os_some_prior_exposure_10",
+        "profile_b": "os_some_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8235
+      },
+      {
+        "profile_a": "os_some_prior_exposure_10",
+        "profile_b": "os_some_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9375
+      },
+      {
+        "profile_a": "os_some_prior_exposure_10",
+        "profile_b": "os_some_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9375
+      },
+      {
+        "profile_a": "os_some_prior_exposure_10",
+        "profile_b": "os_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_10",
+        "profile_b": "os_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9375
+      },
+      {
+        "profile_a": "os_some_prior_exposure_10",
+        "profile_b": "os_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9375
+      },
+      {
+        "profile_a": "os_some_prior_exposure_10",
+        "profile_b": "os_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_some_prior_exposure_10",
+        "profile_b": "os_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9375
+      },
+      {
+        "profile_a": "os_some_prior_exposure_10",
+        "profile_b": "os_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9375
+      },
+      {
+        "profile_a": "os_some_prior_exposure_10",
+        "profile_b": "os_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9375
+      },
+      {
+        "profile_a": "os_some_prior_exposure_10",
+        "profile_b": "os_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9375
+      },
+      {
+        "profile_a": "os_some_prior_exposure_10",
+        "profile_b": "os_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9375
+      },
+      {
+        "profile_a": "os_some_prior_exposure_10",
+        "profile_b": "os_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_10",
+        "profile_b": "os_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9375
+      },
+      {
+        "profile_a": "os_some_prior_exposure_10",
+        "profile_b": "os_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9375
+      },
+      {
+        "profile_a": "os_some_prior_exposure_10",
+        "profile_b": "os_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9375
+      },
+      {
+        "profile_a": "os_some_prior_exposure_2",
+        "profile_b": "os_some_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_2",
+        "profile_b": "os_some_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_2",
+        "profile_b": "os_some_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_2",
+        "profile_b": "os_some_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_2",
+        "profile_b": "os_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_some_prior_exposure_2",
+        "profile_b": "os_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_some_prior_exposure_2",
+        "profile_b": "os_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_2",
+        "profile_b": "os_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9375
+      },
+      {
+        "profile_a": "os_some_prior_exposure_2",
+        "profile_b": "os_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_some_prior_exposure_2",
+        "profile_b": "os_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_2",
+        "profile_b": "os_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_some_prior_exposure_2",
+        "profile_b": "os_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_some_prior_exposure_2",
+        "profile_b": "os_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_2",
+        "profile_b": "os_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_some_prior_exposure_2",
+        "profile_b": "os_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_some_prior_exposure_2",
+        "profile_b": "os_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_some_prior_exposure_2",
+        "profile_b": "os_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_some_prior_exposure_3",
+        "profile_b": "os_some_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_3",
+        "profile_b": "os_some_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_3",
+        "profile_b": "os_some_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_3",
+        "profile_b": "os_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_some_prior_exposure_3",
+        "profile_b": "os_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_3",
+        "profile_b": "os_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_3",
+        "profile_b": "os_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9375
+      },
+      {
+        "profile_a": "os_some_prior_exposure_3",
+        "profile_b": "os_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_3",
+        "profile_b": "os_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_some_prior_exposure_3",
+        "profile_b": "os_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_3",
+        "profile_b": "os_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_3",
+        "profile_b": "os_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_some_prior_exposure_3",
+        "profile_b": "os_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_some_prior_exposure_3",
+        "profile_b": "os_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_3",
+        "profile_b": "os_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_3",
+        "profile_b": "os_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_4",
+        "profile_b": "os_some_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_some_prior_exposure_4",
+        "profile_b": "os_some_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_some_prior_exposure_4",
+        "profile_b": "os_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7368
+      },
+      {
+        "profile_a": "os_some_prior_exposure_4",
+        "profile_b": "os_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_4",
+        "profile_b": "os_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7778
+      },
+      {
+        "profile_a": "os_some_prior_exposure_4",
+        "profile_b": "os_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8235
+      },
+      {
+        "profile_a": "os_some_prior_exposure_4",
+        "profile_b": "os_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_4",
+        "profile_b": "os_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_4",
+        "profile_b": "os_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_4",
+        "profile_b": "os_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_4",
+        "profile_b": "os_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_4",
+        "profile_b": "os_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_some_prior_exposure_4",
+        "profile_b": "os_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_4",
+        "profile_b": "os_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_4",
+        "profile_b": "os_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_5",
+        "profile_b": "os_some_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_5",
+        "profile_b": "os_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_some_prior_exposure_5",
+        "profile_b": "os_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_5",
+        "profile_b": "os_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_5",
+        "profile_b": "os_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9375
+      },
+      {
+        "profile_a": "os_some_prior_exposure_5",
+        "profile_b": "os_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_5",
+        "profile_b": "os_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_5",
+        "profile_b": "os_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_5",
+        "profile_b": "os_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_5",
+        "profile_b": "os_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_5",
+        "profile_b": "os_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_some_prior_exposure_5",
+        "profile_b": "os_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_5",
+        "profile_b": "os_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_5",
+        "profile_b": "os_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_6",
+        "profile_b": "os_some_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_some_prior_exposure_6",
+        "profile_b": "os_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_6",
+        "profile_b": "os_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_6",
+        "profile_b": "os_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9375
+      },
+      {
+        "profile_a": "os_some_prior_exposure_6",
+        "profile_b": "os_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_6",
+        "profile_b": "os_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_6",
+        "profile_b": "os_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_6",
+        "profile_b": "os_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_6",
+        "profile_b": "os_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_6",
+        "profile_b": "os_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_some_prior_exposure_6",
+        "profile_b": "os_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_6",
+        "profile_b": "os_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_6",
+        "profile_b": "os_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_7",
+        "profile_b": "os_some_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_some_prior_exposure_7",
+        "profile_b": "os_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_some_prior_exposure_7",
+        "profile_b": "os_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_7",
+        "profile_b": "os_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_some_prior_exposure_7",
+        "profile_b": "os_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_some_prior_exposure_7",
+        "profile_b": "os_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_some_prior_exposure_7",
+        "profile_b": "os_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_some_prior_exposure_7",
+        "profile_b": "os_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_some_prior_exposure_7",
+        "profile_b": "os_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.7895
+      },
+      {
+        "profile_a": "os_some_prior_exposure_7",
+        "profile_b": "os_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_some_prior_exposure_7",
+        "profile_b": "os_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_some_prior_exposure_7",
+        "profile_b": "os_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_some_prior_exposure_8",
+        "profile_b": "os_some_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_8",
+        "profile_b": "os_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9375
+      },
+      {
+        "profile_a": "os_some_prior_exposure_8",
+        "profile_b": "os_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_some_prior_exposure_8",
+        "profile_b": "os_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_8",
+        "profile_b": "os_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_some_prior_exposure_8",
+        "profile_b": "os_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_some_prior_exposure_8",
+        "profile_b": "os_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_8",
+        "profile_b": "os_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_some_prior_exposure_8",
+        "profile_b": "os_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_some_prior_exposure_8",
+        "profile_b": "os_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_some_prior_exposure_8",
+        "profile_b": "os_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_some_prior_exposure_9",
+        "profile_b": "os_strong_prior_exposure_1",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9375
+      },
+      {
+        "profile_a": "os_some_prior_exposure_9",
+        "profile_b": "os_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_9",
+        "profile_b": "os_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_9",
+        "profile_b": "os_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_9",
+        "profile_b": "os_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_9",
+        "profile_b": "os_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_9",
+        "profile_b": "os_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8333
+      },
+      {
+        "profile_a": "os_some_prior_exposure_9",
+        "profile_b": "os_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_9",
+        "profile_b": "os_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_some_prior_exposure_9",
+        "profile_b": "os_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_1",
+        "profile_b": "os_strong_prior_exposure_10",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9375
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_1",
+        "profile_b": "os_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9375
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_1",
+        "profile_b": "os_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9375
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_1",
+        "profile_b": "os_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9375
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_1",
+        "profile_b": "os_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9375
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_1",
+        "profile_b": "os_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_1",
+        "profile_b": "os_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9375
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_1",
+        "profile_b": "os_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9375
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_1",
+        "profile_b": "os_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9375
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_10",
+        "profile_b": "os_strong_prior_exposure_2",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_10",
+        "profile_b": "os_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_10",
+        "profile_b": "os_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_10",
+        "profile_b": "os_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_10",
+        "profile_b": "os_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_10",
+        "profile_b": "os_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_10",
+        "profile_b": "os_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_10",
+        "profile_b": "os_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_2",
+        "profile_b": "os_strong_prior_exposure_3",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_2",
+        "profile_b": "os_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_2",
+        "profile_b": "os_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_2",
+        "profile_b": "os_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_2",
+        "profile_b": "os_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_2",
+        "profile_b": "os_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_2",
+        "profile_b": "os_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_3",
+        "profile_b": "os_strong_prior_exposure_4",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_3",
+        "profile_b": "os_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_3",
+        "profile_b": "os_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_3",
+        "profile_b": "os_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_3",
+        "profile_b": "os_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_3",
+        "profile_b": "os_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_4",
+        "profile_b": "os_strong_prior_exposure_5",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_4",
+        "profile_b": "os_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_4",
+        "profile_b": "os_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_4",
+        "profile_b": "os_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_4",
+        "profile_b": "os_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_5",
+        "profile_b": "os_strong_prior_exposure_6",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_5",
+        "profile_b": "os_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_5",
+        "profile_b": "os_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_5",
+        "profile_b": "os_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.8824
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_6",
+        "profile_b": "os_strong_prior_exposure_7",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_6",
+        "profile_b": "os_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_6",
+        "profile_b": "os_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 0.9412
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_7",
+        "profile_b": "os_strong_prior_exposure_8",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_7",
+        "profile_b": "os_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      },
+      {
+        "profile_a": "os_strong_prior_exposure_8",
+        "profile_b": "os_strong_prior_exposure_9",
+        "sequence_jaccard": 1.0,
+        "multiset_jaccard": 1.0
+      }
+    ],
+    "mean_sequence_jaccard": 1.0,
+    "mean_multiset_jaccard": 0.8756,
+    "profile_block_summaries": {
+      "os_no_prior_exposure_1": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07"
+        ],
+        "block_counts": {
+          "block_01": 4,
+          "block_02": 2,
+          "block_03": 3,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 2
+        },
+        "node_count": 16
+      },
+      "os_no_prior_exposure_10": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07"
+        ],
+        "block_counts": {
+          "block_01": 4,
+          "block_02": 2,
+          "block_03": 3,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 3
+        },
+        "node_count": 17
+      },
+      "os_no_prior_exposure_2": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07"
+        ],
+        "block_counts": {
+          "block_01": 4,
+          "block_02": 2,
+          "block_03": 3,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 3
+        },
+        "node_count": 17
+      },
+      "os_no_prior_exposure_3": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07"
+        ],
+        "block_counts": {
+          "block_01": 4,
+          "block_02": 2,
+          "block_03": 3,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 2
+        },
+        "node_count": 16
+      },
+      "os_no_prior_exposure_4": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07"
+        ],
+        "block_counts": {
+          "block_01": 4,
+          "block_02": 2,
+          "block_03": 3,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 3
+        },
+        "node_count": 17
+      },
+      "os_no_prior_exposure_5": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07"
+        ],
+        "block_counts": {
+          "block_01": 4,
+          "block_02": 2,
+          "block_03": 3,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 3
+        },
+        "node_count": 17
+      },
+      "os_no_prior_exposure_6": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07"
+        ],
+        "block_counts": {
+          "block_01": 4,
+          "block_02": 2,
+          "block_03": 3,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 2
+        },
+        "node_count": 16
+      },
+      "os_no_prior_exposure_7": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07"
+        ],
+        "block_counts": {
+          "block_01": 4,
+          "block_02": 2,
+          "block_03": 3,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 3
+        },
+        "node_count": 17
+      },
+      "os_no_prior_exposure_8": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07"
+        ],
+        "block_counts": {
+          "block_01": 4,
+          "block_02": 2,
+          "block_03": 3,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 3
+        },
+        "node_count": 17
+      },
+      "os_no_prior_exposure_9": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07"
+        ],
+        "block_counts": {
+          "block_01": 4,
+          "block_02": 2,
+          "block_03": 3,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 3
+        },
+        "node_count": 17
+      },
+      "os_some_prior_exposure_1": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07"
+        ],
+        "block_counts": {
+          "block_01": 2,
+          "block_02": 2,
+          "block_03": 3,
+          "block_04": 3,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 3
+        },
+        "node_count": 16
+      },
+      "os_some_prior_exposure_10": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07"
+        ],
+        "block_counts": {
+          "block_01": 2,
+          "block_02": 2,
+          "block_03": 3,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 3
+        },
+        "node_count": 15
+      },
+      "os_some_prior_exposure_2": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07"
+        ],
+        "block_counts": {
+          "block_01": 2,
+          "block_02": 2,
+          "block_03": 3,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 3,
+          "block_07": 3
+        },
+        "node_count": 16
+      },
+      "os_some_prior_exposure_3": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07"
+        ],
+        "block_counts": {
+          "block_01": 2,
+          "block_02": 2,
+          "block_03": 3,
+          "block_04": 2,
+          "block_05": 2,
+          "block_06": 2,
+          "block_07": 3
+        },
+        "node_count": 16
+      },
+      "os_some_prior_exposure_4": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07"
+        ],
+        "block_counts": {
+          "block_01": 2,
+          "block_02": 2,
+          "block_03": 3,
+          "block_04": 2,
+          "block_05": 2,
+          "block_06": 3,
+          "block_07": 2
+        },
+        "node_count": 16
+      },
+      "os_some_prior_exposure_5": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07"
+        ],
+        "block_counts": {
+          "block_01": 2,
+          "block_02": 2,
+          "block_03": 3,
+          "block_04": 3,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 3
+        },
+        "node_count": 16
+      },
+      "os_some_prior_exposure_6": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07"
+        ],
+        "block_counts": {
+          "block_01": 2,
+          "block_02": 2,
+          "block_03": 3,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 4
+        },
+        "node_count": 16
+      },
+      "os_some_prior_exposure_7": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07"
+        ],
+        "block_counts": {
+          "block_01": 3,
+          "block_02": 2,
+          "block_03": 4,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 3
+        },
+        "node_count": 17
+      },
+      "os_some_prior_exposure_8": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07"
+        ],
+        "block_counts": {
+          "block_01": 2,
+          "block_02": 2,
+          "block_03": 3,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 3,
+          "block_07": 3
+        },
+        "node_count": 16
+      },
+      "os_some_prior_exposure_9": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07"
+        ],
+        "block_counts": {
+          "block_01": 3,
+          "block_02": 2,
+          "block_03": 3,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 3
+        },
+        "node_count": 16
+      },
+      "os_strong_prior_exposure_1": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07"
+        ],
+        "block_counts": {
+          "block_01": 2,
+          "block_02": 2,
+          "block_03": 3,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 2,
+          "block_07": 3
+        },
+        "node_count": 15
+      },
+      "os_strong_prior_exposure_10": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07"
+        ],
+        "block_counts": {
+          "block_01": 2,
+          "block_02": 2,
+          "block_03": 3,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 3,
+          "block_07": 3
+        },
+        "node_count": 16
+      },
+      "os_strong_prior_exposure_2": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07"
+        ],
+        "block_counts": {
+          "block_01": 2,
+          "block_02": 2,
+          "block_03": 3,
+          "block_04": 2,
+          "block_05": 2,
+          "block_06": 2,
+          "block_07": 3
+        },
+        "node_count": 16
+      },
+      "os_strong_prior_exposure_3": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07"
+        ],
+        "block_counts": {
+          "block_01": 2,
+          "block_02": 2,
+          "block_03": 3,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 3,
+          "block_07": 3
+        },
+        "node_count": 16
+      },
+      "os_strong_prior_exposure_4": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07"
+        ],
+        "block_counts": {
+          "block_01": 2,
+          "block_02": 2,
+          "block_03": 3,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 3,
+          "block_07": 3
+        },
+        "node_count": 16
+      },
+      "os_strong_prior_exposure_5": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07"
+        ],
+        "block_counts": {
+          "block_01": 2,
+          "block_02": 2,
+          "block_03": 3,
+          "block_04": 2,
+          "block_05": 2,
+          "block_06": 2,
+          "block_07": 3
+        },
+        "node_count": 16
+      },
+      "os_strong_prior_exposure_6": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07"
+        ],
+        "block_counts": {
+          "block_01": 2,
+          "block_02": 2,
+          "block_03": 3,
+          "block_04": 2,
+          "block_05": 2,
+          "block_06": 3,
+          "block_07": 3
+        },
+        "node_count": 17
+      },
+      "os_strong_prior_exposure_7": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07"
+        ],
+        "block_counts": {
+          "block_01": 2,
+          "block_02": 2,
+          "block_03": 3,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 3,
+          "block_07": 3
+        },
+        "node_count": 16
+      },
+      "os_strong_prior_exposure_8": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07"
+        ],
+        "block_counts": {
+          "block_01": 2,
+          "block_02": 2,
+          "block_03": 3,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 3,
+          "block_07": 3
+        },
+        "node_count": 16
+      },
+      "os_strong_prior_exposure_9": {
+        "block_sequence": [
+          "block_01",
+          "block_02",
+          "block_03",
+          "block_04",
+          "block_05",
+          "block_06",
+          "block_07"
+        ],
+        "block_counts": {
+          "block_01": 2,
+          "block_02": 2,
+          "block_03": 3,
+          "block_04": 2,
+          "block_05": 1,
+          "block_06": 3,
+          "block_07": 3
+        },
+        "node_count": 16
+      }
+    }
+  },
+  "llm_judge": null,
+  "judge_sample_ids": null
+}

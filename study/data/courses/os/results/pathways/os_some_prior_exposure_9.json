@@ -1,0 +1,233 @@
+{
+  "profileId": "os_some_prior_exposure_9",
+  "cluster": null,
+  "field": null,
+  "description": "A junior CS student who is comfortable with high-level data structures and collaboration but feels intimidated by low-level C memory management and debugging.",
+  "studentId": "offline-os_some_prior_exposure_9",
+  "source": "offline-gemini",
+  "nodeCount": 16,
+  "nodes": [
+    {
+      "personalizationRationale": "This student has some_prior_exposure, so a targeted refresher on C memory mechanics ensures they are ready for kernel-level assignments.",
+      "duration": "90 min",
+      "syllabusBlockId": "block_01",
+      "id": "node_01_scaffold",
+      "nodeRole": "scaffolding_catchup",
+      "dependsOn": [],
+      "description": "A review of C-language memory management (pointers, malloc, free) and basic data structures to ensure a solid foundation for systems-level programming.",
+      "type": "subtopic",
+      "difficulty": "beginner",
+      "title": "C and Memory Review for Systems"
+    },
+    {
+      "dependsOn": [
+        "node_01_scaffold"
+      ],
+      "difficulty": "beginner",
+      "type": "topic",
+      "description": "Overview of OS services, system calls, and the fundamental distinction between user and kernel mode.",
+      "title": "Operating System Structures & Services",
+      "personalizationRationale": "This foundational knowledge is required for all students, including those with some_prior_exposure, to understand system protection.",
+      "duration": "100 min",
+      "nodeRole": "core_required",
+      "id": "node_01_core1",
+      "syllabusBlockId": "block_01"
+    },
+    {
+      "type": "subtopic",
+      "description": "Examination of monolithic, layered, and microkernel architectures used in modern operating systems.",
+      "difficulty": "intermediate",
+      "dependsOn": [
+        "node_01_core1"
+      ],
+      "title": "Kernel Architecture Design",
+      "duration": "110 min",
+      "personalizationRationale": "Building on the student's some_prior_exposure, this node explores the structural design choices of modern kernels.",
+      "id": "node_01_core2",
+      "syllabusBlockId": "block_01",
+      "nodeRole": "core_required"
+    },
+    {
+      "syllabusBlockId": "block_02",
+      "id": "node_02_core1",
+      "nodeRole": "core_required",
+      "duration": "115 min",
+      "personalizationRationale": "Process management is a core requirement that bridges the student's some_prior_exposure to deeper OS abstractions.",
+      "title": "Process Abstraction & Lifecycle",
+      "description": "Exploration of the process abstraction, including Process Control Blocks (PCBs) and the process lifecycle (ready, running, waiting).",
+      "type": "topic",
+      "difficulty": "intermediate",
+      "dependsOn": [
+        "node_01_core2"
+      ]
+    },
+    {
+      "dependsOn": [
+        "node_02_core1"
+      ],
+      "type": "subtopic",
+      "description": "Practical implementation of Inter-Process Communication using shared memory and message-passing protocols.",
+      "difficulty": "intermediate",
+      "title": "Inter-Process Communication (IPC)",
+      "personalizationRationale": "Required for the project sequence, this node utilizes the student's some_prior_exposure to implement communication primitives.",
+      "duration": "110 min",
+      "id": "node_02_core2",
+      "syllabusBlockId": "block_02",
+      "nodeRole": "core_required"
+    },
+    {
+      "dependsOn": [
+        "node_02_core2"
+      ],
+      "difficulty": "intermediate",
+      "type": "topic",
+      "description": "Comparison of user threads vs. kernel threads and various threading models (many-to-one, one-to-one).",
+      "title": "Threading Models & Libraries",
+      "personalizationRationale": "Threading models are essential for the upcoming multi-threaded projects and build on the student's some_prior_exposure background.",
+      "duration": "100 min",
+      "nodeRole": "core_required",
+      "id": "node_03_core1",
+      "syllabusBlockId": "block_03"
+    },
+    {
+      "title": "CPU Scheduling Algorithms",
+      "type": "subtopic",
+      "description": "Analysis of scheduling algorithms including FCFS, SJF, Round Robin, and Priority Scheduling.",
+      "difficulty": "intermediate",
+      "dependsOn": [
+        "node_03_core1"
+      ],
+      "id": "node_03_core2",
+      "syllabusBlockId": "block_03",
+      "nodeRole": "core_required",
+      "duration": "100 min",
+      "personalizationRationale": "This core topic requires students with some_prior_exposure to analytically model CPU scheduling performance."
+    },
+    {
+      "title": "Midterm Review (Ch. 1-5)",
+      "dependsOn": [
+        "node_03_core2"
+      ],
+      "difficulty": "intermediate",
+      "description": "A comprehensive review session covering Chapters 1-5 in preparation for the midterm exam.",
+      "type": "assessment",
+      "nodeRole": "assessment",
+      "syllabusBlockId": "block_03",
+      "id": "node_03_midterm_review",
+      "personalizationRationale": "As a student with some_prior_exposure, this review helps synthesize varied concepts before the first major examination.",
+      "duration": "100 min"
+    },
+    {
+      "title": "The Critical Section Problem",
+      "description": "Defining race conditions and implementing software/hardware solutions like Mutexes and Semaphores.",
+      "type": "topic",
+      "difficulty": "intermediate",
+      "dependsOn": [
+        "node_03_midterm_review"
+      ],
+      "syllabusBlockId": "block_04",
+      "id": "node_04_core1",
+      "nodeRole": "core_required",
+      "duration": "150 min",
+      "personalizationRationale": "Synchronization is a key cumulative concept that every student must master, building on some_prior_exposure to coding."
+    },
+    {
+      "dependsOn": [
+        "node_04_core1"
+      ],
+      "difficulty": "advanced",
+      "description": "Deep dive into classic problems like the Bounded-Buffer, Readers-Writers, and Dining Philosophers problems.",
+      "type": "subtopic",
+      "title": "Classic Synchronization Problems",
+      "personalizationRationale": "Applying synchronization primitives to classic problems is essential for the final exam and benefits from some_prior_exposure.",
+      "duration": "150 min",
+      "nodeRole": "core_required",
+      "syllabusBlockId": "block_04",
+      "id": "node_04_core2"
+    },
+    {
+      "difficulty": "intermediate",
+      "description": "Understanding the four conditions for deadlock and applying the Banker's Algorithm for deadlock avoidance.",
+      "type": "topic",
+      "dependsOn": [
+        "node_04_core2"
+      ],
+      "title": "Deadlock Characterization & Avoidance",
+      "duration": "150 min",
+      "personalizationRationale": "Even with some_prior_exposure, understanding formal deadlock prevention is a mandatory component of OS theory.",
+      "nodeRole": "core_required",
+      "syllabusBlockId": "block_05",
+      "id": "node_05_core1"
+    },
+    {
+      "dependsOn": [
+        "node_05_core1"
+      ],
+      "difficulty": "intermediate",
+      "description": "Exploring paging, segmentation, and the structure of hierarchical and hashed page tables.",
+      "type": "topic",
+      "title": "Physical Memory & Paging",
+      "personalizationRationale": "Required for the memory management project, this node leverages some_prior_exposure to explain physical address translation.",
+      "duration": "150 min",
+      "nodeRole": "core_required",
+      "syllabusBlockId": "block_06",
+      "id": "node_06_core1"
+    },
+    {
+      "nodeRole": "core_required",
+      "syllabusBlockId": "block_06",
+      "id": "node_06_core2",
+      "personalizationRationale": "Virtual memory management is a complex core topic where some_prior_exposure helps in understanding hardware-software interaction.",
+      "duration": "150 min",
+      "title": "Virtual Memory & Page Replacement",
+      "dependsOn": [
+        "node_06_core1"
+      ],
+      "difficulty": "advanced",
+      "description": "Focus on demand paging, page faults, and replacement algorithms like FIFO, Optimal, and LRU.",
+      "type": "subtopic"
+    },
+    {
+      "title": "I/O Systems & Performance",
+      "difficulty": "intermediate",
+      "description": "Survey of I/O hardware, interrupt-driven I/O, and the Kernel I/O subsystem architecture.",
+      "type": "topic",
+      "dependsOn": [
+        "node_06_core2"
+      ],
+      "nodeRole": "core_required",
+      "syllabusBlockId": "block_07",
+      "id": "node_07_core1",
+      "duration": "100 min",
+      "personalizationRationale": "This capstone block ensures students with some_prior_exposure understand how the OS interacts with physical device drivers."
+    },
+    {
+      "id": "node_07_core2",
+      "syllabusBlockId": "block_07",
+      "nodeRole": "core_required",
+      "personalizationRationale": "File systems are a mandatory topic tested on the final; some_prior_exposure assists in grasping file metadata and storage.",
+      "duration": "100 min",
+      "title": "File System Implementation",
+      "dependsOn": [
+        "node_07_core1"
+      ],
+      "type": "subtopic",
+      "description": "Analysis of file system structures, directory implementation, and disk block allocation methods.",
+      "difficulty": "intermediate"
+    },
+    {
+      "difficulty": "advanced",
+      "description": "Final comprehensive review of all course material from Chapters 1-15 in preparation for the cumulative final exam.",
+      "type": "assessment",
+      "dependsOn": [
+        "node_07_core2"
+      ],
+      "title": "Cumulative Final Review",
+      "duration": "100 min",
+      "personalizationRationale": "Given the cumulative nature of the final exam, this review synthesizes knowledge for students with some_prior_exposure.",
+      "nodeRole": "assessment",
+      "syllabusBlockId": "block_07",
+      "id": "node_07_final_review"
+    }
+  ]
+}

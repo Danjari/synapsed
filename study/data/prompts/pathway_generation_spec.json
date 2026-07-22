@@ -1,0 +1,103 @@
+{
+  "version": "2.0",
+  "blockIds": [
+    "block_01",
+    "block_02",
+    "block_03",
+    "block_04",
+    "block_05a",
+    "block_05b",
+    "block_06"
+  ],
+  "blockDescriptions": {
+    "block_01": "Classic AI Basics — ML, data, terminology (pathway-relevant)",
+    "block_02": "Generative AI Core — concepts, capabilities, use cases",
+    "block_03": "Prompting Basics — anatomy, first prompts",
+    "block_04": "Advanced Prompting — few-shot, chain-of-thought, complex tasks",
+    "block_05a": "Business & Workplace — transformation playbook, gen AI in business (pathway emphasis track)",
+    "block_05b": "Projects & Workflows — ML/DS workflows, RAG, fine-tuning, project lifecycle (pathway emphasis track)",
+    "block_06": "Ethics & Responsible Use — bias, hallucinations, jobs, responsible AI"
+  },
+  "personalizationRules": [
+    "Every node MUST include syllabusBlockId set to exactly one block id from the catalog.",
+    "Personalization is STRUCTURAL: vary which blocks appear, how many nodes each block gets, difficulty, and order — NOT just rewording titles. A pathway that only rephrases titles while keeping identical block counts is INVALID.",
+    "block_05a and block_05b are alternative emphasis tracks. Most pathways should prioritize ONE of them (3+ nodes). Only include both fully for profiles explicitly wanting breadth.",
+    "prereq_1 Very uncertain OR bloom_remember shows no prior AI courses: assign 3+ nodes to block_01 at beginner difficulty before block_02.",
+    "prereq_1 Very confident OR bloom_remember lists ML/neural networks/gradient descent/PyTorch: assign at most 1 node to block_01, then emphasize block_02 and block_05b.",
+    "goals mentioning business, organization, strategy, transformation, workplace: prioritize block_05a (3+ nodes) over block_05b.",
+    "goals mentioning research, technical, RAG, fine-tuning, workflows, academic: prioritize block_05b (3+ nodes) over block_05a.",
+    "goals mentioning ethics, responsible AI, bias, societal impact, health equity, patient safety: assign 4+ nodes to block_06 (more than a neutral profile would get).",
+    "goals mentioning structured prompting, prompt templates, few-shot, chain-of-thought: assign 3+ nodes combined across block_03 and block_04 unless profile also needs heavy block_01.",
+    "bloom_remember mentions ChatGPT or daily prompting WITHOUT ML background: still assign 1-2 block_01 nodes for foundations; compress block_03+block_04 only if goals do NOT emphasize prompting mastery.",
+    "CRITICAL — learning_1 (learning style) has ZERO effect on structure: it must NOT change syllabusBlockId sequence, block counts, difficulty, or order. Only change description wording (e.g., 'visual diagram' vs 'hands-on exercise'). Two profiles differing ONLY in learning_1 must produce IDENTICAL block sequences.",
+    "Total pathway: 10-14 nodes. Include at least one assessment node. block_06 must appear in every pathway (capstone, at least 2 nodes for neutral profiles)."
+  ],
+  "judgeRubric": {
+    "dimensions": [
+      {
+        "id": "prior_knowledge_alignment",
+        "description": "Pathway depth in block_01 vs block_02 matches prereq_1 and bloom_remember"
+      },
+      {
+        "id": "goal_track_alignment",
+        "description": "block_05a vs block_05b emphasis matches stated learning goals"
+      },
+      {
+        "id": "structural_personalization",
+        "description": "Block coverage and node counts differ meaningfully from a generic path — not title paraphrase only"
+      },
+      {
+        "id": "syllabus_fidelity",
+        "description": "All syllabusBlockId values valid; content aligns with block catalog; no off-syllabus topics"
+      },
+      {
+        "id": "internal_coherence",
+        "description": "Dependencies, difficulty progression, and capstone ethics are logical"
+      }
+    ],
+    "scale": { "min": 1, "max": 5 }
+  },
+  "contrastHypotheses": [
+    {
+      "id": "H1_foundation_depth",
+      "description": "Low-knowledge profile receives more block_01 nodes than research profile",
+      "profile_a": "low_knowledge_general",
+      "profile_b": "high_knowledge_research",
+      "metric": "block_01_node_count",
+      "expect": "a_greater_than_b"
+    },
+    {
+      "id": "H2_business_vs_research_track",
+      "description": "Business leader receives more block_05a nodes than research profile",
+      "profile_a": "business_leader",
+      "profile_b": "high_knowledge_research",
+      "metric": "block_05a_node_count",
+      "expect": "a_greater_than_b"
+    },
+    {
+      "id": "H3_research_track_workflows",
+      "description": "Research profile receives more block_05b nodes than business leader",
+      "profile_a": "high_knowledge_research",
+      "profile_b": "business_leader",
+      "metric": "block_05b_node_count",
+      "expect": "a_greater_than_b"
+    },
+    {
+      "id": "H4_ethics_emphasis",
+      "description": "Ethics-focused profile receives more block_06 nodes than neutral profile",
+      "profile_a": "ethics_focused",
+      "profile_b": "medium_knowledge_mixed",
+      "metric": "block_06_node_count",
+      "expect": "a_greater_than_b"
+    },
+    {
+      "id": "H5_learning_style_invariance",
+      "description": "Learning style control pair should share block sequence (learning_1 must not change structure)",
+      "profile_a": "learning_style_control",
+      "profile_b": "medium_knowledge_mixed",
+      "metric": "block_sequence_similarity",
+      "expect": "greater_than",
+      "threshold": 0.85
+    }
+  ]
+}

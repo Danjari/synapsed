@@ -1,0 +1,233 @@
+{
+  "profileId": "os_strong_prior_exposure_7",
+  "cluster": null,
+  "field": null,
+  "description": "A technically proficient junior aiming for a career in high-performance computing and quantitative finance, prioritizing implementation efficiency and concurrency.",
+  "studentId": "offline-os_strong_prior_exposure_7",
+  "source": "offline-gemini",
+  "nodeCount": 16,
+  "nodes": [
+    {
+      "difficulty": "beginner",
+      "description": "Review of operating system services, system calls, and the distinction between user and kernel mode.",
+      "personalizationRationale": "Ensures that even students with strong_prior_exposure have a consistent baseline of formal OS terminology and structure.",
+      "dependsOn": [],
+      "title": "OS Foundations & System Structure",
+      "syllabusBlockId": "block_01",
+      "duration": "45m",
+      "nodeRole": "core_required",
+      "id": "n1_b1_core",
+      "type": "topic"
+    },
+    {
+      "title": "Architectural Analysis: Microkernels vs. Monolithic Systems",
+      "dependsOn": [
+        "n1_b1_core"
+      ],
+      "personalizationRationale": "Given the student's strong_prior_exposure, this node investigates architectural design decisions rather than just basic definitions.",
+      "description": "A deep dive into the trade-offs between monolithic, microkernel, and hybrid kernel architectures in modern systems.",
+      "difficulty": "advanced",
+      "type": "subtopic",
+      "id": "n2_b1_enrich",
+      "nodeRole": "enrichment_advanced",
+      "duration": "60m",
+      "syllabusBlockId": "block_01"
+    },
+    {
+      "difficulty": "intermediate",
+      "personalizationRationale": "Required floor content for strong_prior_exposure students to master process management before moving to threading.",
+      "dependsOn": [
+        "n1_b1_core"
+      ],
+      "description": "Exploration of the process abstraction, lifecycle, and fundamental IPC mechanisms like shared memory and message passing.",
+      "title": "Processes & IPC Fundamentals",
+      "nodeRole": "core_required",
+      "duration": "60m",
+      "syllabusBlockId": "block_02",
+      "id": "n3_b2_core",
+      "type": "topic"
+    },
+    {
+      "dependsOn": [
+        "n3_b2_core"
+      ],
+      "personalizationRationale": "Builds on the student's strong_prior_exposure by examining the performance implications of IPC at scale.",
+      "description": "Investigating performance overheads and synchronization challenges in high-frequency message-passing systems.",
+      "difficulty": "advanced",
+      "title": "Advanced IPC & Performance Optimization",
+      "nodeRole": "enrichment_advanced",
+      "duration": "45m",
+      "syllabusBlockId": "block_02",
+      "type": "subtopic",
+      "id": "n4_b2_enrich"
+    },
+    {
+      "id": "n5_b3_core_threads",
+      "type": "topic",
+      "nodeRole": "core_required",
+      "duration": "60m",
+      "syllabusBlockId": "block_03",
+      "title": "Threads & Threading Models",
+      "difficulty": "intermediate",
+      "dependsOn": [
+        "n3_b2_core"
+      ],
+      "personalizationRationale": "Core material for strong_prior_exposure students to understand the internal mapping of user threads to kernel threads.",
+      "description": "Comparative analysis of multi-threading models and the implementation of threading libraries."
+    },
+    {
+      "difficulty": "intermediate",
+      "description": "Evaluation of CPU scheduling algorithms including Round Robin, Priority Scheduling, and Multi-Level Feedback Queues.",
+      "personalizationRationale": "Essential scheduling theory that students with strong_prior_exposure must master for the midterm exam.",
+      "dependsOn": [
+        "n5_b3_core_threads"
+      ],
+      "title": "CPU Scheduling Criteria & Algorithms",
+      "duration": "60m",
+      "syllabusBlockId": "block_03",
+      "nodeRole": "core_required",
+      "id": "n6_b3_core_sched",
+      "type": "topic"
+    },
+    {
+      "title": "Midterm Review (Ch. 1-5)",
+      "difficulty": "intermediate",
+      "description": "Comprehensive review of chapters 1-5 covering OS structures, processes, and scheduling in preparation for the midterm.",
+      "dependsOn": [
+        "n6_b3_core_sched"
+      ],
+      "personalizationRationale": "Formal assessment checkpoint to ensure the student's strong_prior_exposure translates to exam readiness for the midterm.",
+      "id": "n7_b3_midterm_eval",
+      "type": "assessment",
+      "syllabusBlockId": "block_03",
+      "duration": "45m",
+      "nodeRole": "assessment"
+    },
+    {
+      "nodeRole": "core_required",
+      "syllabusBlockId": "block_04",
+      "duration": "60m",
+      "type": "topic",
+      "id": "n8_b4_core",
+      "dependsOn": [
+        "n7_b3_midterm_eval"
+      ],
+      "personalizationRationale": "Core synchronization primitives are mandatory for strong_prior_exposure students as they form the basis for project work.",
+      "description": "Detailed study of the critical section problem and the use of mutex locks, semaphores, and monitors.",
+      "difficulty": "intermediate",
+      "title": "Process Synchronization & Primitives"
+    },
+    {
+      "title": "Priority Inversion & Inheritance Protocols",
+      "description": "Exploring the priority inversion problem and solutions like the priority inheritance protocol in real-time systems.",
+      "personalizationRationale": "Challenges the strong_prior_exposure student with advanced synchronization edge cases used in real-world systems.",
+      "dependsOn": [
+        "n8_b4_core"
+      ],
+      "difficulty": "advanced",
+      "type": "subtopic",
+      "id": "n9_b4_enrich",
+      "syllabusBlockId": "block_04",
+      "duration": "45m",
+      "nodeRole": "enrichment_advanced"
+    },
+    {
+      "title": "Deadlock Characterization & Prevention",
+      "description": "Characterizing deadlock conditions and implementing prevention, avoidance (Banker's Algorithm), and detection strategies.",
+      "personalizationRationale": "Required floor coverage of deadlock management for all students, including those with strong_prior_exposure.",
+      "dependsOn": [
+        "n8_b4_core"
+      ],
+      "difficulty": "intermediate",
+      "type": "topic",
+      "id": "n10_b5_core_deadlock",
+      "syllabusBlockId": "block_05",
+      "duration": "60m",
+      "nodeRole": "core_required"
+    },
+    {
+      "nodeRole": "core_required",
+      "syllabusBlockId": "block_06",
+      "duration": "60m",
+      "type": "topic",
+      "id": "n11_b6_core_phys",
+      "dependsOn": [
+        "n10_b5_core_deadlock"
+      ],
+      "personalizationRationale": "Foundational memory concepts that must be reviewed by strong_prior_exposure students before virtual memory.",
+      "description": "Introduction to physical memory management, including contiguous allocation, fragmentation, and the paging abstraction.",
+      "difficulty": "intermediate",
+      "title": "Physical Memory & Paging Structures"
+    },
+    {
+      "title": "Virtual Memory & Page Replacement",
+      "difficulty": "intermediate",
+      "dependsOn": [
+        "n11_b6_core_phys"
+      ],
+      "personalizationRationale": "Core virtual memory theory required for both the final exam and programming project delivery for strong_prior_exposure students.",
+      "description": "Examination of demand paging, page replacement algorithms (LRU, Optimal), and the phenomenon of thrashing.",
+      "id": "n12_b6_core_virt",
+      "type": "topic",
+      "nodeRole": "core_required",
+      "duration": "60m",
+      "syllabusBlockId": "block_06"
+    },
+    {
+      "id": "n13_b6_enrich",
+      "type": "subtopic",
+      "syllabusBlockId": "block_06",
+      "duration": "45m",
+      "nodeRole": "enrichment_advanced",
+      "title": "TLB Performance & Advanced Memory Hardware",
+      "difficulty": "advanced",
+      "description": "Analysis of TLB performance, the impact of page sizes (HugePages), and hardware-level memory management optimizations.",
+      "personalizationRationale": "Utilizes the student's strong_prior_exposure to explore the hardware-software interface of memory performance.",
+      "dependsOn": [
+        "n12_b6_core_virt"
+      ]
+    },
+    {
+      "id": "n14_b7_core_io",
+      "type": "topic",
+      "syllabusBlockId": "block_07",
+      "duration": "60m",
+      "nodeRole": "core_required",
+      "title": "I/O Systems & Device Interfaces",
+      "difficulty": "intermediate",
+      "description": "Overview of I/O hardware, polling vs. interrupts, and the kernel I/O subsystem structure.",
+      "personalizationRationale": "Standard curriculum floor for I/O systems to ensure strong_prior_exposure students understand kernel-level I/O.",
+      "dependsOn": [
+        "n12_b6_core_virt"
+      ]
+    },
+    {
+      "title": "File System Implementation & Reliability",
+      "difficulty": "intermediate",
+      "personalizationRationale": "Critical capstone topic for strong_prior_exposure students, focusing on the implementation details of persistent storage.",
+      "dependsOn": [
+        "n14_b7_core_io"
+      ],
+      "description": "Design and implementation of file systems, including directory structures, allocation methods, and journaling for reliability.",
+      "id": "n15_b7_core_fs",
+      "type": "topic",
+      "nodeRole": "core_required",
+      "duration": "60m",
+      "syllabusBlockId": "block_07"
+    },
+    {
+      "id": "n16_b7_final_eval",
+      "type": "assessment",
+      "nodeRole": "assessment",
+      "syllabusBlockId": "block_07",
+      "duration": "60m",
+      "title": "Final Cumulative Review & Assessment",
+      "difficulty": "advanced",
+      "dependsOn": [
+        "n15_b7_core_fs"
+      ],
+      "personalizationRationale": "A mandatory cumulative assessment designed to verify mastery across all syllabus blocks for a student with strong_prior_exposure.",
+      "description": "Cumulative review of all course material from OS structures to file systems in preparation for the final exam."
+    }
+  ]
+}

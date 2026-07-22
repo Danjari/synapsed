@@ -1,0 +1,275 @@
+{
+  "profileId": "datastructures_no_prior_exposure_5",
+  "cluster": null,
+  "field": null,
+  "description": "A mathematically inclined student who thrives in theoretical logic and proofs but feels intimidated by the transition from high-level Python to the low-level memory management of C++.",
+  "studentId": "offline-datastructures_no_prior_exposure_5",
+  "source": "offline-gemini",
+  "nodeCount": 19,
+  "nodes": [
+    {
+      "dependsOn": [],
+      "personalizationRationale": "This node provides necessary bridging for a student with no_prior_exposure to C++ pointers before tackling memory-intensive data structures.",
+      "nodeRole": "scaffolding_catchup",
+      "title": "C++ Memory Model: Pointers vs. References",
+      "difficulty": "beginner",
+      "id": "n1_cpp_pointers",
+      "duration": "75 min",
+      "description": "Introduction to C++ memory management, focusing on the distinction between pointers and references compared to references in other languages.",
+      "type": "subtopic",
+      "syllabusBlockId": "block_01"
+    },
+    {
+      "dependsOn": [
+        "n1_cpp_pointers"
+      ],
+      "difficulty": "beginner",
+      "title": "Dynamic Memory and the Free Store",
+      "personalizationRationale": "Essential scaffolding for students in the no_prior_exposure tier to prevent memory leaks in custom data structure implementations.",
+      "nodeRole": "scaffolding_catchup",
+      "type": "subtopic",
+      "duration": "75 min",
+      "description": "Learning the syntax and lifecycle of manual memory allocation using 'new' and 'delete' in C++.",
+      "id": "n2_cpp_dynamic_mem",
+      "syllabusBlockId": "block_01"
+    },
+    {
+      "dependsOn": [
+        "n2_cpp_dynamic_mem"
+      ],
+      "title": "C++ Class Architecture and Modularization",
+      "nodeRole": "scaffolding_catchup",
+      "personalizationRationale": "Required scaffolding to help no_prior_exposure students organize C++ projects according to standard course conventions.",
+      "difficulty": "beginner",
+      "id": "n3_cpp_classes_intro",
+      "description": "Transitioning general programming knowledge of classes to C++ specific syntax, including header files (.h) and implementation files (.cpp).",
+      "duration": "75 min",
+      "type": "subtopic",
+      "syllabusBlockId": "block_01"
+    },
+    {
+      "id": "n4_cpp_ood_templates",
+      "type": "topic",
+      "description": "Core object-oriented principles in C++: inheritance, polymorphism, and an introduction to generic programming with templates.",
+      "duration": "75 min",
+      "syllabusBlockId": "block_01",
+      "dependsOn": [
+        "n3_cpp_classes_intro"
+      ],
+      "title": "Object-Oriented Design & C++ Templates",
+      "nodeRole": "core_required",
+      "personalizationRationale": "Standard core requirement tailored to ensure no_prior_exposure students master standard C++ OOD patterns.",
+      "difficulty": "intermediate"
+    },
+    {
+      "syllabusBlockId": "block_01",
+      "duration": "75 min",
+      "description": "Advanced C++ concepts: error handling with exceptions and managing resources through arrays.",
+      "type": "subtopic",
+      "id": "n5_cpp_exceptions_arrays_core",
+      "difficulty": "intermediate",
+      "title": "Exceptions and Array-Based Design",
+      "nodeRole": "core_required",
+      "personalizationRationale": "Core block requirement ensuring the student from the no_prior_exposure tier meets foundational C++ proficiency targets.",
+      "dependsOn": [
+        "n4_cpp_ood_templates"
+      ]
+    },
+    {
+      "type": "topic",
+      "description": "Implementation of Singly, Doubly, and Circularly Linked Lists using pointers.",
+      "duration": "150 min",
+      "id": "n6_linked_lists_core_02",
+      "syllabusBlockId": "block_02",
+      "dependsOn": [
+        "n5_cpp_exceptions_arrays_core"
+      ],
+      "difficulty": "intermediate",
+      "title": "Linked List Implementations",
+      "nodeRole": "core_required",
+      "personalizationRationale": "Core syllabus material that builds on C++ pointer scaffolding for no_prior_exposure students."
+    },
+    {
+      "dependsOn": [
+        "n6_linked_lists_core_02"
+      ],
+      "nodeRole": "core_required",
+      "personalizationRationale": "Fundamental analytical skills required for all students, following the no_prior_exposure introductory sequence.",
+      "title": "Recursion and Asymptotic Analysis",
+      "difficulty": "intermediate",
+      "id": "n7_recursion_analysis_core_02",
+      "type": "topic",
+      "duration": "150 min",
+      "description": "Analyzing algorithm efficiency using Big-O notation and implementing recursive solutions.",
+      "syllabusBlockId": "block_02"
+    },
+    {
+      "id": "n8_stacks_queues_core_03",
+      "type": "topic",
+      "description": "Abstract Data Types (ADTs) for Stacks and Queues, including array-based and list-based implementations.",
+      "duration": "90 min",
+      "syllabusBlockId": "block_03",
+      "dependsOn": [
+        "n7_recursion_analysis_core_02"
+      ],
+      "personalizationRationale": "Standard core requirement ensuring no_prior_exposure students can implement basic linear ADTs.",
+      "nodeRole": "core_required",
+      "title": "Stacks and Queues ADTs",
+      "difficulty": "intermediate"
+    },
+    {
+      "nodeRole": "core_required",
+      "personalizationRationale": "Core curriculum requirement connecting no_prior_exposure C++ basics to standard template usage.",
+      "title": "Vectors, Iterators, and Sequences",
+      "difficulty": "intermediate",
+      "dependsOn": [
+        "n8_stacks_queues_core_03"
+      ],
+      "syllabusBlockId": "block_03",
+      "id": "n9_vectors_iterators_core_03",
+      "duration": "90 min",
+      "description": "Exploring C++ Vectors, the Iterator pattern, and Sequence ADTs.",
+      "type": "topic"
+    },
+    {
+      "difficulty": "intermediate",
+      "title": "Sequence Sorting: Bubble Sort",
+      "personalizationRationale": "Standard sorting algorithm requirement to build algorithmic intuition for no_prior_exposure students.",
+      "nodeRole": "core_required",
+      "dependsOn": [
+        "n9_vectors_iterators_core_03"
+      ],
+      "syllabusBlockId": "block_03",
+      "type": "subtopic",
+      "description": "Implementation and analysis of the Bubble Sort algorithm within sequence-based structures.",
+      "duration": "95 min",
+      "id": "n10_bubble_sort_core_03"
+    },
+    {
+      "dependsOn": [
+        "n10_bubble_sort_core_03"
+      ],
+      "difficulty": "intermediate",
+      "title": "Midterm Review & Assessment",
+      "personalizationRationale": "Mandatory assessment checkpoint to ensure the student from the no_prior_exposure tier is on track for the midterm exam.",
+      "nodeRole": "assessment",
+      "type": "assessment",
+      "description": "Comprehensive assessment of material from Blocks 01 through 03 in preparation for the midterm.",
+      "duration": "100 min",
+      "id": "n11_midterm_assessment_03_01",
+      "syllabusBlockId": "block_03"
+    },
+    {
+      "syllabusBlockId": "block_04",
+      "type": "topic",
+      "description": "Hierarchical structures: General Trees and Binary Tree representations in C++.",
+      "duration": "110 min",
+      "id": "n12_trees_intro_core_04",
+      "difficulty": "intermediate",
+      "title": "General and Binary Trees",
+      "nodeRole": "core_required",
+      "personalizationRationale": "Core structural requirement following the successful midterm review for no_prior_exposure students.",
+      "dependsOn": [
+        "n11_midterm_assessment_03_01"
+      ]
+    },
+    {
+      "syllabusBlockId": "block_04",
+      "id": "n13_tree_traversals_core_04",
+      "type": "subtopic",
+      "duration": "115 min",
+      "description": "Algorithms for traversing trees: Pre-order, Post-order, and In-order traversals.",
+      "personalizationRationale": "Standard core requirement for navigating non-linear structures, regardless of the no_prior_exposure starting tier.",
+      "nodeRole": "core_required",
+      "title": "Tree Traversal Algorithms",
+      "difficulty": "intermediate",
+      "dependsOn": [
+        "n12_trees_intro_core_04"
+      ]
+    },
+    {
+      "id": "n14_heaps_pq_core_05",
+      "type": "topic",
+      "description": "Implementing Priority Queues using Binary Heaps and maintaining the heap property.",
+      "duration": "150 min",
+      "syllabusBlockId": "block_05",
+      "dependsOn": [
+        "n13_tree_traversals_core_04"
+      ],
+      "personalizationRationale": "Mandatory block content introducing heap structures to students from the no_prior_exposure tier.",
+      "nodeRole": "core_required",
+      "title": "Priority Queues & Heaps",
+      "difficulty": "intermediate"
+    },
+    {
+      "dependsOn": [
+        "n14_heaps_pq_core_05"
+      ],
+      "difficulty": "intermediate",
+      "nodeRole": "core_required",
+      "personalizationRationale": "Standard core block requirement; hashing is a critical examined topic for all students including those with no_prior_exposure.",
+      "title": "Maps, Hash Tables, and Dictionaries",
+      "description": "Designing hash functions, managing collisions, and implementing Maps and Dictionaries.",
+      "duration": "225 min",
+      "type": "topic",
+      "id": "n15_maps_hashing_core_06",
+      "syllabusBlockId": "block_06"
+    },
+    {
+      "dependsOn": [
+        "n15_maps_hashing_core_06"
+      ],
+      "difficulty": "advanced",
+      "nodeRole": "core_required",
+      "personalizationRationale": "Required advanced tree theory for all students; builds on the foundational C++ skills developed in block_01 for no_prior_exposure.",
+      "title": "Balanced Search Trees: BST and AVL",
+      "duration": "110 min",
+      "description": "Binary Search Tree (BST) operations and introduction to AVL tree rotations for balance.",
+      "type": "topic",
+      "id": "n16_bst_avl_core_07",
+      "syllabusBlockId": "block_07"
+    },
+    {
+      "dependsOn": [
+        "n16_bst_avl_core_07"
+      ],
+      "difficulty": "advanced",
+      "nodeRole": "core_required",
+      "personalizationRationale": "Core theoretical requirement; ensures the student from the no_prior_exposure tier meets the final exam proof standards.",
+      "title": "(2,4) Trees and Red-Black Trees",
+      "type": "subtopic",
+      "duration": "115 min",
+      "description": "Multi-way search trees focusing on (2,4) Trees and the properties of Red-Black Trees.",
+      "id": "n17_red_black_core_07",
+      "syllabusBlockId": "block_07"
+    },
+    {
+      "dependsOn": [
+        "n17_red_black_core_07"
+      ],
+      "difficulty": "intermediate",
+      "title": "Advanced Sorting Algorithms",
+      "personalizationRationale": "Final required sorting algorithms block, ensuring cumulative proficiency for no_prior_exposure students.",
+      "nodeRole": "core_required",
+      "duration": "125 min",
+      "description": "Divide-and-conquer sorting algorithms: Merge Sort and Selection Sort implementations and analysis.",
+      "type": "topic",
+      "id": "n18_merge_selection_core_08",
+      "syllabusBlockId": "block_08"
+    },
+    {
+      "type": "assessment",
+      "description": "Cumulative review of all data structures and algorithms in the course in preparation for the final exam.",
+      "duration": "100 min",
+      "id": "n19_final_assessment_08_01",
+      "syllabusBlockId": "block_08",
+      "dependsOn": [
+        "n18_merge_selection_core_08"
+      ],
+      "difficulty": "advanced",
+      "title": "Cumulative Final Review Assessment",
+      "personalizationRationale": "Mandatory final assessment to confirm that the no_prior_exposure student has met all core course objectives.",
+      "nodeRole": "assessment"
+    }
+  ]
+}

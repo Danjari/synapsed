@@ -1,0 +1,233 @@
+{
+  "profileId": "os_strong_prior_exposure_5",
+  "cluster": null,
+  "field": null,
+  "description": "A junior Computer Science major with a specialization in Cybersecurity and professional experience in firmware development who seeks to understand OS internals for security auditing.",
+  "studentId": "offline-os_strong_prior_exposure_5",
+  "source": "offline-gemini",
+  "nodeCount": 16,
+  "nodes": [
+    {
+      "difficulty": "beginner",
+      "title": "Classic OS Foundations & System Structures",
+      "id": "node_01_core",
+      "duration": "150 min",
+      "type": "topic",
+      "syllabusBlockId": "block_01",
+      "personalizationRationale": "As a student with strong_prior_exposure, you will start with this core floor node to align your existing knowledge with the course's specific structural definitions.",
+      "dependsOn": [],
+      "description": "An overview of OS services, structures, and the kernel/user mode distinction fundamental to all systems programming.",
+      "nodeRole": "core_required"
+    },
+    {
+      "type": "topic",
+      "difficulty": "advanced",
+      "id": "node_01_enrichment",
+      "duration": "150 min",
+      "title": "Architectural Analysis of System Interfaces",
+      "description": "In-depth analysis of system calls and interrupt handling mechanisms with a focus on hardware-software interface performance.",
+      "nodeRole": "enrichment_advanced",
+      "dependsOn": [
+        "node_01_core"
+      ],
+      "syllabusBlockId": "block_01",
+      "personalizationRationale": "Leveraging your strong_prior_exposure, this enrichment node replaces introductory scaffolding with a deeper look at kernel-mode transition overhead."
+    },
+    {
+      "id": "node_02_core",
+      "duration": "110 min",
+      "title": "Process Lifecycle & Management",
+      "difficulty": "intermediate",
+      "type": "topic",
+      "personalizationRationale": "This core node ensures that even with your strong_prior_exposure, the specific process state models used for exam evaluation are mastered.",
+      "syllabusBlockId": "block_02",
+      "description": "Exploration of the process abstraction, lifecycle management, and the mechanics of context switching.",
+      "nodeRole": "core_required",
+      "dependsOn": [
+        "node_01_core"
+      ]
+    },
+    {
+      "id": "node_02_enrichment",
+      "duration": "115 min",
+      "title": "Advanced Inter-Process Communication Tradeoffs",
+      "difficulty": "advanced",
+      "type": "topic",
+      "personalizationRationale": "Since you have strong_prior_exposure, we move past basic IPC definitions to evaluate the scalability tradeoffs of different communication primitives.",
+      "syllabusBlockId": "block_02",
+      "description": "Comparative study of shared memory versus message passing, focusing on cache coherency and synchronization overhead.",
+      "nodeRole": "enrichment_advanced",
+      "dependsOn": [
+        "node_02_core"
+      ]
+    },
+    {
+      "description": "Introduction to multithreading models and the POSIX threads library used in upcoming projects.",
+      "nodeRole": "core_required",
+      "dependsOn": [
+        "node_02_core"
+      ],
+      "personalizationRationale": "While you likely have strong_prior_exposure to threads, this node confirms your proficiency with the specific threading libraries required for course deliverables.",
+      "syllabusBlockId": "block_03",
+      "type": "topic",
+      "id": "node_03_core_threads",
+      "duration": "100 min",
+      "title": "Threading Models & Programming Libraries",
+      "difficulty": "intermediate"
+    },
+    {
+      "type": "topic",
+      "difficulty": "intermediate",
+      "id": "node_03_core_sched",
+      "duration": "100 min",
+      "title": "CPU Scheduling Algorithms & Evaluation",
+      "description": "Detailed analysis of scheduling criteria and algorithms like Round Robin, Priority, and Multi-level Queue scheduling.",
+      "nodeRole": "core_required",
+      "dependsOn": [
+        "node_03_core_threads"
+      ],
+      "syllabusBlockId": "block_03",
+      "personalizationRationale": "This core content is heavily tested on the midterm; your strong_prior_exposure allows for a focus on the analytical modeling of these algorithms."
+    },
+    {
+      "dependsOn": [
+        "node_03_core_sched"
+      ],
+      "nodeRole": "assessment",
+      "description": "Comprehensive exam covering Operating System foundations, processes, and CPU scheduling (Chapters 1-5).",
+      "personalizationRationale": "This required assessment validates your understanding of foundational material before proceeding to advanced synchronization, reflecting your strong_prior_exposure.",
+      "syllabusBlockId": "block_03",
+      "type": "assessment",
+      "title": "Midterm Review & Assessment (Ch. 1-5)",
+      "duration": "100 min",
+      "id": "node_03_assessment",
+      "difficulty": "intermediate"
+    },
+    {
+      "syllabusBlockId": "block_04",
+      "personalizationRationale": "For a student with strong_prior_exposure, this core block provides the formal theory behind the synchronization primitives you may have used in practice.",
+      "dependsOn": [
+        "node_03_assessment"
+      ],
+      "nodeRole": "core_required",
+      "description": "Addressing the critical section problem using mutex locks, semaphores, and high-level monitors.",
+      "difficulty": "intermediate",
+      "title": "Synchronization Primitives & Monitors",
+      "duration": "150 min",
+      "id": "node_04_core",
+      "type": "topic"
+    },
+    {
+      "type": "topic",
+      "id": "node_04_enrichment",
+      "duration": "150 min",
+      "title": "Advanced Problems in Process Synchronization",
+      "difficulty": "advanced",
+      "description": "Analysis of complex synchronization scenarios, including lock-free programming concepts and the Dining Philosophers optimization.",
+      "nodeRole": "enrichment_advanced",
+      "dependsOn": [
+        "node_04_core"
+      ],
+      "personalizationRationale": "Given your strong_prior_exposure, we dive into edge cases and performance optimizations for classic synchronization problems.",
+      "syllabusBlockId": "block_04"
+    },
+    {
+      "syllabusBlockId": "block_05",
+      "personalizationRationale": "This block is essential for the final exam; your strong_prior_exposure helps you move efficiently through the characterization of deadlock states.",
+      "dependsOn": [
+        "node_04_core"
+      ],
+      "nodeRole": "core_required",
+      "description": "The four necessary conditions for deadlock and strategies for prevention and detection.",
+      "difficulty": "intermediate",
+      "title": "Deadlock Characterization & Prevention",
+      "duration": "75 min",
+      "id": "node_05_core_01",
+      "type": "topic"
+    },
+    {
+      "difficulty": "intermediate",
+      "duration": "75 min",
+      "id": "node_05_core_02",
+      "title": "Deadlock Avoidance & Banker's Algorithm",
+      "type": "topic",
+      "syllabusBlockId": "block_05",
+      "personalizationRationale": "This core node focuses on the algorithmic avoidance of deadlocks, which your strong_prior_exposure will help you grasp analytically.",
+      "nodeRole": "core_required",
+      "description": "Implementation and analysis of the Banker's algorithm for deadlock avoidance in multi-resource systems.",
+      "dependsOn": [
+        "node_05_core_01"
+      ]
+    },
+    {
+      "duration": "150 min",
+      "id": "node_06_core_paging",
+      "title": "Paging & Main Memory Management",
+      "difficulty": "intermediate",
+      "type": "topic",
+      "personalizationRationale": "Memory management is a key project area; this core node aligns your strong_prior_exposure with the course's paging implementation requirements.",
+      "syllabusBlockId": "block_06",
+      "nodeRole": "core_required",
+      "description": "Examination of paging, segmentation, and address translation in modern memory management units.",
+      "dependsOn": [
+        "node_03_assessment"
+      ]
+    },
+    {
+      "title": "Virtual Memory Performance & Page Replacement",
+      "duration": "150 min",
+      "id": "node_06_enrichment_paging",
+      "difficulty": "advanced",
+      "type": "topic",
+      "personalizationRationale": "Leveraging your strong_prior_exposure, we analyze the performance impact of page replacement strategies on high-load systems.",
+      "syllabusBlockId": "block_06",
+      "dependsOn": [
+        "node_06_core_paging"
+      ],
+      "nodeRole": "enrichment_advanced",
+      "description": "Investigation of thrashing, demand paging, and advanced page replacement algorithms like WSClock or LRU-approximations."
+    },
+    {
+      "duration": "100 min",
+      "id": "node_07_core_io",
+      "title": "I/O Subsystems & File Storage Implementation",
+      "difficulty": "intermediate",
+      "type": "topic",
+      "personalizationRationale": "This core capstone content covers I/O performance, which builds on the systems concepts where you have strong_prior_exposure.",
+      "syllabusBlockId": "block_07",
+      "nodeRole": "core_required",
+      "description": "Techniques for I/O scheduling, buffering, and the implementation of file systems on physical storage.",
+      "dependsOn": [
+        "node_06_core_paging"
+      ]
+    },
+    {
+      "type": "topic",
+      "id": "node_07_enrichment_fs",
+      "duration": "100 min",
+      "title": "High-Performance & Distributed File Systems",
+      "difficulty": "advanced",
+      "description": "Exploration of log-structured file systems and distributed storage concepts for high-availability environments.",
+      "nodeRole": "enrichment_advanced",
+      "dependsOn": [
+        "node_07_core_io"
+      ],
+      "personalizationRationale": "With your strong_prior_exposure, this node explores modern storage challenges beyond standard local file system implementations.",
+      "syllabusBlockId": "block_07"
+    },
+    {
+      "type": "assessment",
+      "difficulty": "advanced",
+      "title": "Final Cumulative Review & Assessment",
+      "duration": "100 min",
+      "id": "node_07_assessment_final",
+      "dependsOn": [
+        "node_07_enrichment_fs"
+      ],
+      "nodeRole": "assessment",
+      "description": "A cumulative final review and assessment covering the full syllabus from foundations to file systems.",
+      "syllabusBlockId": "block_07",
+      "personalizationRationale": "The final cumulative review ensures your strong_prior_exposure is synthesized across all seven course blocks for the final exam."
+    }
+  ]
+}

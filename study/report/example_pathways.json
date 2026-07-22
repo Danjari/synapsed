@@ -1,0 +1,56 @@
+{
+  "description": "Structural summaries from Run 3 (Gemini generation + final pipeline). Full node JSON lives in data/results/pathways/ (local, gitignored).",
+  "generator": {
+    "model": "Google Gemini via scripts/07_generate_pathways_offline.py",
+    "output_format": "Function call with fixed schema: each node has title, syllabusBlockId, difficulty, type, description",
+    "prompt": "Built from syllabus + survey answers + personalizationRules in pathway_generation_spec.json",
+    "structure_lock": "For paired_with profiles, copy exact block counts from partner before generation (Run 3 fix)"
+  },
+  "block_legend": {
+    "block_01": "AI Basics",
+    "block_02": "Generative AI Core",
+    "block_03": "Prompting Basics",
+    "block_04": "Advanced Prompting",
+    "block_05a": "Business & Workplace track",
+    "block_05b": "Technical & Workflows track",
+    "block_06": "Ethics capstone"
+  },
+  "contrasting_pair": {
+    "profile_a": "low_knowledge_general",
+    "profile_b": "high_knowledge_research",
+    "a_structure": {
+      "block_sequence": ["block_01", "block_02", "block_03", "block_04", "block_05b", "block_06"],
+      "block_counts": { "block_01": 3, "block_02": 1, "block_03": 1, "block_04": 1, "block_05b": 3, "block_06": 4 },
+      "node_count": 13
+    },
+    "b_structure": {
+      "block_sequence": ["block_01", "block_02", "block_03", "block_04", "block_05b", "block_05a", "block_06"],
+      "block_counts": { "block_01": 1, "block_02": 2, "block_03": 1, "block_04": 1, "block_05b": 4, "block_05a": 1, "block_06": 3 },
+      "node_count": 13
+    },
+    "visual_diff": "History student gets 3× AI Basics; CS researcher gets 1×. Researcher gets 4× Technical track vs 3× for history student."
+  },
+  "business_vs_research": {
+    "business_leader": {
+      "block_counts": { "block_01": 1, "block_02": 2, "block_03": 1, "block_04": 1, "block_05a": 4, "block_06": 2 },
+      "node_count": 11
+    },
+    "high_knowledge_research": {
+      "block_counts": { "block_01": 1, "block_02": 2, "block_03": 1, "block_04": 1, "block_05b": 4, "block_05a": 1, "block_06": 3 },
+      "node_count": 13
+    },
+    "visual_diff": "Executive MBA path emphasizes block_05a (4 nodes); CS researcher emphasizes block_05b (4 nodes)."
+  },
+  "learning_preference_pair": {
+    "medium_knowledge_mixed": {
+      "learning_1": "Mixed approach",
+      "block_counts": { "block_01": 2, "block_02": 1, "block_03": 1, "block_04": 2, "block_05b": 3, "block_05a": 1, "block_06": 3 }
+    },
+    "learning_style_control": {
+      "learning_1": "Kinesthetic (hands-on activities)",
+      "block_counts": { "block_01": 2, "block_02": 1, "block_03": 1, "block_04": 2, "block_05b": 3, "block_05a": 1, "block_06": 3 },
+      "sequence_jaccard_vs_partner": 1.0
+    },
+    "visual_diff": "Identical block structure; descriptions differ in modality wording only."
+  }
+}
