@@ -1,4 +1,4 @@
-import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
+import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 
 export async function chunkMarkdownByPage(
   pages: { page: number; markdown: string }[],
