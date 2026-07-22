@@ -106,6 +106,4 @@ App bridge: `POST /api/study/seed`. App pathway generation uses the same prompt 
 
 ---
 
-## Branch note
 
-Historically, study work has lived on a `study` branch. Confirm with the team which branch is canonical before merging prompt-spec changes into the app.
