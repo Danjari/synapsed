@@ -175,11 +175,11 @@ We saw the same pattern in Data Structures. A student with no prior C++ exposure
 
 *Method used: three deterministic counting rules, plus the Jonckheere-Terpstra test (see Section 2).*
 
-We wrote three automated checks in plain code, no AI model involved, to verify every one of the 30 pathways per course actually follows the rules above.
+Section 3 set three rules for what a personalized required-course pathway must do: the destination is fixed, the route is personalized, and the budget stays the same. We wrote three automated checks in plain code, no AI model involved, one for each rule, to verify every one of the 30 pathways per course actually follows them.
 
-1. **The coverage floor check.** Does every block appear in every pathway, at or above the minimum count we calculated for it? This is a pass-or-fail check, not a personalization measurement. A required course fails immediately if any student's pathway drops a block below its floor.
-2. **The role-mix check.** Does the number of scaffolding_catchup nodes in the foundational block go down as a student's tier goes up, across all 30 profiles, not just the 2 or 3 we might eyeball by hand?
-3. **The length check.** Does every pathway's total node count stay within the target range we set for that course, regardless of tier?
+1. **The coverage floor check**, for the destination-is-fixed rule. Does every block appear in every pathway, at or above the minimum count we calculated for it? This is a pass-or-fail check, not a personalization measurement. A required course fails immediately if any student's pathway drops a block below its floor.
+2. **The role-mix check**, for the route-is-personalized rule. Does the number of scaffolding_catchup nodes in the foundational block go down as a student's tier goes up, across all 30 profiles, not just the 2 or 3 we might eyeball by hand?
+3. **The length check**, for the budget-stays-the-same rule. Does every pathway's total node count stay within the target range we set for that course, regardless of tier?
 
 **Result for Operating Systems:** every block met its floor in all 30 pathways. Every no-prior-exposure student received exactly 3 scaffolding nodes, every some-prior-exposure student received exactly 1, and every strong-prior-exposure student received exactly 0. Every pathway's length stayed within the target range of 14 to 18 nodes. All three checks passed.
 

@@ -2,6 +2,8 @@
 
 LangGraph-based tutoring agent for Synapsed with shared memory across text, visual, and voice interactions.
 
+**Navigation:** [Root hub](../../README.md) · [Architecture decisions](../../docs/ARCHITECTURE.md) · [Ops quickstart](../../AGENT_QUICKSTART.md) · [Tools](./tools/README.md) · [Parent `lib/`](../README.md)
+
 ## Core Architecture
 
 - **Single reasoning brain**: `lib/agent/simple-agent.ts` is the authoritative tutor logic.
